@@ -11,7 +11,7 @@ do
 			local pkg = require("deps/transfromage/package")
 			if pkg then
 				local version = pkg.version
-				local _, lastVersion = http.request("GET", "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/package.lua")
+				local _, lastVersion = require("coro-http").request("GET", "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/package.lua")
 				if lastVersion then
 					lastVersion = string.match(lastVersion, "version = \"(.-)\"")
 					if version ~= lastVersion then
