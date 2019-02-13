@@ -21,7 +21,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 
 - [Client](Client.md)
 - [Enum](Enum.md)
-- [Events][Events.md]
+- [Events](Events.md)
 
 ## Tree
 
@@ -47,13 +47,13 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 - [Events](Events.md)
 	- [ready](Events.md#ready---)
 	- [connection](Events.md#connection---)
-	- [roomMessage](Events.md#roomMessage ---)
-	- [whisperMessage](Events.md#whisperMessage---)
-	- [chatMessage](Events.md#chatMessage---)
-	- [joinTribeHouse](Events.md#joinTribeHouse---)
-	- [roomChanged](Events.md#roomChanged---)
-	- [disconnection](Events.md#disconnection---)
-	- [heartbeat](Events.md#heartbeat---)
-	- [send](Events.md#send---)
-	- [receive](Events.md#receive---)
-	- [missedPacket](Events.md#missedPacket---)
+	- [roomMessage](Events.md#roommessage--playername-message-playercommunity-playerid-)
+	- [whisperMessage](Events.md#whispermessage--playername-message-playercommunity-)
+	- [chatMessage](Events.md#chatmessage--channelname-playername-message-playercommunity-)
+	- [joinTribeHouse](Events.md#jointribehouse--tribename-)
+	- [roomChanged](Events.md#roomchanged--roomname-isprivateroom-)
+	- [disconnection](Events.md#disconnection--connection-)
+	- [heartbeat](Events.md#heartbeat--time-)
+	- [send](Events.md#send--identifiers-packet-)
+	- [receive](Events.md#receive--connection-packet-identifiers-)
+	- [missedPacket](Events.md#missedpacket--identifiers-packet-)

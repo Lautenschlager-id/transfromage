@@ -23,7 +23,7 @@ See also the [**Fromage API**](https://github.com/Lautenschlager-id/Fromage) for
 - To install **TransFromage**, run `lit install Lautenschlager-id/transfromage`
 - Run your bot script using, for example, `luvit bot.lua`
 
-###### If you are new and can't follow these steps, please consider using the _MyFirstBot.zip_ that comes with the executables and API already.<br>_(4MB)_ [Windows](MyFirstBot/Windows.zip) | [Linux](MyFirstBot/Linux.zip)
+###### If you are new and can't follow these steps, please consider using the _MyFirstBot.zip_ that comes with the executables and API already.<br>_(4MB)_ [Windows](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Windows.zip) | [Linux](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Linux.zip)
 
 ### API Update
 
