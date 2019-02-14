@@ -158,4 +158,14 @@ enum.setting = e {
 	port = e { 3724, 6112, 44444, 44440, 5555, 443 }
 }
 
+--[[@
+	@desc Possible states for the whisper
+	@type int
+]]
+enum.whisperState = e {
+	enabled        = 1,
+	disabledPublic = 2,
+	disabledAll    = 3
+}
+
 return enum

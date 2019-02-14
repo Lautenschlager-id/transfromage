@@ -26,6 +26,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 ## Tree
 
 - [Client](Client.md)
+	- [client.changeWhisperState](Client.md#clientchangewhisperstate--function-self-message-state-)
 	- [client.closeChat](Client.md#clientclosechat--self-chatname-)
 	- [client.connect](Client.md#clientconnect--self-username-userpassword-startroom-)
 	- [client.enterRoom](Client.md#cliententerroom--self-roomname-issalonauto-)

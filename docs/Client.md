@@ -31,7 +31,7 @@
 >### client.setCommunity ( self, community )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| community | `string`, `int` | ✔ | An enum from [community](Enum.md#community-int) (index or value) <sub>(default = EN)</sub> |
+>| community | `string`, `int` | ✔ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
 >
 >Sets the community where the bot will be cpmmected to.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [Start](Client.md#clientstart--function-self-tfmid-token-).
@@ -42,7 +42,7 @@
 >| :-: | :-: | :-: | - |
 >| userName | `string` | ✔ | The name of the account. It must contain the discriminator tag (#). |
 >| userPassword | `string` | ✔ | The password of the account. |
->| startRoom | `string` | ✕ | The name of the initial room. <sub>(default = *#bolodefchoco)</sub> |
+>| startRoom | `string` | ✕ | The name of the initial room. <sub>(default = \*#bolodefchoco)</sub> |
 >
 >Connects to an account in-game.<br>
 >It will try to connect using all the available ports before throwing a timing out error.
@@ -114,4 +114,13 @@
 >| command | `string` | ✔ | The command. (without /) |
 >
 >Sends a command (/).
+>
+---
+>### client.changeWhisperState ( self, message, state )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| message | `string` | ✕ | The /silence message.  <sub>(default = '')</sub> |
+>| state | `enum.whisperState` | ✕ | An enum from [whisperState](Enum.md#whisperstate-int). (index or value) <sub>(default = enabled)</sub> |
+>
+>Sets the account's whisper state.
 >

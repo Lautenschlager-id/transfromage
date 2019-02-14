@@ -274,14 +274,14 @@ end
 --[[@
 	@desc Sets the community where the bot will be cpmmected to.
 	@desc /!\ This method must be called before the @see start.
-	@param community<string,int> An enum from @see community (index or value) @default EN
+	@param community<enum.community> An enum from @see community. (index or value) @default EN
 ]]
 client.setCommunity = function(self, community)
 	community = community and (tonumber(community) or string.lower(community))
 	if community then
 		local commu = enum._checkEnum(enum.community, community)
 		if not commu then
-			return error("[Client] @community must be a valid community enumeration.", 0)
+			return error("[setCommunity] @community must be a valid 'community' enumeration.", 0)
 		end
 		if commu == 1 then
 			community = enum.community[community]
@@ -300,7 +300,7 @@ end
 ]]
 client.connect = function(self, userName, userPassword, startRoom)
 	local packet = byteArray:new():writeUTF(userName):writeUTF(encode.getPasswordHash(userPassword))
-	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF(tostring(startRoom) or "*#bolodefchoco")
+	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
 	packet:writeLong(bitwise.bxor(self.receivedAuthkey, self.gameAuthkey))
 
 	self.playerName = userName
@@ -369,10 +369,32 @@ client.enterRoom = function(self, roomName, isSalonAuto)
 end
 --[[@
 	@desc Sends a command (/).
+	@desd /!\ Note that some unlisted commands cannot be triggered by this function.
 	@param command<string> The command. (without /)
 ]]
 client.sendCommand = function(self, command)
 	self.main:send(enum.identifier.command, encode.xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
+end
+--[[@
+	@desc Sets the account's whisper state.
+	@param message?<string> The /silence message. @default ''
+	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
+]]
+client.changeWhisperState = function(self, message, state)
+	state = state and (tonumber(state) or string.lower(level))
+	if state then
+		local s = enum._checkEnum(enum.whisperState, state)
+		if not s then
+			return error("[changeWhisperState] @state must be a valid 'whisperState' enumeration.", 0)
+		end
+		if s == 1 then
+			state = enum.whisperState[state]
+		end
+	else
+		state = enum.whisperState.enabled
+	end
+
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(60):writeLong(1):writeByte(state):writeUTF(message or ''), self.main.packetID))
 end
 
 return client
