@@ -34,7 +34,7 @@
 >| community | `string`, `int` | ✔ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
 >
 >Sets the community where the bot will be cpmmected to.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [Start](Client.md#clientstart--function-self-tfmid-token-).
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [start](Client.md#clientstart--function-self-tfmid-token-).
 >
 ---
 >### client.connect ( self, userName, userPassword, startRoom )

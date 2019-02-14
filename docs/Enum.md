@@ -100,3 +100,12 @@
 | Index | Value |
 | :-: | :-: |
 | port | { 3724, 6112, 44444, 44440, 5555, 443 } |
+
+---
+### whisperState <sub>\<int></sub>
+###### Possible states for the whisper.
+| Index | Value |
+| :-: | :-: |
+| enabled | 1 |
+| disabledPublic | 2 |
+| disabledAll | 3 |

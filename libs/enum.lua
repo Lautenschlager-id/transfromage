@@ -159,7 +159,7 @@ enum.setting = e {
 }
 
 --[[@
-	@desc Possible states for the whisper
+	@desc Possible states for the whisper.
 	@type int
 ]]
 enum.whisperState = e {
