@@ -14,7 +14,7 @@
 
 Join the **_[Fifty Shades of Lua](https://discord.gg/quch83R)_** [discord](https://discordapp.com/) to discuss about this API and to have special support.
 
-See also the [**Fromage API**](https://github.com/Lautenschlager-id/Fromage) for the Atelier801's forum.
+See also the **[Fromage API](https://github.com/Lautenschlager-id/Fromage)** for the Atelier801's forum.
 
 ## Installation
 

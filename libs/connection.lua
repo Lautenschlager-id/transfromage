@@ -43,7 +43,7 @@ connectionHandler.connect = function(self, ip, port)
 			self.buffer:push(data)
 		end)
 
-		self.event:emit("_socketConnection", self, enum.setting.port[port])
+		self.event:emit("_socketConnection", self, port)
 	end)
 
 	timer.setTimeout(3500, function()

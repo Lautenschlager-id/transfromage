@@ -190,6 +190,9 @@ client.getKeys = function(self, tfmId, token)
 		{ "User-Agent", "Mozilla/5.0" }
 	})
 	result = json.decode(result)
+	if not result then
+		return error("[API Endpoint] @TFMID or @TOKEN value is invalid.")
+	end
 
 	if result.success then
 		if not result.internal_error then

@@ -53,7 +53,7 @@ byteArray.writeBigUTF = function(self, bigUtf)
 end
 
 byteArray.writeBool = function(self, boolean)
-	self:writeByte(boolean)
+	self:writeByte(boolean and 1 or 0)
 	return self
 end
 
