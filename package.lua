@@ -1,6 +1,6 @@
 return {
 	name = "Lautenschlager-id/transfromage",
-	version = "0.1.2",
+	version = "0.1.3",
 	homepage = "https://github.com/Lautenschlager-id/Transfromage",
 	dependencies = {
 		"creationix/base64",

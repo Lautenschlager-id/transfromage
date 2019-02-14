@@ -243,7 +243,7 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 					self.event:emit("ready")
 				end, self)
 			elseif enum.identifier.bulle[1] == C_CC[1] and enum.identifier.bulle[2] == C_CC[2] then
-				return timer.setTimeout(2000, function(self)
+				return timer.setTimeout(5000, function(self)
 					self.event:emit("connection")
 				end, self)
 			end
@@ -273,7 +273,7 @@ end
 -- Methods
 --[[@
 	@desc Sets the community where the bot will be cpmmected to.
-	@desc /!\ This method must be called before the @see connect.
+	@desc /!\ This method must be called before the @see start.
 	@param community<string,int> An enum from @see community (index or value) @default EN
 ]]
 client.setCommunity = function(self, community)

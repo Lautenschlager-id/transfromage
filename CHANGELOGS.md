@@ -1,4 +1,11 @@
 # Changelogs
+## v.0.1.3 - 14/02/2019
+### News
+- Now the _byteArray_ class can be used from the require. `require('transfromage').byteArray`
+
+### Fixes
+- Now the _connection_ event is triggered after 5s since the login, not 2s. It prevents many bulle bugs.
+
 ## v.0.1.2 - 14/02/2019
 ### News
 - Added an error message when the tfmkey or token parameters are invalid in `Client.start`.
