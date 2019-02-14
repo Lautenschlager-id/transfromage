@@ -1,5 +1,5 @@
 # Methods
->### client.start ( function(self, tfmId, token )
+>### client.start ( self, tfmId, token )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| tfmId | `string`, `int` | ✔ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |

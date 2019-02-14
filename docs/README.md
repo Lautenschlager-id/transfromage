@@ -26,7 +26,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 ## Tree
 
 - [Client](Client.md)
-	- [client.changeWhisperState](Client.md#clientchangewhisperstate--function-self-message-state-)
+	- [client.changeWhisperState](Client.md#clientchangewhisperstate--self-message-state-)
 	- [client.closeChat](Client.md#clientclosechat--self-chatname-)
 	- [client.connect](Client.md#clientconnect--self-username-userpassword-startroom-)
 	- [client.enterRoom](Client.md#cliententerroom--self-roomname-issalonauto-)
@@ -39,12 +39,13 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 	- [client.sendRoomMessage](Client.md#clientsendroommessage--self-message-)
 	- [client.sendWhisper](Client.md#clientsendwhisper--self-targetuser-message-)
 	- [client.setCommunity](Client.md#clientsetcommunity--self-community-)
-	- [client.start](Client.md#clientstart--function-self-tfmid-token-)
+	- [client.start](Client.md#clientstart--self-tfmid-token-)
 - [Enum](Enum.md)
 	- [chatCommunity](Enum.md#chatcommunity-int)
 	- [community](Enum.md#community-int)
 	- [identifier](Enum.md#identifier-table)
 	- [setting](Enum.md#setting-table)
+	- [whisperState](Enum.md#whisperstate-int)
 - [Events](Events.md)
 	- [chatMessage](Events.md#chatmessage--channelname-playername-message-playercommunity-)
 	- [connection](Events.md#connection---)
