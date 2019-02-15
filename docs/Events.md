@@ -71,7 +71,7 @@
 >| :-: | :-: | - |
 >| time | `int` | The current time. |
 >
->Triggered when a heartbeat is sent to the connection.
+>Triggered when a heartbeat is sent to the connection, every 10 seconds.
 >
 ---
 >### send ( identifiers, packet )
