@@ -16,13 +16,13 @@ Join the **_[Fifty Shades of Lua](https://discord.gg/quch83R)_** [discord](https
 
 See also the **[Fromage API](https://github.com/Lautenschlager-id/Fromage)** for the Atelier801's forum.
 
-This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python TransFromage API](https://github.com/Tocutoeltuco/transfromage).
+This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python TransFromage API](https://github.com/Tocutoeltuco/transfromage).
 
 ## Keys Endpoint
 
 This API depends on an [endpoint](https://api.tocu.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
 
-To get access to it you need to request a token to Tocutoeltuco _(preferably via discord: Tocutoeltuco#0018)_ by explaining your project.
+To get access to it you need to request a token to the player [Tocutoeltuco](https://github.com/Tocutoeltuco) _(preferably on discord: 'Tocutoeltuco#0018')_ by explaining your project.
 
 ## Installation
 
