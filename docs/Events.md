@@ -41,6 +41,15 @@
 >Triggered when a #chat receives a new message.
 >
 ---
+>### tribeMessage ( memberName, message )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| memberName | `string` | The member who sent the message. (lower case) |
+>| message | `string` | The message. |
+>
+>Triggered when the tribe chat receives a new message.
+>
+---
 >### joinTribeHouse ( tribeName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |

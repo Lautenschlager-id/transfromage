@@ -94,6 +94,16 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 >
 ---
+---
+>### client.sendTribeMessage ( self, message )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| message | `string` | ✔ | The message. |
+>
+>Sends a message to the tribe chat.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+>
+---
 >### client.joinTribeHouse ( self )
 >
 >Joins the tribe house, if the account is in a tribe.
@@ -123,4 +133,12 @@
 >| state | `enum.whisperState` | ✕ | An enum from [whisperState](Enum.md#whisperstate-int). (index or value) <sub>(default = enabled)</sub> |
 >
 >Sets the account's whisper state.
+>
+---
+>### client.loadLua ( self, script )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| script | `string` | ✕ | The lua script. |
+>
+>Loads a lua script in the room.
 >

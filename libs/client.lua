@@ -11,6 +11,11 @@ if not string.getBytes then
 	require("extensions")
 end
 
+local fixEntity = function(str)
+	str = string.gsub(tostring(str), "&lt;", '>')
+	return str
+end
+
 local client = { }
 client.__index = client
 
@@ -55,7 +60,7 @@ do
 		[6] = {
 			[6] = function(self, connection, packet, C_CC) -- Room message
 				local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.decodeEntities(packet:readUTF())
-				self.event:emit("roomMessage", string.lower(playerName), message, playerCommu, playerId)
+				self.event:emit("roomMessage", string.lower(playerName), fixEntity(message), playerCommu, playerId)
 			end
 		},
 		[26] = {
@@ -101,11 +106,14 @@ do
 			[3] = function(self, connection, packet, C_CC) -- Community Platform
 				local tribulle = packet:readShort()
 				if tribulle == 64 then -- #Chat Message
-					local playerName, community, channelName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
-					return self.event:emit("chatMessage", channelName, string.lower(playerName), message, community)
+					local playerName, community, chatName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+					return self.event:emit("chatMessage", chatName, string.lower(playerName), fixEntity(message), community)
+				elseif tribulle == 65 then -- Tribe message
+					local memberName, message = packet:readUTF(), packet:readUTF()
+					return self.event:emit("tribeMessage", string.lower(memberName), fixEntity(message))
 				elseif tribulle == 66 then -- Whisper message
 					local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
-					return self.event:emit("whisperMessage", string.lower(playerName), message, community)
+					return self.event:emit("whisperMessage", string.lower(playerName), fixEntity(message), community)
 				end
 			end
 		}
@@ -354,6 +362,14 @@ client.sendChatMessage = function(self, chatName, message)
 	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(48):writeLong(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
 end
 --[[@
+	@desc Sends a message to the tribe chat.
+	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+	@param message<string> The message.
+]]
+client.sendTribeMessage = function(self, message)
+    self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(50):writeLong(3):writeUTF(message), self.main.packetID))
+end
+--[[@
 	@desc Joins the tribe house, if the account is in a tribe.
 ]]
 client.joinTribeHouse = function(self)
@@ -395,6 +411,13 @@ client.changeWhisperState = function(self, message, state)
 	end
 
 	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(60):writeLong(1):writeByte(state):writeUTF(message or ''), self.main.packetID))
+end
+--[[@
+	@desc Loads a lua script in the room.
+	@param script<string> The lua script.
+]]
+client.loadLua = function(self, script)
+	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeByte(0):writeUTF(script))
 end
 
 return client
