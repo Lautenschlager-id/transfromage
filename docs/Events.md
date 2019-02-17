@@ -83,6 +83,11 @@
 >Triggered when a connection dies or fails.
 >
 ---
+>### ping ( )
+>
+>Triggered when a server heartbeat is received.
+>
+---
 >### heartbeat ( time )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |

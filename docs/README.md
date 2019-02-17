@@ -56,6 +56,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 	- [joinTribeHouse](Events.md#jointribehouse--tribename-)
 	- [lua](Events.md#lua--log-)
 	- [missedPacket](Events.md#missedpacket--identifiers-packet-)
+	- [ping](Events.md#ping---)
 	- [ready](Events.md#ready---)
 	- [receive](Events.md#receive--connection-packet-identifiers-)
 	- [roomChanged](Events.md#roomchanged--roomname-isprivateroom-)
