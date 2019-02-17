@@ -1,5 +1,5 @@
 # Changelogs
-## v0.3.0 - 16/02/2019
+## v0.3.0 - 17/02/2019
 ### News
 - Added the event _ping ( )_.
 - Added the event _lua ( log )_.
