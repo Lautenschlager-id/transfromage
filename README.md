@@ -44,7 +44,7 @@ The update will overwrite all the old files and dependencies.
 
 The best way to contribute for this API is ~~donating~~ creating pull requests with bug fixes and new events / methods (like joining the map editor, getting a map XML, loading Lua...)
 
-You may find the Tribulle part [here](libs/client.lua) by searching `-- Tribulle functions` - the format is `[C][CC](connection, packet, C_CC)` -. You may also find the methods part in the same file by searching `-- Methods`.
+You may find the Tribulle part [here](libs/client.lua) by searching `-- Recv functions` - the format is `[C][CC](connection, packet, C_CC)` -. You may also find the methods part in the same file by searching `-- Methods`.
 
 Currently the [Events documentation](docs/Events.md) has to be done manually. To document [Methods](docs/Client.md) use the format provided [here](https://github.com/Lautenschlager-id/Fromage/blob/master/docgen.lua#L1-L36).
 

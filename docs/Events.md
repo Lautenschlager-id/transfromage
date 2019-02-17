@@ -58,6 +58,14 @@
 >Triggered when the account joins a tribe house.
 >
 ---
+>### lua ( log )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| log | `string` | The log message. |
+>
+>Triggered when the #lua channel receives a log message.
+>
+---
 >### roomChanged ( roomName, isPrivateRoom )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |

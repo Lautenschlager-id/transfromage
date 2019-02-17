@@ -54,6 +54,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 	- [disconnection](Events.md#disconnection--connection-)
 	- [heartbeat](Events.md#heartbeat--time-)
 	- [joinTribeHouse](Events.md#jointribehouse--tribename-)
+	- [lua](Events.md#lua--log-)
 	- [missedPacket](Events.md#missedpacket--identifiers-packet-)
 	- [ready](Events.md#ready---)
 	- [receive](Events.md#receive--connection-packet-identifiers-)

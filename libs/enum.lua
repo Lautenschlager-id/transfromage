@@ -71,7 +71,6 @@ enum.identifier = e {
 	roomMessage    = e({ 06, 06 }, nil, true)
 }
 
-
 --[[@
 	@desc The ID of each community.
 	@type int
@@ -101,7 +100,7 @@ enum.community = e {
 	cz = 21,
 	sk = 22,
 	hr = 23,
-	bu = 24,
+	bg = 24,
 	lv = 25,
 	he = 26,
 	it = 27,
@@ -138,16 +137,14 @@ enum.chatCommunity = e {
 	fi = 21,
 	cz = 22,
 	hr = 23,
-	cz = 24,
-	sk = 25,
-	hr = 26,
-	bg = 27,
-	lv = 28,
-	he = 29,
-	it = 30,
-	et = 31,
-	az = 32,
-	pt = 33
+	sk = 24,
+	bg = 25,
+	lv = 26,
+	he = 27,
+	it = 28,
+	et = 29,
+	az = 30,
+	pt = 31
 }
 
 --[[@

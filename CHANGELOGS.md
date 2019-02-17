@@ -1,8 +1,17 @@
 # Changelogs
+## v0.3.0 - 16/02/2019
+### News
+- Added the event _ping ( )_.
+- Added the event _lua ( log )_.
+
+### Fixes
+- Fixed `community` and `chatCommunity` enums.
+- The events will translate every `&amp;` to `&` now.
+
 ## v0.2.0 - 15/02/2019
 ### News
-- Added _client.loadLua_
-- Added the event _tribeMessage ( memberName, message )_
+- Added _client.loadLua_.
+- Added the event _tribeMessage ( memberName, message )_.
 - Added _client.sendTribeMessage_.
 - Added _client.changeWhisperState_.
 - Added _enum.whisperState_.

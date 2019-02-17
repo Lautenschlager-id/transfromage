@@ -12,7 +12,9 @@ if not string.getBytes then
 end
 
 local fixEntity = function(str)
-	str = string.gsub(tostring(str), "&lt;", '>')
+	str = tostring(str)
+	str = string.gsub(str, "&lt;", '>')
+	str = string.gsub(str, "&amp;", '&')
 	return str
 end
 
@@ -44,7 +46,7 @@ end
 
 -- Tribulle
 do
-	-- Tribulle functions
+	-- Recv functions
 	local exec = {
 		[5] = {
 			[21] = function(self, connection, packet, C_CC) -- Room changed
@@ -84,6 +86,17 @@ do
 				local osInfo = byteArray:new():writeUTF("en"):writeUTF("Linux")
 				osInfo:writeUTF("LNX 29,0,0,140"):writeByte(0)
 				self.main:send(enum.identifier.os, osInfo)
+			end
+		},
+		[28] = {
+			[6] = function(self, connection, packet, C_CC)
+				self.event:emit("ping")
+			end
+		},
+		[29] = {
+			[6] = function(self, connection, packet, C_CC)
+				local log = packet:readUTF()
+				self.event:emit("lua", log)
 			end
 		},
 		[44] = {
