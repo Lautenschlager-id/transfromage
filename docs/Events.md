@@ -1,4 +1,13 @@
 # Events
+
+Use the following structure to make events:
+```Lua
+client:on("event_name", function(parameters)
+	-- TODO
+end)
+```
+---
+
 >### ready (  )
 >
 >Triggered when the connection is live.

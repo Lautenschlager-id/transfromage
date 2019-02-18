@@ -1,5 +1,5 @@
 # Methods
->### client.start ( self, tfmId, token )
+>### client:start ( tfmId, token )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| tfmId | `string`, `int` | ✔ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |
@@ -8,7 +8,7 @@
 >Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
 >
 ---
->### client.on ( self, eventName, callback )
+>### client:on ( eventName, callback )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| eventName | `string` | ✔ | The name of the event. |
@@ -18,7 +18,7 @@
 >See the available events in Events.
 >
 ---
->### client.once ( self, eventName, callback )
+>### client:once ( eventName, callback )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| eventName | `string` | ✔ | The name of the event. |
@@ -28,7 +28,7 @@
 >See the available events in Events.
 >
 ---
->### client.setCommunity ( self, community )
+>### client:setCommunity ( community )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| community | `string`, `int` | ✔ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
@@ -37,18 +37,19 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [start](Client.md#clientstart--self-tfmid-token-).
 >
 ---
->### client.connect ( self, userName, userPassword, startRoom )
+>### client:connect ( userName, userPassword, startRoom, timeout )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| userName | `string` | ✔ | The name of the account. It must contain the discriminator tag (#). |
 >| userPassword | `string` | ✔ | The password of the account. |
 >| startRoom | `string` | ✕ | The name of the initial room. <sub>(default = \*#bolodefchoco)</sub> |
+>| timeout | `int` | ✕ | The time in ms to throw a timeout error if the connection takes too long to succeed. <sub>(default = 15000)</sub> |
 >
 >Connects to an account in-game.<br>
 >It will try to connect using all the available ports before throwing a timing out error.
 >
 ---
->### client.sendRoomMessage ( self, message )
+>### client:sendRoomMessage ( message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
@@ -57,7 +58,7 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 >
 ---
->### client.sendWhisper ( self, targetUser, message )
+>### client:sendWhisper ( targetUser, message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
@@ -68,7 +69,7 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 >
 ---
->### client.joinChat ( self, chatName )
+>### client:joinChat ( chatName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| chatName | `string` | ✔ | The name of the chat. |
@@ -76,7 +77,7 @@
 >Joins a #chat.
 >
 ---
->### client.closeChat ( self, chatName )
+>### client:closeChat ( chatName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| chatName | `string` | ✔ | The name of the chat. |
@@ -84,7 +85,7 @@
 >Leaves a #chat.
 >
 ---
->### client.sendChatMessage ( self, chatName, message )
+>### client:sendChatMessage ( chatName, message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| chatName | `string` | ✔ | The name of the chat. |
@@ -95,7 +96,7 @@
 >
 ---
 ---
->### client.sendTribeMessage ( self, message )
+>### client:sendTribeMessage ( message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
@@ -104,12 +105,12 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 >
 ---
->### client.joinTribeHouse ( self )
+>### client:joinTribeHouse ( self )
 >
 >Joins the tribe house, if the account is in a tribe.
 >
 ---
->### client.enterRoom ( self, roomName, isSalonAuto )
+>### client:enterRoom ( roomName, isSalonAuto )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| roomName | `string` | ✔ | The name of the room. |
@@ -118,7 +119,7 @@
 >Enters in a room.
 >
 ---
->### client.sendCommand ( self, command )
+>### client:sendCommand ( command )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| command | `string` | ✔ | The command. (without /) |
@@ -126,7 +127,7 @@
 >Sends a command (/).
 >
 ---
->### client.changeWhisperState ( self, message, state )
+>### client:changeWhisperState ( message, state )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✕ | The /silence message. <sub>(default = '')</sub> |
@@ -135,7 +136,7 @@
 >Sets the account's whisper state.
 >
 ---
->### client.loadLua ( self, script )
+>### client:loadLua ( script )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| script | `string` | ✔ | The lua script. |
@@ -143,7 +144,7 @@
 >Loads a lua script in the room.
 >
 ---
->### client.playEmote ( self, emote, flag )
+>### client:playEmote ( emote, flag )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| emote | `enum.emote` | ✕ | An enum from @see emote. (index or value) <sub>(default = dance)</sub> |
@@ -152,7 +153,7 @@
 >Plays an emote.
 >
 ---
->### client.playEmoticon ( self, emoticon )
+>### client:playEmoticon ( emoticon )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| emoticon | `enum.emoticon` | ✕ | An enum from @see emoticon. (index or value) <sub>(default = smiley)</sub> |
