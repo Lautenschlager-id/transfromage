@@ -2,7 +2,7 @@
 
 Use the following structure to make events:
 ```Lua
-client:on("event_name", function(parameters)
+client:on("event_name", function(parameters) -- replace 'on' to 'once' if you want it to be triggered only once.
 	-- TODO
 end)
 ```
