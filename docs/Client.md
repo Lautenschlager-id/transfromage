@@ -129,7 +129,7 @@
 >### client.changeWhisperState ( self, message, state )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| message | `string` | ✕ | The /silence message.  <sub>(default = '')</sub> |
+>| message | `string` | ✕ | The /silence message. <sub>(default = '')</sub> |
 >| state | `enum.whisperState` | ✕ | An enum from [whisperState](Enum.md#whisperstate-int). (index or value) <sub>(default = enabled)</sub> |
 >
 >Sets the account's whisper state.
@@ -138,7 +138,24 @@
 >### client.loadLua ( self, script )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| script | `string` | ✕ | The lua script. |
+>| script | `string` | ✔ | The lua script. |
 >
 >Loads a lua script in the room.
+>
+---
+>### client.playEmote ( self, emote, flag )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| emote | `enum.emote` | ✕ | An enum from @see emote. (index or value) <sub>(default = dance)</sub> |
+>| flag | `string` | ✕ | The country code of the flag when @emote is flag. |
+>
+>Plays an emote.
+>
+---
+>### client.playEmoticon ( self, emoticon )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| emoticon | `enum.emoticon` | ✕ | An enum from @see emoticon. (index or value) <sub>(default = smiley)</sub> |
+>
+>Plays an emoticon
 >

@@ -75,6 +75,61 @@
 >Triggered when the account changes the room.
 >
 ---
+>### profileLoaded ( data )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| data | `table` | The user profile data. |
+>
+>Triggered when the profile of an user is loaded.
+>
+>**@data structure**:
+>```Lua
+>{
+>	playerName = "", -- The player name.
+>	id = 0, -- The player id.
+>	registrationDate = 0, -- The timestamp of when the account was created.
+>	role = 0, -- An enum from enum.role that specifies the account's role.
+>	gender = 0, -- An enum from enum.gender for the account's gender. 
+>	tribeName = "", -- The name of the tribe.
+>	soulmate = "", -- The name of the soulmate.
+>	saves = {
+>		normal = 0, -- Total saves in the normal mode.
+>		hardmode = 0, -- Total saves in the hard mode.
+>		divine = 0 -- Total saves in the divine mode.
+>	}, -- Total saves of the account.
+>	shamanCheese = 0, -- Total of cheeses gathered as shaman.
+>	firsts = 0, -- Total of firsts.
+>	cheeses = 0, -- Total of cheeses.
+>	bootcamps = 0, -- Total of bootcamps.
+>	titleId = 0, -- The id of the current title.
+>	totalTitles = 0, -- Total of unlocked titles.
+>	titles = {
+>		[id] = 0 -- The id of the title as index, the quantity of stars as value.
+>	}, -- The list of unlocked titles.
+>	look = "", -- The account's outfit code.
+>	level = 0, -- The account's level.
+>	totalBadges = 0, -- The total of unlocked badges.
+>	badges = {
+>		[id] = 0 -- The id of the badge as index, the quantity as value.
+>	}, -- The list of unlocked badges.
+>	totalModeStats = 0, -- The total of mode statuses.
+>	modeStats = {
+>		[id] = {
+>			progress = 0, -- The current score in the status.
+>			progressLimit = 0, -- The status score limit.
+>			imageId = 0 -- The image id of the status. 
+>		} -- The status id.
+>	}, -- The list of mode statuses.
+>	orbId = 0, -- The id of the current shaman orb.
+>	totalOrbs = 0, -- The total of unlocked shaman orbs.
+>	orbs = {
+>		[id] = true -- The id of the shaman orb as index.
+>	}, -- The list of unlocked shaman orbs.
+>	adventurePoints = 0 -- The total adventure points.
+>}
+>```
+>
+---
 >### disconnection ( connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |

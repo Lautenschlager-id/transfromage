@@ -1,4 +1,16 @@
 # Changelogs
+## v0.4.0 - 17/02/2019
+### News
+- Added a new update system: `semiautoupdate`, that asks for permission before updating the API.
+- Added _client.playEmoticon_.
+- Added _client.playEmote_.
+- Added the event _profileLoaded ( data )_.
+
+### Fixes
+- Fixed an enumeration problem in _changeWhisperState_.
+- Added the message error when the endpoint keys fail.
+- Added the `time` parameter in the ping event.
+
 ## v0.3.0 - 17/02/2019
 ### News
 - Added the event _ping ( )_.

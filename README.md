@@ -40,6 +40,8 @@ You can create it running `echo >> autoupdate` (for Windows) or `touch autoupdat
 
 The update will overwrite all the old files and dependencies.
 
+For semi-automatic updates (asks permission before updating), create the file `semiautoupdate` instead.
+
 ### Contribution
 
 The best way to contribute for this API is ~~donating~~ creating pull requests with bug fixes and new events / methods (like joining the map editor, getting a map XML, loading Lua...)

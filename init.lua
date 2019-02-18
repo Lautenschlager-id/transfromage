@@ -4,8 +4,14 @@ end
 
 do
 	local autoupdate = io.open("autoupdate", 'r') or io.open("autoupdate.txt", 'r')
-	if autoupdate then
-		autoupdate:close()
+	local semiupdate = not autoupdate and (io.open("semiautoupdate", 'r') or io.open("semiautoupdate.txt", 'r'))
+	if autoupdate or semiupdate then
+		if autoupdate then
+			autoupdate:close()
+		end
+		if semiupdate then
+			semiupdate:close()
+		end
 
 		coroutine.wrap(function()
 			local pkg = require("deps/transfromage/package")
@@ -15,12 +21,24 @@ do
 				if lastVersion then
 					lastVersion = string.match(lastVersion, "version = \"(.-)\"")
 					if version ~= lastVersion then
-						for i = 1, #pkg.files do
-							os.remove("deps/transfromage/" .. pkg.files[i])
+						local toUpdate
+						if semiupdate then
+							repeat
+								print("There is a new version of transfromage available [" .. lastVersion .. "]. Update it now? (Y/N)")
+								toUpdate = string.lower(io.read())
+							until toUpdate == 'n' or toUpdate == 'y'
+						else
+							toUpdate = 'y'
 						end
-						os.execute("lit install Lautenschlager-id/transfromage") -- Installs the new lib
-						os.execute("luvit " .. table.concat(args, ' ')) -- Luvit's command
-						return os.exit()
+
+						if toUpdate == 'y' then
+							for i = 1, #pkg.files do
+								os.remove("deps/transfromage/" .. pkg.files[i])
+							end
+							os.execute("lit install Lautenschlager-id/transfromage") -- Installs the new lib
+							os.execute("luvit " .. table.concat(args, ' ')) -- Luvit's command
+							return os.exit()
+						end
 					end
 				end
 			end

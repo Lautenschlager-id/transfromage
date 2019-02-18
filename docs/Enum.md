@@ -107,3 +107,73 @@
 | enabled | 1 |
 | disabledPublic | 2 |
 | disabledAll | 3 |
+
+---
+### role <sub>\<int></sub>
+###### The id for staff role identifiers.
+| Index | Value |
+| :-: | :-: |
+| normal | 00 |
+| moderator | 05 |
+| administrator | 10 |
+| mapcrew | 11 |
+| funcorp | 13 |
+
+---
+### gender <sub>\<int></sub>
+###### The profile gender id.
+| Index | Value |
+| :-: | :-: |
+| none | 0 |
+| female | 1 |
+| male | 2 |
+
+---
+### emote <sub>\<int></sub>
+###### The available emote ids.
+| Index | Value |
+| :-: | :-: |
+| dance | 00 |
+| laugh | 01 |
+| cry | 02 |
+| kiss | 03 |
+| angry | 04 |
+| clap | 05 |
+| sleep | 06 |
+| facepaw | 07 |
+| sit | 08 |
+| confetti | 09 |
+| flag | 10 |
+| marshmallow | 11 |
+| selfie | 12 |
+| highfive | 13 |
+| highfive_1 | 14 |
+| highfive_2 | 15 |
+| partyhorn | 16 |
+| hug | 17 |
+| hug_1 | 18 |
+| hug_2 | 19 |
+| jigglypuff | 20 |
+| kissing | 21 |
+| kissing_1 | 22 |
+| kissing_2 | 23 |
+| carnaval | 24 |
+| rockpaperscissors | 25 |
+| rockpaperscissors_1 | 26 |
+| rockpaperscissor_2 | 27 |
+
+---
+### emoticon <sub>\<int></sub>
+###### The available emoticon ids.
+| Index | Value |
+| :-: | :-: |
+| OMG | 0 |
+| smiley | 1 |
+| sad | 2 |
+| tongue | 3 |
+| angry | 4 |
+| :D | 5 |
+| shades | 6 |
+| blush | 7 |
+| sweatdrop | 8 |
+| derp | 9 |

@@ -65,6 +65,69 @@ do
 				self.event:emit("roomMessage", string.lower(playerName), fixEntity(message), playerCommu, playerId)
 			end
 		},
+		[8] = {
+			[16] = function(self, connection, packet, C_CC) -- Profile data
+				local data = { }
+				data.playerName = packet:readUTF()
+				data.id = packet:readLong()
+				data.registrationDate = packet:readLong()
+				data.role = packet:readByte() -- enum.role
+				
+				data.gender = packet:readByte() -- enum.gender
+				data.tribeName = packet:readUTF()
+				data.soulmate = packet:readUTF()
+				
+				data.saves = { }
+				data.saves.normal = packet:readLong()
+				data.shamanCheese = packet:readLong()
+				data.firsts = packet:readLong()
+				data.cheeses = packet:readLong()
+				data.saves.hard = packet:readLong()
+				data.bootcamps = packet:readLong()
+				data.saves.divine = packet:readLong()
+				
+				data.titleId = packet:readShort()
+				data.totalTitles = packet:readShort()
+				data.titles = { }
+				for i = 1, data.totalTitles do
+					data.titles[packet:readShort()] = packet:readByte() -- id, stars
+				end
+
+				data.look = packet:readUTF()
+
+				data.level = packet:readShort()
+
+				data.totalBadges = packet:readShort() / 2
+				data.badges = { }
+				for i = 1, data.totalBadges do
+					data.badges[packet:readShort()] = packet:readShort() -- id, quantity
+				end
+
+				data.totalModeStats = packet:readByte()
+				data.modeStats = { }
+				local modeId
+				for i = 1, data.totalModeStats do
+					modeId = packet:readByte()
+					data.modeStats[modeId] = { }
+					data.modeStats[modeId].progress = packet:readLong()
+					data.modeStats[modeId].progressLimit = packet:readLong()
+					data.modeStats[modeId].imageId = packet:readByte()
+				end
+
+				data.orbId = packet:readByte()
+				data.totalOrbs = packet:readByte()
+				data.orbs = { }
+				for i = 1, data.totalOrbs do
+					data.orbs[packet:readByte()] = true
+				end
+
+				packet:readByte() -- ?
+
+				data.adventurePoints = packet:readLong()
+
+				self.event:emit("profileLoaded", data)
+			end
+		},
 		[26] = {
 			[2] = function(self, connection, packet, C_CC)
 				self._isConnected = true
@@ -90,7 +153,7 @@ do
 		},
 		[28] = {
 			[6] = function(self, connection, packet, C_CC)
-				self.event:emit("ping")
+				self.event:emit("ping", os.time())
 			end
 		},
 		[29] = {
@@ -210,9 +273,10 @@ client.getKeys = function(self, tfmId, token)
 	local _, result = http.request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
 		{ "User-Agent", "Mozilla/5.0" }
 	})
+	local _r = result
 	result = json.decode(result)
 	if not result then
-		return error("[API Endpoint] @TFMID or @TOKEN value is invalid.")
+		return error("[API Endpoint] @TFMID or @TOKEN value is invalid.\n\t" .. tostring(_r))
 	end
 
 	if result.success then
@@ -327,7 +391,8 @@ client.connect = function(self, userName, userPassword, startRoom)
 	self.playerName = userName
 	self.main:send(enum.identifier.login, encode.blockCipher(packet):writeByte(0))
 
-	timer.setTimeout(10000, function(self)
+	local isStaff = string.find(userName, "#00[012][015]")
+	timer.setTimeout((10 + (isStaff and 10 or 0)) * 1000, function(self)
 		if not self._isConnected then
 			return error("[Login] Impossible to log in. Try again later.", 0)
 		end
@@ -410,7 +475,7 @@ end
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
 ]]
 client.changeWhisperState = function(self, message, state)
-	state = state and (tonumber(state) or string.lower(level))
+	state = state and (tonumber(state) or string.lower(state))
 	if state then
 		local s = enum._checkEnum(enum.whisperState, state)
 		if not s then
@@ -431,6 +496,52 @@ end
 ]]
 client.loadLua = function(self, script)
 	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeByte(0):writeUTF(script))
+end
+--[[@
+	@desc Plays an emote.
+	@param emote<enum.emote> An enum from @see emote. (index or value) @default dance
+	@param flag<string> The country code of the flag when @emote is flag.
+]]
+client.playEmote = function(self, emote, flag)
+	emote = emote and (tonumber(emote) or string.lower(emote))
+	if emote then
+		local s = enum._checkEnum(enum.emote, emote)
+		if not s then
+			return error("[playEmote] @emote must be a valid 'emote' enumeration.", 0)
+		end
+		if s == 1 then
+			emote = enum.emote[emote]
+		end
+	else
+		emote = enum.emote.dance
+	end
+
+	local packet = byteArray:new():writeByte(emote):writeLong(0)
+	if emote == enum.emote.flag then
+		packet = packet:writeUTF(flag)
+	end
+
+	self.bulle:send(enum.identifier.emote, packet)
+end
+--[[@
+	@desc Plays an emoticon.
+	@param emoticon<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
+]]
+client.playEmoticon = function(self, emoticon)
+	emoticon = emoticon and (tonumber(emoticon) or string.lower(emoticon))
+	if emoticon then
+		local s = enum._checkEnum(enum.emoticon, emoticon)
+		if not s then
+			return error("[playEmoticon] @emoticon must be a valid 'emoticon' enumeration.", 0)
+		end
+		if s == 1 then
+			emoticon = enum.emoticon[emoticon]
+		end
+	else
+		emoticon = enum.emoticon.smiley
+	end
+
+	self.bulle:send(enum.identifier.emoticon, byteArray:new():writeByte(emoticon):writeLong(0))
 end
 
 return client

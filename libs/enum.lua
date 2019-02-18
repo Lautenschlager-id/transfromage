@@ -11,7 +11,7 @@ local e = function(list, __index, ignoreConflit)
 	return setmetatable({ }, {
 		__index = function(_, index)
 			if __index then
-				index = __index(index)
+				index = __index(index, list)
 			end
 			return list[index]
 		end,
@@ -56,15 +56,17 @@ end
 ]]
 enum.identifier = e {
 	bulle          = e { 44, 01 },
-	message        = e { 60, 03 },
 	command        = e { 06, 26 },
 	community      = e { 08, 02 },
 	correctVersion = e { 26, 03 },
+	emote          = e { 08, 01 },
+	emoticon       = e { 08, 05 },
 	heartbeat      = e({ 26, 26 }, nil, true),
 	initialize     = e { 28, 01 },
 	joinTribeHouse = e { 16, 01 },
 	login          = e { 26, 08 },
 	loadLua        = e { 29, 01 },
+	message        = e { 60, 03 },
 	os             = e { 28, 17 },
 	packetOffset   = e { 44, 22 },
 	room           = e { 05, 38 },
@@ -163,6 +165,80 @@ enum.whisperState = e {
 	enabled        = 1,
 	disabledPublic = 2,
 	disabledAll    = 3
+}
+
+--[[@
+	@desc The id for staff role identifiers.
+	@type int
+]]
+enum.role = e {
+	normal        = 00,
+	moderator     = 05,
+	administrator = 10,
+	mapcrew       = 11,
+	funcorp       = 13
+}
+
+--[[@
+	@desc The profile gender id.
+	@type int
+]]
+enum.gender = {
+	none   = 0,
+	female = 1,
+	male   = 2
+}
+
+--[[@
+	@desc The available emote ids.
+	@type int
+]]
+enum.emote = e {
+	dance               = 00,
+	laugh               = 01,
+	cry                 = 02,
+	kiss                = 03,
+	angry               = 04,
+	clap                = 05,
+	sleep               = 06,
+	facepaw             = 07,
+	sit                 = 08,
+	confetti            = 09,
+	flag                = 10,
+	marshmallow         = 11,
+	selfie              = 12,
+	highfive            = 13,
+	highfive_1          = 14,
+	highfive_2          = 15,
+	partyhorn           = 16,
+	hug                 = 17,
+	hug_1               = 18,
+	hug_2               = 19,
+	jigglypuff          = 20,
+	kissing             = 21,
+	kissing_1           = 22,
+	kissing_2           = 23,
+	carnaval            = 24,
+	rockpaperscissors   = 25,
+	rockpaperscissors_1 = 26,
+	rockpaperscissor_2  = 27
+}
+
+--[[@
+	@desc The available emoticon ids.
+	@type int
+]]
+enum.emoticon = e {
+	OMG       = 0,
+	smiley    = 1,
+	sad       = 2,
+	tongue    = 3,
+	angry     = 4,
+	[":D"]    = 5,
+	shades    = 6,
+	blush     = 7,
+	sweatdrop = 8,
+	derp      = 9
 }
 
 return enum
