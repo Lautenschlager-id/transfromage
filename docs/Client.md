@@ -43,7 +43,7 @@
 >| userName | `string` | ✔ | The name of the account. It must contain the discriminator tag (#). |
 >| userPassword | `string` | ✔ | The password of the account. |
 >| startRoom | `string` | ✕ | The name of the initial room. <sub>(default = \*#bolodefchoco)</sub> |
->| timeout | `int` | ✕ | The time in ms to throw a timeout error if the connection takes too long to succeed. <sub>(default = 15000)</sub> |
+>| timeout | `int` | ✕ | The time in ms to throw a timeout error if the connection takes too long to succeed. <sub>(default = 20000)</sub> |
 >
 >Connects to an account in-game.<br>
 >It will try to connect using all the available ports before throwing a timing out error.
@@ -63,7 +63,6 @@
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
 >| targetUser | `string` | ✔ | The user to receive the whisper. |
->| message | `string` | ✔ | The message. |
 >
 >Sends a whisper to an user.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
