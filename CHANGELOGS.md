@@ -1,5 +1,5 @@
 # Changelogs
-## v0.5.0 - 18/02/2019
+## v0.5.0 - 20/02/2019
 ### News
 - Added _client.emit_.
 - Now the _cipher_ class can be used from the require. `require('transfromage').encode`
