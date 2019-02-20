@@ -15,7 +15,7 @@
 >| callback | `function` | ✔ | The function that must be called when the event is triggered. |
 >
 >Sets an event emitter that is triggered everytime the specific behavior happens.<br>
->See the available events in Events.
+>See the available events in [Events](Events.md).
 >
 ---
 >### client:once ( eventName, callback )
@@ -25,7 +25,7 @@
 >| callback | `function` | ✔ | The function that must be called only once when the event is triggered. |
 >
 >Sets an event emitter that is triggered only once when a specific behavior happens.<br>
->See the available events in Events.
+>See the available events in [Events](Events.md).
 >
 ---
 >### client:setCommunity ( community )
@@ -55,7 +55,6 @@
 >| C | `int` | ✔ | The C packet. |
 >| CC | `int` | ✔ | The CC packet. |
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
->| ... | `*` | ✕ | The parameters to be passed during the emitter call. |
 >
 >Inserts a new function to the packet parser.
 >
@@ -64,10 +63,10 @@
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| eventName | `string` | ✔ | The name of the event. |
->| ... | `*` | ✔ | The parameters to be passed during the emitter call. |
+>| ... | `*` | ✕ | The parameters to be passed during the emitter call. |
 >
 >Emits an event.<br>
->See the available events in @see Events. You can also create your own events / emitters.
+>See the available events in [Events](Events.md). You can also create your own events / emitters.
 >
 ---
 >### client:sendRoomMessage ( message )
@@ -167,7 +166,7 @@
 >### client:playEmote ( emote, flag )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| emote | `enum.emote` | ✕ | An enum from @see emote. (index or value) <sub>(default = dance)</sub> |
+>| emote | `enum.emote` | ✕ | An enum from [emote](Enum.md#emote-int). (index or value) <sub>(default = dance)</sub> |
 >| flag | `string` | ✕ | The country code of the flag when @emote is flag. |
 >
 >Plays an emote.
@@ -176,7 +175,7 @@
 >### client:playEmoticon ( emoticon )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| emoticon | `enum.emoticon` | ✕ | An enum from @see emoticon. (index or value) <sub>(default = smiley)</sub> |
+>| emoticon | `enum.emoticon` | ✕ | An enum from [emoticon](Enum.md#emoticon-int). (index or value) <sub>(default = smiley)</sub> |
 >
 >Plays an emoticon
 >

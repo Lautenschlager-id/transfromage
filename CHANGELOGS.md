@@ -4,7 +4,7 @@
 - Added _client.emit_.
 - Now the _cipher_ class can be used from the require. `require('transfromage').encode`
 - Added the event _staffList ( list )_.
-- Added _client.insertReceiveFunction.
+- Added _client.insertReceiveFunction_.
 - Added a new parameter `timeout` in _client.connect_.
 
 ### Fixes
