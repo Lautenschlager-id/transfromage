@@ -1,5 +1,14 @@
 string.getBytes = function(s)
-	return { string.byte(s, 1, -1) }
+	local len = #s
+	if len > 8000 then -- avoids 'string slice too long'
+		local out = { }
+		for i = 1, len do
+			out[i] = string.byte(s, i, i)
+		end
+		return out
+	else
+		return { string.byte(s, 1, -1) }
+	end
 end
 
 string.decodeEntities = function(s)

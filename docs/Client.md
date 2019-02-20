@@ -49,6 +49,27 @@
 >It will try to connect using all the available ports before throwing a timing out error.
 >
 ---
+>### client:insertReceiveFunction ( C, CC, f )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| C | `int` | ✔ | The C packet. |
+>| CC | `int` | ✔ | The CC packet. |
+>| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
+>| ... | `*` | ✕ | The parameters to be passed during the emitter call. |
+>
+>Inserts a new function to the packet parser.
+>
+---
+>### client:emit ( eventName, ... )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| eventName | `string` | ✔ | The name of the event. |
+>| ... | `*` | ✔ | The parameters to be passed during the emitter call. |
+>
+>Emits an event.<br>
+>See the available events in @see Events. You can also create your own events / emitters.
+>
+---
 >### client:sendRoomMessage ( message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

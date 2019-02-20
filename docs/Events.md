@@ -139,12 +139,12 @@ end)
 >```
 >
 ---
->### disconnection ( connection )
+>### staffList ( list )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| connection | `connection` | The connection object. |
+>| list | `string` | The staff list content. |
 >
->Triggered when a connection dies or fails.
+>Triggered when a staff list is loaded (/mod, /mapcrew).
 >
 ---
 >### ping ( )
@@ -160,6 +160,14 @@ end)
 >Triggered when a heartbeat is sent to the connection, every 10 seconds.
 >
 ---
+>### disconnection ( connection )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| connection | `connection` | The connection object. |
+>
+>Triggered when a connection dies or fails.
+>
+---
 >### send ( identifiers, packet )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -168,6 +176,14 @@ end)
 >
 >Triggered when the client sends packets to the server.
 >
+---
+>### missedPacket ( identifiers, packet )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| identifiers | `table` | The C, CC identifiers that were not handled. |
+>| packet | `byteArray` | The Byte Array object with the packets that were not handled. |
+>
+>Triggered when an identifier is not handled by the system.
 ---
 >### receive ( connection, packet, identifiers )
 >| Parameter | Type | Description |
@@ -178,11 +194,3 @@ end)
 >
 >Triggered when the client receives packets from the server.
 >
----
->### missedPacket ( identifiers, packet )
->| Parameter | Type | Description |
->| :-: | :-: | - |
->| identifiers | `table` | The C, CC identifiers that were not handled. |
->| packet | `byteArray` | The Byte Array object with the packets that were not handled. |
->
->Triggered when an identifier is not handled by the system.

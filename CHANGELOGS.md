@@ -1,4 +1,16 @@
 # Changelogs
+## v0.5.0 - 18/02/2019
+### News
+- Added _client.emit_.
+- Now the _cipher_ class can be used from the require. `require('transfromage').encode`
+- Added the event _staffList ( list )_.
+- Added _client.insertReceiveFunction.
+- Added a new parameter `timeout` in _client.connect_.
+
+### Fixes
+- The function _string.getBytes_ could if it was too big. 
+- When someone sent the character `<` it was accidentally replaced by `>`. 
+
 ## v0.4.0 - 17/02/2019
 ### News
 - Added a new update system: `semiautoupdate`, that asks for permission before updating the API.
@@ -9,7 +21,7 @@
 ### Fixes
 - Fixed an enumeration problem in _changeWhisperState_.
 - Added the message error when the endpoint keys fail.
-- Added the `time` parameter in the ping event.
+- Added the `time` argument in the ping event.
 
 ## v0.3.0 - 17/02/2019
 ### News

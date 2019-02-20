@@ -63,6 +63,7 @@ enum.identifier = e {
 	emoticon       = e { 08, 05 },
 	heartbeat      = e({ 26, 26 }, nil, true),
 	initialize     = e { 28, 01 },
+	modList        = e { 26, 05 },
 	joinTribeHouse = e { 16, 01 },
 	login          = e { 26, 08 },
 	loadLua        = e { 29, 01 },

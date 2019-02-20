@@ -13,7 +13,7 @@ end
 
 local fixEntity = function(str)
 	str = tostring(str)
-	str = string.gsub(str, "&lt;", '>')
+	str = string.gsub(str, "&lt;", '<')
 	str = string.gsub(str, "&amp;", '&')
 	return str
 end
@@ -45,165 +45,180 @@ client.new = function(self)
 end
 
 -- Tribulle
-do
-	-- Recv functions
-	local exec = {
-		[5] = {
-			[21] = function(self, connection, packet, C_CC) -- Room changed
-				local isPrivate, roomName = packet:readBool(), packet:readUTF()
+-- Recv functions
+local exec = {
+	[5] = {
+		[21] = function(self, connection, packet, C_CC) -- Room changed
+			local isPrivate, roomName = packet:readBool(), packet:readUTF()
 
-				if string.byte(roomName, 2) == 3 then
-					self.event:emit("joinTribeHouse", string.sub(roomName, 3))
-				else
-					self.event:emit("roomChanged", roomName, isPrivate)
-				end
+			if string.byte(roomName, 2) == 3 then
+				self.event:emit("joinTribeHouse", string.sub(roomName, 3))
+			else
+				self.event:emit("roomChanged", roomName, isPrivate)
 			end
-		},
-		[6] = {
-			[6] = function(self, connection, packet, C_CC) -- Room message
-				local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.decodeEntities(packet:readUTF())
-				self.event:emit("roomMessage", string.lower(playerName), fixEntity(message), playerCommu, playerId)
-			end
-		},
-		[8] = {
-			[16] = function(self, connection, packet, C_CC) -- Profile data
-				local data = { }
-				data.playerName = packet:readUTF()
-				data.id = packet:readLong()
-				data.registrationDate = packet:readLong()
-				data.role = packet:readByte() -- enum.role
-				
-				data.gender = packet:readByte() -- enum.gender
-				data.tribeName = packet:readUTF()
-				data.soulmate = packet:readUTF()
-				
-				data.saves = { }
-				data.saves.normal = packet:readLong()
-				data.shamanCheese = packet:readLong()
-				data.firsts = packet:readLong()
-				data.cheeses = packet:readLong()
-				data.saves.hard = packet:readLong()
-				data.bootcamps = packet:readLong()
-				data.saves.divine = packet:readLong()
-				
-				data.titleId = packet:readShort()
-				data.totalTitles = packet:readShort()
-				data.titles = { }
-				for i = 1, data.totalTitles do
-					data.titles[packet:readShort()] = packet:readByte() -- id, stars
-				end
-
-				data.look = packet:readUTF()
-
-				data.level = packet:readShort()
-
-				data.totalBadges = packet:readShort() / 2
-				data.badges = { }
-				for i = 1, data.totalBadges do
-					data.badges[packet:readShort()] = packet:readShort() -- id, quantity
-				end
-
-				data.totalModeStats = packet:readByte()
-				data.modeStats = { }
-				local modeId
-				for i = 1, data.totalModeStats do
-					modeId = packet:readByte()
-					data.modeStats[modeId] = { }
-					data.modeStats[modeId].progress = packet:readLong()
-					data.modeStats[modeId].progressLimit = packet:readLong()
-					data.modeStats[modeId].imageId = packet:readByte()
-				end
-
-				data.orbId = packet:readByte()
-				data.totalOrbs = packet:readByte()
-				data.orbs = { }
-				for i = 1, data.totalOrbs do
-					data.orbs[packet:readByte()] = true
-				end
-
-				packet:readByte() -- ?
-
-				data.adventurePoints = packet:readLong()
-
-				self.event:emit("profileLoaded", data)
-			end
-		},
-		[26] = {
-			[2] = function(self, connection, packet, C_CC)
-				self._isConnected = true
-			end,
-			[3] = function(self, connection, packet, C_CC) -- Correct handshake identifiers
-				local onlinePlayers = packet:readLong()
-
-				connection.packetID = packet:readByte()
-				local community = packet:readUTF() -- Necessary to get the country and authkeys later
-				local country = packet:readUTF()
-
-				self.receivedAuthkey = packet:readLong() -- Receives an authentication key, parsed in the login function
-
-				self._hbTimer = timer.setInterval(10 * 1000, self.sendHeartbeat, self)
-
-				community = byteArray:new():writeByte(self.community):writeByte(0)
-				self.main:send(enum.identifier.community, community)
-
-				local osInfo = byteArray:new():writeUTF("en"):writeUTF("Linux")
-				osInfo:writeUTF("LNX 29,0,0,140"):writeByte(0)
-				self.main:send(enum.identifier.os, osInfo)
-			end
-		},
-		[28] = {
-			[6] = function(self, connection, packet, C_CC)
-				self.event:emit("ping", os.time())
-			end
-		},
-		[29] = {
-			[6] = function(self, connection, packet, C_CC)
-				local log = packet:readUTF()
-				self.event:emit("lua", log)
-			end
-		},
-		[44] = {
-			[1] = function(self, connection, packet, C_CC) -- Switch bulle identifiers
-				local bulleId = packet:readLong()
-				local bulleIp = packet:readUTF()
-
-				self.bulle = connectionHandler:new("bulle", self.event)
-				self.bulle:connect(bulleIp, enum.setting.port[self.main.port])
-
-				self.bulle.event:once("_socketConnection", function()
-					self.bulle:send(C_CC, byteArray:new():writeLong(bulleId))
-				end)
-			end,
-			[22] = function(self, connection, packet, C_CC) -- PacketID offset identifiers
-				connection.packetID = packet:readByte() -- Sets the pkt of the connection
-			end
-		},
-		[60] = {
-			[3] = function(self, connection, packet, C_CC) -- Community Platform
-				local tribulle = packet:readShort()
-				if tribulle == 64 then -- #Chat Message
-					local playerName, community, chatName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
-					return self.event:emit("chatMessage", chatName, string.lower(playerName), fixEntity(message), community)
-				elseif tribulle == 65 then -- Tribe message
-					local memberName, message = packet:readUTF(), packet:readUTF()
-					return self.event:emit("tribeMessage", string.lower(memberName), fixEntity(message))
-				elseif tribulle == 66 then -- Whisper message
-					local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
-					return self.event:emit("whisperMessage", string.lower(playerName), fixEntity(message), community)
-				end
-			end
-		}
-	}
-
-	client.parsePacket = function(self, connection, packet)
-		local C, CC = packet:readByte(), packet:readByte()
-		local C_CC = { C, CC }
-
-		if exec[C] and exec[C][CC] then
-			return exec[C][CC](self, connection, packet, C_CC)
 		end
-		self.event:emit("missedPacket", C_CC, packet)
+	},
+	[6] = {
+		[6] = function(self, connection, packet, C_CC) -- Room message
+			local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.decodeEntities(packet:readUTF())
+			self.event:emit("roomMessage", string.lower(playerName), fixEntity(message), playerCommu, playerId)
+		end
+	},
+	[8] = {
+		[16] = function(self, connection, packet, C_CC) -- Profile data
+			local data = { }
+			data.playerName = packet:readUTF()
+			data.id = packet:readLong()
+			data.registrationDate = packet:readLong()
+			data.role = packet:readByte() -- enum.role
+			
+			data.gender = packet:readByte() -- enum.gender
+			data.tribeName = packet:readUTF()
+			data.soulmate = packet:readUTF()
+			
+			data.saves = { }
+			data.saves.normal = packet:readLong()
+			data.shamanCheese = packet:readLong()
+			data.firsts = packet:readLong()
+			data.cheeses = packet:readLong()
+			data.saves.hard = packet:readLong()
+			data.bootcamps = packet:readLong()
+			data.saves.divine = packet:readLong()
+			
+			data.titleId = packet:readShort()
+			data.totalTitles = packet:readShort()
+			data.titles = { }
+			for i = 1, data.totalTitles do
+				data.titles[packet:readShort()] = packet:readByte() -- id, stars
+			end
+
+			data.look = packet:readUTF()
+
+			data.level = packet:readShort()
+
+			data.totalBadges = packet:readShort() / 2
+			data.badges = { }
+			for i = 1, data.totalBadges do
+				data.badges[packet:readShort()] = packet:readShort() -- id, quantity
+			end
+
+			data.totalModeStats = packet:readByte()
+			data.modeStats = { }
+			local modeId
+			for i = 1, data.totalModeStats do
+				modeId = packet:readByte()
+				data.modeStats[modeId] = { }
+				data.modeStats[modeId].progress = packet:readLong()
+				data.modeStats[modeId].progressLimit = packet:readLong()
+				data.modeStats[modeId].imageId = packet:readByte()
+			end
+
+			data.orbId = packet:readByte()
+			data.totalOrbs = packet:readByte()
+			data.orbs = { }
+			for i = 1, data.totalOrbs do
+				data.orbs[packet:readByte()] = true
+			end
+
+			packet:readByte() -- ?
+
+			data.adventurePoints = packet:readLong()
+
+			self.event:emit("profileLoaded", data)
+		end
+	},
+	[26] = {
+		[2] = function(self, connection, packet, C_CC)
+			self._isConnected = true
+		end,
+		[3] = function(self, connection, packet, C_CC) -- Correct handshake identifiers
+			local onlinePlayers = packet:readLong()
+
+			connection.packetID = packet:readByte()
+			local community = packet:readUTF() -- Necessary to get the country and authkeys later
+			local country = packet:readUTF()
+
+			self.receivedAuthkey = packet:readLong() -- Receives an authentication key, parsed in the login function
+
+			self._hbTimer = timer.setInterval(10 * 1000, self.sendHeartbeat, self)
+
+			community = byteArray:new():writeByte(self.community):writeByte(0)
+			self.main:send(enum.identifier.community, community)
+
+			local osInfo = byteArray:new():writeUTF("en"):writeUTF("Linux")
+			osInfo:writeUTF("LNX 29,0,0,140"):writeByte(0)
+			self.main:send(enum.identifier.os, osInfo)
+		end
+	},
+	[28] = {
+		[5] = function(self, connection, packet, C_CC)
+			packet:readShort() -- ?
+			self.event:emit("staffList", packet:readUTF())
+		end,
+		[6] = function(self, connection, packet, C_CC)
+			self.event:emit("ping", os.time())
+		end
+	},
+	[29] = {
+		[6] = function(self, connection, packet, C_CC)
+			local log = packet:readUTF()
+			self.event:emit("lua", log)
+		end
+	},
+	[44] = {
+		[1] = function(self, connection, packet, C_CC) -- Switch bulle identifiers
+			local bulleId = packet:readLong()
+			local bulleIp = packet:readUTF()
+
+			self.bulle = connectionHandler:new("bulle", self.event)
+			self.bulle:connect(bulleIp, enum.setting.port[self.main.port])
+
+			self.bulle.event:once("_socketConnection", function()
+				self.bulle:send(C_CC, byteArray:new():writeLong(bulleId))
+			end)
+		end,
+		[22] = function(self, connection, packet, C_CC) -- PacketID offset identifiers
+			connection.packetID = packet:readByte() -- Sets the pkt of the connection
+		end
+	},
+	[60] = {
+		[3] = function(self, connection, packet, C_CC) -- Community Platform
+			local tribulle = packet:readShort()
+			if tribulle == 64 then -- #Chat Message
+				local playerName, community, chatName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+				return self.event:emit("chatMessage", chatName, string.lower(playerName), fixEntity(message), community)
+			elseif tribulle == 65 then -- Tribe message
+				local memberName, message = packet:readUTF(), packet:readUTF()
+				return self.event:emit("tribeMessage", string.lower(memberName), fixEntity(message))
+			elseif tribulle == 66 then -- Whisper message
+				local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+				return self.event:emit("whisperMessage", string.lower(playerName), fixEntity(message), community)
+			end
+		end
+	}
+}
+
+--[[@
+	@desc Inserts a new function to the packet parser.
+	@param C<int> The C packet.
+	@param CC<int> The CC packet.
+	@param f<function> The function to be triggered when the @C-@CC packets are received.	
+]]
+client.insertReceiveFunction = function(self, C, CC, f)
+	if not exec[C] then
+		exec[C] = { }
 	end
+	exec[C][CC] = f
+end
+
+client.parsePacket = function(self, connection, packet)
+	local C, CC = packet:readByte(), packet:readByte()
+	local C_CC = { C, CC }
+
+	if exec[C] and exec[C][CC] then
+		return exec[C][CC](self, connection, packet, C_CC)
+	end
+	self.event:emit("missedPacket", C_CC, packet)
 end
 
 -- Technical
@@ -354,6 +369,15 @@ end
 client.once = function(self, eventName, callback)
 	return self.event:once(eventName, callback)
 end
+--[[@
+	@desc Emits an event.
+	@desc See the available events in @see Events. You can also create your own events / emitters.
+	@param eventName<string> The name of the event.
+	@param ...?<*> The parameters to be passed during the emitter call.
+]]
+client.emit = function(self, eventName, ...)
+	return self.event:emit(eventName, ...)
+end
 
 -- Methods
 --[[@
@@ -383,7 +407,7 @@ end
 	@param userPassword<string> The password of the account.
 	@param startRoom?<string> The name of the initial room. @default *#bolodefchoco
 ]]
-client.connect = function(self, userName, userPassword, startRoom)
+client.connect = function(self, userName, userPassword, startRoom, timeout)
 	local packet = byteArray:new():writeUTF(userName):writeUTF(encode.getPasswordHash(userPassword))
 	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
 	packet:writeLong(bitwise.bxor(self.receivedAuthkey, self.gameAuthkey))
@@ -391,8 +415,7 @@ client.connect = function(self, userName, userPassword, startRoom)
 	self.playerName = userName
 	self.main:send(enum.identifier.login, encode.blockCipher(packet):writeByte(0))
 
-	local isStaff = string.find(userName, "#00[012][015]")
-	timer.setTimeout((10 + (isStaff and 10 or 0)) * 1000, function(self)
+	timer.setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then
 			return error("[Login] Impossible to log in. Try again later.", 0)
 		end
@@ -411,7 +434,6 @@ end
 	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 	@param message<string> The message.
 	@param targetUser<string> The user to receive the whisper.
-	@param message<string> The message.
 ]]
 client.sendWhisper = function(self, targetUser, message)
 	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(52):writeLong(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
@@ -466,7 +488,7 @@ end
 	@desd /!\ Note that some unlisted commands cannot be triggered by this function.
 	@param command<string> The command. (without /)
 ]]
-client.sendCommand = function(self, command)
+client.sendCommand = function(self, command, crypted)
 	self.main:send(enum.identifier.command, encode.xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@
