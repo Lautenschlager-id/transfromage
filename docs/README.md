@@ -33,7 +33,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 	- [client.emit](Client.md#clientemit--eventname--)
 	- [client.enterRoom](Client.md#cliententerroom--roomname-issalonauto-)
 	- [client.insertReceiveFunction](Client.md#clientinsertreceivefunction--C-CC-f-)
-	- [client.insertTribulleFunction](Client.md#inserttribullefunction--tribulleid-f-)
+	- [client.insertTribulleFunction](Client.md#clientinserttribullefunction--tribulleid-f-)
 	- [client.joinChat](Client.md#clientjoinchat--chatname-)
 	- [client.joinTribeHouse](Client.md#clientjointribehouse--)
 	- [client.loadLua](Client.md#clientloadlua--script-)

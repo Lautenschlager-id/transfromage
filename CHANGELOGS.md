@@ -6,6 +6,8 @@
 - Added the event _missedTribulle ( connection, tribulleId, packet  )_.
 - Added _client.insertTribulleFunction_.
 - Added _client.chatWho_.
+- Added the event _tribeMessage ( memberName, message )_.
+- Added _client.sendTribeMessage_.
 
 ### Changes
 - The order of parameters of the _receive_ event changed. ( connection, identifiers, packet )
