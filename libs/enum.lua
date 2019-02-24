@@ -50,6 +50,10 @@ enum._checkEnum = function(enumeration, value)
 	return false
 end
 
+enum._enum = function(...)
+	return e(...)
+end
+
 --[[@
 	@desc The action identifiers (C_CC, Tribulle, ...) for packets.
 	@type table

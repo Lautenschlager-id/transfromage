@@ -14,9 +14,9 @@ return {
 	files = {
 		"init.lua",
 		"package.lua",
+		"libs/bArray.lua",
 		"libs/bitwise.lua",
 		"libs/buffer.lua",
-		"libs/byteArray.lua",
 		"libs/cipher.lua",
 		"libs/client.lua",
 		"libs/connection.lua",

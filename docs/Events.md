@@ -21,7 +21,7 @@ end)
 >### roomMessage ( playerName, message, playerCommunity, playerId )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| playerName | `string` | The player who sent the message. (lower case) |
+>| playerName | `string` | The player who sent the message. |
 >| message | `string` | The message. |
 >| playerCommunity | `int` | The community id of @playerName. |
 >| playerId | `int` | The temporary id of @playerName. |
@@ -32,18 +32,18 @@ end)
 >### whisperMessage ( playerName, message, playerCommunity )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| playerName | `string` | Who sent the whisper message. (lower case) |
+>| playerName | `string` | Who sent the whisper message. |
 >| message | `string` | The message. |
 >| playerCommunity | `int` | The community id of @playerName. |
 >
 >Triggered when the account receives a whisper.
 >
 ---
->### chatMessage ( channelName, playerName, message, playerCommunity )
+>### chatMessage ( chatName, playerName, message, playerCommunity )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| channelName | `string` | The name of the channel. |
->| playerName | `string` | The player who sent the message. (lower case) |
+>| chatName | `string` | The name of the chat. |
+>| playerName | `string` | The player who sent the message. |
 >| message | `string` | The message. |
 >| playerCommunity | `int` | The community id of @playerName. |
 >
@@ -53,7 +53,7 @@ end)
 >### tribeMessage ( memberName, message )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| memberName | `string` | The member who sent the message. (lower case) |
+>| memberName | `string` | The member who sent the message. |
 >| message | `string` | The message. |
 >
 >Triggered when the tribe chat receives a new message.
@@ -72,7 +72,7 @@ end)
 >| :-: | :-: | - |
 >| log | `string` | The log message. |
 >
->Triggered when the #lua channel receives a log message.
+>Triggered when the #lua chat receives a log message.
 >
 ---
 >### roomChanged ( roomName, isPrivateRoom )
@@ -139,6 +139,15 @@ end)
 >```
 >
 ---
+>### chatWho ( chatName, data )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| chatName | `string` | The name of the chat. |
+>| data | `table` | An array with the nicknames of the current users in the chat. |
+>
+>Triggered when the /who command is loaded in a chat.
+>
+---''
 >### staffList ( list )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -172,7 +181,7 @@ end)
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| identifiers | `table` | The C, CC identifiers sent in the request. |
->| packet | `byteArray` | The Byte Array object that was sent. |
+>| packet | `bArray` | The Byte Array object that was sent. |
 >
 >Triggered when the client sends packets to the server.
 >
@@ -181,15 +190,24 @@ end)
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| identifiers | `table` | The C, CC identifiers that were not handled. |
->| packet | `byteArray` | The Byte Array object with the packets that were not handled. |
+>| packet | `bArray` | The Byte Array object with the packets that were not handled. |
 >
 >Triggered when an identifier is not handled by the system.
+---
+>### missedTribulle ( connection, tribulleId, packet )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| connection | `connection` | The connection object. |
+>| tribulleId | `int` | ✔ | The tribulle id. |
+>| packet | `bArray` | The Byte Array object with the packets that were not handled. |
+>
+>Triggered when a tribulle packet is not handled by the tribulle packet parser.
 ---
 >### receive ( connection, packet, identifiers )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| connection | `connection` | The connection object that received the packets. |
->| packet | `byteArray` | The Byte Array object that was received. |
+>| packet | `bArray` | The Byte Array object that was received. |
 >| identifiers | `table` | The C, CC identifiers that were received. |
 >
 >Triggered when the client receives packets from the server.

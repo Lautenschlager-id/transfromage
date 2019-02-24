@@ -1,4 +1,4 @@
-local byteArray = require("byteArray")
+local byteArray = require("bArray")
 local bitwise = require("bitwise")
 
 local cryptToSha256 

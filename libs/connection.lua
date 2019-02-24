@@ -1,6 +1,6 @@
 local net = require("net")
 
-local byteArray = require("byteArray")
+local byteArray = require("bArray")
 local buffer = require("buffer")
 local timer = require("timer")
 local enum = require("enum")

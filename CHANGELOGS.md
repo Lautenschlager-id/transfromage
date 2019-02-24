@@ -1,4 +1,20 @@
 # Changelogs
+## v0.6.0 - 24/02/2019
+### News
+- Added the function _string.toNickname ( str, checkDiscriminator )_.
+- Added the event _chatWho ( chatName, data )_.
+- Added the event _missedTribulle ( connection, tribulleId, packet  )_.
+- Added _client.insertTribulleFunction_.
+- Added _client.chatWho_.
+
+### Changes
+- The order of parameters of the _receive_ event changed. ( connection, identifiers, packet )
+- The private function _fixEntity_ is now _string.fixEntity_.
+
+### Fixes
+- Renamed the file `byteArray.lua` to `bArray.lua` due to Heroku compatibility issues.
+- Improved the packet struct of _client.loadLua_.
+
 ## v0.5.0 - 20/02/2019
 ### News
 - Added _client.emit_.

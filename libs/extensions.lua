@@ -11,9 +11,22 @@ string.getBytes = function(s)
 	end
 end
 
-string.decodeEntities = function(s)
+string.fixEntity = function(s)
+	s = tostring(s)
 	s = string.gsub(s, "&lt;", '<')
-	s = string.gsub(s, "&amp;#", "&#")
+	s = string.gsub(s, "&amp;(#?)", '&%1')
+	return s
+end
+
+string.toNickname = function(s, checkDiscriminator)
+	s = tostring(s)
+	s = string.lower(s)
+	s = string.gsub(s, "%a", string.upper, 1)
+
+	if checkDiscriminator and not string.find(s, '#') then
+		s = s .. "#0000"
+	end
+
 	return s
 end
 

@@ -1,5 +1,5 @@
 local connectionHandler = require("connection")
-local byteArray = require("byteArray")
+local byteArray = require("bArray")
 local encode = require("cipher")
 local http = require("coro-http")
 local json = require("json")
@@ -9,13 +9,6 @@ local event = require("core").Emitter
 local bitwise = require("bitwise")
 if not string.getBytes then
 	require("extensions")
-end
-
-local fixEntity = function(str)
-	str = tostring(str)
-	str = string.gsub(str, "&lt;", '<')
-	str = string.gsub(str, "&amp;", '&')
-	return str
 end
 
 local client = { }
@@ -40,11 +33,43 @@ client.new = function(self)
 		gameIdentificationKeys = { },
 		gameMsgKeys = { },
 		_isConnected = false,
-		_hbTimer = nil
+		_hbTimer = nil,
+		_who_fingerprint = 0,
+		_who_list = { }
 	}, self)
 end
 
--- Tribulle
+-- Recv
+-- Tribulle functions
+local trib = {
+	[59] = function(self, connection, packet, C_CC, tribulleId) -- /who
+		local fingerprint = packet:readLong()
+
+		packet:readByte() -- ?
+		
+		local total = packet:readShort()
+		local data = { }
+		for i = 1, total do
+			data[i] = string.toNickname(packet:readUTF(), true)
+		end
+
+		local chatName = self._who_list[fingerprint]
+		self.event:emit("chatWho", chatName, data)
+		self._who_list[fingerprint] = nil
+	end,
+	[64] = function(self, connection, packet, C_CC, tribulleId) -- #Chat Message
+		local playerName, community, chatName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+		self.event:emit("chatMessage", chatName, string.toNickname(playerName, true), string.fixEntity(message), community)
+	end,
+	[65] = function(self, connection, packet, C_CC, tribulleId) -- Tribe message
+		local memberName, message = packet:readUTF(), packet:readUTF()
+		self.event:emit("tribeMessage", string.toNickname(memberName, true), string.fixEntity(message))
+	end,
+	[66] = function(self, connection, packet, C_CC, tribulleId) -- Whisper message
+		local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+		self.event:emit("whisperMessage", string.toNickname(playerName, true), string.fixEntity(message), community)
+	end,
+}
 -- Recv functions
 local exec = {
 	[5] = {
@@ -60,8 +85,8 @@ local exec = {
 	},
 	[6] = {
 		[6] = function(self, connection, packet, C_CC) -- Room message
-			local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.decodeEntities(packet:readUTF())
-			self.event:emit("roomMessage", string.lower(playerName), fixEntity(message), playerCommu, playerId)
+			local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.fixEntity(packet:readUTF())
+			self.event:emit("roomMessage", string.toNickname(playerName, true), string.fixEntity(message), playerCommu, playerId)
 		end
 	},
 	[8] = {
@@ -183,17 +208,11 @@ local exec = {
 	},
 	[60] = {
 		[3] = function(self, connection, packet, C_CC) -- Community Platform
-			local tribulle = packet:readShort()
-			if tribulle == 64 then -- #Chat Message
-				local playerName, community, chatName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
-				return self.event:emit("chatMessage", chatName, string.lower(playerName), fixEntity(message), community)
-			elseif tribulle == 65 then -- Tribe message
-				local memberName, message = packet:readUTF(), packet:readUTF()
-				return self.event:emit("tribeMessage", string.lower(memberName), fixEntity(message))
-			elseif tribulle == 66 then -- Whisper message
-				local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
-				return self.event:emit("whisperMessage", string.lower(playerName), fixEntity(message), community)
+			local tribulleId = packet:readShort()
+			if trib[tribulleId] then
+				return trib[tribulleId](self, connection, packet, C_CC, tribulleId)
 			end
+			self.event:emit("missedTribulle", connection, tribulleId, packet)
 		end
 	}
 }
@@ -209,6 +228,14 @@ client.insertReceiveFunction = function(self, C, CC, f)
 		exec[C] = { }
 	end
 	exec[C][CC] = f
+end
+--[[@
+	@desc Inserts a new function to the tribulle (60, 3) packet parser.
+	@param tribulleId<int> The tribulle id.
+	@param f<function> The function to be triggered when this tribulle packet is received.
+]]
+client.insertTribulleFunction = function(self, tribulleId, f)
+	trib[tribulleId] = f
 end
 
 client.parsePacket = function(self, connection, packet)
@@ -348,7 +375,7 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 				end, self)
 			end
 		end
-		self.event:emit("receive", connection, packet, C_CC)
+		self.event:emit("receive", connection, C_CC, packet)
 	end)
 end)
 --[[@
@@ -462,6 +489,16 @@ client.sendChatMessage = function(self, chatName, message)
 	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(48):writeLong(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
 end
 --[[@
+	@desc Gets who is in a specific chat. (/who)
+	@param chatName<string> The name of the chat.
+]]
+client.chatWho = function(self, chatName)
+	self._who_fingerprint = (self._who_fingerprint + 1) % 300
+	self._who_list[self._who_fingerprint] = chatName
+
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(58):writeLong(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
+end
+--[[@
 	@desc Sends a message to the tribe chat.
 	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 	@param message<string> The message.
@@ -517,7 +554,7 @@ end
 	@param script<string> The lua script.
 ]]
 client.loadLua = function(self, script)
-	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeByte(0):writeUTF(script))
+	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeBigUTF(script))
 end
 --[[@
 	@desc Plays an emote.

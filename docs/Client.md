@@ -59,6 +59,15 @@
 >Inserts a new function to the packet parser.
 >
 ---
+>### client:insertTribulleFunction ( tribulleId, f )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| tribulleId | `int` | ✔ | The tribulle id. |
+>| f | `function` | ✔ | The function to be triggered when this tribulle packet is received. |
+>
+>Inserts a new function to the tribulle (60, 3) packet parser.
+>
+---
 >### client:emit ( eventName, ... )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -114,6 +123,13 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 >
 ---
+>### client:chatWho ( chatName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| chatName | `string` | ✔ | The name of the chat. |
+>
+>Gets who is in a specific chat. (/who)
+>
 ---
 >### client:sendTribeMessage ( message )
 >| Parameter | Type | Required | Description |

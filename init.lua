@@ -49,6 +49,6 @@ end
 return {
     client = require("client"),
     enum = require("enum"),
-    byteArray = require("byteArray"),
+    byteArray = require("bArray"),
     encode = require("cipher")
 }
