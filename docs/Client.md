@@ -78,6 +78,14 @@
 >See the available events in [Events](Events.md). You can also create your own events / emitters.
 >
 ---
+>### client:connectionTime ( )
+>Gets the total time of the connection.
+>
+>**Returns:**
+>| Type | Description |
+>| :-: | - |
+>| `int` | The total time since the connection. |
+---
 >### client:sendRoomMessage ( message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -140,7 +148,7 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 >
 ---
->### client:joinTribeHouse ( self )
+>### client:joinTribeHouse ( )
 >
 >Joins the tribe house, if the account is in a tribe.
 >
