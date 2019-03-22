@@ -24,7 +24,7 @@ do
 						local toUpdate
 						if semiupdate then
 							repeat
-								print("There is a new version of transfromage available [" .. lastVersion .. "]. Update it now? (Y/N)")
+								print("There is a new version of 'Transfromage' available [" .. lastVersion .. "]. Update it now? (Y/N)")
 								toUpdate = string.lower(io.read())
 							until toUpdate == 'n' or toUpdate == 'y'
 						else

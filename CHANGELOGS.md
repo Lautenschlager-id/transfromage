@@ -1,4 +1,11 @@
 # Changelogs
+## v0.7.0 - 22/03/2019
+### News
+- Added the event _tribeMemberLeave ( memberName )_.
+- Added the event _newTribeMember ( memberName )_.
+- Added the event _time ( time )_.
+- Added _client.connectionTime_.
+
 ## v0.6.0 - 24/02/2019
 ### News
 - Added the function _string.toNickname ( str, checkDiscriminator )_.

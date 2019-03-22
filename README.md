@@ -10,13 +10,13 @@
 
 [Luvit](https://luvit.io/) is an open-source, asynchronous I/O Lua runtime environment that makes requests and connections possible for the Lua programming language.
 
-**TransFromage API** is a [documented API](docs) that allows developers to make bots for the mentioned game.
+**Transfromage API** is a [documented API](docs) that allows developers to make bots for the mentioned game.
 
 Join the **_[Fifty Shades of Lua](https://discord.gg/quch83R)_** [discord](https://discordapp.com/) to discuss about this API and to have special support.
 
 See also the **[Fromage API](https://github.com/Lautenschlager-id/Fromage)** for the Atelier801's forum.
 
-This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python TransFromage API](https://github.com/Tocutoeltuco/transfromage).
+This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python Transfromage API](https://github.com/Tocutoeltuco/transfromage).
 
 ## Keys Endpoint
 
@@ -28,7 +28,7 @@ To get access to it you need to request a token to the player [Tocutoeltuco](htt
 
 - To install Luvit, visit https://luvit.io and follow the instructions provided for your platform.
 	- If you have problems installing it on Windows, please use [Get-Lit](https://github.com/SinisterRectus/get-lit)
-- To install **TransFromage**, run `lit install Lautenschlager-id/transfromage`
+- To install **Transfromage**, run `lit install Lautenschlager-id/transfromage`
 - Run your bot script using, for example, `luvit bot.lua`
 
 ###### If you are new and can't follow these steps, please consider using the _MyFirstBot.zip_ that comes with the executables and API already.<br>_(4MB)_ [Windows](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Windows.zip) | [Linux](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Linux.zip)

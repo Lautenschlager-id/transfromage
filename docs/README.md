@@ -1,6 +1,6 @@
 # Guide
 
-## Installing TransFromage
+## Installing Transfromage
 
 ### Luvit
 
@@ -11,9 +11,9 @@ Follow the installation instructions at https://luvit.io/install.html according 
 
 The files `lit`, `luvit`, and `luvit` are needed. Make sure that you have them in your new directory once its installed, otherwise the API will not work.
 
-### TransFromage
+### Transfromage
 
-With the three executables installed, run `lit install Lautenschlager-id/transfromage` to get a `deps` folder with the TransFromage API.
+With the three executables installed, run `lit install Lautenschlager-id/transfromage` to get a `deps` folder with the Transfromage API.
 
 # Documentation
 
@@ -69,6 +69,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 	- [lua](Events.md#lua--log-)
 	- [missedPacket](Events.md#missedpacket--identifiers-packet-)
 	- [missedTribulle](Events.md#missedtribulle--connection-tribulleid-packet-)
+	- [newTribeMember](Events.md#newtribemember--membername-)
 	- [ping](Events.md#ping---)
 	- [profileLoaded](Events.md#profileloaded--data-)
 	- [ready](Events.md#ready---)
@@ -77,6 +78,7 @@ With the three executables installed, run `lit install Lautenschlager-id/transfr
 	- [roomMessage](Events.md#roommessage--playername-message-playercommunity-playerid-)
 	- [send](Events.md#send--identifiers-packet-)
 	- [staffList](Events.md#stafflist--list-)
+	- [tribeMemberLeave](Events.md#tribememberleave--membername-)
 	- [tribeMessage](Events.md#tribemessage--membername-message-)
 	- [time](Events.md#time--time-)
 	- [whisperMessage](Events.md#whispermessage--playername-message-playercommunity-)

@@ -59,6 +59,22 @@ end)
 >Triggered when the tribe chat receives a new message.
 >
 ---
+>### tribeMemberLeave ( memberName )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| memberName | `string` | The member who left the tribe. |
+>
+>Triggered when a member leaves the tribe.
+>
+---
+>### newTribeMember ( memberName )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| memberName | `string` | The member who joined the tribe. |
+>
+>Triggered when a player joins the tribe.
+>
+---
 >### joinTribeHouse ( tribeName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -147,13 +163,31 @@ end)
 >
 >Triggered when the /who command is loaded in a chat.
 >
----''
+---
 >### staffList ( list )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| list | `string` | The staff list content. |
 >
 >Triggered when a staff list is loaded (/mod, /mapcrew).
+>
+---
+>### time ( time )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| time | `table` | The account's time data. |
+>
+>Triggered when the command /time is requested.
+>
+>**@time structure**:
+>```Lua
+>{
+>	day = 0, -- Total days
+>	hour = 0, -- Total hours
+>	minute = 0, -- Total minutes
+>	second = 0 -- Total seconds
+>}
+>```
 >
 ---
 >### ping ( )

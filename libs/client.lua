@@ -32,6 +32,7 @@ client.new = function(self)
 		gameAuthkey = 0,
 		gameIdentificationKeys = { },
 		gameMsgKeys = { },
+		_connectionTime = os.time(),
 		_isConnected = false,
 		_hbTimer = nil,
 		_who_fingerprint = 0,
@@ -69,6 +70,14 @@ local trib = {
 		local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
 		self.event:emit("whisperMessage", string.toNickname(playerName, true), string.fixEntity(message), community)
 	end,
+	[91] = function(self, connection, packet, C_CC, tribulleId) -- New tribe member
+		local memberName = packet:readUTF()
+		self.event:emit("newTribeMember", memberName)
+	end,
+	[92] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member leave
+		local memberName = packet:readUTF()
+		self.event:emit("tribeMemberLeave", memberName)
+	end
 }
 -- Recv functions
 local exec = {
@@ -87,6 +96,19 @@ local exec = {
 		[6] = function(self, connection, packet, C_CC) -- Room message
 			local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.fixEntity(packet:readUTF())
 			self.event:emit("roomMessage", string.toNickname(playerName, true), string.fixEntity(message), playerCommu, playerId)
+		end,
+		[20] = function(self, connection, packet, C_CC) -- /time
+			packet:readByte() -- ?
+			packet:readUTF() -- $TempsDeJeu
+			packet:readByte() -- Total parameters (useless?)
+
+			local time = { }
+			time.day = tonumber(packet:readUTF())
+			time.hour = tonumber(packet:readUTF())
+			time.minute = tonumber(packet:readUTF())
+			time.second = tonumber(packet:readUTF())
+
+			self.event:emit("time", time)
 		end
 	},
 	[8] = {
@@ -404,6 +426,13 @@ end
 ]]
 client.emit = function(self, eventName, ...)
 	return self.event:emit(eventName, ...)
+end
+--[[@
+	@desc Gets the total time of the connection.
+	@returns int The total time since the connection.
+]]
+client.connectionTime = function(self)
+	return os.time() - self._connectionTime
 end
 
 -- Methods
