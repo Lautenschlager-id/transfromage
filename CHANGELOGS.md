@@ -1,4 +1,26 @@
 # Changelogs
+
+###### [Semantic Versioning SemVer](https://semver.org/)
+
+## v0.8.0 - 04/04/2019
+### News
+- Added the event _newGame ( map )_.
+- Added _client.recruitPlayer_.
+
+### Changes
+- The ByteArray functions were renamed. However the compatibility was kept. (Please, open an issue if you find any problem related to it)
+	- readByte   → read8
+	- write8     → write8
+	- readShort  → read16
+	- writeShort → write16
+	- readInt    → read24
+	- writeInt   → write24
+	- readLong   → read32
+	- writeLong  → write32
+
+### Fixes
+- The emoticon enumeration was wrong.
+
 ## v0.7.0 - 22/03/2019
 ### News
 - Added the event _tribeMemberLeave ( memberName )_.
@@ -20,8 +42,10 @@
 - The order of parameters of the _receive_ event changed. ( connection, identifiers, packet )
 - The private function _fixEntity_ is now _string.fixEntity_.
 
-### Fixes
+### Changes
 - Renamed the file `byteArray.lua` to `bArray.lua` due to Heroku compatibility issues.
+
+### Fixes
 - Improved the packet struct of _client.loadLua_.
 
 ## v0.5.0 - 20/02/2019
@@ -33,7 +57,7 @@
 - Added a new parameter `timeout` in _client.connect_.
 
 ### Fixes
-- The function _string.getBytes_ could if it was too big. 
+- The function _string.getBytes_ could break if it was too big. 
 - When someone sent the character `<` it was accidentally replaced by `>`. 
 
 ## v0.4.0 - 17/02/2019

@@ -83,7 +83,7 @@ connectionHandler.send = function(self, identifiers, alphaPacket)
 			betaPacket = byteArray:new(table.fuse(identifiers, alphaPacket.stack))
 		else
 			local bytes = { "0x" .. (string.format("%02x", identifiers[1]) .. string.format("%02x", identifiers[2])), 0x1, table.join(alphaPacket, 0x1) }
-			betaPacket = byteArray:new():writeByte(1, 1):writeUTF(bytes)
+			betaPacket = byteArray:new():write8(1, 1):writeUTF(bytes)
 		end
 	elseif type(alphaPacket) == "string" then
 		betaPacket = byteArray:new(table.fuse(identifiers, string.getBytes(alphaPacket)))
@@ -91,7 +91,7 @@ connectionHandler.send = function(self, identifiers, alphaPacket)
 		local arg = { table.unpack(identifiers) }
 		arg[#arg + 1] = alphaPacket
 
-		betaPacket = byteArray:new():writeByte(table.unpack(arg))
+		betaPacket = byteArray:new():write8(table.unpack(arg))
 	else
 		return error("[Send] Unknown packet type.\n\tIdentifiers: " .. table.concat(identifiers, ','), 0)
 	end
@@ -99,16 +99,16 @@ connectionHandler.send = function(self, identifiers, alphaPacket)
 	local gammaPacket
 	local stackLen = #betaPacket.stack
 	if stackLen < 256 then
-		gammaPacket = byteArray:new():writeByte(1, stackLen)
+		gammaPacket = byteArray:new():write8(1, stackLen)
 	elseif stackLen < 65536 then
-		gammaPacket = byteArray:new():writeByte(2):writeShort(stackLen)
+		gammaPacket = byteArray:new():write8(2):write16(stackLen)
 	elseif stackLen < 16777216 then
-		gammaPacket = byteArray:new():writeByte(3):writeInt(stackLen)
+		gammaPacket = byteArray:new():write8(3):write24(stackLen)
 	else
 		return error("[Send] The packet length is too big! (" .. stackLen .. ")\n\tIdentifiers: " .. table.concat(identifiers, ','), 0)
 	end
 
-	gammaPacket:writeByte(self.packetID)
+	gammaPacket:write8(self.packetID)
 	self.packetID = (self.packetID + 1) % 100
 
 	table.add(gammaPacket.stack, betaPacket.stack)

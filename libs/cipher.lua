@@ -111,14 +111,14 @@ local blockCipher = function(packet)
 	local chunks, counter = { }, 0
 	while #packet.stack > 0 do
 		counter = counter + 1
-		chunks[counter] = packet:readLong()
+		chunks[counter] = packet:read32()
 	end
 
 	chunks = encodeChunks(chunks)
 
-	packet:writeShort(#chunks)
+	packet:write16(#chunks)
 	for i = 1, #chunks do
-		packet:writeLong(chunks[i])
+		packet:write32(chunks[i])
 	end
 
 	return packet

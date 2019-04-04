@@ -100,6 +100,25 @@ end)
 >Triggered when the account changes the room.
 >
 ---
+>### newGame ( map )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| map | `table` | The new map data. |
+>
+>Triggered when a new map is loaded.
+>
+>**@map structure**:
+>```Lua
+>{
+>	code = 0, -- The map code.
+>	xml = "", -- The map XML. May be nil if the map is Vanilla.
+>	author = "", -- The map author
+>	perm = 0, -- The perm code of the map.
+>	isMirrored = false -- Whether the map is mirrored or not.
+>}
+>```
+>
+---
 >### profileLoaded ( data )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |

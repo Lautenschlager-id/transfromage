@@ -7,6 +7,7 @@ local timer = require("timer")
 local enum = require("enum")
 local event = require("core").Emitter
 local bitwise = require("bitwise")
+local zlibDecompress = require("miniz").inflate
 if not string.getBytes then
 	require("extensions")
 end
@@ -44,11 +45,11 @@ end
 -- Tribulle functions
 local trib = {
 	[59] = function(self, connection, packet, C_CC, tribulleId) -- /who
-		local fingerprint = packet:readLong()
+		local fingerprint = packet:read32()
 
-		packet:readByte() -- ?
+		packet:read8() -- ?
 		
-		local total = packet:readShort()
+		local total = packet:read16()
 		local data = { }
 		for i = 1, total do
 			data[i] = string.toNickname(packet:readUTF(), true)
@@ -59,7 +60,7 @@ local trib = {
 		self._who_list[fingerprint] = nil
 	end,
 	[64] = function(self, connection, packet, C_CC, tribulleId) -- #Chat Message
-		local playerName, community, chatName, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+		local playerName, community, chatName, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
 		self.event:emit("chatMessage", chatName, string.toNickname(playerName, true), string.fixEntity(message), community)
 	end,
 	[65] = function(self, connection, packet, C_CC, tribulleId) -- Tribe message
@@ -67,7 +68,7 @@ local trib = {
 		self.event:emit("tribeMessage", string.toNickname(memberName, true), string.fixEntity(message))
 	end,
 	[66] = function(self, connection, packet, C_CC, tribulleId) -- Whisper message
-		local playerName, community, _, message = packet:readUTF(), packet:readLong(), packet:readUTF(), packet:readUTF()
+		local playerName, community, _, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
 		self.event:emit("whisperMessage", string.toNickname(playerName, true), string.fixEntity(message), community)
 	end,
 	[91] = function(self, connection, packet, C_CC, tribulleId) -- New tribe member
@@ -82,6 +83,26 @@ local trib = {
 -- Recv functions
 local exec = {
 	[5] = {
+		[2] = function(self, connection, packet, C_CC) -- New game
+			if not self._isConnected then return end
+
+			local map = { }
+			map.code = packet:read32()
+	
+			packet:read16() -- ?
+			packet:read8() -- ?
+			packet:read16() -- ?
+
+			local xml = table.writeBytes(packet:read8(packet:read16()))
+			if xml ~= '' then
+				map.xml = zlibDecompress(xml, 1)
+			end
+			map.author = packet:readUTF()
+			map.perm = packet:read8()
+			map.isMirrored = packet:readBool()
+	
+			self.event:emit("newGame", map)
+		end,
 		[21] = function(self, connection, packet, C_CC) -- Room changed
 			local isPrivate, roomName = packet:readBool(), packet:readUTF()
 
@@ -94,13 +115,13 @@ local exec = {
 	},
 	[6] = {
 		[6] = function(self, connection, packet, C_CC) -- Room message
-			local playerId, playerName, playerCommu, message = packet:readLong(), packet:readUTF(), packet:readByte(), string.fixEntity(packet:readUTF())
+			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string.fixEntity(packet:readUTF())
 			self.event:emit("roomMessage", string.toNickname(playerName, true), string.fixEntity(message), playerCommu, playerId)
 		end,
 		[20] = function(self, connection, packet, C_CC) -- /time
-			packet:readByte() -- ?
+			packet:read8() -- ?
 			packet:readUTF() -- $TempsDeJeu
-			packet:readByte() -- Total parameters (useless?)
+			packet:read8() -- Total parameters (useless?)
 
 			local time = { }
 			time.day = tonumber(packet:readUTF())
@@ -115,61 +136,61 @@ local exec = {
 		[16] = function(self, connection, packet, C_CC) -- Profile data
 			local data = { }
 			data.playerName = packet:readUTF()
-			data.id = packet:readLong()
-			data.registrationDate = packet:readLong()
-			data.role = packet:readByte() -- enum.role
+			data.id = packet:read32()
+			data.registrationDate = packet:read32()
+			data.role = packet:read8() -- enum.role
 			
-			data.gender = packet:readByte() -- enum.gender
+			data.gender = packet:read8() -- enum.gender
 			data.tribeName = packet:readUTF()
 			data.soulmate = packet:readUTF()
 			
 			data.saves = { }
-			data.saves.normal = packet:readLong()
-			data.shamanCheese = packet:readLong()
-			data.firsts = packet:readLong()
-			data.cheeses = packet:readLong()
-			data.saves.hard = packet:readLong()
-			data.bootcamps = packet:readLong()
-			data.saves.divine = packet:readLong()
+			data.saves.normal = packet:read32()
+			data.shamanCheese = packet:read32()
+			data.firsts = packet:read32()
+			data.cheeses = packet:read32()
+			data.saves.hard = packet:read32()
+			data.bootcamps = packet:read32()
+			data.saves.divine = packet:read32()
 			
-			data.titleId = packet:readShort()
-			data.totalTitles = packet:readShort()
+			data.titleId = packet:read16()
+			data.totalTitles = packet:read16()
 			data.titles = { }
 			for i = 1, data.totalTitles do
-				data.titles[packet:readShort()] = packet:readByte() -- id, stars
+				data.titles[packet:read16()] = packet:read8() -- id, stars
 			end
 
 			data.look = packet:readUTF()
 
-			data.level = packet:readShort()
+			data.level = packet:read16()
 
-			data.totalBadges = packet:readShort() / 2
+			data.totalBadges = packet:read16() / 2
 			data.badges = { }
 			for i = 1, data.totalBadges do
-				data.badges[packet:readShort()] = packet:readShort() -- id, quantity
+				data.badges[packet:read16()] = packet:read16() -- id, quantity
 			end
 
-			data.totalModeStats = packet:readByte()
+			data.totalModeStats = packet:read8()
 			data.modeStats = { }
 			local modeId
 			for i = 1, data.totalModeStats do
-				modeId = packet:readByte()
+				modeId = packet:read8()
 				data.modeStats[modeId] = { }
-				data.modeStats[modeId].progress = packet:readLong()
-				data.modeStats[modeId].progressLimit = packet:readLong()
-				data.modeStats[modeId].imageId = packet:readByte()
+				data.modeStats[modeId].progress = packet:read32()
+				data.modeStats[modeId].progressLimit = packet:read32()
+				data.modeStats[modeId].imageId = packet:read8()
 			end
 
-			data.orbId = packet:readByte()
-			data.totalOrbs = packet:readByte()
+			data.orbId = packet:read8()
+			data.totalOrbs = packet:read8()
 			data.orbs = { }
 			for i = 1, data.totalOrbs do
-				data.orbs[packet:readByte()] = true
+				data.orbs[packet:read8()] = true
 			end
 
-			packet:readByte() -- ?
+			packet:read8() -- ?
 
-			data.adventurePoints = packet:readLong()
+			data.adventurePoints = packet:read32()
 
 			self.event:emit("profileLoaded", data)
 		end
@@ -179,27 +200,27 @@ local exec = {
 			self._isConnected = true
 		end,
 		[3] = function(self, connection, packet, C_CC) -- Correct handshake identifiers
-			local onlinePlayers = packet:readLong()
+			local onlinePlayers = packet:read32()
 
-			connection.packetID = packet:readByte()
+			connection.packetID = packet:read8()
 			local community = packet:readUTF() -- Necessary to get the country and authkeys later
 			local country = packet:readUTF()
 
-			self.receivedAuthkey = packet:readLong() -- Receives an authentication key, parsed in the login function
+			self.receivedAuthkey = packet:read32() -- Receives an authentication key, parsed in the login function
 
 			self._hbTimer = timer.setInterval(10 * 1000, self.sendHeartbeat, self)
 
-			community = byteArray:new():writeByte(self.community):writeByte(0)
+			community = byteArray:new():write8(self.community):write8(0)
 			self.main:send(enum.identifier.community, community)
 
 			local osInfo = byteArray:new():writeUTF("en"):writeUTF("Linux")
-			osInfo:writeUTF("LNX 29,0,0,140"):writeByte(0)
+			osInfo:writeUTF("LNX 29,0,0,140"):write8(0)
 			self.main:send(enum.identifier.os, osInfo)
 		end
 	},
 	[28] = {
 		[5] = function(self, connection, packet, C_CC)
-			packet:readShort() -- ?
+			packet:read16() -- ?
 			self.event:emit("staffList", packet:readUTF())
 		end,
 		[6] = function(self, connection, packet, C_CC)
@@ -214,23 +235,23 @@ local exec = {
 	},
 	[44] = {
 		[1] = function(self, connection, packet, C_CC) -- Switch bulle identifiers
-			local bulleId = packet:readLong()
+			local bulleId = packet:read32()
 			local bulleIp = packet:readUTF()
 
 			self.bulle = connectionHandler:new("bulle", self.event)
 			self.bulle:connect(bulleIp, enum.setting.port[self.main.port])
 
 			self.bulle.event:once("_socketConnection", function()
-				self.bulle:send(C_CC, byteArray:new():writeLong(bulleId))
+				self.bulle:send(C_CC, byteArray:new():write32(bulleId))
 			end)
 		end,
 		[22] = function(self, connection, packet, C_CC) -- PacketID offset identifiers
-			connection.packetID = packet:readByte() -- Sets the pkt of the connection
+			connection.packetID = packet:read8() -- Sets the pkt of the connection
 		end
 	},
 	[60] = {
 		[3] = function(self, connection, packet, C_CC) -- Community Platform
-			local tribulleId = packet:readShort()
+			local tribulleId = packet:read16()
 			if trib[tribulleId] then
 				return trib[tribulleId](self, connection, packet, C_CC, tribulleId)
 			end
@@ -261,7 +282,7 @@ client.insertTribulleFunction = function(self, tribulleId, f)
 end
 
 client.parsePacket = function(self, connection, packet)
-	local C, CC = packet:readByte(), packet:readByte()
+	local C, CC = packet:read8(), packet:read8()
 	local C_CC = { C, CC }
 
 	if exec[C] and exec[C][CC] then
@@ -372,11 +393,11 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 	self.main:connect("164.132.202.12")
 
 	self.main.event:once("_socketConnection", function()
-		local packet = byteArray:new():writeShort(self.gameVersion):writeUTF(self.gameConnectionKey)
-		packet:writeUTF("Desktop"):writeUTF('-'):writeLong(8125):writeUTF('')
+		local packet = byteArray:new():write16(self.gameVersion):writeUTF(self.gameConnectionKey)
+		packet:writeUTF("Desktop"):writeUTF('-'):write32(8125):writeUTF('')
 		packet:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
 		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&PR64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
-		packet:writeLong(0):writeLong(25175):writeUTF('')
+		packet:write32(0):write32(25175):writeUTF('')
 
 		self.main:send(enum.identifier.initialize, packet)
 
@@ -384,7 +405,7 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 	end)
 
 	self.main.event:on("_receive", function(connection, packet)
-		local C_CC = { packet:readByte(), packet:readByte() }
+		local C_CC = { packet:read8(), packet:read8() }
 
 		if connection.name == "main" then
 			if enum.identifier.correctVersion[1] == C_CC[1] and enum.identifier.correctVersion[2] == C_CC[2] then
@@ -393,6 +414,7 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 				end, self)
 			elseif enum.identifier.bulle[1] == C_CC[1] and enum.identifier.bulle[2] == C_CC[2] then
 				return timer.setTimeout(5000, function(self)
+
 					self.event:emit("connection")
 				end, self)
 			end
@@ -466,10 +488,10 @@ end
 client.connect = function(self, userName, userPassword, startRoom, timeout)
 	local packet = byteArray:new():writeUTF(userName):writeUTF(encode.getPasswordHash(userPassword))
 	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-	packet:writeLong(bitwise.bxor(self.receivedAuthkey, self.gameAuthkey))
+	packet:write32(bitwise.bxor(self.receivedAuthkey, self.gameAuthkey))
 
 	self.playerName = userName
-	self.main:send(enum.identifier.login, encode.blockCipher(packet):writeByte(0))
+	self.main:send(enum.identifier.login, encode.blockCipher(packet):write8(0))
 
 	timer.setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then
@@ -492,21 +514,21 @@ end
 	@param targetUser<string> The user to receive the whisper.
 ]]
 client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(52):writeLong(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Joins a #chat.
 	@param chatName<string> The name of the chat.
 ]]
 client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(54):writeLong(1):writeUTF(chatName):writeByte(1), self.main.packetID))
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
 	@desc Leaves a #chat.
 	@param chatName<string> The name of the chat.
 ]]
 client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(56):writeLong(1):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
 end
 --[[@
 	@desc Sends a message to a #chat.
@@ -515,7 +537,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(48):writeLong(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Gets who is in a specific chat. (/who)
@@ -525,7 +547,7 @@ client.chatWho = function(self, chatName)
 	self._who_fingerprint = (self._who_fingerprint + 1) % 300
 	self._who_list[self._who_fingerprint] = chatName
 
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(58):writeLong(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
 end
 --[[@
 	@desc Sends a message to the tribe chat.
@@ -533,7 +555,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendTribeMessage = function(self, message)
-    self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(50):writeLong(3):writeUTF(message), self.main.packetID))
+    self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Joins the tribe house, if the account is in a tribe.
@@ -542,12 +564,20 @@ client.joinTribeHouse = function(self)
 	self.main:send(enum.identifier.joinTribeHouse, byteArray:new())
 end
 --[[@
+	@desc Sends a recruitment invite to the player.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+	@param playerName<string> The name of player to be recruited.
+]]
+client.recruitPlayer = function(self, playerName)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
+end
+--[[@
 	@desc Enters in a room.
 	@param roomName<string> The name of the room.
 	@param isSalonAuto?<boolean> Whether the change room must be /salonauto or not. @default false
 ]]
 client.enterRoom = function(self, roomName, isSalonAuto)
-	self.main:send(enum.identifier.room, byteArray:new():writeByte(self.community):writeUTF(roomName):writeBool(isSalonAuto))
+	self.main:send(enum.identifier.room, byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
 end
 --[[@
 	@desc Sends a command (/).
@@ -576,7 +606,7 @@ client.changeWhisperState = function(self, message, state)
 		state = enum.whisperState.enabled
 	end
 
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():writeShort(60):writeLong(1):writeByte(state):writeUTF(message or ''), self.main.packetID))
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
 end
 --[[@
 	@desc Loads a lua script in the room.
@@ -604,7 +634,7 @@ client.playEmote = function(self, emote, flag)
 		emote = enum.emote.dance
 	end
 
-	local packet = byteArray:new():writeByte(emote):writeLong(0)
+	local packet = byteArray:new():write8(emote):write32(0)
 	if emote == enum.emote.flag then
 		packet = packet:writeUTF(flag)
 	end
@@ -629,7 +659,7 @@ client.playEmoticon = function(self, emoticon)
 		emoticon = enum.emoticon.smiley
 	end
 
-	self.bulle:send(enum.identifier.emoticon, byteArray:new():writeByte(emoticon):writeLong(0))
+	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
 end
 
 return client

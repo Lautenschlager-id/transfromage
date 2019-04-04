@@ -234,16 +234,16 @@ enum.emote = e {
 	@type int
 ]]
 enum.emoticon = e {
-	OMG       = 0,
-	smiley    = 1,
-	sad       = 2,
-	tongue    = 3,
-	angry     = 4,
-	[":D"]    = 5,
-	shades    = 6,
-	blush     = 7,
-	sweatdrop = 8,
-	derp      = 9
+	smiley    = 0,
+	sad       = 1,
+	tongue    = 2,
+	angry     = 3,
+	[":D"]    = 4,
+	shades    = 5,
+	blush     = 6,
+	sweatdrop = 7,
+	derp      = 8,
+	OMG       = 9
 }
 
 return enum

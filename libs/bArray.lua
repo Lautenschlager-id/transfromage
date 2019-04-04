@@ -12,7 +12,7 @@ byteArray.new = function(self, stack)
 	}, self)
 end
 
-byteArray.writeByte = function(self, ...)
+byteArray.write8 = function(self, ...)
 	local tbl = { ... }
 	if #tbl == 0 then
 		tbl = { 0 }
@@ -23,20 +23,20 @@ byteArray.writeByte = function(self, ...)
 	return self
 end
 
-byteArray.writeShort = function(self, short)
-	return self:writeByte(bit.band(bit.rshift(short, 8), 255), bit.band(short, 255))
+byteArray.write16 = function(self, short)
+	return self:write8(bit.band(bit.rshift(short, 8), 255), bit.band(short, 255))
 end
 
-byteArray.writeInt = function(self, integer)
-	return self:writeByte(bit.band(bit.rshift(integer, 16), 255), bit.band(bit.rshift(integer, 8), 255), bit.band(integer, 255))
+byteArray.write24 = function(self, integer)
+	return self:write8(bit.band(bit.rshift(integer, 16), 255), bit.band(bit.rshift(integer, 8), 255), bit.band(integer, 255))
 end
 
-byteArray.writeLong = function(self, long)
-	return self:writeByte(bit.band(bit.rshift(long, 24), 255), bit.band(bit.rshift(long, 16), 255), bit.band(bit.rshift(long, 8), 255), bit.band(long, 255))
+byteArray.write32 = function(self, long)
+	return self:write8(bit.band(bit.rshift(long, 24), 255), bit.band(bit.rshift(long, 16), 255), bit.band(bit.rshift(long, 8), 255), bit.band(long, 255))
 end
 
 byteArray.writeUTF = function(self, utf)
-	self:writeShort(#utf)
+	self:write16(#utf)
 
 	if type(utf) == "string" then
 		utf = string.getBytes(utf)
@@ -47,17 +47,17 @@ byteArray.writeUTF = function(self, utf)
 end
 
 byteArray.writeBigUTF = function(self, bigUtf)
-	self:writeInt(#bigUtf)
+	self:write24(#bigUtf)
 	table.add(self.stack, string.getBytes(bigUtf))
 	return self
 end
 
 byteArray.writeBool = function(self, boolean)
-	self:writeByte(boolean and 1 or 0)
+	self:write8(boolean and 1 or 0)
 	return self
 end
 
-byteArray.readByte = function(self, bytesQuantity)
+byteArray.read8 = function(self, bytesQuantity)
 	bytesQuantity = bytesQuantity or 1
 
 	local byteStack = table.arrayRange(self.stack, 1, bytesQuantity)
@@ -74,23 +74,23 @@ byteArray.readByte = function(self, bytesQuantity)
 	return (#byteStack ~= 1) and byteStack or byteStack[1]
 end
 
-byteArray.readShort = function(self)
-	local shortStack = self:readByte(2)
+byteArray.read16 = function(self)
+	local shortStack = self:read8(2)
 	return bit.lshift(shortStack[1], 8) + shortStack[2]
 end
 
-byteArray.readInt = function(self)
-	local intStack = self:readByte(3)
+byteArray.read24 = function(self)
+	local intStack = self:read8(3)
 	return bit.lshift(intStack[1], 16) + bit.lshift(intStack[2], 8) + intStack[3]
 end
 
-byteArray.readLong = function(self)
-	local longStack = self:readByte(4)
+byteArray.read32 = function(self)
+	local longStack = self:read8(4)
 	return bit.lshift(longStack[1], 24) + bit.lshift(longStack[2], 16) + bit.lshift(longStack[3], 8) + longStack[4]
 end
 
 byteArray.readUTF = function(self)
-	local byte = self:readByte(self:readShort())
+	local byte = self:read8(self:read16())
 
 	if type(byte) == "number" then
 		return string.char(byte)
@@ -99,7 +99,7 @@ byteArray.readUTF = function(self)
 end
 
 byteArray.readBigUTF = function(self)
-	local byte = self:readByte(self:readInt())
+	local byte = self:read8(self:read24())
 
 	if type(byte) == "number" then
 		return string.char(byte)
@@ -108,7 +108,11 @@ byteArray.readBigUTF = function(self)
 end
 
 byteArray.readBool = function(self)
-	return self:readByte() == 1
+	return self:read8() == 1
 end
+
+----- Compatibility -----
+byteArray.readByte, byteArray.readShort, byteArray.readWrite, byteArray.readLong = byteArray.read8, byteArray.read16, byteArray.read24, byteArray.read32
+byteArray.writeByte, byteArray.writeShort, byteArray.writeWrite, byteArray.writeLong = byteArray.write8, byteArray.write16, byteArray.write24, byteArray.write32
 
 return byteArray

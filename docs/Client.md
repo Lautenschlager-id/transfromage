@@ -153,6 +153,15 @@
 >Joins the tribe house, if the account is in a tribe.
 >
 ---
+>### client:recruitPlayer ( playerName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| playerName | `string` | ✔ | The name of player to be recruited. |
+>
+>Sends a recruitment invite to the player.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>
+---
 >### client:enterRoom ( roomName, isSalonAuto )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
