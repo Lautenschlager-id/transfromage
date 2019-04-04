@@ -106,6 +106,7 @@ end)
 >| map | `table` | The new map data. |
 >
 >Triggered when a new map is loaded.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) This event may increase the memory consumption significantly due to the XML processes. Set the variable `_process_xml` as false to avoid processing it.
 >
 >**@map structure**:
 >```Lua
@@ -246,6 +247,7 @@ end)
 >| packet | `bArray` | The Byte Array object with the packets that were not handled. |
 >
 >Triggered when an identifier is not handled by the system.
+>
 ---
 >### missedTribulle ( connection, tribulleId, packet )
 >| Parameter | Type | Description |
@@ -255,6 +257,7 @@ end)
 >| packet | `bArray` | The Byte Array object with the packets that were not handled. |
 >
 >Triggered when a tribulle packet is not handled by the tribulle packet parser.
+>
 ---
 >### receive ( connection, packet, identifiers )
 >| Parameter | Type | Description |

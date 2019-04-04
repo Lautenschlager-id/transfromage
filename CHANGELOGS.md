@@ -2,6 +2,13 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v0.8.1 - 04/04/2019
+### Fixes
+- Due to memory consumption the variable `_process_xml` is now exposed so you can enable or disable the XML processes. Default value is true. Set it as false if you are not using the event _newGame_.
+```Lua
+client._process_xml = false
+```
+
 ## v0.8.0 - 04/04/2019
 ### News
 - Added the event _newGame ( map )_.

@@ -37,7 +37,8 @@ client.new = function(self)
 		_isConnected = false,
 		_hbTimer = nil,
 		_who_fingerprint = 0,
-		_who_list = { }
+		_who_list = { },
+		_process_xml = true
 	}, self)
 end
 
@@ -93,9 +94,12 @@ local exec = {
 			packet:read8() -- ?
 			packet:read16() -- ?
 
-			local xml = table.writeBytes(packet:read8(packet:read16()))
-			if xml ~= '' then
-				map.xml = zlibDecompress(xml, 1)
+			local xml = packet:read8(packet:read16())
+			if self._process_xml then
+				xml = table.writeBytes(xml)
+				if xml ~= '' then
+					map.xml = zlibDecompress(xml, 1)
+				end
 			end
 			map.author = packet:readUTF()
 			map.perm = packet:read8()
