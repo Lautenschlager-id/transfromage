@@ -36,7 +36,7 @@ To get access to it you need to request a token to the player [Tocutoeltuco](htt
 ### API Update
 
 To update the API automatically all you need to do is to create a file named `autoupdate` in the bot's path.<br>
-You can create it running `echo >> autoupdate` (for Windows) or `touch autoupdate` (for Linux);
+You can create it running `cd. > autoupdate` (for Windows) or `touch autoupdate` (for Linux);
 
 The update will overwrite all the old files and dependencies.
 
