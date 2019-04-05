@@ -105,7 +105,7 @@ end)
 >| :-: | :-: | - |
 >| map | `table` | The new map data. |
 >
->Triggered when a new map is loaded.
+>Triggered when a new map is loaded.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) This event may increase the memory consumption significantly due to the XML processes. Set the variable `_process_xml` as false to avoid processing it.
 >
 >**@map structure**:
