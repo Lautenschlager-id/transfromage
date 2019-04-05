@@ -51,7 +51,7 @@ local trib = {
 			@desc Triggered when a friend connects to the game.
 			@param playerName<string> The player name.
 		]]
-		self.event:emit("friendConnection", playerName)
+		self.event:emit("friendConnection", string.toNickname(playerName, true))
 	end,
 	[33] = function(self, connection, packet, C_CC, tribulleId) -- Friend disconnected
 		local playerName = packet:readUTF()
@@ -59,7 +59,7 @@ local trib = {
 			@desc Triggered when a friend disconnects from the game.
 			@param playerName<string> The player name.
 		]]
-		self.event:emit("friendDisconnection", playerName)
+		self.event:emit("friendDisconnection", string.toNickname(playerName, true))
 	end,
 	[59] = function(self, connection, packet, C_CC, tribulleId) -- /who
 		local fingerprint = packet:read32()
@@ -117,7 +117,7 @@ local trib = {
 			@desc Triggered when a tribe member connects to the game.
 			@param memberName<string> The member name.
 		]]
-		self.event:emit("tribeMemberConnection", memberName)
+		self.event:emit("tribeMemberConnection", string.toNickname(memberName, true))
 	end,
 	[90] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member disconnected
 		local memberName = packet:readUTF()
@@ -125,7 +125,7 @@ local trib = {
 			@desc Triggered when a tribe member disconnects to the game.
 			@param memberName<string> The member name.
 		]]
-		self.event:emit("tribeMemberDisconnection", memberName)
+		self.event:emit("tribeMemberDisconnection", string.toNickname(memberName, true))
 	end,
 	[91] = function(self, connection, packet, C_CC, tribulleId) -- New tribe member
 		local memberName = packet:readUTF()
@@ -133,7 +133,7 @@ local trib = {
 			@desc Triggered when a player joins the tribe.
 			@param memberName<string> The member who joined the tribe.
 		]]
-		self.event:emit("newTribeMember", memberName)
+		self.event:emit("newTribeMember", string.toNickname(memberName, true))
 	end,
 	[92] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member leave
 		local memberName = packet:readUTF()
@@ -141,7 +141,7 @@ local trib = {
 			@desc Triggered when a member leaves the tribe.
 			@param memberName<string> The member who left the tribe.
 		]]
-		self.event:emit("tribeMemberLeave", memberName)
+		self.event:emit("tribeMemberLeave", string.toNickname(memberName, true))
 	end,
 	[93] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
 		local memberName, kickerName = packet:readUTF(), packet:readUTF()
@@ -150,7 +150,7 @@ local trib = {
 			@param memberName<string> The member name.
 			@param kickerName<string> The name of who kicked the member.
 		]]
-		self.event:emit("tribeMemberKick", memberName, kickerName)
+		self.event:emit("tribeMemberKick", string.toNickname(memberName, true), string.toNickname(kickerName, true))
 	end,
 	[124] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
 		local memberName, setterName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
@@ -160,7 +160,7 @@ local trib = {
 			@param setterName<string> The name of who set the role to the member.
 			@param role<string> The role name.
 		]]
-		self.event:emit("tribeMemberGetRole", memberName, setterName, role)
+		self.event:emit("tribeMemberGetRole", string.toNickname(memberName, true), string.toNickname(setterName, true), role)
 	end
 }
 -- Recv functions
@@ -216,7 +216,7 @@ local exec = {
 					@param roomName<string> The name of the room.
 					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
 				]]
-				self.event:emit("roomChanged", roomName, isPrivate)
+				self.event:emit("roomChanged", string.fixEntity(roomName), isPrivate)
 			end
 		end
 	},

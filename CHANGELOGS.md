@@ -2,6 +2,10 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v0.9.1 - 05/04/2019
+### Fixes
+- It was missing some normalization for player names and uncoded strings in some events.
+
 ## v0.9.0 - 05/04/2019
 ### News
 - Added _client.setTribeMemberRole_.
