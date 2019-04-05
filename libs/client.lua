@@ -45,6 +45,22 @@ end
 -- Recv
 -- Tribulle functions
 local trib = {
+	[32] = function(self, connection, packet, C_CC, tribulleId) -- Friend connected
+		local playerName = packet:readUTF()
+		--[[@
+			@desc Triggered when a friend connects to the game.
+			@param playerName<string> The player name.
+		]]
+		self.event:emit("friendConnection", playerName)
+	end,
+	[33] = function(self, connection, packet, C_CC, tribulleId) -- Friend disconnected
+		local playerName = packet:readUTF()
+		--[[@
+			@desc Triggered when a friend disconnects from the game.
+			@param playerName<string> The player name.
+		]]
+		self.event:emit("friendDisconnection", playerName)
+	end,
 	[59] = function(self, connection, packet, C_CC, tribulleId) -- /who
 		local fingerprint = packet:read32()
 
@@ -57,28 +73,94 @@ local trib = {
 		end
 
 		local chatName = self._who_list[fingerprint]
+		--[[@
+			@desc Triggered when the /who command is loaded in a chat.
+			@param chatName<string> The name of the chat.
+			@param data<table> An array with the nicknames of the current users in the chat.
+		]]
 		self.event:emit("chatWho", chatName, data)
 		self._who_list[fingerprint] = nil
 	end,
 	[64] = function(self, connection, packet, C_CC, tribulleId) -- #Chat Message
 		local playerName, community, chatName, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
+		--[[@
+			@desc Triggered when a #chat receives a new message.
+			@param chatName<string> The name of the chat.
+			@param playerName<string> The player who sent the message.
+			@param message<string> The message.
+			@param playerCommunity<int> The community id of @playerName.
+		]]
 		self.event:emit("chatMessage", chatName, string.toNickname(playerName, true), string.fixEntity(message), community)
 	end,
 	[65] = function(self, connection, packet, C_CC, tribulleId) -- Tribe message
 		local memberName, message = packet:readUTF(), packet:readUTF()
+		--[[@
+			@desc Triggered when the tribe chat receives a new message.
+			@param memberName<string> The member who sent the message.
+			@param message<string> The message.
+		]]
 		self.event:emit("tribeMessage", string.toNickname(memberName, true), string.fixEntity(message))
 	end,
 	[66] = function(self, connection, packet, C_CC, tribulleId) -- Whisper message
 		local playerName, community, _, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
+		--[[@
+			@desc Triggered when the account receives a whisper.
+			playerName<string> Who sent the whisper message.
+			message<string> The message.
+			playerCommunity<int> The community id of @playerName.
+		]]
 		self.event:emit("whisperMessage", string.toNickname(playerName, true), string.fixEntity(message), community)
+	end,
+	[88] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member connected
+		local memberName = packet:readUTF()
+		--[[@
+			@desc Triggered when a tribe member connects to the game.
+			@param memberName<string> The member name.
+		]]
+		self.event:emit("tribeMemberConnection", memberName)
+	end,
+	[90] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member disconnected
+		local memberName = packet:readUTF()
+		--[[@
+			@desc Triggered when a tribe member disconnects to the game.
+			@param memberName<string> The member name.
+		]]
+		self.event:emit("tribeMemberDisconnection", memberName)
 	end,
 	[91] = function(self, connection, packet, C_CC, tribulleId) -- New tribe member
 		local memberName = packet:readUTF()
+		--[[@
+			@desc Triggered when a player joins the tribe.
+			@param memberName<string> The member who joined the tribe.
+		]]
 		self.event:emit("newTribeMember", memberName)
 	end,
 	[92] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member leave
 		local memberName = packet:readUTF()
+		--[[@
+			@desc Triggered when a member leaves the tribe.
+			@param memberName<string> The member who left the tribe.
+		]]
 		self.event:emit("tribeMemberLeave", memberName)
+	end,
+	[93] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
+		local memberName, kickerName = packet:readUTF(), packet:readUTF()
+		--[[@
+			@desc Triggered when a tribe member is kicked.
+			@param memberName<string> The member name.
+			@param kickerName<string> The name of who kicked the member.
+		]]
+		self.event:emit("tribeMemberKick", memberName, kickerName)
+	end,
+	[124] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
+		local memberName, setterName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
+		--[[@
+			@desc Triggered when a tribe member gets a role.
+			@param memberName<string> The member name.
+			@param setterName<string> The name of who set the role to the member.
+			@param role<string> The role name.
+		]]
+		self.event:emit("tribeMemberGetRole", memberName, setterName, role)
 	end
 }
 -- Recv functions
@@ -105,14 +187,35 @@ local exec = {
 			map.perm = packet:read8()
 			map.isMirrored = packet:readBool()
 	
+			--[[@
+				@desc Triggered when a new map is loaded.
+				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_process_xml` as false to avoid processing it.
+				@param map<table> The new map data.
+				@struct @map {
+					code = 0, -- The map code.
+					xml = "", -- The map XML. May be nil if the map is Vanilla.
+					author = "", -- The map author
+					perm = 0, -- The perm code of the map.
+					isMirrored = false -- Whether the map is mirrored or not.
+				}
+			]]
 			self.event:emit("newGame", map)
 		end,
 		[21] = function(self, connection, packet, C_CC) -- Room changed
 			local isPrivate, roomName = packet:readBool(), packet:readUTF()
 
 			if string.byte(roomName, 2) == 3 then
+				--[[@
+					@desc Triggered when the account joins a tribe house.
+					@param tribeName<string> The name of the tribe.
+				]]
 				self.event:emit("joinTribeHouse", string.sub(roomName, 3))
 			else
+				--[[@
+					@desc Triggered when the account changes the room.
+					@param roomName<string> The name of the room.
+					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
+				]]
 				self.event:emit("roomChanged", roomName, isPrivate)
 			end
 		end
@@ -120,6 +223,13 @@ local exec = {
 	[6] = {
 		[6] = function(self, connection, packet, C_CC) -- Room message
 			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string.fixEntity(packet:readUTF())
+			--[[@
+				@desc Triggered when the room receives a new user message.
+				@param playerName<string> The player who sent the message.
+				@param message<string> The message.
+				@param playerCommunity<int> The community id of @playerName.
+				@param playerId<int> The temporary id of @playerName.
+			]]
 			self.event:emit("roomMessage", string.toNickname(playerName, true), string.fixEntity(message), playerCommu, playerId)
 		end,
 		[20] = function(self, connection, packet, C_CC) -- /time
@@ -133,6 +243,16 @@ local exec = {
 			time.minute = tonumber(packet:readUTF())
 			time.second = tonumber(packet:readUTF())
 
+			--[[@
+				@desc Triggered when the command /time is requested.
+				@param time<table> The account's time data.
+				@struct @param {
+					day = 0, -- Total days
+					hour = 0, -- Total hours
+					minute = 0, -- Total minutes
+					second = 0 -- Total seconds
+				}
+			]]
 			self.event:emit("time", time)
 		end
 	},
@@ -196,6 +316,53 @@ local exec = {
 
 			data.adventurePoints = packet:read32()
 
+			--[[@
+				@desc Triggered when the profile of an user is loaded.
+				@param data<table> The user profile data.
+				@struct @data {
+					playerName = "", -- The player name.
+					id = 0, -- The player id.
+					registrationDate = 0, -- The timestamp of when the account was created.
+					role = 0, -- An enum from enum.role that specifies the account's role.
+					gender = 0, -- An enum from enum.gender for the account's gender. 
+					tribeName = "", -- The name of the tribe.
+					soulmate = "", -- The name of the soulmate.
+					saves = {
+						normal = 0, -- Total saves in the normal mode.
+						hardmode = 0, -- Total saves in the hard mode.
+						divine = 0 -- Total saves in the divine mode.
+					}, -- Total saves of the account.
+					shamanCheese = 0, -- Total of cheeses gathered as shaman.
+					firsts = 0, -- Total of firsts.
+					cheeses = 0, -- Total of cheeses.
+					bootcamps = 0, -- Total of bootcamps.
+					titleId = 0, -- The id of the current title.
+					totalTitles = 0, -- Total of unlocked titles.
+					titles = {
+						[id] = 0 -- The id of the title as index, the quantity of stars as value.
+					}, -- The list of unlocked titles.
+					look = "", -- The account's outfit code.
+					level = 0, -- The account's level.
+					totalBadges = 0, -- The total of unlocked badges.
+					badges = {
+						[id] = 0 -- The id of the badge as index, the quantity as value.
+					}, -- The list of unlocked badges.
+					totalModeStats = 0, -- The total of mode statuses.
+					modeStats = {
+						[id] = {
+							progress = 0, -- The current score in the status.
+							progressLimit = 0, -- The status score limit.
+							imageId = 0 -- The image id of the status. 
+						} -- The status id.
+					}, -- The list of mode statuses.
+					orbId = 0, -- The id of the current shaman orb.
+					totalOrbs = 0, -- The total of unlocked shaman orbs.
+					orbs = {
+						[id] = true -- The id of the shaman orb as index.
+					}, -- The list of unlocked shaman orbs.
+					adventurePoints = 0 -- The total adventure points.
+				}
+			]]
 			self.event:emit("profileLoaded", data)
 		end
 	},
@@ -225,15 +392,26 @@ local exec = {
 	[28] = {
 		[5] = function(self, connection, packet, C_CC)
 			packet:read16() -- ?
+			--[[@
+				@desc Triggered when a staff list is loaded (/mod, /mapcrew).
+				@param list<string> The staff list content.
+			]]
 			self.event:emit("staffList", packet:readUTF())
 		end,
 		[6] = function(self, connection, packet, C_CC)
+			--[[@
+				@desc Triggered when a server heartbeat is received.
+			]]
 			self.event:emit("ping", os.time())
 		end
 	},
 	[29] = {
 		[6] = function(self, connection, packet, C_CC)
 			local log = packet:readUTF()
+			--[[@
+				@desc Triggered when the #lua chat receives a log message.
+				@param log<string> The log message.
+			]]
 			self.event:emit("lua", log)
 		end
 	},
@@ -259,11 +437,18 @@ local exec = {
 			if trib[tribulleId] then
 				return trib[tribulleId](self, connection, packet, C_CC, tribulleId)
 			end
+			--[[@
+				@desc Triggered when a tribulle packet is not handled by the tribulle packet parser.
+				@param connection<connection> The connection object.
+				@param tribulleId<int> The tribulle id.
+				@param packet<bArray> The Byte Array object with the packets that were not handled.
+			]]
 			self.event:emit("missedTribulle", connection, tribulleId, packet)
 		end
 	}
 }
 
+-- Recv Manipulation
 --[[@
 	@desc Inserts a new function to the packet parser.
 	@param C<int> The C packet.
@@ -292,10 +477,15 @@ client.parsePacket = function(self, connection, packet)
 	if exec[C] and exec[C][CC] then
 		return exec[C][CC](self, connection, packet, C_CC)
 	end
+	--[[@
+		@desc Triggered when an identifier is not handled by the system.
+		@param identifiers<table> The C, CC identifiers sent in the request.
+		@param packet<bArray> The Byte Array object that was sent.
+	]]
 	self.event:emit("missedPacket", C_CC, packet)
 end
 
--- Technical
+-- System
 
 client.sendHeartbeat = function(self)
 	self.main:send(enum.identifier.heartbeat, byteArray:new())
@@ -303,6 +493,10 @@ client.sendHeartbeat = function(self)
 		self.bulle:send(enum.identifier.heartbeat, byteArray:new())
 	end
 
+	--[[@
+		@desc Triggered when a heartbeat is sent to the connection, every 10 seconds.
+		@param time<int> The current time.
+	]]
 	self.event:emit("heartbeat", os.time())
 end
 
@@ -336,6 +530,10 @@ client.closeAll = function(self)
 
 		timer.clearInterval(self.bulleLoop)
 		self.bulle.socket:destroy()
+		--[[@
+			@desc Triggered when a connection dies or fails.
+			@param connection<connection> The connection object.
+		]]
 		self.event:emit("disconnection", self.bulle)
 
 		self.main.open = false
@@ -414,15 +612,26 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 		if connection.name == "main" then
 			if enum.identifier.correctVersion[1] == C_CC[1] and enum.identifier.correctVersion[2] == C_CC[2] then
 				return timer.setTimeout(5000, function(self)
+					--[[@
+						@desc Triggered when the connection is live.
+					]]
 					self.event:emit("ready")
 				end, self)
 			elseif enum.identifier.bulle[1] == C_CC[1] and enum.identifier.bulle[2] == C_CC[2] then
 				return timer.setTimeout(5000, function(self)
-
+					--[[@
+						@desc Triggered when the account is logged and ready to perform actions.
+					]]
 					self.event:emit("connection")
 				end, self)
 			end
 		end
+		--[[@
+			@desc Triggered when the client receives packets from the server.
+			@param connection<connection> The connection object that received the packets.
+			@param packet<bArray> The Byte Array object that was received.
+			@param identifiers<table> The C, CC identifiers that were received.
+		]]
 		self.event:emit("receive", connection, C_CC, packet)
 	end)
 end)
@@ -462,6 +671,7 @@ client.connectionTime = function(self)
 end
 
 -- Methods
+-- Initialization
 --[[@
 	@desc Sets the community where the bot will be cpmmected to.
 	@desc /!\ This method must be called before the @see start.
@@ -503,78 +713,7 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 		end
 	end, self)
 end
---[[@
-	@desc Sends a message in the room chat.
-	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
-	@param message<string> The message.
-]]
-client.sendRoomMessage = function(self, message)
-	self.bulle:send(enum.identifier.roomMessage, encode.xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
-end
---[[@
-	@desc Sends a whisper to an user.
-	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
-	@param message<string> The message.
-	@param targetUser<string> The user to receive the whisper.
-]]
-client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
-end
---[[@
-	@desc Joins a #chat.
-	@param chatName<string> The name of the chat.
-]]
-client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
-end
---[[@
-	@desc Leaves a #chat.
-	@param chatName<string> The name of the chat.
-]]
-client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
-end
---[[@
-	@desc Sends a message to a #chat.
-	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
-	@param chatName<string> The name of the chat.
-	@param message<string> The message.
-]]
-client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
-end
---[[@
-	@desc Gets who is in a specific chat. (/who)
-	@param chatName<string> The name of the chat.
-]]
-client.chatWho = function(self, chatName)
-	self._who_fingerprint = (self._who_fingerprint + 1) % 300
-	self._who_list[self._who_fingerprint] = chatName
-
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
-end
---[[@
-	@desc Sends a message to the tribe chat.
-	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
-	@param message<string> The message.
-]]
-client.sendTribeMessage = function(self, message)
-    self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
-end
---[[@
-	@desc Joins the tribe house, if the account is in a tribe.
-]]
-client.joinTribeHouse = function(self)
-	self.main:send(enum.identifier.joinTribeHouse, byteArray:new())
-end
---[[@
-	@desc Sends a recruitment invite to the player.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
-	@param playerName<string> The name of player to be recruited.
-]]
-client.recruitPlayer = function(self, playerName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
-end
+-- Room
 --[[@
 	@desc Enters in a room.
 	@param roomName<string> The name of the room.
@@ -584,12 +723,22 @@ client.enterRoom = function(self, roomName, isSalonAuto)
 	self.main:send(enum.identifier.room, byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
 end
 --[[@
-	@desc Sends a command (/).
-	@desd /!\ Note that some unlisted commands cannot be triggered by this function.
-	@param command<string> The command. (without /)
+	@desc Sends a message in the room chat.
+	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+	@param message<string> The message.
 ]]
-client.sendCommand = function(self, command, crypted)
-	self.main:send(enum.identifier.command, encode.xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
+client.sendRoomMessage = function(self, message)
+	self.bulle:send(enum.identifier.roomMessage, encode.xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
+end
+-- Whisper
+--[[@
+	@desc Sends a whisper to an user.
+	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+	@param message<string> The message.
+	@param targetUser<string> The user to receive the whisper.
+]]
+client.sendWhisper = function(self, targetUser, message)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Sets the account's whisper state.
@@ -612,12 +761,95 @@ client.changeWhisperState = function(self, message, state)
 
 	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
 end
+-- Chat
+--[[@
+	@desc Joins a #chat.
+	@param chatName<string> The name of the chat.
+]]
+client.joinChat = function(self, chatName)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
+end
+--[[@
+	@desc Sends a message to a #chat.
+	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+	@param chatName<string> The name of the chat.
+	@param message<string> The message.
+]]
+client.sendChatMessage = function(self, chatName, message)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
+end
+--[[@
+	@desc Leaves a #chat.
+	@param chatName<string> The name of the chat.
+]]
+client.closeChat = function(self, chatName)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
+end
+--[[@
+	@desc Gets who is in a specific chat. (/who)
+	@param chatName<string> The name of the chat.
+]]
+client.chatWho = function(self, chatName)
+	self._who_fingerprint = (self._who_fingerprint + 1) % 300
+	self._who_list[self._who_fingerprint] = chatName
+
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
+end
+-- Tribe
+--[[@
+	@desc Joins the tribe house, if the account is in a tribe.
+]]
+client.joinTribeHouse = function(self)
+	self.main:send(enum.identifier.joinTribeHouse, byteArray:new())
+end
+--[[@
+	@desc Sends a message to the tribe chat.
+	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+	@param message<string> The message.
+]]
+client.sendTribeMessage = function(self, message)
+    self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
+end
+--[[@
+	@desc Sends a recruitment invite to the player.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+	@param playerName<string> The name of player to be recruited.
+]]
+client.recruitPlayer = function(self, playerName)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
+end
+--[[@
+	@desc Kicks a member of the tribe.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+	@param memberName<string> The name of the member to be kicked.
+]]
+client.kickTribeMember = function(self, memberName)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
+end
+--[[@
+	@desc Sets the role of a member in the tribe.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+	@param memberName<string> The name of the member to get the role.
+	@param roleId<int> The role id. (starts in 0, for the initial role. Increases until the Chief role)
+]]
+client.setTribeMemberRole = function(self, memberName, roleId)
+	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
+end
 --[[@
 	@desc Loads a lua script in the room.
 	@param script<string> The lua script.
 ]]
 client.loadLua = function(self, script)
 	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeBigUTF(script))
+end
+-- Miscellaneous
+--[[@
+	@desc Sends a command (/).
+	@desd /!\ Note that some unlisted commands cannot be triggered by this function.
+	@param command<string> The command. (without /)
+]]
+client.sendCommand = function(self, command, crypted)
+	self.main:send(enum.identifier.command, encode.xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@
 	@desc Plays an emote.

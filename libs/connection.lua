@@ -119,6 +119,11 @@ connectionHandler.send = function(self, identifiers, alphaPacket)
 		self.event:emit("disconnection", self)
 	end
 
+	--[[@
+		@desc Triggered when the client sends packets to the server.
+		@param identifiers<table> The C, CC identifiers sent in the request.
+		@param packet<bArray> The Byte Array object that was sent.
+	]]
 	self.event:emit("send", identifiers, alphaPacket)
 end
 

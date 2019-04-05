@@ -2,6 +2,22 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v0.9.0 - 05/04/2019
+### News
+- Added _client.setTribeMemberRole_.
+- Added the event _tribeMemberGetRole ( memberName, setterName, role )_.
+- Added the event _friendConnection ( playerName )_.
+- Added the event _friendDisconnection ( playerName )_.
+- Added the event _tribeMemberConnection ( memberName )_.
+- Added the event _tribeMemberDisconnection ( memberName )_.
+- Added the event _tribeMemberKick ( memberName, kickerName )_.
+- Added _client.kickTribeMember_.
+
+### Changes
+- The documentation is now reorganised.
+- Events are not documented in the source files.
+- The order of the port numbers has been changed aiming better connections.
+
 ## v0.8.1 - 04/04/2019
 ### Fixes
 - Due to memory consumption the variable `_process_xml` is now exposed so you can enable or disable the XML processes. Default value is true. Set it as false if you are not using the event _newGame_.

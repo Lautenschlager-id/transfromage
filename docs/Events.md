@@ -8,37 +8,6 @@ end)
 ```
 ---
 
->### ready (  )
->
->Triggered when the connection is live.
->
----
->### connection (  )
->
->Triggered when the account is logged and ready to perform actions.
->
----
->### roomMessage ( playerName, message, playerCommunity, playerId )
->| Parameter | Type | Description |
->| :-: | :-: | - |
->| playerName | `string` | The player who sent the message. |
->| message | `string` | The message. |
->| playerCommunity | `int` | The community id of @playerName. |
->| playerId | `int` | The temporary id of @playerName. |
->
->Triggered when the room receives a new user message.
->
----
->### whisperMessage ( playerName, message, playerCommunity )
->| Parameter | Type | Description |
->| :-: | :-: | - |
->| playerName | `string` | Who sent the whisper message. |
->| message | `string` | The message. |
->| playerCommunity | `int` | The community id of @playerName. |
->
->Triggered when the account receives a whisper.
->
----
 >### chatMessage ( chatName, playerName, message, playerCommunity )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -50,29 +19,50 @@ end)
 >Triggered when a #chat receives a new message.
 >
 ---
->### tribeMessage ( memberName, message )
+>### chatWho ( chatName, data )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| memberName | `string` | The member who sent the message. |
->| message | `string` | The message. |
+>| chatName | `string` | The name of the chat. |
+>| data | `table` | An array with the nicknames of the current users in the chat. |
 >
->Triggered when the tribe chat receives a new message.
+>Triggered when the /who command is loaded in a chat.
 >
 ---
->### tribeMemberLeave ( memberName )
->| Parameter | Type | Description |
->| :-: | :-: | - |
->| memberName | `string` | The member who left the tribe. |
+>### connection (  )
 >
->Triggered when a member leaves the tribe.
+>Triggered when the account is logged and ready to perform actions.
 >
 ---
->### newTribeMember ( memberName )
+>### disconnection ( connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| memberName | `string` | The member who joined the tribe. |
+>| connection | `connection` | The connection object. |
 >
->Triggered when a player joins the tribe.
+>Triggered when a connection dies or fails.
+>
+---
+>### friendConnection ( playerName )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerName | `string` | The player name. |
+>
+>Triggered when a friend connects to the game.
+>
+---
+>### friendDisconnection ( playerName )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerName | `string` | The player name. |
+>
+>Triggered when a friend disconnects from the game.
+>
+---
+>### heartbeat ( time )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| time | `int` | The current time. |
+>
+>Triggered when a heartbeat is sent to the connection, every 10 seconds.
 >
 ---
 >### joinTribeHouse ( tribeName )
@@ -91,13 +81,23 @@ end)
 >Triggered when the #lua chat receives a log message.
 >
 ---
->### roomChanged ( roomName, isPrivateRoom )
+>### missedPacket ( identifiers, packet )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| roomName | `string` | The name of the room. |
->| isPrivateRoom | `boolean` | Whether the room is only accessible by the account or not. |
+>| identifiers | `table` | The C, CC identifiers that were not handled. |
+>| packet | `bArray` | The Byte Array object with the packets that were not handled. |
 >
->Triggered when the account changes the room.
+>Triggered when an identifier is not handled by the system.
+>
+---
+>### missedTribulle ( connection, tribulleId, packet )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| connection | `connection` | The connection object. |
+>| tribulleId | `int` | The tribulle id. |
+>| packet | `bArray` | The Byte Array object with the packets that were not handled. |
+>
+>Triggered when a tribulle packet is not handled by the tribulle packet parser.
 >
 ---
 >### newGame ( map )
@@ -118,6 +118,19 @@ end)
 >	isMirrored = false -- Whether the map is mirrored or not.
 >}
 >```
+>
+---
+>### newTribeMember ( memberName )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| memberName | `string` | The member who joined the tribe. |
+>
+>Triggered when a player joins the tribe.
+>
+---
+>### ping ( )
+>
+>Triggered when a server heartbeat is received.
 >
 ---
 >### profileLoaded ( data )
@@ -175,13 +188,48 @@ end)
 >```
 >
 ---
->### chatWho ( chatName, data )
+>### ready (  )
+>
+>Triggered when the connection is live.
+>
+---
+>### receive ( connection, packet, identifiers )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| chatName | `string` | The name of the chat. |
->| data | `table` | An array with the nicknames of the current users in the chat. |
+>| connection | `connection` | The connection object that received the packets. |
+>| packet | `bArray` | The Byte Array object that was received. |
+>| identifiers | `table` | The C, CC identifiers that were received. |
 >
->Triggered when the /who command is loaded in a chat.
+>Triggered when the client receives packets from the server.
+>
+---
+>### roomChanged ( roomName, isPrivateRoom )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| roomName | `string` | The name of the room. |
+>| isPrivateRoom | `boolean` | Whether the room is only accessible by the account or not. |
+>
+>Triggered when the account changes the room.
+>
+---
+>### roomMessage ( playerName, message, playerCommunity, playerId )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerName | `string` | The player who sent the message. |
+>| message | `string` | The message. |
+>| playerCommunity | `int` | The community id of @playerName. |
+>| playerId | `int` | The temporary id of @playerName. |
+>
+>Triggered when the room receives a new user message.
+>
+---
+>### send ( identifiers, packet )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| identifiers | `table` | The C, CC identifiers sent in the request. |
+>| packet | `bArray` | The Byte Array object that was sent. |
+>
+>Triggered when the client sends packets to the server.
 >
 ---
 >### staffList ( list )
@@ -210,61 +258,65 @@ end)
 >```
 >
 ---
->### ping ( )
->
->Triggered when a server heartbeat is received.
->
----
->### heartbeat ( time )
+>### tribeMemberConnection ( memberName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| time | `int` | The current time. |
+>| memberName | `string` | The member name. |
 >
->Triggered when a heartbeat is sent to the connection, every 10 seconds.
->
----
->### disconnection ( connection )
->| Parameter | Type | Description |
->| :-: | :-: | - |
->| connection | `connection` | The connection object. |
->
->Triggered when a connection dies or fails.
+>Triggered when a tribe member connects to the game.
 >
 ---
->### send ( identifiers, packet )
+>### tribeMemberDisconnection ( memberName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| identifiers | `table` | The C, CC identifiers sent in the request. |
->| packet | `bArray` | The Byte Array object that was sent. |
+>| memberName | `string` | The member name. |
 >
->Triggered when the client sends packets to the server.
+>Triggered when a tribe member disconnects to the game.
 >
 ---
->### missedPacket ( identifiers, packet )
+>### tribeMemberGetRole ( memberName, setterName, role )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| identifiers | `table` | The C, CC identifiers that were not handled. |
->| packet | `bArray` | The Byte Array object with the packets that were not handled. |
+>| memberName | `string` | The member name. |
+>| setterName | `string` | The name of who set the role to the member. |
+>| role | `string` | The role name. |
 >
->Triggered when an identifier is not handled by the system.
+>Triggered when a tribe member gets a role.
 >
 ---
->### missedTribulle ( connection, tribulleId, packet )
+>### tribeMemberKick ( memberName, kickerName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| connection | `connection` | The connection object. |
->| tribulleId | `int` | ✔ | The tribulle id. |
->| packet | `bArray` | The Byte Array object with the packets that were not handled. |
+>| memberName | `string` | The member name. |
+>| kickerName | `string` | The name of who kicked the member. |
 >
->Triggered when a tribulle packet is not handled by the tribulle packet parser.
+>Triggered when a tribe member is kicked.
 >
 ---
->### receive ( connection, packet, identifiers )
+>### tribeMemberLeave ( memberName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| connection | `connection` | The connection object that received the packets. |
->| packet | `bArray` | The Byte Array object that was received. |
->| identifiers | `table` | The C, CC identifiers that were received. |
+>| memberName | `string` | The member who left the tribe. |
 >
->Triggered when the client receives packets from the server.
+>Triggered when a member leaves the tribe.
 >
+---
+>### tribeMessage ( memberName, message )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| memberName | `string` | The member who sent the message. |
+>| message | `string` | The message. |
+>
+>Triggered when the tribe chat receives a new message.
+>
+---
+>### whisperMessage ( playerName, message, playerCommunity )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerName | `string` | Who sent the whisper message. |
+>| message | `string` | The message. |
+>| playerCommunity | `int` | The community id of @playerName. |
+>
+>Triggered when the account receives a whisper.
+>
+---

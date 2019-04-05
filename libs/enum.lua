@@ -159,7 +159,7 @@ enum.chatCommunity = e {
 	@type table
 ]]
 enum.setting = e {
-	port = e { 3724, 6112, 44444, 44440, 5555, 443 }
+	port = e { 5555, 44444, 3724, 44440, 6112, 443 }
 }
 
 --[[@
