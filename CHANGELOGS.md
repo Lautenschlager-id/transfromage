@@ -2,6 +2,10 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v0.9.2 - 06/04/2019
+### Fixes
+- The event _tribeMemberGetRole_ was passing the parameters memberName and setterName in a wrong order.
+
 ## v0.9.1 - 05/04/2019
 ### Fixes
 - It was missing some normalization for player names and uncoded strings in some events.

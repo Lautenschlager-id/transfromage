@@ -153,7 +153,7 @@ local trib = {
 		self.event:emit("tribeMemberKick", string.toNickname(memberName, true), string.toNickname(kickerName, true))
 	end,
 	[124] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
-		local memberName, setterName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
+		local setterName, memberName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
 		--[[@
 			@desc Triggered when a tribe member gets a role.
 			@param memberName<string> The member name.
