@@ -124,12 +124,12 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
 >
 ---
->### client:likeCafeMessage ( topicId, messageId, deslike )
+>### client:likeCafeMessage ( topicId, messageId, dislike )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| topicId | `int` | ✔ | The id of the topic where the message is located. |
 >| messageId | `int` | ✔ | The id of the message that will receive the reaction. |
->| deslike | `boolean` | ✕ | Whether the reaction must be a dislike or not. <sub>(default = false)</sub> |
+>| dislike | `boolean` | ✕ | Whether the reaction must be a dislike or not. <sub>(default = false)</sub> |
 >
 >Likes/Dislikes a message in a Café topic.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system: 300 seconds to react in a message.
