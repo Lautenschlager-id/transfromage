@@ -59,23 +59,30 @@ end
 	@type table
 ]]
 enum.identifier = e {
-	bulle          = e { 44, 01 },
-	command        = e { 06, 26 },
-	community      = e { 08, 02 },
-	correctVersion = e { 26, 03 },
-	emote          = e { 08, 01 },
-	emoticon       = e { 08, 05 },
-	heartbeat      = e({ 26, 26 }, nil, true),
-	initialize     = e { 28, 01 },
-	modList        = e { 26, 05 },
-	joinTribeHouse = e { 16, 01 },
-	login          = e { 26, 08 },
-	loadLua        = e { 29, 01 },
-	message        = e { 60, 03 },
-	os             = e { 28, 17 },
-	packetOffset   = e { 44, 22 },
-	room           = e { 05, 38 },
-	roomMessage    = e({ 06, 06 }, nil, true)
+	bulle           = e { 44, 01 },
+	cafeData        = e { 30, 40 },
+	cafeState       = e { 30, 45 },
+	cafeLike        = e { 30, 46 },
+	cafeLoadData    = e { 30, 41 },
+	cafeNewTopic    = e { 30, 44 },
+	cafeSendMessage = e { 30, 43 },
+	command         = e { 06, 26 },
+	community       = e { 08, 02 },
+	correctVersion  = e { 26, 03 },
+	emote           = e { 08, 01 },
+	emoticon        = e { 08, 05 },
+	heartbeat       = e({ 26, 26 }, nil, true),
+	initialize      = e { 28, 01 },
+	joinTribeHouse  = e { 16, 01 },
+	loadLua         = e { 29, 01 },
+	login           = e { 26, 08 },
+	message         = e { 60, 03 },
+	modList         = e { 26, 05 },
+	os              = e { 28, 17 },
+	packetOffset    = e { 44, 22 },
+	room            = e { 05, 38 },
+	roomList        = e { 26, 35 },
+	roomMessage     = e({ 06, 06 }, nil, true)
 }
 
 --[[@
@@ -244,6 +251,22 @@ enum.emoticon = e {
 	sweatdrop = 7,
 	derp      = 8,
 	OMG       = 9
+}
+
+--[[@
+	@desc The available room modes.
+	@type int
+]]
+enum.roomMode = e {
+	normal    = 01,
+	bootcamp  = 02,
+	vanilla   = 03,
+	survivor  = 08,
+	racing    = 09,
+	music     = 10,
+	defilante = 11,
+	village   = 16,
+	module    = 18
 }
 
 return enum

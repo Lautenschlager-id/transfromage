@@ -44,6 +44,16 @@
 >| :-: | - |
 >| `int` | The total time since the connection. |
 ---
+>### client:createCafeTopic ( title, message )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| title | `string` | ✔ | The title of the topic. |
+>| message | `string` | ✔ | The content of the topic. |
+>
+>Creates a Café topic.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system.
+>
+---
 >### client:emit ( eventName, ... )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -63,7 +73,7 @@
 >Enters in a room.
 >
 ---
->### client:insertReceiveFunction ( C, CC, f )
+>### client:insertPacketListener ( C, CC, f )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| C | `int` | ✔ | The C packet. |
@@ -73,7 +83,17 @@
 >Inserts a new function to the packet parser.
 >
 ---
->### client:insertTribulleFunction ( tribulleId, f )
+>### client:insertOldPacketListener ( C, CC, f )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| C | `int` | ✔ | The C packet. |
+>| CC | `int` | ✔ | The CC packet. |
+>| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
+>
+>Inserts a new function to the old packet parser.
+>
+---
+>### client:insertTribulleListener ( tribulleId, f )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| tribulleId | `int` | ✔ | The tribulle id. |
@@ -104,6 +124,17 @@
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
 >
 ---
+>### client:likeCafeMessage ( topicId, messageId, deslike )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| topicId | `int` | ✔ | The id of the topic where the message is located. |
+>| messageId | `int` | ✔ | The id of the message that will receive the reaction. |
+>| deslike | `boolean` | ✕ | Whether the reaction must be a dislike or not. <sub>(default = false)</sub> |
+>
+>Likes/Dislikes a message in a Café topic.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system: 300 seconds to react in a message.
+>
+---
 >### client:loadLua ( script )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -132,6 +163,24 @@
 >See the available events in [Events](Events.md).
 >
 ---
+>### client:openCafe ( close )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| close | `boolean` | ✕ | If the Café must be closed. <sub>(default = false)</sub> |
+>
+>Toggles the current Café state (open / closed).<br>
+>You may use this method to reload the Café (refresh).
+>
+---
+>### client:openCafeTopic ( topicId )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| topicId | `int` | ✔ | The id of the topic to be opened. |
+>
+>Opens a Café topic.<br>
+>You may use this method to reload the topic (refresh).
+>
+---
 >### client:playEmote ( emote, flag )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -156,6 +205,24 @@
 >
 >Sends a recruitment invite to the player.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>
+---
+>### client:requestRoomList ( roomMode )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| roomMode | `enum.roomMode` | ✕ | An enum from [roomMode](Enum.md#roomMode-int). (index or value) <sub>(default = normal)</sub> |
+>
+>Requests the data of a room mode list.
+>
+---
+>### client:sendCafeMessage ( topicId, message )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| topicId | `int` | ✔ | The id of the topic where the message will be posted. |
+>| message | `string` | ✔ | The message to be posted. |
+>
+>Sends a message in a Café topic.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system: 300 seconds if the last post is from the same account, otherwise 10 seconds.
 >
 ---
 >### client:sendChatMessage ( chatName, message )
@@ -207,9 +274,9 @@
 >### client:setCommunity ( community )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| community | `string`, `int` | ✔ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
+>| community | `string`, `int` | ✕ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
 >
->Sets the community where the bot will be cpmmected to.<br>
+>Sets the community where the bot will be connected to.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [start](Client.md#clientstart--self-tfmid-token-).
 >
 ---

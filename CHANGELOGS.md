@@ -2,6 +2,48 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v0.10.0 - 11/05/2019
+### News
+- Added the event _unreadCafeMessage ( topicId, topic )_.
+```Lua
+-- Usually should be used as
+client:on("unreadCafeMessage", function(topicId, topic)
+	client:openCafeTopic(topicId)
+end)
+```
+- Added _client.openCafeTopic_.
+- Added _client.createCafeTopic_.
+- Added _client.likeCafeMessage_.
+- Added _client.sendCafeMessage_.
+```Lua
+-- Tools for sending messages
+local quoteCafeMessage = function(message)
+	return "> @" .. message.author .. "\r> " + message.content + "\r\r"
+end
+
+local replyCafeMessage = function(message, content)
+	client:sendCafeMessage(message.topicId, quoteCafeMessage(message.content) .. content)
+end
+```
+- Added the event _cafeTopicMessage ( message, topic )_.
+- Added the event _cafeTopicLoad ( topic )_.
+- Added the event _cafeTopicList ( data )_.
+- Added _client.openCafe_.
+- Added the event _roomList ( roomMode, rooms, pinned )_.
+- Added _enum.roomMode_.
+- Added _client.requestRoomList_.
+- Added _client.insertOldPacketListener_.
+- Added the event _missedOldPacket ( connection, identifiers, packet )_.
+- Now the API supports old packets (1, 1).
+
+### Changes
+- The insertFuction functions were renamed. However the compatibility was kept. (Please, open an issue if you find any problem related to it)
+	- insertReceiveFunction  → insertPacketListener
+	- insertTribulleFunction → insertTribulleListener
+
+### Fixes
+- The event _missedPacket_ now receives the parameter _connection_.
+
 ## v0.9.2 - 06/04/2019
 ### Fixes
 - The event _tribeMemberGetRole_ was passing the parameters memberName and setterName in a wrong order.

@@ -8,6 +8,77 @@ end)
 ```
 ---
 
+>### cafeTopicList ( data )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| data | `table` | The data of the topics. |
+>
+>Triggered when the Café is opened or refreshed, and the topics are loaded partially.
+>
+>**@data structure**:
+>```Lua
+>{
+>	-- See "author" and "messages" in the event "cafeTopicMessage"
+>	id = 0, -- The id of the topic.
+>	title = "", -- The title of the topic.
+>	authorId = 0, -- The id of the topic author.
+>	posts = 0, -- The quantity of messages in the topic.
+>	lastUserName = "", -- The name of the last user that posted in the topic.
+>	timestamp = 0, -- When the topic was created.
+>}
+>```
+>
+---
+>### cafeTopicLoad ( topic )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| topic | `table` | The data of the topic. |
+>
+>Triggered when the Café is opened or refreshed, and the topics are loaded partially.
+>
+>**@topic structure**:
+>```Lua
+>{
+>	-- See the topic structure in the event "cafeTopicList"
+>	-- See the message structure in the event "cafeTopicMessage"
+>	author = "" -- The name of the topic author.
+>	messages = {
+>		[i] = { }
+>	}
+>}
+>```
+>
+---
+>### cafeTopicMessage ( message, topic )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| message | `table`| The data of the message. |
+>| topic | `table` | The data of the topic. |
+>
+>Triggered when a new message in a Café topic is cached.
+>
+>**@message structure**:
+>```Lua
+>{
+>	topicId = 0, -- The id of the topic where the message was posted.
+>	id = 0, -- The id of the message.
+>	authorId = 0, -- The id of the topic author.
+>	timestamp = 0, -- When the topic was created.
+>	author = "", -- The name of the topic author.
+>	content = "", -- The content of the message.
+>	canLike = false, -- Whether the message can be liked by the bot or not.
+>	likes = 0 -- The quantity of the likes in the message.
+>}
+>```
+>
+>**@topic structure**:
+>```Lua
+>{
+>	-- See the topic structure in the events "cafeTopicLoad" and "cafeTopicList"
+>}
+>```
+>
+---
 >### chatMessage ( chatName, playerName, message, playerCommunity )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -81,11 +152,22 @@ end)
 >Triggered when the #lua chat receives a log message.
 >
 ---
->### missedPacket ( identifiers, packet )
+>### missedOldPacket ( connection, identifiers, packet )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
+>| connection | `connection` | The connection object. |
 >| identifiers | `table` | The C, CC identifiers that were not handled. |
->| packet | `bArray` | The Byte Array object with the packets that were not handled. |
+>| packet | `bArray` | The Byte Array object with the packet that was not handled. |
+>
+>Triggered when an old packet is not handled by the old packet parser.
+>
+---
+>### missedPacket ( connection, identifiers, packet )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| connection | `connection` | The connection object. |
+>| identifiers | `table` | The C, CC identifiers that were not handled. |
+>| packet | `bArray` | The Byte Array object with the packet that was not handled. |
 >
 >Triggered when an identifier is not handled by the system.
 >
@@ -95,7 +177,7 @@ end)
 >| :-: | :-: | - |
 >| connection | `connection` | The connection object. |
 >| tribulleId | `int` | The tribulle id. |
->| packet | `bArray` | The Byte Array object with the packets that were not handled. |
+>| packet | `bArray` | The Byte Array object with the packet that was not handled. |
 >
 >Triggered when a tribulle packet is not handled by the tribulle packet parser.
 >
@@ -212,6 +294,34 @@ end)
 >Triggered when the account changes the room.
 >
 ---
+>### roomList ( roomMode, rooms, pinned )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| roomMode | `int`| The id of the room mode. |
+>| rooms | `table` | The data of the rooms in the list. |
+>| pinned | `table` | The data of the pinned objects in the list. |
+>
+>Triggered when the room list of a mode is loaded.
+>
+>**@rooms structure**:
+>```Lua
+>{
+>	name = "", -- The name of the room.
+>	totalPlayers = 0, -- The quantity of players in the room.
+>	maxPlayers = 0, -- The maximum quantity of players the room can get.
+>	onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
+>}
+>```
+>
+>**@pinned structure**:
+>```Lua
+>{
+>	name = "", -- The name of the object.
+>	totalPlayers = 0 -- The quantity of players in the object counter.
+>}
+>```
+>
+---
 >### roomMessage ( playerName, message, playerCommunity, playerId )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -308,6 +418,15 @@ end)
 >| message | `string` | The message. |
 >
 >Triggered when the tribe chat receives a new message.
+>
+---
+>### unreadCafeMessage ( topicId, topic )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| topicId | `int` | The id of the topic where the new messages were posted. |
+>| topic | `table` | The data of the topic. It may be nil. See it's structure in the event [cafeTopicLoad](Events.md#cafetopicload--topic-). |
+>
+>Triggered when new messages are posted on Café.
 >
 ---
 >### whisperMessage ( playerName, message, playerCommunity )

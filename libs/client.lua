@@ -38,7 +38,9 @@ client.new = function(self)
 		_hbTimer = nil,
 		_who_fingerprint = 0,
 		_who_list = { },
-		_process_xml = true
+		_process_xml = true,
+		_cafe = { },
+		_cafeCachedMessages = { }
 	}, self)
 end
 
@@ -163,8 +165,30 @@ local trib = {
 		self.event:emit("tribeMemberGetRole", string.toNickname(memberName, true), string.toNickname(setterName, true), role)
 	end
 }
+-- Old packets
+local oldPkt = {
+
+}
 -- Recv functions
 local exec = {
+	[1] = {
+		[1] = function(self, connection, packet, C_CC) -- Old packets format
+			local data = string.split(packet:readUTF(), "[^\x01]+")
+			local oldC_CC = { string.byte(table.remove(data, 1), 1, 2) }
+
+			if oldPkt[oldC_CC[1]] and oldPkt[oldC_CC[1]][oldC_CC[2]] then
+				return oldPkt[oldC_CC[1]][oldC_CC[2]](self, connection, data, oldC_CC)
+			end
+
+			--[[@
+				@desc Triggered when an old packet is not handled by the old packet parser.
+				@param connection<connection> The connection object.
+				@param identifiers<table> The C, CC identifiers that were not handled.
+				@param packet<bArray> The Byte Array object with the packet that was not handled.
+			]]
+			self.event:emit("missedOldPacket", connection, oldC_CC, data)
+		end
+	},
 	[5] = {
 		[2] = function(self, connection, packet, C_CC) -- New game
 			if not self._isConnected then return end
@@ -387,7 +411,64 @@ local exec = {
 			local osInfo = byteArray:new():writeUTF("en"):writeUTF("Linux")
 			osInfo:writeUTF("LNX 29,0,0,140"):write8(0)
 			self.main:send(enum.identifier.os, osInfo)
-		end
+		end,
+		[35] = function(self, connection, packet, C_CC) -- Room list
+			for i = 1, packet:read8() do packet:read8() end -- Room types
+
+			local rooms, counter = { }, 0
+			local pinned, pinnedCounter = { }, 0
+
+			local roomType, name, count, max, onFcMode
+			local roomMode = packet:read8()
+			while #packet.stack > 0 do
+				roomType = packet:read8()
+				if roomType == 0 then -- Normal room
+					packet:read8() -- community
+					name = packet:readUTF()
+					count = packet:read16() -- total mice
+					max = packet:read8() -- max total mice
+					onFcMode = packet:readBool() -- funcorp mode
+
+					counter = counter + 1
+					rooms[counter] = {
+						name = name,
+						totalPlayers = count,
+						maxPlayers = max,
+						onFuncorpMode = onFcMode
+					}
+				elseif roomType == 1 then -- Pinned rooms / modules
+					packet:read8() -- community
+					name = packet:readUTF()
+					count = packet:readUTF() -- total mice
+					packet:readUTF() -- mjj
+					packet:readUTF() -- m room/#module
+
+					pinnedCounter = pinnedCounter + 1
+					pinned[pinnedCounter] = {
+						name = name,
+						totalPlayers = count
+					}
+				end
+			end
+
+			--[[@
+				@desc Triggered when the room list of a mode is loaded.
+				@param roomMode<int> The id of the room mode.
+				@param rooms<table> The data of the rooms in the list.
+				@param pinned<tablet> The data of the pinned objects in the list.
+				@struct @rooms {
+					name = "", -- The name of the room.
+					totalPlayers = 0, -- The quantity of players in the room.
+					maxPlayers = 0, -- The maximum quantity of players the room can get.
+					onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
+				}
+				@struct @pinned {
+					name = "", -- The name of the object.
+					totalPlayers = 0 -- The quantity of players in the object counter.
+				}
+			]]
+			self.event:emit("roomList", roomMode, rooms, pinned)
+		end,
 	},
 	[28] = {
 		[5] = function(self, connection, packet, C_CC)
@@ -413,6 +494,125 @@ local exec = {
 				@param log<string> The log message.
 			]]
 			self.event:emit("lua", log)
+		end
+	},
+	[30] = {
+		[40] = function(self, connection, packet, C_CC) -- Cafe topic data
+			local id, data
+			local _messages, _totalMessages, _author
+
+			while #packet.stack > 0 do
+				id = packet:read32()
+				data = { id = id }
+				data.title = packet:readUTF()
+				data.authorId = packet:read32()
+				data.posts = packet:read32()
+				data.lastUserName = packet:readUTF()
+				data.timestamp = os.time() - packet:read32()
+
+				if self._cafe[id] then
+					data.messages = self._cafe[id].messages
+					data.author = self._cafe[id].author
+				end
+				self._cafe[id] = data
+			end
+
+			--[[@
+				@desc Triggered when the Café is opened or refreshed, and the topics are loaded partially.
+				@param data<table> The data of the topics.
+				@struct @data
+				{
+					-- See "author" and "messages" in the event "cafeTopicMessage"
+					id = 0, -- The id of the topic.
+					title = "", -- The title of the topic.
+					authorId = 0, -- The id of the topic author.
+					posts = 0, -- The quantity of messages in the topic.
+					lastUserName = "", -- The name of the last user that posted in the topic.
+					timestamp = 0, -- When the topic was created.
+				}
+			]]
+			self.event:emit("cafeTopicList", self._cafe)
+		end,
+		[41] = function(self, connection, packet, C_CC) -- Cafe message data
+			packet:read8() -- ?
+
+			local id = packet:read32()
+			if not self._cafe[id] then
+				self._cafe[id] = { id = id }
+			end
+			local data = self._cafe[id]
+
+			data.messages = { }
+			
+			local totalMessages = 0
+
+			while #packet.stack > 0 do
+				totalMessages = totalMessages + 1
+				data.messages[totalMessages] = { }
+				data.messages[totalMessages].topicId = id
+				data.messages[totalMessages].id = packet:read32()
+				data.messages[totalMessages].authorId = packet:read32()
+				data.messages[totalMessages].timestamp = os.time() - packet:read32()
+				data.messages[totalMessages].author = packet:readUTF()
+				data.messages[totalMessages].content = string.gsub(packet:readUTF(), "\r", "\r\n")
+				data.messages[totalMessages].canLike = packet:readBool()
+				data.messages[totalMessages].likes = packet:read16()
+			end
+
+			data.author = data.messages[1].author
+
+			--[[@
+				@desc Triggered when a Café topic is opened or refreshed.
+				@param topic<table> The data of the topic.
+				@struct @topic
+				{
+					-- See the topic structure in the event "cafeTopicList"
+					-- See the message structure in the event "cafeTopicMessage"
+					author = "", -- The name of the topic author.
+					messages = {
+						[i] = { }
+					}
+				}
+			]]
+			self.event:emit("cafeTopicLoad", topic)
+
+			for i = 1, totalMessages do -- Unfortunately I couldn't make it decrescent, otherwise it would trigger the events in the wrong order
+				if not self._cafeCachedMessages[data.messages[i].id] then
+					self._cafeCachedMessages[data.messages[i].id] = true
+
+					--[[@
+						@desc Triggered when a new message in a Café topic is cached.
+						@param message<table> The data of the message.
+						@param topic<table> The data of the topic.
+						@struct @message
+						{
+							topicId = 0, -- The id of the topic where the message was posted.
+							id = 0, -- The id of the message.
+							authorId = 0, -- The id of the topic author.
+							timestamp = 0, -- When the topic was created.
+							author = "", -- The name of the topic author.
+							content = "", -- The content of the message.
+							canLike = false, -- Whether the message can be liked by the bot or not.
+							likes = 0 -- The quantity of the likes in the message.
+						}
+						@struct @data
+						{
+							-- See the topic structure in the events "cafeTopicLoad" and "cafeTopicList"
+						}
+					]]
+					self.event:emit("cafeTopicMessage", data.messages[i], data)
+				end
+			end
+		end,
+		[44] = function(self, connection, packet, C_CC) -- New Cafe post detected
+			local topicId = packet:read32()
+
+			--[[@
+				@desc Triggered when new messages are posted on Café.
+				@param topicId<int> The id of the topic where the new messages were posted.
+				@param topic<table> The data of the topic. It may be nil. See it's structure in the event @see cafeTopicLoad.
+			]]
+			self.event:emit("unreadCafeMessage", topicId, self._cafe[topicId])
 		end
 	},
 	[44] = {
@@ -441,21 +641,21 @@ local exec = {
 				@desc Triggered when a tribulle packet is not handled by the tribulle packet parser.
 				@param connection<connection> The connection object.
 				@param tribulleId<int> The tribulle id.
-				@param packet<bArray> The Byte Array object with the packets that were not handled.
+				@param packet<bArray> The Byte Array object with the packet that was not handled.
 			]]
 			self.event:emit("missedTribulle", connection, tribulleId, packet)
 		end
 	}
 }
 
--- Recv Manipulation
+-- Recv Parsers
 --[[@
 	@desc Inserts a new function to the packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
 	@param f<function> The function to be triggered when the @C-@CC packets are received.	
 ]]
-client.insertReceiveFunction = function(self, C, CC, f)
+client.insertPacketListener = function(self, C, CC, f)
 	if not exec[C] then
 		exec[C] = { }
 	end
@@ -466,9 +666,26 @@ end
 	@param tribulleId<int> The tribulle id.
 	@param f<function> The function to be triggered when this tribulle packet is received.
 ]]
-client.insertTribulleFunction = function(self, tribulleId, f)
+client.insertTribulleListener = function(self, tribulleId, f)
 	trib[tribulleId] = f
 end
+--[[@
+	@desc Inserts a new function to the old packet parser.
+	@param C<int> The C packet.
+	@param CC<int> The CC packet.
+	@param f<function> The function to be triggered when the @C-@CC packets are received.	
+]]
+client.insertOldPacketListener = function(self, C, CC, f)
+	if not oldPkt[C] then
+		oldPkt[C] = { }
+	end
+	oldPkt[C][CC] = f
+end
+
+-- Compatibility
+client.insertReceiveFunction = client.insertPacketListener
+client.insertTribulleFunction = client.insertTribulleListener
+
 
 client.parsePacket = function(self, connection, packet)
 	local C, CC = packet:read8(), packet:read8()
@@ -479,10 +696,11 @@ client.parsePacket = function(self, connection, packet)
 	end
 	--[[@
 		@desc Triggered when an identifier is not handled by the system.
-		@param identifiers<table> The C, CC identifiers sent in the request.
-		@param packet<bArray> The Byte Array object that was sent.
+		@param connection<connection> The connection object.
+		@param identifiers<table> The C, CC identifiers that were not handled.
+		@param packet<bArray> The Byte Array object with the packet that was not handled.
 	]]
-	self.event:emit("missedPacket", C_CC, packet)
+	self.event:emit("missedPacket", connection, C_CC, packet)
 end
 
 -- System
@@ -673,9 +891,9 @@ end
 -- Methods
 -- Initialization
 --[[@
-	@desc Sets the community where the bot will be cpmmected to.
+	@desc Sets the community where the bot will be connected to.
 	@desc /!\ This method must be called before the @see start.
-	@param community<enum.community> An enum from @see community. (index or value) @default EN
+	@param community?<enum.community> An enum from @see community. (index or value) @default EN
 ]]
 client.setCommunity = function(self, community)
 	community = community and (tonumber(community) or string.lower(community))
@@ -842,10 +1060,62 @@ end
 client.loadLua = function(self, script)
 	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeBigUTF(script))
 end
+-- Café
+--[[@
+	@desc Toggles the current Café state (open / closed).
+	@desc You may use this method to reload the Café (refresh).
+	@param close?<boolean> If the Café must be closed. @default false
+]]
+client.openCafe = function(self, close)
+	close = not close
+	self.main:send(enum.identifier.cafeState, byteArray:new():writeBool(close))
+	if close then -- open = reload
+		self.main:send(enum.identifier.cafeData, byteArray:new())
+	end
+end
+--[[@
+	@desc Creates a Café topic.
+	@desc /!\ The method does not handle the Café's cooldown system.
+	@param title<string> The title of the topic.
+	@param message<string> The content of the topic.
+]]
+client.createCafeTopic = function(self, title, message)
+	message = string.gsub(message, "\r\n", "\r")
+	self.main:send(enum.identifier.cafeNewTopic, byteArray:new():writeUTF(title):writeUTF(message))
+end
+--[[@
+	@desc Opens a Café topic.
+	@desc You may use this method to reload the topic (refresh).
+	@param topicId<int> The id of the topic to be opened.
+]]
+client.openCafeTopic = function(self, topicId)
+	self.main:send(enum.identifier.cafeLoadData, byteArray:new():write32(topicId))
+end
+--[[@
+	@desc Sends a message in a Café topic.
+	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds if the last post is from the same account, otherwise 10 seconds.
+	@param topicId<int> The id of the topic where the message will be posted.
+	@param message<string> The message to be posted.
+]]
+client.sendCafeMessage = function(self, topicId, message)
+	message = string.gsub(message, "\r\n", "\r")
+	self.main:send(enum.identifier.cafeSendMessage, byteArray:new():write32(topicId):writeUTF(message))
+end
+--[[@
+	@desc Likes/Dislikes a message in a Café topic.
+	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds to react in a message.
+	@param topicId<int> The id of the topic where the message is located.
+	@param messageId<int> The id of the message that will receive the reaction.
+	@param deslike?<boolean> Whether the reaction must be a dislike or not. @default false
+]]
+client.likeCafeMessage = function(self, topicId, messageId, deslike)
+	self.main:send(enum.identifier.cafeLike, byteArray:new():write32(topicId):write32(messageId):writeBool(not deslike))
+end
+
 -- Miscellaneous
 --[[@
 	@desc Sends a command (/).
-	@desd /!\ Note that some unlisted commands cannot be triggered by this function.
+	@desc /!\ Note that some unlisted commands cannot be triggered by this function.
 	@param command<string> The command. (without /)
 ]]
 client.sendCommand = function(self, command, crypted)
@@ -853,8 +1123,8 @@ client.sendCommand = function(self, command, crypted)
 end
 --[[@
 	@desc Plays an emote.
-	@param emote<enum.emote> An enum from @see emote. (index or value) @default dance
-	@param flag<string> The country code of the flag when @emote is flag.
+	@param emote?<enum.emote> An enum from @see emote. (index or value) @default dance
+	@param flag?<string> The country code of the flag when @emote is flag.
 ]]
 client.playEmote = function(self, emote, flag)
 	emote = emote and (tonumber(emote) or string.lower(emote))
@@ -879,7 +1149,7 @@ client.playEmote = function(self, emote, flag)
 end
 --[[@
 	@desc Plays an emoticon.
-	@param emoticon<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
+	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
 ]]
 client.playEmoticon = function(self, emoticon)
 	emoticon = emoticon and (tonumber(emoticon) or string.lower(emoticon))
@@ -896,6 +1166,26 @@ client.playEmoticon = function(self, emoticon)
 	end
 
 	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
+end
+--[[@
+	@desc Requests the data of a room mode list.
+	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
+]]
+client.requestRoomList = function(self, roomMode)
+	roomMode = roomMode and (tonumber(roomMode) or string.lower(roomMode))
+	if roomMode then
+		local s = enum._checkEnum(enum.roomMode, roomMode)
+		if not s then
+			return error("[playEmoticon] @roomMode must be a valid 'roomMode' enumeration.", 0)
+		end
+		if s == 1 then
+			roomMode = enum.roomMode[roomMode]
+		end
+	else
+		roomMode = enum.roomMode.normal
+	end
+
+	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
 end
 
 return client

@@ -18,6 +18,17 @@ string.fixEntity = function(s)
 	return s
 end
 
+string.split = function(s, p)
+	local out, counter = { }, 0
+
+	for v in string.gmatch(s, p) do
+		counter = counter + 1
+		out[counter] = tonumber(v) or v
+	end
+
+	return out
+end
+
 string.toNickname = function(s, checkDiscriminator)
 	s = tostring(s)
 	s = string.lower(s)

@@ -163,6 +163,21 @@
 | funcorp | 13 |
 
 ---
+### roomMode <sub>\<int></sub>
+###### The available room modes.
+| Index | Value |
+| :-: | :-: |
+| normal | 01 |
+| bootcamp | 02 |
+| vanilla | 03 |
+| survivor | 08 |
+| racing | 09 |
+| music | 10 |
+| defilante | 11 |
+| village | 16 |
+| module | 18 |
+
+---
 ### setting <sub>\<table></sub>
 ###### Miscellaneous connection settings.
 | Index | Value |
