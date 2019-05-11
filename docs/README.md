@@ -42,7 +42,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [joinChat](Client.md#clientjoinchat--chatname-)
 	- [joinTribeHouse](Client.md#clientjointribehouse--)
 	- [kickTribeMember](Client.md#clientkicktribemember--membername-)
-	- [likeCafeMessage](Client.md#cclientlikecafemessage--topicid-messageid-deslike-)
+	- [likeCafeMessage](Client.md#clientlikecafemessage--topicid-messageid-deslike-)
 	- [loadLua](Client.md#clientloadlua--script-)
 	- [on](Client.md#clienton--eventname-callback-)
 	- [once](Client.md#clientonce--eventname-callback-)
