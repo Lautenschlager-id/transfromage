@@ -353,7 +353,7 @@ local exec = {
 					soulmate = "", -- The name of the soulmate.
 					saves = {
 						normal = 0, -- Total saves in the normal mode.
-						hardmode = 0, -- Total saves in the hard mode.
+						hard = 0, -- Total saves in the hard mode.
 						divine = 0 -- Total saves in the divine mode.
 					}, -- Total saves of the account.
 					shamanCheese = 0, -- Total of cheeses gathered as shaman.
@@ -457,14 +457,18 @@ local exec = {
 				@param rooms<table> The data of the rooms in the list.
 				@param pinned<tablet> The data of the pinned objects in the list.
 				@struct @rooms {
-					name = "", -- The name of the room.
-					totalPlayers = 0, -- The quantity of players in the room.
-					maxPlayers = 0, -- The maximum quantity of players the room can get.
-					onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
+					[n] = {
+						name = "", -- The name of the room.
+						totalPlayers = 0, -- The quantity of players in the room.
+						maxPlayers = 0, -- The maximum quantity of players the room can get.
+						onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
+					}
 				}
 				@struct @pinned {
-					name = "", -- The name of the object.
-					totalPlayers = 0 -- The quantity of players in the object counter.
+					[n] = {
+						name = "", -- The name of the object.
+						totalPlayers = 0 -- The quantity of players in the object counter.
+					}
 				}
 			]]
 			self.event:emit("roomList", roomMode, rooms, pinned)
