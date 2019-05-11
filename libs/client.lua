@@ -1106,10 +1106,10 @@ end
 	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds to react in a message.
 	@param topicId<int> The id of the topic where the message is located.
 	@param messageId<int> The id of the message that will receive the reaction.
-	@param deslike?<boolean> Whether the reaction must be a dislike or not. @default false
+	@param dislike?<boolean> Whether the reaction must be a dislike or not. @default false
 ]]
-client.likeCafeMessage = function(self, topicId, messageId, deslike)
-	self.main:send(enum.identifier.cafeLike, byteArray:new():write32(topicId):write32(messageId):writeBool(not deslike))
+client.likeCafeMessage = function(self, topicId, messageId, dislike)
+	self.main:send(enum.identifier.cafeLike, byteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
 end
 
 -- Miscellaneous
