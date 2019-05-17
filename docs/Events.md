@@ -18,13 +18,29 @@ end)
 >**@data structure**:
 >```Lua
 >{
->	-- See "author" and "messages" in the event "cafeTopicMessage"
->	id = 0, -- The id of the topic.
->	title = "", -- The title of the topic.
->	authorId = 0, -- The id of the topic author.
->	posts = 0, -- The quantity of messages in the topic.
->	lastUserName = "", -- The name of the last user that posted in the topic.
->	timestamp = 0, -- When the topic was created.
+>	[i] = {
+>		id = 0, -- The id of the topic.
+>		title = "", -- The title of the topic.
+>		authorId = 0, -- The id of the topic author.
+>		posts = 0, -- The quantity of messages in the topic.
+>		lastUserName = "", -- The name of the last user that posted in the topic.
+>		timestamp = 0, -- When the topic was created.
+>
+>		-- The event "cafeTopicLoad" must be triggered so the fields below exist.
+>		author = "", -- The name of the topic author.
+>		messages = {
+>			[i] = {
+>				topicId = 0, -- The id of the topic where the message is located.
+>				id = 0, -- The id of the message.
+>				authorId = 0, -- The id of the topic author.
+>				timestamp = 0, -- When the topic was created.
+>				author = "", -- The name of the topic author.
+>				content = "", -- The content of the message.
+>				canLike = false, -- Whether the message can be liked by the bot or not.
+>				likes = 0 -- The quantity of likes in the message.
+>			}
+>		}
+>	}
 >}
 >```
 >
@@ -39,11 +55,26 @@ end)
 >**@topic structure**:
 >```Lua
 >{
->	-- See the topic structure in the event "cafeTopicList"
->	-- See the message structure in the event "cafeTopicMessage"
->	author = "" -- The name of the topic author.
+>	id = 0, -- The id of the topic.
+>	title = "", -- The title of the topic.
+>	authorId = 0, -- The id of the topic author.
+>	posts = 0, -- The quantity of messages in the topic.
+>	lastUserName = "", -- The name of the last user that posted in the topic.
+>	timestamp = 0, -- When the topic was created.
+>
+>	-- The event "cafeTopicLoad" must be triggered so the fields below exist.
+>	author = "", -- The name of the topic author.
 >	messages = {
->		[i] = { }
+>		[i] = {
+>			topicId = 0, -- The id of the topic where the message is located.
+>			id = 0, -- The id of the message.
+>			authorId = 0, -- The id of the topic author.
+>			timestamp = 0, -- When the topic was created.
+>			author = "", -- The name of the topic author.
+>			content = "", -- The content of the message.
+>			canLike = false, -- Whether the message can be liked by the bot or not.
+>			likes = 0 -- The quantity of likes in the message.
+>		}
 >	}
 >}
 >```
@@ -60,21 +91,41 @@ end)
 >**@message structure**:
 >```Lua
 >{
->	topicId = 0, -- The id of the topic where the message was posted.
+>	topicId = 0, -- The id of the topic where the message is located.
 >	id = 0, -- The id of the message.
 >	authorId = 0, -- The id of the topic author.
 >	timestamp = 0, -- When the topic was created.
 >	author = "", -- The name of the topic author.
 >	content = "", -- The content of the message.
 >	canLike = false, -- Whether the message can be liked by the bot or not.
->	likes = 0 -- The quantity of the likes in the message.
+>	likes = 0 -- The quantity of likes in the message.
 >}
 >```
 >
 >**@topic structure**:
 >```Lua
 >{
->	-- See the topic structure in the events "cafeTopicLoad" and "cafeTopicList"
+>	id = 0, -- The id of the topic.
+>	title = "", -- The title of the topic.
+>	authorId = 0, -- The id of the topic author.
+>	posts = 0, -- The quantity of messages in the topic.
+>	lastUserName = "", -- The name of the last user that posted in the topic.
+>	timestamp = 0, -- When the topic was created.
+>
+>	-- The event "cafeTopicLoad" must be triggered so the fields below exist.
+>	author = "", -- The name of the topic author.
+>	messages = {
+>		[i] = {
+>			topicId = 0, -- The id of the topic where the message is located.
+>			id = 0, -- The id of the message.
+>			authorId = 0, -- The id of the topic author.
+>			timestamp = 0, -- When the topic was created.
+>			author = "", -- The name of the topic author.
+>			content = "", -- The content of the message.
+>			canLike = false, -- Whether the message can be liked by the bot or not.
+>			likes = 0 -- The quantity of likes in the message.
+>		}
+>	}
 >}
 >```
 >
@@ -428,9 +479,37 @@ end)
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| topicId | `int` | The id of the topic where the new messages were posted. |
->| topic | `table` | The data of the topic. It may be nil. See it's structure in the event [cafeTopicLoad](Events.md#cafetopicload--topic-). |
+>| topic | `table` | The data of the topic. It **may be** nil. |
 >
 >Triggered when new messages are posted on Café.
+>
+>**@topic structure**:
+>```Lua
+>{
+>	id = 0, -- The id of the topic.
+>	title = "", -- The title of the topic.
+>	authorId = 0, -- The id of the topic author.
+>	posts = 0, -- The quantity of messages in the topic.
+>	lastUserName = "", -- The name of the last user that posted in the topic.
+>	timestamp = 0, -- When the topic was created.
+>	
+>	-- The event "cafeTopicLoad" must be triggered so the fields below exist.
+>	author = "", -- The name of the topic author.
+>	messages = {
+>		-- This might not include the unread message.
+>		[i] = {
+>			topicId = 0, -- The id of the topic where the message is located.
+>			id = 0, -- The id of the message.
+>			authorId = 0, -- The id of the topic author.
+>			timestamp = 0, -- When the topic was created.
+>			author = "", -- The name of the topic author.
+>			content = "", -- The content of the message.
+>			canLike = false, -- Whether the message can be liked by the bot or not.
+>			likes = 0 -- The quantity of likes in the message.
+>		}
+>	}
+>}
+>```
 >
 ---
 >### whisperMessage ( playerName, message, playerCommunity )
