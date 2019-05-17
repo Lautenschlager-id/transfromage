@@ -61,8 +61,6 @@ end)
 >	posts = 0, -- The quantity of messages in the topic.
 >	lastUserName = "", -- The name of the last user that posted in the topic.
 >	timestamp = 0, -- When the topic was created.
->
->	-- The event "cafeTopicLoad" must be triggered so the fields below exist.
 >	author = "", -- The name of the topic author.
 >	messages = {
 >		[i] = {
