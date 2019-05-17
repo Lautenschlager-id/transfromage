@@ -1,6 +1,6 @@
-[![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TSTEG3PXK4HJ4&source=url)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TSTEG3PXK4HJ4&source=url)
 
-<p align='center'><a href='https://atelier801.com/topic?f=5&t=917024'><img src="http://images.atelier801.com/168e7d7a07d.png" title="Fromage"></a></p>
+<p align='center'><a href='https://atelier801.com/topic?f=5&t=917024'><img src="http://images.atelier801.com/168e7d7a07d.png" title="Transfromage"></a></p>
 
 **Transformice's API written in Lua (5.1▲) using the Luvit runtime environment**
 
@@ -22,7 +22,10 @@ This API had many indirect contributors, including [@Tocutoeltuco](https://githu
 
 This API depends on an [endpoint](https://api.tocu.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
 
-To get access to it you need to request a token to the player [Tocutoeltuco](https://github.com/Tocutoeltuco) _(preferably on discord: 'Tocutoeltuco#0018')_ by explaining your project.
+To get access to it you need to request a token, after explaining your project, to one of the following players:
+- **[Tocutoeltuco](https://github.com/Tocutoeltuco)** @discord=> `Tocutoeltuco#0018`;
+- **Blank#3495** @discord=> `󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪#8737`;
+- **[Bolodefchoco](https://github.com/Lautenschlager-id)** @discord=> `Lautenschlager#2555`.
 
 ## Installation
 
@@ -42,13 +45,11 @@ The update will overwrite all the old files and dependencies.
 
 For semi-automatic updates (asks permission before updating), create the file `semiautoupdate` instead.
 
-### Contribution
+### Contributing
 
 The best way to contribute for this API is ~~donating~~ creating pull requests with bug fixes and new events / methods (like joining the map editor, getting a map XML, loading Lua...)
 
-You may find the Tribulle part [here](libs/client.lua) by searching `-- Recv` - the format is `[C][CC](connection, packet, C_CC)` -. You may also find the methods part in the same file by searching `-- Methods`.
-
-Currently the [Events documentation](docs/Events.md) has to be done manually. To document [Methods](docs/Client.md) use the format provided [here](https://github.com/Lautenschlager-id/Fromage/blob/master/docgen.lua#L1-L36).
+Read [CONTRIBUTING](CONTRIBUTING.md) to learn more about contributions for the API.
 
 ## Base example
 
