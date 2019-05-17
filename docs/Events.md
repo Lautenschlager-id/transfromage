@@ -34,7 +34,7 @@ end)
 >| :-: | :-: | - |
 >| topic | `table` | The data of the topic. |
 >
->Triggered when the Café is opened or refreshed, and the topics are loaded partially.
+>Triggered when a Café topic is opened or refreshed.
 >
 >**@topic structure**:
 >```Lua
