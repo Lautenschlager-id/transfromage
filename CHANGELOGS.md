@@ -7,7 +7,7 @@
 - Added the internal function _client.coroutineFunction_.
 
 ### Changes
-- All insert functions now execute automatic coroutine callbacks. (@f is now coroutinezed).
+- All insert functions now execute automatic coroutine callbacks. (@f is now coroutinized).
 
 
 ## v1.0.0 - 22/05/2019
