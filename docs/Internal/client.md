@@ -1,5 +1,5 @@
 # Private Functions
-Private functions where created in the Client class because their use could compromise the functionalities of the API.
+Private functions were created in the Client class because their use could compromise the functionalities of the API.
 
 ---
 >### closeAll ( self )
@@ -9,6 +9,20 @@ Private functions where created in the Client class because their use could comp
 >
 >Closes all the Connection objects.<br>
 >Note that a new Client instance should be created instead of closing and re-opening an existent one.
+>
+---
+>### coroutineFunction ( f )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| f | `funciton` | ✔ | Function to be executed inside a coroutine. |
+>
+>Creates a coroutine to execute the given function.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `function` | A coroutine with @f to be executed. |
 >
 ---
 >### getKeys ( self, tfmId, token )

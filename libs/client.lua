@@ -10,7 +10,7 @@ local zlibDecompress = require("miniz").inflate
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
-local handlePlayerField
+local handlePlayerField, coroutineFunction
 
 local client = table.setNewClass()
 client.__index = client
@@ -1226,6 +1226,7 @@ client.insertPacketListener = function(self, C, CC, f, append)
 		packetListener[C] = { }
 	end
 
+	f = coroutineFunction(f)
 	if append and packetListener[C][CC] then
 		packetListener[C][CC] = function(...)
 			packetListener[C][CC](...)
@@ -1242,6 +1243,7 @@ end
 	@param append?<boolean> True if the function should be appended to the (C, CC, tribulle) listener, false if the function should overwrite the (C, CC) listener. @default false
 ]]
 client.insertTribulleListener = function(self, tribulleId, f, append)
+	f = coroutineFunction(f)
 	if append and tribulleListener[tribulleId] then
 		tribulleListener[tribulleId] = function(...)
 			tribulleListener[tribulleId](...)
@@ -1263,6 +1265,7 @@ client.insertOldPacketListener = function(self, C, CC, f, append)
 		oldPacketListener[C] = { }
 	end
 
+	f = coroutineFunction(f)
 	if append and oldPacketListener[C][CC] then
 		oldPacketListener[C][CC] = function(...)
 			oldPacketListener[C][CC](...)
@@ -1444,6 +1447,16 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 		self.event:emit((eventName or "updatePlayer"), self.playerList[playerId], (oldPlayerData or (sendValue and fieldValue)))
 	end
 end
+--[[@
+	@desc Creates a coroutine to execute the given function.
+	@param f<function> Function to be executed inside a coroutine.
+	@returns function A coroutine with @f to be executed.
+]]
+coroutineFunction = function(f)
+	return function(...)
+		coroutine.wrap(f)(...)
+	end
+end
 
 --[[@
 	@desc Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
@@ -1515,9 +1528,7 @@ end)
 	@param callback<function> The function that must be called when the event is triggered.
 ]]
 client.on = function(self, eventName, callback)
-	return self.event:on(eventName, function(...)
-		coroutine.wrap(callback)(...)
-	end)
+	return self.event:on(eventName, coroutineFunction(callback))
 end
 --[[@
 	@desc Sets an event emitter that is triggered only once when a specific behavior happens.
@@ -1526,9 +1537,7 @@ end
 	@param callback<function> The function that must be called only once when the event is triggered.
 ]]
 client.once = function(self, eventName, callback)
-	return self.event:once(eventName, function(...)
-		coroutine.wrap(callback)(...)
-	end)
+	return self.event:once(eventName, coroutineFunction(callback))
 end
 --[[@
 	@desc Emits an event.

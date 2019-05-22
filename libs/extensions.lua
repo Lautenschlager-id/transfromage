@@ -41,7 +41,7 @@ do
 	local err = error
 	_G.error = function(message, level) -- _G avoids bugs
 		os.log(message) -- Clean message
-		return err('↑', level)
+		return err('^', level)
 	end
 end
 --[[@

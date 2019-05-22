@@ -38,7 +38,7 @@ connection.new = function(self, name, event)
 	return setmetatable(data, connection)
 end
 --[[@
-	@desc Ends a connection.
+	@desc Ends the socket connection.
 ]]
 connection.close = function(self)
 	self.open = false

@@ -2,6 +2,14 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.1.0 - 22/05/2019
+### News
+- Added the internal function _client.coroutineFunction_.
+
+### Changes
+- All insert functions now execute automatic coroutine callbacks. (@f is now coroutinezed).
+
+
 ## v1.0.0 - 22/05/2019
 ### News
 - Added the function _os.log_.
@@ -21,7 +29,7 @@ do
 	end
 end
 ```
-- Added internal function _handlePlayerField_.
+- Added internal function _client.handlePlayerField_.
 - Added a new parameter `append` in the listener functions.
 - Added _table.copy_.
 - Added the event _refreshPlayerList ( playerList )_.
@@ -55,7 +63,7 @@ end)
 	- insertOldPacketListener's f → (data, connection, oldIdentifiers)
 	- insertPacketListener's f → (packet, connection, identifiers)
 - Now you don't need to send _client.openCafe_ to reload it. Use _client.reloadCafe_ instead.
-- Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called, respectivelly: _tribulleListener_, _oldPacketListener_, _packetListener_.
+- Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called _tribulleListener_, _oldPacketListener_ and _packetListener_, respectivelly..
 - Renamed the class _connectionHandler_ to _connection_.
 - Renamed the enum _emote.:D_ to _emote.laugh_, due to facilities. **No compatibility maintained.**
 - Renamed the enum _identifier.message_ to _identifier.bulle_, since it was a grotesque mistake since the beginning. **No compatibility maintained.**

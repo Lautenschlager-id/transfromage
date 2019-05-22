@@ -32,7 +32,7 @@ Handles the connection with the Transformice's servers.
 >
 ---
 >### connection:close (  )
->Ends a connection.
+>Ends the socket connection.
 >
 ---
 >### connection:connect ( ip, port )
