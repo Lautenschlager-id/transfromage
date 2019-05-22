@@ -8,7 +8,7 @@
 - Added the function _connection.close_.
 - Added the function _client.reloadCafe_.
 - The field _client.\_cafe_ was renamed to _client.cafe_.
-- Implemented error system (low and high error) with the enum of _enum.errorLevel_. Now you can rewrite the funtion _error_ to handle low and high errors differently. Example:
+- Implemented error system (low and high error) with the enum of _enum.errorLevel_. Now you can rewrite the function _error_ to handle low and high errors differently. Example:
 ```Lua
 do
 	local err = error
@@ -51,9 +51,9 @@ end)
 
 ### Changes
 - The sequence order of parameters in the listener functions have changed.
-	- insertTribulleListener → (packet, connection, tribulleId)
-	- insertOldPacketListener_ → (data, connection, oldIdentifiers)
-	- insertPacketListener → (packet, connection, identifiers)
+	- insertTribulleListener's f → (packet, connection, tribulleId)
+	- insertOldPacketListener's f → (data, connection, oldIdentifiers)
+	- insertPacketListener's f → (packet, connection, identifiers)
 - Now you don't need to send _client.openCafe_ to reload it. Use _client.reloadCafe_ instead.
 - Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called, respectivelly: _tribulleListener_, _oldPacketListener_, _packetListener_.
 - Renamed the class _connectionHandler_ to _connection_.
