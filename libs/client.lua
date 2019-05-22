@@ -1,53 +1,88 @@
-local connectionHandler = require("connection")
+local connection = require("connection")
 local byteArray = require("bArray")
-local encode = require("cipher")
+local encode = require("encode")
 local http = require("coro-http")
 local json = require("json")
 local timer = require("timer")
 local enum = require("enum")
 local event = require("core").Emitter
-local bitwise = require("bitwise")
 local zlibDecompress = require("miniz").inflate
-if not string.getBytes then
-	require("extensions")
-end
 
-local client = { }
+local parsePacket, receive, sendHeartbeat, getKeys, closeAll
+local tribulleListener, oldPacketListener, packetListener
+local handlePlayerField
+
+local client = table.setNewClass()
 client.__index = client
 
+--[[@
+	@desc Creates a new instance of Client. Alias: `client()`.
+	@returns client The new Client object.
+	@struct {
+		playerName = "", -- The nickname of the account that is attached to this instance, if there's any.
+		community = 0, -- The community enum where the object is set to perform the login. Default value is EN.
+		main = { }, -- The main connection object, handles the game server.
+		bulle = { }, -- The bulle connection object, handles the room server.
+		event = { }, -- The event emitter object, used to trigger events.
+		cafe = { }, -- The cached Café structure. (topics and messages)
+		playerList = { }, -- The room players data.
+		-- The fields below must not be edited, since they are used internally in the api.
+		_mainLoop = { }, -- (userdata) A timer that retrieves the packets received from the game server.
+		_bulleLoop = { }, -- (userdata) A timer that retrieves the packets received from the room server.
+		_receivedAuthkey = 0, -- Authorization key, used to connect the account.
+		_gameVersion = 0, -- The game version, used to connect the account.
+		_gameConnectionKey = "", -- The game connection key, used to connect the account.
+		_gameIdentificationKeys = { }, -- The game identification keys, used to connect the account.
+		_gameMsgKeys = { }, -- The game message keys, used to connect the account.
+		_connectionTime = 0, -- The timestamp of when the player logged in. It will be 0 if the account is not connected.
+		_isConnected = false, -- Whether the player is connected or not.
+		_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
+		_who_fingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
+		_who_list = { }, -- A list of chat names associated to their own fingerprints.
+		_process_xml = true, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+		_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
+		_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
+	}
+]]
 client.new = function(self)
 	local eventEmitter = event:new()
 
 	return setmetatable({
 		playerName = nil,
 		community = enum.community.en,
-		main = connectionHandler:new("main", eventEmitter),
-		mainLoop = nil,
+		main = connection:new("main", eventEmitter),
 		bulle = nil,
-		bulleLoop = nil,
 		event = eventEmitter,
-		gamePacketKeys = { },
-		receivedAuthkey = 0,
-		gameVersion = 0,
-		gameConnectionKey = "",
-		gameAuthkey = 0,
-		gameIdentificationKeys = { },
-		gameMsgKeys = { },
-		_connectionTime = os.time(),
+		cafe = { },
+		playerList = setmetatable({ }, {
+			__len = function(this)
+				return this.count or -1
+			end
+		}),
+		-- Private
+		_mainLoop = nil,
+		_bulleLoop = nil,
+		_receivedAuthkey = 0,
+		_gameVersion = 0,
+		_gameConnectionKey = "",
+		_gameAuthkey = 0,
+		_gameIdentificationKeys = { },
+		_gameMsgKeys = { },
+		_connectionTime = 0,
 		_isConnected = false,
 		_hbTimer = nil,
 		_who_fingerprint = 0,
 		_who_list = { },
 		_process_xml = true,
-		_cafe = { },
-		_cafeCachedMessages = { }
+		_cafeCachedMessages = { },
+		_handle_players = false
 	}, self)
 end
 
--- Recv
+-- Receive
 -- Tribulle functions
-local trib = {
-	[32] = function(self, connection, packet, C_CC, tribulleId) -- Friend connected
+tribulleListener = {
+	[32] = function(self, packet, connection, tribulleId) -- Friend connected
 		local playerName = packet:readUTF()
 		--[[@
 			@desc Triggered when a friend connects to the game.
@@ -55,7 +90,7 @@ local trib = {
 		]]
 		self.event:emit("friendConnection", string.toNickname(playerName, true))
 	end,
-	[33] = function(self, connection, packet, C_CC, tribulleId) -- Friend disconnected
+	[33] = function(self, packet, connection, tribulleId) -- Friend disconnected
 		local playerName = packet:readUTF()
 		--[[@
 			@desc Triggered when a friend disconnects from the game.
@@ -63,11 +98,11 @@ local trib = {
 		]]
 		self.event:emit("friendDisconnection", string.toNickname(playerName, true))
 	end,
-	[59] = function(self, connection, packet, C_CC, tribulleId) -- /who
+	[59] = function(self, packet, connection, tribulleId) -- /who
 		local fingerprint = packet:read32()
 
 		packet:read8() -- ?
-		
+
 		local total = packet:read16()
 		local data = { }
 		for i = 1, total do
@@ -83,7 +118,7 @@ local trib = {
 		self.event:emit("chatWho", chatName, data)
 		self._who_list[fingerprint] = nil
 	end,
-	[64] = function(self, connection, packet, C_CC, tribulleId) -- #Chat Message
+	[64] = function(self, packet, connection, tribulleId) -- #Chat Message
 		local playerName, community, chatName, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
 		--[[@
 			@desc Triggered when a #chat receives a new message.
@@ -94,7 +129,7 @@ local trib = {
 		]]
 		self.event:emit("chatMessage", chatName, string.toNickname(playerName, true), string.fixEntity(message), community)
 	end,
-	[65] = function(self, connection, packet, C_CC, tribulleId) -- Tribe message
+	[65] = function(self, packet, connection, tribulleId) -- Tribe message
 		local memberName, message = packet:readUTF(), packet:readUTF()
 		--[[@
 			@desc Triggered when the tribe chat receives a new message.
@@ -103,17 +138,17 @@ local trib = {
 		]]
 		self.event:emit("tribeMessage", string.toNickname(memberName, true), string.fixEntity(message))
 	end,
-	[66] = function(self, connection, packet, C_CC, tribulleId) -- Whisper message
+	[66] = function(self, packet, connection, tribulleId) -- Whisper message
 		local playerName, community, _, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
 		--[[@
-			@desc Triggered when the account receives a whisper.
+			@desc Triggered when the player receives a whisper.
 			playerName<string> Who sent the whisper message.
 			message<string> The message.
 			playerCommunity<int> The community id of @playerName.
 		]]
 		self.event:emit("whisperMessage", string.toNickname(playerName, true), string.fixEntity(message), community)
 	end,
-	[88] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member connected
+	[88] = function(self, packet, connection, tribulleId) -- Tribe member connected
 		local memberName = packet:readUTF()
 		--[[@
 			@desc Triggered when a tribe member connects to the game.
@@ -121,7 +156,7 @@ local trib = {
 		]]
 		self.event:emit("tribeMemberConnection", string.toNickname(memberName, true))
 	end,
-	[90] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member disconnected
+	[90] = function(self, packet, connection, tribulleId) -- Tribe member disconnected
 		local memberName = packet:readUTF()
 		--[[@
 			@desc Triggered when a tribe member disconnects to the game.
@@ -129,7 +164,7 @@ local trib = {
 		]]
 		self.event:emit("tribeMemberDisconnection", string.toNickname(memberName, true))
 	end,
-	[91] = function(self, connection, packet, C_CC, tribulleId) -- New tribe member
+	[91] = function(self, packet, connection, tribulleId) -- New tribe member
 		local memberName = packet:readUTF()
 		--[[@
 			@desc Triggered when a player joins the tribe.
@@ -137,7 +172,7 @@ local trib = {
 		]]
 		self.event:emit("newTribeMember", string.toNickname(memberName, true))
 	end,
-	[92] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member leave
+	[92] = function(self, packet, connection, tribulleId) -- Tribe member leave
 		local memberName = packet:readUTF()
 		--[[@
 			@desc Triggered when a member leaves the tribe.
@@ -145,7 +180,7 @@ local trib = {
 		]]
 		self.event:emit("tribeMemberLeave", string.toNickname(memberName, true))
 	end,
-	[93] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
+	[93] = function(self, packet, connection, tribulleId) -- Tribe member kicked
 		local memberName, kickerName = packet:readUTF(), packet:readUTF()
 		--[[@
 			@desc Triggered when a tribe member is kicked.
@@ -154,7 +189,7 @@ local trib = {
 		]]
 		self.event:emit("tribeMemberKick", string.toNickname(memberName, true), string.toNickname(kickerName, true))
 	end,
-	[124] = function(self, connection, packet, C_CC, tribulleId) -- Tribe member kicked
+	[124] = function(self, packet, connection, tribulleId) -- Tribe member kicked
 		local setterName, memberName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
 		--[[@
 			@desc Triggered when a tribe member gets a role.
@@ -165,37 +200,176 @@ local trib = {
 		self.event:emit("tribeMemberGetRole", string.toNickname(memberName, true), string.toNickname(setterName, true), role)
 	end
 }
--- Old packets
-local oldPkt = {
+-- Old packet functions
+oldPacketListener = {
+	[8] = {
+		[5] = function(self, data, connection, oldIdentifiers) -- Updates player dead state [true]
+			if not self._handle_players or self.playerList.count == 0 then return end
 
+			local playerId, score = data[1], data[2]
+			if self.playerList[playerId] then
+				self.playerList[playerId].isDead = true
+				self.playerList[playerId].score = score
+
+				--[[@
+					@desc Triggered when a player dies.
+					@param playerData<table> The data of the player.
+					@struct @playerData {
+						playerName = "", -- The nickname of the player.
+						id = 0, -- The temporary id of the player during the section.
+						isShaman = false, -- Whether the player is shaman or not.
+						isDead = false, -- Whether the player is dead or not.
+						score = 0, -- The current player score.
+						hasCheese = false, -- Whether the player has cheese or not.
+						title = 0, -- The id of the current title of the player.
+						titleStars = 0, -- The quantity of starts that the current title of the player has.
+						gender = 0, -- The gender of the player. Enum in enum.gender.
+						look = "", -- The current outfit string code of the player.
+						mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+						shamanColor = 0, -- The color of the player as shaman.
+						nameColor = 0, -- The color of the nickname of the player.
+						isSouris = false, -- Whether the player is souris or not.
+						isVampire = false, -- Whether the player is vampire or not.
+						hasWon = false, -- Whether the player has joined the hole in the round or not.
+						winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+						winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+						isFacingRight = false, -- Whether the player is facing right or not.
+						movingRight = false, -- Whether the player is moving right or not.
+						movingLeft = false, -- Whether the player is moving left or not.
+						isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+						isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+						x = 0, -- The coordinate X of the player in the map.
+						y =  0, -- The coordinate Y of the player in the map.
+						vx = 0, -- The X speed of the player in the map.
+						vy =  0, -- The Y speed of the player in the map.
+						isDucking = false, -- Whether the player is ducking or not.
+						isJumping = false, -- Whether the player is jumping or not.
+						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+					}
+				]]
+				self.event:emit("playerDied", self.playerList[playerId])
+			end			
+		end,
+		[7] = function(self, data, connection, oldIdentifiers) -- Removes player
+			if not self._handle_players or self.playerList.count == 0 then return end
+
+			local playerId = tonumber(data[1])
+			if self.playerList[playerId] then
+				--[[@
+					@desc Triggered when a player leaves the room.
+					@param playerData<table> The data of the player.
+					@struct @playerData {
+						playerName = "", -- The nickname of the player.
+						id = 0, -- The temporary id of the player during the section.
+						isShaman = false, -- Whether the player is shaman or not.
+						isDead = false, -- Whether the player is dead or not.
+						score = 0, -- The current player score.
+						hasCheese = false, -- Whether the player has cheese or not.
+						title = 0, -- The id of the current title of the player.
+						titleStars = 0, -- The quantity of starts that the current title of the player has.
+						gender = 0, -- The gender of the player. Enum in enum.gender.
+						look = "", -- The current outfit string code of the player.
+						mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+						shamanColor = 0, -- The color of the player as shaman.
+						nameColor = 0, -- The color of the nickname of the player.
+						isSouris = false, -- Whether the player is souris or not.
+						isVampire = false, -- Whether the player is vampire or not.
+						hasWon = false, -- Whether the player has joined the hole in the round or not.
+						winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+						winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+						isFacingRight = false, -- Whether the player is facing right or not.
+						movingRight = false, -- Whether the player is moving right or not.
+						movingLeft = false, -- Whether the player is moving left or not.
+						isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+						isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+						x = 0, -- The coordinate X of the player in the map.
+						y =  0, -- The coordinate Y of the player in the map.
+						vx = 0, -- The X speed of the player in the map.
+						vy =  0, -- The Y speed of the player in the map.
+						isDucking = false, -- Whether the player is ducking or not.
+						isJumping = false, -- Whether the player is jumping or not.
+						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+					}
+				]]
+				self.event:emit("playerLeft", self.playerList[playerId])
+
+				-- Removes the numeric reference and decreases 1 for all the next players in the queue.
+				local pos = self.playerList[playerId]._pos
+				table.remove(self.playerList, self.playerList[playerId]._pos)
+
+				self.playerList.count = self.playerList.count - 1
+				for i = pos, self.playerList.count do
+					self.playerList[i]._pos = self.playerList[i]._pos - 1
+				end
+
+				-- Removes the other references
+				self.playerList[self.playerList[playerId].playerName] = nil
+				self.playerList[playerId] = nil
+			end
+		end
+	}
 }
--- Recv functions
-local exec = {
+-- Normal functions
+packetListener = {
 	[1] = {
-		[1] = function(self, connection, packet, C_CC) -- Old packets format
+		[1] = function(self, packet, connection, identifiers) -- Old packets format
 			local data = string.split(packet:readUTF(), "[^\x01]+")
-			local oldC_CC = { string.byte(table.remove(data, 1), 1, 2) }
+			local oldIdentifiers = { string.byte(table.remove(data, 1), 1, 2) }
 
-			if oldPkt[oldC_CC[1]] and oldPkt[oldC_CC[1]][oldC_CC[2]] then
-				return oldPkt[oldC_CC[1]][oldC_CC[2]](self, connection, data, oldC_CC)
+			if oldPacketListener[oldIdentifiers[1]] and oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]] then
+				return oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]](self, data, connection, oldIdentifiers)
 			end
 
 			--[[@
 				@desc Triggered when an old packet is not handled by the old packet parser.
+				@param oldIdentifiers<table> The oldC, oldCC identifiers that were not handled.
+				@param data<table> The data that was not handled.
 				@param connection<connection> The connection object.
-				@param identifiers<table> The C, CC identifiers that were not handled.
-				@param packet<bArray> The Byte Array object with the packet that was not handled.
 			]]
-			self.event:emit("missedOldPacket", connection, oldC_CC, data)
+			self.event:emit("missedOldPacket", oldIdentifiers, data, connection)
+		end
+	},
+	[4] = {
+		[4] = function(self, packet, connection, identifiers) -- Update player movement
+			if not self._handle_players or self.playerList.count == 0 then return end
+
+			local playerId = packet:read32()
+			if self.playerList[playerId] then
+				packet:read32() -- round code
+
+				local oldPlayerData = table.copy(self.playerList[playerId])
+
+				-- It's intended that, based on Lua behavior, all the hashes get updated automatically.
+				self.playerList[playerId].movingRight = packet:readBool()
+				self.playerList[playerId].movingLeft = packet:readBool()
+
+				self.playerList[playerId].x = math.normalizePoint(packet:read32())
+				self.playerList[playerId].y = math.normalizePoint(packet:read32())
+				self.playerList[playerId].vx = packet:read16()
+				self.playerList[playerId].vy = packet:read16()
+
+				self.playerList[playerId].isJumping = packet:readBool()
+
+				self.event:emit("updatePlayer", self.playerList[playerId], oldPlayerData)
+			end
+		end,
+		[6] = function(self, packet, connection, identifiers) -- Updates player direction
+			handlePlayerField(self, packet, "isFacingRight")
+		end,
+		[9] = function(self, packet, connection, identifiers) -- Updates ducking
+			handlePlayerField(self, packet, "isDucking")
+		end,
+		[10] = function(self, packet, connection, identifiers) -- Updates player direction
+			handlePlayerField(self, packet, "isFacingRight")
 		end
 	},
 	[5] = {
-		[2] = function(self, connection, packet, C_CC) -- New game
+		[2] = function(self, packet, connection, identifiers) -- New game
 			if not self._isConnected then return end
 
 			local map = { }
 			map.code = packet:read32()
-	
+
 			packet:read16() -- ?
 			packet:read8() -- ?
 			packet:read16() -- ?
@@ -210,7 +384,7 @@ local exec = {
 			map.author = packet:readUTF()
 			map.perm = packet:read8()
 			map.isMirrored = packet:readBool()
-	
+
 			--[[@
 				@desc Triggered when a new map is loaded.
 				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_process_xml` as false to avoid processing it.
@@ -225,18 +399,18 @@ local exec = {
 			]]
 			self.event:emit("newGame", map)
 		end,
-		[21] = function(self, connection, packet, C_CC) -- Room changed
+		[21] = function(self, packet, connection, identifiers) -- Room changed
 			local isPrivate, roomName = packet:readBool(), packet:readUTF()
 
 			if string.byte(roomName, 2) == 3 then
 				--[[@
-					@desc Triggered when the account joins a tribe house.
+					@desc Triggered when the player joins a tribe house.
 					@param tribeName<string> The name of the tribe.
 				]]
 				self.event:emit("joinTribeHouse", string.sub(roomName, 3))
 			else
 				--[[@
-					@desc Triggered when the account changes the room.
+					@desc Triggered when the player changes the room.
 					@param roomName<string> The name of the room.
 					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
 				]]
@@ -245,7 +419,7 @@ local exec = {
 		end
 	},
 	[6] = {
-		[6] = function(self, connection, packet, C_CC) -- Room message
+		[6] = function(self, packet, connection, identifiers) -- Room message
 			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string.fixEntity(packet:readUTF())
 			--[[@
 				@desc Triggered when the room receives a new user message.
@@ -256,7 +430,7 @@ local exec = {
 			]]
 			self.event:emit("roomMessage", string.toNickname(playerName, true), string.fixEntity(message), playerCommu, playerId)
 		end,
-		[20] = function(self, connection, packet, C_CC) -- /time
+		[20] = function(self, packet, connection, identifiers) -- /time
 			packet:read8() -- ?
 			packet:readUTF() -- $TempsDeJeu
 			packet:read8() -- Total parameters (useless?)
@@ -281,17 +455,94 @@ local exec = {
 		end
 	},
 	[8] = {
-		[16] = function(self, connection, packet, C_CC) -- Profile data
+		[6] = function(self, packet, connection, identifiers) -- Updates player win state
+			if not self._handle_players or self.playerList.count == 0 then return end
+
+			packet:readBool() -- ?
+
+			local playerId = packet:read32()
+			if self.playerList[playerId] then
+				self.playerList[playerId].score = packet:read16()
+				self.playerList[playerId].hasWon = true
+				self.playerList[playerId].winPosition = packet:read8()
+				self.playerList[playerId].winTimeElapsed = packet:read16() / 100
+
+				--[[@
+					@desc Triggered when a player joins the hole.
+					@param playerData<table> The data of the player.
+					@param position<int> The position where the player joined the hole.
+					@param timeElapsed<number> The time elapsed when the accont joined the hole.
+					@struct @playerdata {
+						playerName = "", -- The nickname of the player.
+						id = 0, -- The temporary id of the player during the section.
+						isShaman = false, -- Whether the player is shaman or not.
+						isDead = false, -- Whether the player is dead or not.
+						score = 0, -- The current player score.
+						hasCheese = false, -- Whether the player has cheese or not.
+						title = 0, -- The id of the current title of the player.
+						titleStars = 0, -- The quantity of starts that the current title of the player has.
+						gender = 0, -- The gender of the player. Enum in enum.gender.
+						look = "", -- The current outfit string code of the player.
+						mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+						shamanColor = 0, -- The color of the player as shaman.
+						nameColor = 0, -- The color of the nickname of the player.
+						isSouris = false, -- Whether the player is souris or not.
+						isVampire = false, -- Whether the player is vampire or not.
+						hasWon = false, -- Whether the player has joined the hole in the round or not.
+						winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+						winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+						isFacingRight = false, -- Whether the player is facing right or not.
+						movingRight = false, -- Whether the player is moving right or not.
+						movingLeft = false, -- Whether the player is moving left or not.
+						isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+						isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+						x = 0, -- The coordinate X of the player in the map.
+						y =  0, -- The coordinate Y of the player in the map.
+						vx = 0, -- The X speed of the player in the map.
+						vy =  0, -- The Y speed of the player in the map.
+						isDucking = false, -- Whether the player is ducking or not.
+						isJumping = false, -- Whether the player is jumping or not.
+						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+					}
+				]]
+				self.event:emit("playerWon", self.playerList[playerId], self.playerList[playerId].winPosition, self.playerList[playerId].winTimeElapsed)
+			end
+		end,
+		[7] = function(self, packet, connection, identifiers) -- Updates player score
+			handlePlayerField(self, packet, "score", nil, "read16")
+		end,
+		[11] = function(self, packet, connection, identifiers) -- Updates blue/ping shaman
+			if not self._handle_players or self.playerList.count == 0 then return end
+
+			local shaman = { }
+			shaman[1] = packet:read32() -- Blue
+			shaman[2] = packet:read32() -- Pink
+
+			local oldPlayerData
+			for i = 1, 2 do
+				if self.playerList[shaman[i]] then
+					oldPlayerData = table.copy(self.playerList[shaman[i]])
+
+					self.playerList[shaman[i]][(i == 1 and "isBlueShaman" or "isPinkShaman")] = true
+
+					self.event:emit("updatePlayer", self.playerList[shaman[i]], oldPlayerData)
+				end
+			end
+		end,
+		[12] = function(self, packet, connection, identifiers) -- Updates player shaman state [true]
+			handlePlayerField(self, packet, "isShaman", nil, nil, true)
+		end,
+		[16] = function(self, packet, connection, identifiers) -- Profile data
 			local data = { }
 			data.playerName = packet:readUTF()
 			data.id = packet:read32()
 			data.registrationDate = packet:read32()
 			data.role = packet:read8() -- enum.role
-			
+
 			data.gender = packet:read8() -- enum.gender
 			data.tribeName = packet:readUTF()
 			data.soulmate = packet:readUTF()
-			
+
 			data.saves = { }
 			data.saves.normal = packet:read32()
 			data.shamanCheese = packet:read32()
@@ -300,7 +551,7 @@ local exec = {
 			data.saves.hard = packet:read32()
 			data.bootcamps = packet:read32()
 			data.saves.divine = packet:read32()
-			
+
 			data.titleId = packet:read16()
 			data.totalTitles = packet:read16()
 			data.titles = { }
@@ -341,21 +592,21 @@ local exec = {
 			data.adventurePoints = packet:read32()
 
 			--[[@
-				@desc Triggered when the profile of an user is loaded.
-				@param data<table> The user profile data.
+				@desc Triggered when the profile of an player is loaded.
+				@param data<table> The player profile data.
 				@struct @data {
 					playerName = "", -- The player name.
 					id = 0, -- The player id.
-					registrationDate = 0, -- The timestamp of when the account was created.
-					role = 0, -- An enum from enum.role that specifies the account's role.
-					gender = 0, -- An enum from enum.gender for the account's gender. 
+					registrationDate = 0, -- The timestamp of when the player was created.
+					role = 0, -- An enum from enum.role that specifies the player's role.
+					gender = 0, -- An enum from enum.gender for the player's gender. 
 					tribeName = "", -- The name of the tribe.
 					soulmate = "", -- The name of the soulmate.
 					saves = {
 						normal = 0, -- Total saves in the normal mode.
 						hard = 0, -- Total saves in the hard mode.
 						divine = 0 -- Total saves in the divine mode.
-					}, -- Total saves of the account.
+					}, -- Total saves of the player.
 					shamanCheese = 0, -- Total of cheeses gathered as shaman.
 					firsts = 0, -- Total of firsts.
 					cheeses = 0, -- Total of cheeses.
@@ -365,8 +616,8 @@ local exec = {
 					titles = {
 						[id] = 0 -- The id of the title as index, the quantity of stars as value.
 					}, -- The list of unlocked titles.
-					look = "", -- The account's outfit code.
-					level = 0, -- The account's level.
+					look = "", -- The player's outfit code.
+					level = 0, -- The player's level.
 					totalBadges = 0, -- The total of unlocked badges.
 					badges = {
 						[id] = 0 -- The id of the badge as index, the quantity as value.
@@ -388,22 +639,62 @@ local exec = {
 				}
 			]]
 			self.event:emit("profileLoaded", data)
+		end,
+		[66] = function(self, packet, connection, identifiers) -- Updates player vampire state
+			--[[@
+				@desc Triggered when a player is (un)transformed into a vampire.
+				@param playerData<table> The data of the player.
+				@param isVampire<boolean> Whether the player is a vampire or not.
+				@struct @playerdata {
+					playerName = "", -- The nickname of the player.
+					id = 0, -- The temporary id of the player during the section.
+					isShaman = false, -- Whether the player is shaman or not.
+					isDead = false, -- Whether the player is dead or not.
+					score = 0, -- The current player score.
+					hasCheese = false, -- Whether the player has cheese or not.
+					title = 0, -- The id of the current title of the player.
+					titleStars = 0, -- The quantity of starts that the current title of the player has.
+					gender = 0, -- The gender of the player. Enum in enum.gender.
+					look = "", -- The current outfit string code of the player.
+					mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+					shamanColor = 0, -- The color of the player as shaman.
+					nameColor = 0, -- The color of the nickname of the player.
+					isSouris = false, -- Whether the player is souris or not.
+					isVampire = false, -- Whether the player is vampire or not.
+					hasWon = false, -- Whether the player has joined the hole in the round or not.
+					winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+					winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+					isFacingRight = false, -- Whether the player is facing right or not.
+					movingRight = false, -- Whether the player is moving right or not.
+					movingLeft = false, -- Whether the player is moving left or not.
+					isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+					isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+					x = 0, -- The coordinate X of the player in the map.
+					y =  0, -- The coordinate Y of the player in the map.
+					vx = 0, -- The X speed of the player in the map.
+					vy =  0, -- The Y speed of the player in the map.
+					isDucking = false, -- Whether the player is ducking or not.
+					isJumping = false, -- Whether the player is jumping or not.
+					_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+				}
+			]]
+			handlePlayerField(self, packet, "isVampire", "playerVampire", nil, nil, true)
 		end
 	},
 	[26] = {
-		[2] = function(self, connection, packet, C_CC)
+		[2] = function(self, packet, connection, identifiers) -- Set connection
 			self._isConnected = true
 		end,
-		[3] = function(self, connection, packet, C_CC) -- Correct handshake identifiers
+		[3] = function(self, packet, connection, identifiers) -- Correct handshake identifiers
 			local onlinePlayers = packet:read32()
 
 			connection.packetID = packet:read8()
 			local community = packet:readUTF() -- Necessary to get the country and authkeys later
 			local country = packet:readUTF()
 
-			self.receivedAuthkey = packet:read32() -- Receives an authentication key, parsed in the login function
+			self._receivedAuthkey = packet:read32() -- Receives an authentication key, parsed in the login function
 
-			self._hbTimer = timer.setInterval(10 * 1000, self.sendHeartbeat, self)
+			self._hbTimer = timer.setInterval(10 * 1000, sendHeartbeat, self)
 
 			community = byteArray:new():write8(self.community):write8(0)
 			self.main:send(enum.identifier.community, community)
@@ -412,7 +703,7 @@ local exec = {
 			osInfo:writeUTF("LNX 29,0,0,140"):write8(0)
 			self.main:send(enum.identifier.os, osInfo)
 		end,
-		[35] = function(self, connection, packet, C_CC) -- Room list
+		[35] = function(self, packet, connection, identifiers) -- Room list
 			for i = 1, packet:read8() do packet:read8() end -- Room types
 
 			local rooms, counter = { }, 0
@@ -440,6 +731,7 @@ local exec = {
 					packet:read8() -- community
 					name = packet:readUTF()
 					count = packet:readUTF() -- total mice
+					count = tonumber(count) or count -- Make it a number
 					packet:readUTF() -- mjj
 					packet:readUTF() -- m room/#module
 
@@ -467,7 +759,7 @@ local exec = {
 				@struct @pinned {
 					[n] = {
 						name = "", -- The name of the object.
-						totalPlayers = 0 -- The quantity of players in the object counter.
+						totalPlayers = 0 -- The quantity of players in the object counter. (Might be a string)
 					}
 				}
 			]]
@@ -475,7 +767,7 @@ local exec = {
 		end,
 	},
 	[28] = {
-		[5] = function(self, connection, packet, C_CC)
+		[5] = function(self, packet, connection, identifiers) -- /mod, /mapcrew
 			packet:read16() -- ?
 			--[[@
 				@desc Triggered when a staff list is loaded (/mod, /mapcrew).
@@ -483,25 +775,25 @@ local exec = {
 			]]
 			self.event:emit("staffList", packet:readUTF())
 		end,
-		[6] = function(self, connection, packet, C_CC)
+		[6] = function(self, packet, connection, identifiers) -- Ping
 			--[[@
 				@desc Triggered when a server heartbeat is received.
+				@param time<int> The current time.
 			]]
 			self.event:emit("ping", os.time())
 		end
 	},
 	[29] = {
-		[6] = function(self, connection, packet, C_CC)
-			local log = packet:readUTF()
+		[6] = function(self, packet, connection, identifiers) -- Lua logs
 			--[[@
 				@desc Triggered when the #lua chat receives a log message.
 				@param log<string> The log message.
 			]]
-			self.event:emit("lua", log)
+			self.event:emit("lua", packet:readUTF())
 		end
 	},
 	[30] = {
-		[40] = function(self, connection, packet, C_CC) -- Cafe topic data
+		[40] = function(self, packet, connection, identifiers) -- Cafe topic data
 			local id, data
 			local _messages, _totalMessages, _author
 
@@ -514,11 +806,11 @@ local exec = {
 				data.lastUserName = packet:readUTF()
 				data.timestamp = os.time() - packet:read32()
 
-				if self._cafe[id] then
-					data.messages = self._cafe[id].messages
-					data.author = self._cafe[id].author
+				if self.cafe[id] then
+					data.messages = self.cafe[id].messages
+					data.author = self.cafe[id].author
 				end
-				self._cafe[id] = data
+				self.cafe[id] = data
 			end
 
 			--[[@
@@ -526,28 +818,44 @@ local exec = {
 				@param data<table> The data of the topics.
 				@struct @data
 				{
-					-- See "author" and "messages" in the event "cafeTopicMessage"
-					id = 0, -- The id of the topic.
-					title = "", -- The title of the topic.
-					authorId = 0, -- The id of the topic author.
-					posts = 0, -- The quantity of messages in the topic.
-					lastUserName = "", -- The name of the last user that posted in the topic.
-					timestamp = 0, -- When the topic was created.
+					[i] = {
+						id = 0, -- The id of the topic.
+						title = "", -- The title of the topic.
+						authorId = 0, -- The id of the topic author.
+						posts = 0, -- The quantity of messages in the topic.
+						lastUserName = "", -- The name of the last user that posted in the topic.
+						timestamp = 0, -- When the topic was created.
+
+						-- The event "cafeTopicLoad" must be triggered so the fields below exist.
+						author = "", -- The name of the topic author.
+						messages = {
+							[i] = {
+								topicId = 0, -- The id of the topic where the message is located.
+								id = 0, -- The id of the message.
+								authorId = 0, -- The id of the topic author.
+								timestamp = 0, -- When the topic was created.
+								author = "", -- The name of the topic author.
+								content = "", -- The content of the message.
+								canLike = false, -- Whether the message can be liked by the bot or not.
+								likes = 0 -- The quantity of likes in the message.
+							}
+						}
+					}
 				}
 			]]
-			self.event:emit("cafeTopicList", self._cafe)
+			self.event:emit("cafeTopicList", self.cafe)
 		end,
-		[41] = function(self, connection, packet, C_CC) -- Cafe message data
+		[41] = function(self, packet, connection, identifiers) -- Cafe message data
 			packet:read8() -- ?
 
 			local id = packet:read32()
-			if not self._cafe[id] then
-				self._cafe[id] = { id = id }
+			if not self.cafe[id] then
+				self.cafe[id] = { id = id }
 			end
-			local data = self._cafe[id]
+			local data = self.cafe[id]
 
 			data.messages = { }
-			
+
 			local totalMessages = 0
 
 			while #packet.stack > 0 do
@@ -570,11 +878,24 @@ local exec = {
 				@param topic<table> The data of the topic.
 				@struct @topic
 				{
-					-- See the topic structure in the event "cafeTopicList"
-					-- See the message structure in the event "cafeTopicMessage"
+					id = 0, -- The id of the topic.
+					title = "", -- The title of the topic.
+					authorId = 0, -- The id of the topic author.
+					posts = 0, -- The quantity of messages in the topic.
+					lastUserName = "", -- The name of the last user that posted in the topic.
+					timestamp = 0, -- When the topic was created.
 					author = "", -- The name of the topic author.
 					messages = {
-						[i] = { }
+						[i] = {
+							topicId = 0, -- The id of the topic where the message is located.
+							id = 0, -- The id of the message.
+							authorId = 0, -- The id of the topic author.
+							timestamp = 0, -- When the topic was created.
+							author = "", -- The name of the topic author.
+							content = "", -- The content of the message.
+							canLike = false, -- Whether the message can be liked by the bot or not.
+							likes = 0 -- The quantity of likes in the message.
+						}
 					}
 				}
 			]]
@@ -590,126 +911,447 @@ local exec = {
 						@param topic<table> The data of the topic.
 						@struct @message
 						{
-							topicId = 0, -- The id of the topic where the message was posted.
+							topicId = 0, -- The id of the topic where the message is located.
 							id = 0, -- The id of the message.
 							authorId = 0, -- The id of the topic author.
 							timestamp = 0, -- When the topic was created.
 							author = "", -- The name of the topic author.
 							content = "", -- The content of the message.
 							canLike = false, -- Whether the message can be liked by the bot or not.
-							likes = 0 -- The quantity of the likes in the message.
+							likes = 0 -- The quantity of likes in the message.
 						}
 						@struct @data
 						{
-							-- See the topic structure in the events "cafeTopicLoad" and "cafeTopicList"
+							id = 0, -- The id of the topic.
+							title = "", -- The title of the topic.
+							authorId = 0, -- The id of the topic author.
+							posts = 0, -- The quantity of messages in the topic.
+							lastUserName = "", -- The name of the last user that posted in the topic.
+							timestamp = 0, -- When the topic was created.
+							author = "", -- The name of the topic author.
+							messages = {
+								[i] = {
+									topicId = 0, -- The id of the topic where the message is located.
+									id = 0, -- The id of the message.
+									authorId = 0, -- The id of the topic author.
+									timestamp = 0, -- When the topic was created.
+									author = "", -- The name of the topic author.
+									content = "", -- The content of the message.
+									canLike = false, -- Whether the message can be liked by the bot or not.
+									likes = 0 -- The quantity of likes in the message.
+								}
+							}
 						}
 					]]
 					self.event:emit("cafeTopicMessage", data.messages[i], data)
 				end
 			end
 		end,
-		[44] = function(self, connection, packet, C_CC) -- New Cafe post detected
+		[44] = function(self, packet, connection, identifiers) -- New Cafe post detected
 			local topicId = packet:read32()
 
 			--[[@
 				@desc Triggered when new messages are posted on Café.
 				@param topicId<int> The id of the topic where the new messages were posted.
-				@param topic<table> The data of the topic. It may be nil. See it's structure in the event @see cafeTopicLoad.
+				@param topic<table> The data of the topic. It **may be** nil.
+				@struct @topic
+				{
+					id = 0, -- The id of the topic.
+					title = "", -- The title of the topic.
+					authorId = 0, -- The id of the topic author.
+					posts = 0, -- The quantity of messages in the topic.
+					lastUserName = "", -- The name of the last user that posted in the topic.
+					timestamp = 0, -- When the topic was created.
+
+					-- The event "cafeTopicLoad" must be triggered so the fields below exist.
+					author = "", -- The name of the topic author.
+					messages = {
+						-- This might not include the unread message.
+						[i] = {
+							topicId = 0, -- The id of the topic where the message is located.
+							id = 0, -- The id of the message.
+							authorId = 0, -- The id of the topic author.
+							timestamp = 0, -- When the topic was created.
+							author = "", -- The name of the topic author.
+							content = "", -- The content of the message.
+							canLike = false, -- Whether the message can be liked by the bot or not.
+							likes = 0 -- The quantity of likes in the message.
+						}
+					}
+				}
 			]]
-			self.event:emit("unreadCafeMessage", topicId, self._cafe[topicId])
+			self.event:emit("unreadCafeMessage", topicId, self.cafe[topicId])
 		end
 	},
 	[44] = {
-		[1] = function(self, connection, packet, C_CC) -- Switch bulle identifiers
+		[1] = function(self, packet, connection, identifiers) -- Switch bulle identifiers
 			local bulleId = packet:read32()
 			local bulleIp = packet:readUTF()
 
-			self.bulle = connectionHandler:new("bulle", self.event)
+			self.bulle = connection:new("bulle", self.event)
 			self.bulle:connect(bulleIp, enum.setting.port[self.main.port])
 
 			self.bulle.event:once("_socketConnection", function()
-				self.bulle:send(C_CC, byteArray:new():write32(bulleId))
+				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(bulleId))
 			end)
 		end,
-		[22] = function(self, connection, packet, C_CC) -- PacketID offset identifiers
+		[22] = function(self, packet, connection, identifiers) -- PacketID offset identifiers
 			connection.packetID = packet:read8() -- Sets the pkt of the connection
 		end
 	},
 	[60] = {
-		[3] = function(self, connection, packet, C_CC) -- Community Platform
+		[3] = function(self, packet, connection, identifiers) -- Community Platform
 			local tribulleId = packet:read16()
-			if trib[tribulleId] then
-				return trib[tribulleId](self, connection, packet, C_CC, tribulleId)
+			if tribulleListener[tribulleId] then
+				return tribulleListener[tribulleId](self, packet, connection, tribulleId)
 			end
 			--[[@
 				@desc Triggered when a tribulle packet is not handled by the tribulle packet parser.
-				@param connection<connection> The connection object.
 				@param tribulleId<int> The tribulle id.
-				@param packet<bArray> The Byte Array object with the packet that was not handled.
+				@param packet<byteArray> The Byte Array object with the packet that was not handled.
+				@param connection<connection> The connection object.
 			]]
-			self.event:emit("missedTribulle", connection, tribulleId, packet)
+			self.event:emit("missedTribulle", tribulleId, packet, connection)
+		end
+	},
+	[144] = {
+		[1] = function(self, packet, connection, identifiers) -- Set player list
+			if not self._handle_players then return end
+
+			self.playerList.count = packet:read16() -- Total mice in the room
+
+			for i = 1, self.playerList.count do
+				packetListener[144][2](self, packet, connection, nil, i)
+			end
+
+			--[[@
+				@desc Triggered when the data of all players are refreshed (mostly in new games).
+				@param playerList<table> The data of all players.
+				@struct @playerList {
+					[playerName] = {
+						playerName = "", -- The nickname of the player.
+						id = 0, -- The temporary id of the player during the section.
+						isShaman = false, -- Whether the player is shaman or not.
+						isDead = false, -- Whether the player is dead or not.
+						score = 0, -- The current player score.
+						hasCheese = false, -- Whether the player has cheese or not.
+						title = 0, -- The id of the current title of the player.
+						titleStars = 0, -- The quantity of starts that the current title of the player has.
+						gender = 0, -- The gender of the player. Enum in enum.gender.
+						look = "", -- The current outfit string code of the player.
+						mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+						shamanColor = 0, -- The color of the player as shaman.
+						nameColor = 0, -- The color of the nickname of the player.
+						isSouris = false, -- Whether the player is souris or not.
+						isVampire = false, -- Whether the player is vampire or not.
+						hasWon = false, -- Whether the player has joined the hole in the round or not.
+						winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+						winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+						isFacingRight = false, -- Whether the player is facing right or not.
+						movingRight = false, -- Whether the player is moving right or not.
+						movingLeft = false, -- Whether the player is moving left or not.
+						isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+						isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+						x = 0, -- The coordinate X of the player in the map.
+						y =  0, -- The coordinate Y of the player in the map.
+						vx = 0, -- The X speed of the player in the map.
+						vy =  0, -- The Y speed of the player in the map.
+						isDucking = false, -- Whether the player is ducking or not.
+						isJumping = false, -- Whether the player is jumping or not.
+						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+					},
+					[i] = { }, -- Reference of [playerName], 'i' is stored in '_pos'
+					[id] = { } -- Reference of [playerName]
+				}
+			]]
+			self.event:emit("refreshPlayerList", self.playerList)
+		end,
+		[2] = function(self, packet, connection, identifiers, _pos) -- Updates player data
+			if not self._handle_players or (not _pos and self.playerList.count == 0) then return end
+
+			local data, color = { }
+			data.playerName = packet:readUTF()
+			data.id = packet:read32() -- Temporary id
+			data.isShaman = packet:readBool()
+			data.isDead = packet:readBool()
+			data.score = packet:read16()
+			data.hasCheese = packet:readBool()
+			data.title = packet:read16()
+			data.titleStars = packet:read8() - 1
+			data.gender = packet:read8()
+			packet:readUTF() -- ?
+			data.look = packet:readUTF()
+			packet:readBool() -- ?
+			data.mouseColor = packet:read32()
+			data.shamanColor = packet:read32()
+			packet:read32() -- ?
+			color = packet:read32()
+			data.nameColor = (color == 0xFFFFFFFF and -1 or color)
+
+			-- Custom or delayed data
+			data.isSouris = (string.sub(data.playerName, 1, 1) == '*')
+			data.isVampire = false
+			data.hasWon = false
+			data.winPosition = -1
+			data.winTimeElapsed = -1
+			data.isFacingRight = true
+			data.movingRight = false
+			data.movingLeft = false
+			data.isBlueShaman = false
+			data.isPinkShaman = false
+
+			data.x = 0
+			data.y = 0
+			data.vx = 0
+			data.vy = 0
+			data.isDucking = false
+			data.isJumping = false
+
+			local isNew, oldPlayerData = false
+			if not self.playerList[data.playerName] then
+				isNew = true
+
+				if _pos then
+					data._pos = _pos
+				else
+					self.playerList.count = self.playerList.count + 1
+					data._pos = self.playerList.count
+				end
+			else
+				oldPlayerData = table.copy(self.playerList[data.id])
+				data._pos = self.playerList[data.playerName]._pos
+			end
+
+			self.playerList[data._pos] = data
+			self.playerList[data.playerName] = data
+			self.playerList[data.id] = data
+
+			if not _pos and not (isNew and data.playerName == self.playerName) then
+				--[[@
+					@desc Triggered when a new player joins the room.
+					@param playerData<table> The data of the player.
+					@struct @playerdata {
+						playerName = "", -- The nickname of the player.
+						id = 0, -- The temporary id of the player during the section.
+						isShaman = false, -- Whether the player is shaman or not.
+						isDead = false, -- Whether the player is dead or not.
+						score = 0, -- The current player score.
+						hasCheese = false, -- Whether the player has cheese or not.
+						title = 0, -- The id of the current title of the player.
+						titleStars = 0, -- The quantity of starts that the current title of the player has.
+						gender = 0, -- The gender of the player. Enum in enum.gender.
+						look = "", -- The current outfit string code of the player.
+						mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+						shamanColor = 0, -- The color of the player as shaman.
+						nameColor = 0, -- The color of the nickname of the player.
+						isSouris = false, -- Whether the player is souris or not.
+						isVampire = false, -- Whether the player is vampire or not.
+						hasWon = false, -- Whether the player has joined the hole in the round or not.
+						winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+						winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+						isFacingRight = false, -- Whether the player is facing right or not.
+						movingRight = false, -- Whether the player is moving right or not.
+						movingLeft = false, -- Whether the player is moving left or not.
+						isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+						isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+						x = 0, -- The coordinate X of the player in the map.
+						y =  0, -- The coordinate Y of the player in the map.
+						vx = 0, -- The X speed of the player in the map.
+						vy =  0, -- The Y speed of the player in the map.
+						isDucking = false, -- Whether the player is ducking or not.
+						isJumping = false, -- Whether the player is jumping or not.
+						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+					}
+				]]
+				self.event:emit((isNew and "newPlayer" or "updatePlayer"), data, oldPlayerData)
+			end
+		end,
+		[6] = function(self, packet, connection, identifiers) -- Updates player cheese state
+			--[[@
+				@desc Triggered when a player gets (or gets removed) a cheese.
+				@param playerData<table> The data of the player.
+				@param hasCheese<boolean> Whether the player has cheese or not.
+				@struct @playerdata {
+					playerName = "", -- The nickname of the player.
+					id = 0, -- The temporary id of the player during the section.
+					isShaman = false, -- Whether the player is shaman or not.
+					isDead = false, -- Whether the player is dead or not.
+					score = 0, -- The current player score.
+					hasCheese = false, -- Whether the player has cheese or not.
+					title = 0, -- The id of the current title of the player.
+					titleStars = 0, -- The quantity of starts that the current title of the player has.
+					gender = 0, -- The gender of the player. Enum in enum.gender.
+					look = "", -- The current outfit string code of the player.
+					mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+					shamanColor = 0, -- The color of the player as shaman.
+					nameColor = 0, -- The color of the nickname of the player.
+					isSouris = false, -- Whether the player is souris or not.
+					isVampire = false, -- Whether the player is vampire or not.
+					hasWon = false, -- Whether the player has joined the hole in the round or not.
+					winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+					winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+					isFacingRight = false, -- Whether the player is facing right or not.
+					movingRight = false, -- Whether the player is moving right or not.
+					movingLeft = false, -- Whether the player is moving left or not.
+					isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+					isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+					x = 0, -- The coordinate X of the player in the map.
+					y =  0, -- The coordinate Y of the player in the map.
+					vx = 0, -- The X speed of the player in the map.
+					vy =  0, -- The Y speed of the player in the map.
+					isDucking = false, -- Whether the player is ducking or not.
+					isJumping = false, -- Whether the player is jumping or not.
+					_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+				}
+			]]
+			handlePlayerField(self, packet, "hasCheese", "playerGetCheese", nil, nil, true)
+		end,
+		[7] = function(self, packet, connection, identifiers) -- Updates player shaman state [false]
+			handlePlayerField(self, packet, "isShaman", nil, nil, false)
 		end
 	}
 }
 
--- Recv Parsers
+-- System
+-- Packet listeners and parsers
 --[[@
 	@desc Inserts a new function to the packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
-	@param f<function> The function to be triggered when the @C-@CC packets are received.	
+	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (packet, connection, identifiers).
+	@param append?<boolean> True if the function should be appended to the (C, CC) listener, false if the function should overwrite the (C, CC) listener. @default false
 ]]
-client.insertPacketListener = function(self, C, CC, f)
-	if not exec[C] then
-		exec[C] = { }
+client.insertPacketListener = function(self, C, CC, f, append)
+	if not packetListener[C] then
+		packetListener[C] = { }
 	end
-	exec[C][CC] = f
+
+	if append and packetListener[C][CC] then
+		packetListener[C][CC] = function(...)
+			packetListener[C][CC](...)
+			f(...)
+		end
+	else
+		packetListener[C][CC] = f
+	end
 end
 --[[@
 	@desc Inserts a new function to the tribulle (60, 3) packet parser.
 	@param tribulleId<int> The tribulle id.
-	@param f<function> The function to be triggered when this tribulle packet is received.
+	@param f<function> The function to be triggered when this tribulle packet is received. The parameters are (packet, connection, tribulleId).
+	@param append?<boolean> True if the function should be appended to the (C, CC, tribulle) listener, false if the function should overwrite the (C, CC) listener. @default false
 ]]
-client.insertTribulleListener = function(self, tribulleId, f)
-	trib[tribulleId] = f
+client.insertTribulleListener = function(self, tribulleId, f, append)
+	if append and tribulleListener[tribulleId] then
+		tribulleListener[tribulleId] = function(...)
+			tribulleListener[tribulleId](...)
+			f(...)
+		end
+	else
+		tribulleListener[tribulleId] = f
+	end
 end
 --[[@
 	@desc Inserts a new function to the old packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
-	@param f<function> The function to be triggered when the @C-@CC packets are received.	
+	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (data, connection, oldIdentifiers).
+	@param append?<boolean> True if the function should be appended to the (C, CC) listener, false if the function should overwrite the (C, CC) listener. @default false
 ]]
-client.insertOldPacketListener = function(self, C, CC, f)
-	if not oldPkt[C] then
-		oldPkt[C] = { }
+client.insertOldPacketListener = function(self, C, CC, f, append)
+	if not oldPacketListener[C] then
+		oldPacketListener[C] = { }
 	end
-	oldPkt[C][CC] = f
+
+	if append and oldPacketListener[C][CC] then
+		oldPacketListener[C][CC] = function(...)
+			oldPacketListener[C][CC](...)
+			f(...)
+		end
+	else
+		oldPacketListener[C][CC] = f
+	end
 end
 
--- Compatibility
-client.insertReceiveFunction = client.insertPacketListener
-client.insertTribulleFunction = client.insertTribulleListener
+----- Compatibility -----
+client.insertReceiveFunction, client.insertTribulleFunction = client.insertPacketListener, client.insertTribulleListener
+-------------------------
 
-
-client.parsePacket = function(self, connection, packet)
+--[[@
+	@desc Handles the received packets by triggering their listeners.
+	@param self<client> A Client object.
+	@param connection<connection> A Connection object attached to @self.
+	@param packet<byteArray> THe packet to be parsed.
+]]
+parsePacket = function(self, connection, packet)
 	local C, CC = packet:read8(), packet:read8()
-	local C_CC = { C, CC }
+	local identifiers = { C, CC }
 
-	if exec[C] and exec[C][CC] then
-		return exec[C][CC](self, connection, packet, C_CC)
+	if packetListener[C] and packetListener[C][CC] then
+		return packetListener[C][CC](self, packet, connection, identifiers)
 	end
 	--[[@
 		@desc Triggered when an identifier is not handled by the system.
-		@param connection<connection> The connection object.
 		@param identifiers<table> The C, CC identifiers that were not handled.
-		@param packet<bArray> The Byte Array object with the packet that was not handled.
+		@param packet<byteArray> The Byte Array object with the packet that was not handled.
+		@param connection<connection> The connection object.
 	]]
-	self.event:emit("missedPacket", connection, C_CC, packet)
+	self.event:emit("missedPacket", identifiers, packet, connection)
 end
+--[[@
+	@desc Creates a new timer attached to a connection object to receive packets and parse them.
+	@param self<client> A Client object.
+	@param connectionName<string> The name of the Connection object to get the timer attached to.
+]]
+receive = function(self, connectionName)
+	self["_" .. connectionName .. "Loop"] = timer.setInterval(10, function(self)
+		if self[connectionName] and self[connectionName].open then
+			local packet = self[connectionName]:receive()
+			if not packet then return end
 
--- System
+			self.event:emit("_receive", self[connectionName], byteArray:new(packet))
+			parsePacket(self, self[connectionName], byteArray:new(packet))
+		end
+	end, self)
+end
+--[[@
+	@desc Gets the connection keys in the API endpoint.
+	@desc This function is destroyed when 'client.start' is called.
+	@param self<client> A Client object.
+	@param tfmId<string,int> The developer's transformice id.
+	@param token<string> The developer's token.
+]]
+getKeys = function(self, tfmId, token)
+	local _, result = http.request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
+		{ "User-Agent", "Mozilla/5.0" }
+	})
+	local _r = result
+	result = json.decode(result)
+	if not result then
+		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is invalid.\n\t" .. tostring(_r), enum.errorLevel.high)
+	end
 
-client.sendHeartbeat = function(self)
+	if result.success then
+		if not result.internal_error then
+			self._gameVersion = result.version
+			self._gameConnectionKey = result.connection_key
+			self._gameAuthkey = result.auth_key
+			self._gameIdentificationKeys = result.identification_keys
+			self._gameMsgKeys = result.msg_keys
+
+			encode.setPacketKeys(self._gameIdentificationKeys, self._gameMsgKeys)
+		else
+			return error("↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\n\t'" .. result.internal_error_step .. "'" .. ((result.internal_error_step == 2) and ": The game may be in maintenance." or ''), enum.errorLevel.high)
+		end
+	else
+		return error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " .. tostring(result.error), enum.errorLevel.high)
+	end
+end
+--[[@
+	@desc Sends server heartbeats/pings to the servers.
+	@param self<client> A Client object.
+]]
+sendHeartbeat = function(self)
 	self.main:send(enum.identifier.heartbeat, byteArray:new())
 	if self.bulle and self.bulle.open then
 		self.bulle:send(enum.identifier.heartbeat, byteArray:new())
@@ -721,103 +1363,102 @@ client.sendHeartbeat = function(self)
 	]]
 	self.event:emit("heartbeat", os.time())
 end
-
-client.mainReceive = function(self)
-	self.mainLoop = timer.setInterval(10, function(self)
-		if self.main.open then
-			local packet = self.main:receive()
-			if not packet then return end
-			
-			self.event:emit("_receive", self.main, byteArray:new(packet))
-			self:parsePacket(self.main, byteArray:new(packet))
+--[[@
+	@desc Closes all the Connection objects.
+	@desc Note that a new Client instance should be created instead of closing and re-opening an existent one.
+	@param self<client> A Client object.
+]]
+closeAll = function(self)
+	if self.main then
+		if self.bulle then
+			timer.clearInterval(self._bulleLoop)
+			self.bulle:close()
 		end
-	end, self)
+		timer.clearInterval(self._mainLoop)
+		self.main:close()
+	end
 end
+--[[@
+	@desc Handles the packets that alters only one player data field.
+	@param self<client> A Client object.
+	@param packet<byteArray> A Byte Array object with the data to be extracted.
+	@param fieldName<string> THe name of the field to be altered.
+	@param eventName?<string> The name of the event to be triggered. @default "updatePlayer"
+	@param methodName?<string> The name of the ByteArray function to be used to extract the data from @packet. @default "readBool"
+	@param fieldValue?<*> The value to be set to the player data @fieldName. @default Extracted data
+	@param sendValue?<boolean> Whether the new value should be sent as second argument of the event or not. @default false
+]]
+handlePlayerField = function(self, packet, fieldName, eventName, methodName, fieldValue, sendValue) -- It would be a table with settings, but since it's created many times I have decided to keep it as parameters.
+	if not self._handle_players or self.playerList.count == 0 then return end
 
-client.bulleReceive = function(self)
-	self.bulleLoop = timer.setInterval(10, function(self)
-		if self.bulle and self.bulle.open then
-			local packet = self.bulle:receive()
-			if not packet then return end
-
-			self.event:emit("_receive", self.bulle, byteArray:new(packet))
-			self:parsePacket(self.bulle, byteArray:new(packet))
+	local playerId = packet:read32()
+	if self.playerList[playerId] then
+		if fieldValue == nil then
+			fieldValue = packet[(methodName or "readBool")](packet)
 		end
-	end, self)
-end
 
-client.closeAll = function(self)
-	if self.bulle and self.bulle.open then
-		self.bulle.open = false
+		local oldPlayerData
+		if not eventName then -- updatePlayer
+			oldPlayerData = table.copy(self.playerList[playerId])
+		end
 
-		timer.clearInterval(self.bulleLoop)
-		self.bulle.socket:destroy()
+		self.playerList[playerId][fieldName] = fieldValue
+
 		--[[@
-			@desc Triggered when a connection dies or fails.
-			@param connection<connection> The connection object.
+			@desc Triggered when a player field is updated.
+			@param playerData<table> The data of the player.
+			@param oldPlayerData<table> The data of the player before the new values.
+			@struct @playerdata @oldPlayerData {
+				playerName = "", -- The nickname of the player.
+				id = 0, -- The temporary id of the player during the section.
+				isShaman = false, -- Whether the player is shaman or not.
+				isDead = false, -- Whether the player is dead or not.
+				score = 0, -- The current player score.
+				hasCheese = false, -- Whether the player has cheese or not.
+				title = 0, -- The id of the current title of the player.
+				titleStars = 0, -- The quantity of starts that the current title of the player has.
+				gender = 0, -- The gender of the player. Enum in enum.gender.
+				look = "", -- The current outfit string code of the player.
+				mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+				shamanColor = 0, -- The color of the player as shaman.
+				nameColor = 0, -- The color of the nickname of the player.
+				isSouris = false, -- Whether the player is souris or not.
+				isVampire = false, -- Whether the player is vampire or not.
+				hasWon = false, -- Whether the player has joined the hole in the round or not.
+				winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+				winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+				isFacingRight = false, -- Whether the player is facing right or not.
+				movingRight = false, -- Whether the player is moving right or not.
+				movingLeft = false, -- Whether the player is moving left or not.
+				isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+				isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+				x = 0, -- The coordinate X of the player in the map.
+				y =  0, -- The coordinate Y of the player in the map.
+				vx = 0, -- The X speed of the player in the map.
+				vy =  0, -- The Y speed of the player in the map.
+				isDucking = false, -- Whether the player is ducking or not.
+				isJumping = false, -- Whether the player is jumping or not.
+				_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+			}
 		]]
-		self.event:emit("disconnection", self.bulle)
-
-		self.main.open = false
-		timer.clearInterval(self.mainLoop)
-		self.main.socket:destroy()
-		self.event:emit("disconnection", self.main)
-	end
-end
-
-client.loop = function(self)
-	self:mainReceive()
-	self:bulleReceive()
-	local loop
-	loop = timer.setInterval(10, function(self, loop)
-		if not self.main.open then
-			timer.clearInterval(self._hbTimer)
-			timer.clearInterval(loop)
-			self.closeAll()
-		end
-	end, self, loop)
-end
-
-client.getKeys = function(self, tfmId, token)
-	local _, result = http.request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
-		{ "User-Agent", "Mozilla/5.0" }
-	})
-	local _r = result
-	result = json.decode(result)
-	if not result then
-		return error("[API Endpoint] @TFMID or @TOKEN value is invalid.\n\t" .. tostring(_r))
-	end
-
-	if result.success then
-		if not result.internal_error then
-			self.gameVersion = result.version
-			self.gameConnectionKey = result.connection_key
-			self.gameAuthkey = result.auth_key
-			self.gamePacketKeys = result.packet_keys
-			self.gameIdentificationKeys = result.identification_keys
-			self.gameMsgKeys = result.msg_keys
-
-			encode.setPacketKeys(self.gamePacketKeys, self.gameIdentificationKeys, self.gameMsgKeys)
-		else
-			return error("[Endpoint] An internal error occurred in the API endpoint.\n\t'" .. result.internal_error_step .. "'" .. ((result.internal_error_step == 2) and ": The game may be in maintenance." or ""), 0)
-		end
-	else
-		return error("[Endpoint] Impossible to get the keys.\n\tError: " .. tostring(result.error), 0)
+		self.event:emit((eventName or "updatePlayer"), self.playerList[playerId], (oldPlayerData or (sendValue and fieldValue)))
 	end
 end
 
 --[[@
 	@desc Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
+	@desc This function can be called only once.
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
-	@param token<string> The API Endpoint token to get access to the authentication keys. Learn more in
+	@param token<string> The API Endpoint token to get access to the authentication keys.
 ]]
 client.start = coroutine.wrap(function(self, tfmId, token)
-	self:getKeys(tfmId, token)
+	getKeys(self, tfmId, token)
+	getKeys = nil -- Saves memory
 
-	self.main:connect("164.132.202.12")
+	self.main:connect(enum.setting.mainIp)
 
 	self.main.event:once("_socketConnection", function()
-		local packet = byteArray:new():write16(self.gameVersion):writeUTF(self.gameConnectionKey)
+		local packet = byteArray:new():write16(self._gameVersion):writeUTF(self._gameConnectionKey)
 		packet:writeUTF("Desktop"):writeUTF('-'):write32(8125):writeUTF('')
 		packet:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
 		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&PR64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
@@ -825,24 +1466,34 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 
 		self.main:send(enum.identifier.initialize, packet)
 
-		self:loop()
+		receive(self, "main")
+		receive(self, "bulle")
+		local loop
+		loop = timer.setInterval(10, function(self, loop)
+			if not self.main.open then
+				timer.clearInterval(self._hbTimer)
+				timer.clearInterval(loop)
+				closeAll(self)
+			end
+		end, self, loop)
 	end)
 
 	self.main.event:on("_receive", function(connection, packet)
-		local C_CC = { packet:read8(), packet:read8() }
+		local identifiers = { packet:read8(), packet:read8() }
 
 		if connection.name == "main" then
-			if enum.identifier.correctVersion[1] == C_CC[1] and enum.identifier.correctVersion[2] == C_CC[2] then
+			if enum.identifier.correctVersion[1] == identifiers[1] and enum.identifier.correctVersion[2] == identifiers[2] then
 				return timer.setTimeout(5000, function(self)
 					--[[@
 						@desc Triggered when the connection is live.
 					]]
 					self.event:emit("ready")
 				end, self)
-			elseif enum.identifier.bulle[1] == C_CC[1] and enum.identifier.bulle[2] == C_CC[2] then
+			elseif enum.identifier.bulleConnection[1] == identifiers[1] and enum.identifier.bulleConnection[2] == identifiers[2] then
+				self._connectionTime = os.time()
 				return timer.setTimeout(5000, function(self)
 					--[[@
-						@desc Triggered when the account is logged and ready to perform actions.
+						@desc Triggered when the player is logged and ready to perform actions.
 					]]
 					self.event:emit("connection")
 				end, self)
@@ -851,10 +1502,10 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 		--[[@
 			@desc Triggered when the client receives packets from the server.
 			@param connection<connection> The connection object that received the packets.
-			@param packet<bArray> The Byte Array object that was received.
 			@param identifiers<table> The C, CC identifiers that were received.
+			@param packet<byteArray> The Byte Array object that was received.
 		]]
-		self.event:emit("receive", connection, C_CC, packet)
+		self.event:emit("receive", connection, identifiers, packet)
 	end)
 end)
 --[[@
@@ -864,7 +1515,9 @@ end)
 	@param callback<function> The function that must be called when the event is triggered.
 ]]
 client.on = function(self, eventName, callback)
-	return self.event:on(eventName, callback)
+	return self.event:on(eventName, function(...)
+		coroutine.wrap(callback)(...)
+	end)
 end
 --[[@
 	@desc Sets an event emitter that is triggered only once when a specific behavior happens.
@@ -873,7 +1526,9 @@ end
 	@param callback<function> The function that must be called only once when the event is triggered.
 ]]
 client.once = function(self, eventName, callback)
-	return self.event:once(eventName, callback)
+	return self.event:once(eventName, function(...)
+		coroutine.wrap(callback)(...)
+	end)
 end
 --[[@
 	@desc Emits an event.
@@ -891,6 +1546,17 @@ end
 client.connectionTime = function(self)
 	return os.time() - self._connectionTime
 end
+--[[@
+	@desc Forces the private function @see closeAll to be called.
+	@returns boolean Whether the Connection objects can be destroyed or not.
+]]
+client.closeAll = function(self)
+	if self.main then
+		self.main.open = false
+		return true
+	end
+	return false
+end
 
 -- Methods
 -- Initialization
@@ -900,18 +1566,7 @@ end
 	@param community?<enum.community> An enum from @see community. (index or value) @default EN
 ]]
 client.setCommunity = function(self, community)
-	community = community and (tonumber(community) or string.lower(community))
-	if community then
-		local commu = enum._checkEnum(enum.community, community)
-		if not commu then
-			return error("[setCommunity] @community must be a valid 'community' enumeration.", 0)
-		end
-		if commu == 1 then
-			community = enum.community[community]
-		end
-	else
-		community =  enum.community.en
-	end
+	community = enum._validate(enum.community, enum.community.en, community, string.format(enum.error.invalidEnum, "setCommunity", "community", "community"))
 	self.community = community
 end
 --[[@
@@ -919,19 +1574,21 @@ end
 	@desc It will try to connect using all the available ports before throwing a timing out error.
 	@param userName<string> The name of the account. It must contain the discriminator tag (#).
 	@param userPassword<string> The password of the account.
-	@param startRoom?<string> The name of the initial room. @default *#bolodefchoco
+	@param startRoom?<string> The name of the initial room. @default "*#bolodefchoco"
 ]]
 client.connect = function(self, userName, userPassword, startRoom, timeout)
+	userName = string.toNickname(userName, true)
+
 	local packet = byteArray:new():writeUTF(userName):writeUTF(encode.getPasswordHash(userPassword))
 	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-	packet:write32(bitwise.bxor(self.receivedAuthkey, self.gameAuthkey))
+	packet:write32(bit.bxor(self._receivedAuthkey, self._gameAuthkey))
 
 	self.playerName = userName
-	self.main:send(enum.identifier.login, encode.blockCipher(packet):write8(0))
+	self.main:send(enum.identifier.login, encode.btea(packet):write8(0))
 
 	timer.setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then
-			return error("[Login] Impossible to log in. Try again later.", 0)
+			return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.", enum.errorLevel.low)
 		end
 	end, self)
 end
@@ -960,7 +1617,7 @@ end
 	@param targetUser<string> The user to receive the whisper.
 ]]
 client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Sets the account's whisper state.
@@ -968,20 +1625,8 @@ end
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
 ]]
 client.changeWhisperState = function(self, message, state)
-	state = state and (tonumber(state) or string.lower(state))
-	if state then
-		local s = enum._checkEnum(enum.whisperState, state)
-		if not s then
-			return error("[changeWhisperState] @state must be a valid 'whisperState' enumeration.", 0)
-		end
-		if s == 1 then
-			state = enum.whisperState[state]
-		end
-	else
-		state = enum.whisperState.enabled
-	end
-
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
+	state = enum._validate(enum.whisperState, enum.whisperState.enabled, state, string.format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
 end
 -- Chat
 --[[@
@@ -989,7 +1634,7 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
 	@desc Sends a message to a #chat.
@@ -998,24 +1643,24 @@ end
 	@param message<string> The message.
 ]]
 client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Leaves a #chat.
 	@param chatName<string> The name of the chat.
 ]]
 client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
 end
 --[[@
 	@desc Gets who is in a specific chat. (/who)
 	@param chatName<string> The name of the chat.
 ]]
 client.chatWho = function(self, chatName)
-	self._who_fingerprint = (self._who_fingerprint + 1) % 300
+	self._who_fingerprint = (self._who_fingerprint + 1) % 500
 	self._who_list[self._who_fingerprint] = chatName
 
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
 end
 -- Tribe
 --[[@
@@ -1030,7 +1675,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendTribeMessage = function(self, message)
-    self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
+    self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Sends a recruitment invite to the player.
@@ -1038,7 +1683,7 @@ end
 	@param playerName<string> The name of player to be recruited.
 ]]
 client.recruitPlayer = function(self, playerName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@desc Kicks a member of the tribe.
@@ -1046,7 +1691,7 @@ end
 	@param memberName<string> The name of the member to be kicked.
 ]]
 client.kickTribeMember = function(self, memberName)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
 end
 --[[@
 	@desc Sets the role of a member in the tribe.
@@ -1055,7 +1700,7 @@ end
 	@param roleId<int> The role id. (starts in 0, for the initial role. Increases until the Chief role)
 ]]
 client.setTribeMemberRole = function(self, memberName, roleId)
-	self.main:send(enum.identifier.message, encode.xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
 end
 --[[@
 	@desc Loads a lua script in the room.
@@ -1066,15 +1711,21 @@ client.loadLua = function(self, script)
 end
 -- Café
 --[[@
+	@desc Reloads the Café data.
+]]
+client.reloadCafe = function(self)
+	self.main:send(enum.identifier.cafeData, byteArray:new())
+end
+--[[@
 	@desc Toggles the current Café state (open / closed).
-	@desc You may use this method to reload the Café (refresh).
+	@desc It will send @see client.reloadCafe automatically if close is false.
 	@param close?<boolean> If the Café must be closed. @default false
 ]]
 client.openCafe = function(self, close)
 	close = not close
 	self.main:send(enum.identifier.cafeState, byteArray:new():writeBool(close))
 	if close then -- open = reload
-		self.main:send(enum.identifier.cafeData, byteArray:new())
+		client:reloadCafe()
 	end
 end
 --[[@
@@ -1131,18 +1782,7 @@ end
 	@param flag?<string> The country code of the flag when @emote is flag.
 ]]
 client.playEmote = function(self, emote, flag)
-	emote = emote and (tonumber(emote) or string.lower(emote))
-	if emote then
-		local s = enum._checkEnum(enum.emote, emote)
-		if not s then
-			return error("[playEmote] @emote must be a valid 'emote' enumeration.", 0)
-		end
-		if s == 1 then
-			emote = enum.emote[emote]
-		end
-	else
-		emote = enum.emote.dance
-	end
+	emote = enum._validate(enum.emote, enum.emote.dance, emote, string.format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
 
 	local packet = byteArray:new():write8(emote):write32(0)
 	if emote == enum.emote.flag then
@@ -1156,19 +1796,7 @@ end
 	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
 ]]
 client.playEmoticon = function(self, emoticon)
-	emoticon = emoticon and (tonumber(emoticon) or string.lower(emoticon))
-	if emoticon then
-		local s = enum._checkEnum(enum.emoticon, emoticon)
-		if not s then
-			return error("[playEmoticon] @emoticon must be a valid 'emoticon' enumeration.", 0)
-		end
-		if s == 1 then
-			emoticon = enum.emoticon[emoticon]
-		end
-	else
-		emoticon = enum.emoticon.smiley
-	end
-
+	emoticon = enum._validate(enum.emoticon, enum.emoticon.smiley, emoticon, string.format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
 	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
 end
 --[[@
@@ -1176,19 +1804,7 @@ end
 	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
 ]]
 client.requestRoomList = function(self, roomMode)
-	roomMode = roomMode and (tonumber(roomMode) or string.lower(roomMode))
-	if roomMode then
-		local s = enum._checkEnum(enum.roomMode, roomMode)
-		if not s then
-			return error("[playEmoticon] @roomMode must be a valid 'roomMode' enumeration.", 0)
-		end
-		if s == 1 then
-			roomMode = enum.roomMode[roomMode]
-		end
-	else
-		roomMode = enum.roomMode.normal
-	end
-
+	roomMode = enum._validate(enum.roomMode, enum.roomMode.normal, roomMode, string.format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
 end
 

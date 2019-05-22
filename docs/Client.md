@@ -1,4 +1,43 @@
-# Methods
+# API Functions
+>### client:new (  )
+>
+>Creates a new instance of Client. Alias: `client()`.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `client` | The new Client object. |
+>
+>**Table structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the account that is attached to this instance, if there's any.
+>	community = 0, -- The community enum where the object is set to perform the login. Default value is EN.
+>	main = { }, -- The main connection object, handles the game server.
+>	bulle = { }, -- The bulle connection object, handles the room server.
+>	event = { }, -- The event emitter object, used to trigger events.
+>	cafe = { }, -- The cached Café structure. (topics and messages)
+>	playerList = { }, -- The room players data.
+>	-- The fields below must not be edited, since they are used internally in the api.
+>	_mainLoop = { }, -- (userdata) A timer that retrieves the packets received from the game server.
+>	_bulleLoop = { }, -- (userdata) A timer that retrieves the packets received from the room server.
+>	_receivedAuthkey = 0, -- Authorization key, used to connect the account.
+>	_gameVersion = 0, -- The game version, used to connect the account.
+>	_gameConnectionKey = "", -- The game connection key, used to connect the account.
+>	_gameIdentificationKeys = { }, -- The game identification keys, used to connect the account.
+>	_gameMsgKeys = { }, -- The game message keys, used to connect the account.
+>	_connectionTime = 0, -- The timestamp of when the account logged in. It will be 0 if the account is not connected.
+>	_isConnected = false, -- Whether the account is connected or not.
+>	_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
+>	_who_fingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
+>	_who_list = { }, -- A list of chat names associated to their own fingerprints.
+>	_process_xml = true, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+>	_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
+>	_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
+>}
+>```
+---
 >### client:changeWhisperState ( message, state )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -7,6 +46,15 @@
 >
 >Sets the account's whisper state.
 >
+---
+>### client:closeAll (  )
+>Forces the private function [closeAll](Internal/client.md#closeall-self--) to be called.
+>
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean` | Whether the Connection objects can be destroyed or not. |
 ---
 >### client:chatWho ( chatName )
 >| Parameter | Type | Required | Description |
@@ -29,17 +77,18 @@
 >| :-: | :-: | :-: | - |
 >| userName | `string` | ✔ | The name of the account. It must contain the discriminator tag (#). |
 >| userPassword | `string` | ✔ | The password of the account. |
->| startRoom | `string` | ✕ | The name of the initial room. <sub>(default = \*#bolodefchoco)</sub> |
+>| startRoom | `string` | ✕ | The name of the initial room. <sub>(default = "\*#bolodefchoco")</sub> |
 >| timeout | `int` | ✕ | The time in ms to throw a timeout error if the connection takes too long to succeed. <sub>(default = 20000)</sub> |
 >
 >Connects to an account in-game.<br>
 >It will try to connect using all the available ports before throwing a timing out error.
 >
 ---
->### client:connectionTime ( )
+>### client:connectionTime (  )
 >Gets the total time of the connection.
 >
 >**Returns:**
+>
 >| Type | Description |
 >| :-: | - |
 >| `int` | The total time since the connection. |
@@ -73,33 +122,36 @@
 >Enters in a room.
 >
 ---
->### client:insertPacketListener ( C, CC, f )
+>### client:insertPacketListener ( C, CC, f, append )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| C | `int` | ✔ | The C packet. |
 >| CC | `int` | ✔ | The CC packet. |
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
+>| append | `boolean` | ✕ | True if the function should be appended to the (C, CC) listener, false if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
->Inserts a new function to the packet parser.
+>Inserts a new function to the packet parser. The parameters are (packet, connection, identifiers).
 >
 ---
->### client:insertOldPacketListener ( C, CC, f )
+>### client:insertOldPacketListener ( C, CC, f, append )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| C | `int` | ✔ | The C packet. |
 >| CC | `int` | ✔ | The CC packet. |
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
+>| append | `boolean` | ✕ | True if the function should be appended to the (C, CC) listener, false if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
->Inserts a new function to the old packet parser.
+>Inserts a new function to the old packet parser. The parameters are (data, connection, oldIdentifiers).
 >
 ---
->### client:insertTribulleListener ( tribulleId, f )
+>### client:insertTribulleListener ( tribulleId, f, append )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| tribulleId | `int` | ✔ | The tribulle id. |
 >| f | `function` | ✔ | The function to be triggered when this tribulle packet is received. |
+>| append | `boolean` | ✕ | True if the function should be appended to the (C, CC, tribulle) listener, false if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
->Inserts a new function to the tribulle (60, 3) packet parser.
+>Inserts a new function to the tribulle (60, 3) packet parser. The parameters are (packet, connection, tribulleId).
 >
 ---
 >### client:joinChat ( chatName )
@@ -110,7 +162,7 @@
 >Joins a #chat.
 >
 ---
->### client:joinTribeHouse ( )
+>### client:joinTribeHouse (  )
 >
 >Joins the tribe house, if the account is in a tribe.
 >
@@ -169,7 +221,7 @@
 >| close | `boolean` | ✕ | If the Café must be closed. <sub>(default = false)</sub> |
 >
 >Toggles the current Café state (open / closed).<br>
->You may use this method to reload the Café (refresh).
+>It will send [reloadCafe](Client.md#clientreloadcafe---) automatically if close is false.
 >
 ---
 >### client:openCafeTopic ( topicId )
@@ -205,6 +257,11 @@
 >
 >Sends a recruitment invite to the player.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>
+---
+>### client:reloadCafe (  )
+>
+>Reloads the Café data.
 >
 ---
 >### client:requestRoomList ( roomMode )
@@ -294,8 +351,9 @@
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| tfmId | `string`, `int` | ✔ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |
->| token | `string` | ✔ | The API Endpoint token to get access to the authentication keys. Learn more in |
+>| token | `string` | ✔ | The API Endpoint token to get access to the authentication keys. |
 >
->Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
+>Initializes the API connection with the authentication keys. It must be the first method of the API to be called.<br>
+>This function can be called only once.
 >
 ---

@@ -2,6 +2,87 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.0.0 - 22/05/2019
+### News
+- Added the function _os.log_.
+- Added the function _connection.close_.
+- Added the function _client.reloadCafe_.
+- The field _client.\_cafe_ was renamed to _client.cafe_.
+- Implemented error system (low and high error) with the enum of _enum.errorLevel_. Now you can rewrite the funtion _error_ to handle low and high errors differently. Example:
+```Lua
+do
+	local err = error
+	error = function(message, level)
+		if level == transfromage.enum.errorLevel.low then
+			return os.log("↑failure↓ERROR↑ " .. message) -- Colorful print with the FAILURE warning.
+		else
+			return error(message, level)
+		end
+	end
+end
+```
+- Added internal function _handlePlayerField_.
+- Added a new parameter `append` in the listener functions.
+- Added _table.copy_.
+- Added the event _refreshPlayerList ( playerList )_.
+- Added the event _updatePlayer ( playerData, oldPlayerData )_.
+```Lua
+-- All the facilities events (playerGetCheese, playerVampire, etc) can be hard-coded using this main-event.
+-- Example:
+client:on("updatePlayer", playerData, oldPlayerData)
+	if playerData.hasCheese and not oldPlayerData.hasCheese then
+		client:emit("playerGetCheese", playerData, true)
+	elseif oldPlayerData.hasCheese and not playerData.hasCheese then
+		client:emit("playerGetCheese", playerData, false)
+	end		
+end)
+```
+- Added the event _newPlayer ( playerData )_.
+- Added the event _playerGetCheese ( playerData, hasCheese )_.
+- Added the event _playerVampire ( playerData, isVampire )_.
+- Added the event _playerWon ( playerData, position, timeElapsed )_.
+- Added the event _playerLeft ( playerData )_.
+- Added the event _playerDied ( playerData )_.
+- Added _math.normalizePoint_.
+- Added _enum.errorLevel_.
+- Added _table.setNewClass_.
+- Added _enum.error_.
+- Added _enum.\_validate_.
+
+### Changes
+- The sequence order of parameters in the listener functions have changed.
+	- insertTribulleListener → (packet, connection, tribulleId)
+	- insertOldPacketListener_ → (data, connection, oldIdentifiers)
+	- insertPacketListener → (packet, connection, identifiers)
+- Now you don't need to send _client.openCafe_ to reload it. Use _client.reloadCafe_ instead.
+- Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called, respectivelly: _tribulleListener_, _oldPacketListener_, _packetListener_.
+- Renamed the class _connectionHandler_ to _connection_.
+- Renamed the enum _emote.:D_ to _emote.laugh_, due to facilities. **No compatibility maintained.**
+- Renamed the enum _identifier.bulle_ to _identifier.bulle_, since it was a grotesque mistake since the beginning. **No compatibility maintained.**
+- Renamed the enum _identifier.bulle_ to _identifier.bulleConnection_. **No compatibility maintained** because it was an internal enum.
+- Added the function _client.closeAll_, a brute-force to trigger the real and private _closeAll_ function.
+- Removed _client.gamePacketKeys_. It was never used.
+- The functions _client.parsePacket_, _client.receive_, _client.getKeys_, _client.sendHeartbeat_, _client.closeAll_ are now private, since their use could compromise the functionalities of the API.
+- Renamed the function _encode.encodeChunks_ to _encode.btea_. **No compatibility maintained.**
+- Renamed the file _cipher_ to _encode_.
+- The following client fields were renamed to private fields:
+	- mainLoop → \_mainLoop
+	- bulleLoop → \_bulleLoop
+	- receivedAuthkey → \_receivedAuthkey
+	- gameVersion → \_gameVersion
+	- gameConnectionKey → \_gameConnectionKey
+	- gameIdentificationKeys → \_gameIdentificationKeys
+	- gameMsgKeys → \_gameMsgKeys
+- Renamed _enum.\_checkEnum_ to _enum.\_exists_. **No compatibility maintained** because it was an internal function.
+- **End of compatibility** of _enum.\_enum_. Use the constructor _enum()_ instead.
+- The sequence of the parameters in the events _missedPacket_, _missedTribulle_, and _missedOldPacket_ have all changed. Now, the _connection_ parameter is the last one.
+- _client.on_ and _client.once_ now have automatic coroutine callbacks.
+
+### Fixes
+- The event _disconnection_ would trigger twice when the main socket got disconnected.
+- _client.\_connectionTime_ was wrongly set before the login.
+- _table.join_ was broken.
+
 ## v0.10.0 - 11/05/2019
 ### News
 - Added the event _unreadCafeMessage ( topicId, topic )_.
@@ -147,7 +228,7 @@ client._process_xml = false
 
 ## v0.3.0 - 17/02/2019
 ### News
-- Added the event _ping ( )_.
+- Added the event _ping (  )_.
 - Added the event _lua ( log )_.
 
 ### Fixes

@@ -7,7 +7,6 @@ client:on("event_name", function(parameters) -- replace 'on' to 'once' if you wa
 end)
 ```
 ---
-
 >### cafeTopicList ( data )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -150,7 +149,7 @@ end)
 ---
 >### connection (  )
 >
->Triggered when the account is logged and ready to perform actions.
+>Triggered when the player is logged and ready to perform actions.
 >
 ---
 >### disconnection ( connection )
@@ -190,7 +189,7 @@ end)
 >| :-: | :-: | - |
 >| tribeName | `string` | The name of the tribe. |
 >
->Triggered when the account joins a tribe house.
+>Triggered when the player joins a tribe house.
 >
 ---
 >### lua ( log )
@@ -201,32 +200,32 @@ end)
 >Triggered when the #lua chat receives a log message.
 >
 ---
->### missedOldPacket ( connection, identifiers, packet )
+>### missedOldPacket ( oldIdentifiers, packet, connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
+>| oldIdentifiers | `table` | The oldC, oldCC identifiers that were not handled. |
+>| packet | `table` | The data table that was not handled. |
 >| connection | `connection` | The connection object. |
->| identifiers | `table` | The C, CC identifiers that were not handled. |
->| packet | `bArray` | The Byte Array object with the packet that was not handled. |
 >
 >Triggered when an old packet is not handled by the old packet parser.
 >
 ---
->### missedPacket ( connection, identifiers, packet )
+>### missedPacket ( identifiers, packet, connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| connection | `connection` | The connection object. |
 >| identifiers | `table` | The C, CC identifiers that were not handled. |
->| packet | `bArray` | The Byte Array object with the packet that was not handled. |
+>| packet | `byteArray` | The Byte Array object with the packet that was not handled. |
+>| connection | `connection` | The connection object. |
 >
 >Triggered when an identifier is not handled by the system.
 >
 ---
->### missedTribulle ( connection, tribulleId, packet )
+>### missedTribulle ( tribulleId, packet, connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| connection | `connection` | The connection object. |
 >| tribulleId | `int` | The tribulle id. |
->| packet | `bArray` | The Byte Array object with the packet that was not handled. |
+>| packet | `byteArray` | The Byte Array object with the packet that was not handled. |
+>| connection | `connection` | The connection object. |
 >
 >Triggered when a tribulle packet is not handled by the tribulle packet parser.
 >
@@ -251,6 +250,51 @@ end)
 >```
 >
 ---
+>### newPlayer ( playerData )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>
+>
+>Triggered when a new player joins the room.
+>
+>**@playerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
+>
+---
 >### newTribeMember ( memberName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -259,33 +303,266 @@ end)
 >Triggered when a player joins the tribe.
 >
 ---
->### ping ( )
+>### ping ( time )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| time | `int` | The current time. |
+>
 >
 >Triggered when a server heartbeat is received.
+>
+---
+>### playerDied ( playerData )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>
+>
+>Triggered when a player dies.
+>
+>**@playerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
+>
+---
+>### playerGetCheese ( playerData, hasCheese )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>| hasCheese | `boolean` | Whether the player has cheese or not. |
+>
+>
+>Triggered when a player gets (or gets removed) a cheese.
+>
+>**@playerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
+>
+---
+>### playerLeft ( playerData )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>
+>
+>Triggered when a player leaves the room.
+>
+>**@playerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
+>
+---
+>### playerVampire ( playerData, isVampire )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>| isVampire | `boolean` | Whether the player is a vampire or not. |
+>
+>
+>Triggered when a player is (un)transformed into a vampire.
+>
+>**@playerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
+>
+---
+>### playerWon ( playerData, position, timeElapsed )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>| position | `int` | The position where the player joined the hole. |
+>| timeElapsed | `number` | The time elapsed when the accont joined the hole. |
+>
+>
+>Triggered when a player joins the hole.
+>
+>**@playerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
 >
 ---
 >### profileLoaded ( data )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| data | `table` | The user profile data. |
+>| data | `table` | The player profile data. |
 >
->Triggered when the profile of an user is loaded.
+>Triggered when the profile of an player is loaded.
 >
 >**@data structure**:
 >```Lua
 >{
 >	playerName = "", -- The player name.
 >	id = 0, -- The player id.
->	registrationDate = 0, -- The timestamp of when the account was created.
->	role = 0, -- An enum from enum.role that specifies the account's role.
->	gender = 0, -- An enum from enum.gender for the account's gender. 
+>	registrationDate = 0, -- The timestamp of when the player was created.
+>	role = 0, -- An enum from enum.role that specifies the player's role.
+>	gender = 0, -- An enum from enum.gender for the player's gender. 
 >	tribeName = "", -- The name of the tribe.
 >	soulmate = "", -- The name of the soulmate.
 >	saves = {
 >		normal = 0, -- Total saves in the normal mode.
 >		hard = 0, -- Total saves in the hard mode.
 >		divine = 0 -- Total saves in the divine mode.
->	}, -- Total saves of the account.
+>	}, -- Total saves of the player.
 >	shamanCheese = 0, -- Total of cheeses gathered as shaman.
 >	firsts = 0, -- Total of firsts.
 >	cheeses = 0, -- Total of cheeses.
@@ -295,8 +572,8 @@ end)
 >	titles = {
 >		[id] = 0 -- The id of the title as index, the quantity of stars as value.
 >	}, -- The list of unlocked titles.
->	look = "", -- The account's outfit code.
->	level = 0, -- The account's level.
+>	look = "", -- The player's outfit code.
+>	level = 0, -- The player's level.
 >	totalBadges = 0, -- The total of unlocked badges.
 >	badges = {
 >		[id] = 0 -- The id of the badge as index, the quantity as value.
@@ -324,14 +601,63 @@ end)
 >Triggered when the connection is live.
 >
 ---
->### receive ( connection, packet, identifiers )
+>### receive ( connection, identifiers, packet )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| connection | `connection` | The connection object that received the packets. |
->| packet | `bArray` | The Byte Array object that was received. |
 >| identifiers | `table` | The C, CC identifiers that were received. |
+>| packet | `byteArray` | The Byte Array object that was received. |
 >
 >Triggered when the client receives packets from the server.
+>
+---
+>### refreshPlayerList ( playerList )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerList | `table` | The data of all players. |
+>
+>
+>Triggered when the data of all players are refreshed (mostly in new games).
+>
+>**@playerList structure**:
+>```Lua
+>{
+>	[playerName] = {
+>		playerName = "", -- The nickname of the player.
+>		id = 0, -- The temporary id of the player during the section.
+>		isShaman = false, -- Whether the player is shaman or not.
+>		isDead = false, -- Whether the player is dead or not.
+>		score = 0, -- The current player score.
+>		hasCheese = false, -- Whether the player has cheese or not.
+>		title = 0, -- The id of the current title of the player.
+>		titleStars = 0, -- The quantity of starts that the current title of the player has.
+>		gender = 0, -- The gender of the player. Enum in enum.gender.
+>		look = "", -- The current outfit string code of the player.
+>		mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>		shamanColor = 0, -- The color of the player as shaman.
+>		nameColor = 0, -- The color of the nickname of the player.
+>		isSouris = false, -- Whether the player is souris or not.
+>		isVampire = false, -- Whether the player is vampire or not.
+>		hasWon = false, -- Whether the player has joined the hole in the round or not.
+>		winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>		winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>		isFacingRight = false, -- Whether the player is facing right or not.
+>		movingRight = false, -- Whether the player is moving right or not.
+>		movingLeft = false, -- Whether the player is moving left or not.
+>		isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>		isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>		x = 0, -- The coordinate X of the player in the map.
+>		y =  0, -- The coordinate Y of the player in the map.
+>		vx = 0, -- The X speed of the player in the map.
+>		vy =  0, -- The Y speed of the player in the map.
+>		isDucking = false, -- Whether the player is ducking or not.
+>		isJumping = false, -- Whether the player is jumping or not.
+>		_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>	},
+>	[i] = { }, -- Reference of [playerName], 'i' is stored in '_pos'
+>	[id] = { } -- Reference of [playerName]
+>}
+>```
 >
 ---
 >### roomChanged ( roomName, isPrivateRoom )
@@ -340,7 +666,7 @@ end)
 >| roomName | `string` | The name of the room. |
 >| isPrivateRoom | `boolean` | Whether the room is only accessible by the account or not. |
 >
->Triggered when the account changes the room.
+>Triggered when the player changes the room.
 >
 ---
 >### roomList ( roomMode, rooms, pinned )
@@ -369,7 +695,7 @@ end)
 >{
 >	[n] = {
 >		name = "", -- The name of the object.
->		totalPlayers = 0 -- The quantity of players in the object counter.
+>		totalPlayers = 0 -- The quantity of players in the object counter. (Might be a string)
 >	}
 >}
 >```
@@ -390,7 +716,7 @@ end)
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| identifiers | `table` | The C, CC identifiers sent in the request. |
->| packet | `bArray` | The Byte Array object that was sent. |
+>| packet | `byteArray` | The Byte Array object that was sent. |
 >
 >Triggered when the client sends packets to the server.
 >
@@ -490,7 +816,7 @@ end)
 >	posts = 0, -- The quantity of messages in the topic.
 >	lastUserName = "", -- The name of the last user that posted in the topic.
 >	timestamp = 0, -- When the topic was created.
->	
+>
 >	-- The event "cafeTopicLoad" must be triggered so the fields below exist.
 >	author = "", -- The name of the topic author.
 >	messages = {
@@ -510,6 +836,52 @@ end)
 >```
 >
 ---
+>### updatePlayer ( playerData, oldPlayerData )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player. |
+>| oldPlayerData | `table` | The data of the player before the new values. |
+>
+>
+>Triggered when a player field is updated.
+>
+>**@playerData, @oldPlayerData structure**:
+>```Lua
+>{
+>	playerName = "", -- The nickname of the player.
+>	id = 0, -- The temporary id of the player during the section.
+>	isShaman = false, -- Whether the player is shaman or not.
+>	isDead = false, -- Whether the player is dead or not.
+>	score = 0, -- The current player score.
+>	hasCheese = false, -- Whether the player has cheese or not.
+>	title = 0, -- The id of the current title of the player.
+>	titleStars = 0, -- The quantity of starts that the current title of the player has.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	look = "", -- The current outfit string code of the player.
+>	mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+>	shamanColor = 0, -- The color of the player as shaman.
+>	nameColor = 0, -- The color of the nickname of the player.
+>	isSouris = false, -- Whether the player is souris or not.
+>	isVampire = false, -- Whether the player is vampire or not.
+>	hasWon = false, -- Whether the player has joined the hole in the round or not.
+>	winPosition = 0, -- The position where the player joined the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- The time elapsed when the player joined the hole. It is set to -1 if it has not won yet.
+>	isFacingRight = false, -- Whether the player is facing right or not.
+>	movingRight = false, -- Whether the player is moving right or not.
+>	movingLeft = false, -- Whether the player is moving left or not.
+>	isBlueShaman = false, -- Whether the player is the blue shamamn or not.
+>	isPinkShaman = false, -- Whether the player is the pink shamamn or not.
+>	x = 0, -- The coordinate X of the player in the map.
+>	y =  0, -- The coordinate Y of the player in the map.
+>	vx = 0, -- The X speed of the player in the map.
+>	vy =  0, -- The Y speed of the player in the map.
+>	isDucking = false, -- Whether the player is ducking or not.
+>	isJumping = false, -- Whether the player is jumping or not.
+>	_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+>}
+>```
+>
+---
 >### whisperMessage ( playerName, message, playerCommunity )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -517,6 +889,6 @@ end)
 >| message | `string` | The message. |
 >| playerCommunity | `int` | The community id of @playerName. |
 >
->Triggered when the account receives a whisper.
+>Triggered when the player receives a whisper.
 >
 ---

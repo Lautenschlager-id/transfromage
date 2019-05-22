@@ -1,25 +1,33 @@
-if not table.add then
-	require("extensions")
-end
-
-local buffer = { }
+local buffer = table.setNewClass()
 buffer.__index = buffer
 
+--[[@
+	@desc Creates a new instance of Buffer. Alias: `buffer()`.
+	@returns buffer The new Buffer object.
+	@struct {
+		queue = { } -- The bytes queue
+	}
+]]
 buffer.new = function(self)
 	return setmetatable({
 		queue = { }
 	}, self)
 end
-
+--[[
+	@desc Checks whether the queue is empty or not.
+	@returns boolean Whether the queue is empty or not.
+]]
 buffer.isEmpty = function(self)
 	return #self.queue == 0
 end
-
+--[[@
+	@desc Retrieves bytes from the queue.
+	@param length<int> The quantity of bytes to be extracted.
+	@returns table An array of bytes. 
+]]
 buffer.receive = function(self, length)
 	local bufferSize = #self.queue
-	if bufferSize == 0 then
-		return
-	end
+	if bufferSize == 0 then return end
 
 	if length >= bufferSize then
 		local ret = self.queue
@@ -34,7 +42,11 @@ buffer.receive = function(self, length)
 
 	return ret
 end
-
+--[[@
+	@desc Inserts bytes to the queue.
+	@param bytes<table,string> A string/table of bytes.
+	@returns buffer Object instance.
+]]
 buffer.push = function(self, bytes)
 	if type(bytes) == "string" then
 		bytes = string.getBytes(bytes)

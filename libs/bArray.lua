@@ -1,94 +1,153 @@
-if not string.getBytes then
-	require("extensions")
-end
-
-local byteArray = { }
-
+local byteArray = table.setNewClass()
 byteArray.__index = byteArray
 
+--[[@
+	@desc Creates a new instance of a Byte Array. Alias: `byteArray()`.
+	@param stack?<table> An array of bytes.
+	@returns byteArray The new Byte Array object.
+	@struct {
+		stack = { } -- The bytes stack
+	}
+]]
 byteArray.new = function(self, stack)
 	return setmetatable({
 		stack = (stack or { }) -- Array of bytes
 	}, self)
 end
-
+--[[@
+	@desc Inserts bytes in the byte array.
+	@param ...?<int> Bytes. @default 0
+	@returns byteArray Object instance.
+]]
 byteArray.write8 = function(self, ...)
 	local tbl = { ... }
 	if #tbl == 0 then
 		tbl = { 0 }
 	end
 
-	local bytes = table.mapArray(tbl, function(n) return n % 256 end)
+	local bytes = table.mapArray(tbl, function(n)
+		return n % 256
+	end)
 	table.add(self.stack, bytes)
 	return self
 end
-
+--[[@
+	@desc Inserts a short integer in the byte array.
+	@param short<int> An integer number in the range [0, 65535].
+	@returns byteArray Object instance.
+]]
 byteArray.write16 = function(self, short)
+	-- (long >> 8) & 255, long & 255
 	return self:write8(bit.band(bit.rshift(short, 8), 255), bit.band(short, 255))
 end
-
-byteArray.write24 = function(self, integer)
-	return self:write8(bit.band(bit.rshift(integer, 16), 255), bit.band(bit.rshift(integer, 8), 255), bit.band(integer, 255))
+--[[@
+	@desc Inserts an integer in the byte array.
+	@param int<int> An integer number in the range [0, 16777215].
+	@returns byteArray Object instance.
+]]
+byteArray.write24 = function(self, int)
+	-- (long >> 16) & 255, (long >> 8) & 255, long & 255
+	return self:write8(bit.band(bit.rshift(int, 16), 255), bit.band(bit.rshift(int, 8), 255), bit.band(int, 255))
 end
-
+--[[@
+	@desc Inserts a long integer in the byte array.
+	@param long<int> An integer number in the range [0, 4294967295].
+	@returns byteArray Object instance.
+]]
 byteArray.write32 = function(self, long)
+	-- (long >> 24) & 255, (long >> 16) & 255, (long >> 8) & 255, long & 255
 	return self:write8(bit.band(bit.rshift(long, 24), 255), bit.band(bit.rshift(long, 16), 255), bit.band(bit.rshift(long, 8), 255), bit.band(long, 255))
 end
-
+--[[@
+	@desc Inserts a string in the byte array.
+	@param utf<table,string> A string/table with a maximum of 65535 characters/values.
+	@returns byteArray Object instance.
+]]
 byteArray.writeUTF = function(self, utf)
-	self:write16(#utf)
-
 	if type(utf) == "string" then
 		utf = string.getBytes(utf)
 	end
+
+	self:write16(#utf)
 	table.add(self.stack, utf)
 
 	return self
 end
-
+--[[@
+	@desc Inserts a string in the byte array.
+	@param utf<table,string> A string/table with a maximum of 16777215 characters/values.
+	@returns byteArray Object instance.
+]]
 byteArray.writeBigUTF = function(self, bigUtf)
+	if type(bigUtf) == "string" then
+		bigUtf = string.getBytes(bigUtf)
+	end
+
 	self:write24(#bigUtf)
 	table.add(self.stack, string.getBytes(bigUtf))
+
 	return self
 end
-
-byteArray.writeBool = function(self, boolean)
-	self:write8(boolean and 1 or 0)
+--[[@
+	@desc Inserts a byte (0, 1) in the byte array.
+	@param bool<boolean> A boolean.
+]]
+byteArray.writeBool = function(self, bool)
+	self:write8(bool and 1 or 0)
 	return self
 end
+--[[@
+	@desc Extracts bytes from the packet stack. If there are not suficient bytes in the stack, it's filled with bytes with value 0.
+	@param quantity<int> The quantity of bytes to be extracted. @default 1
+	@returns table,int A table with the extracted bytes. If there's only one byte, it is sent instead of the table.
+]]
+byteArray.read8 = function(self, quantity)
+	quantity = quantity or 1
 
-byteArray.read8 = function(self, bytesQuantity)
-	bytesQuantity = bytesQuantity or 1
-
-	local byteStack = table.arrayRange(self.stack, 1, bytesQuantity)
-	self.stack = table.arrayRange(self.stack, bytesQuantity + 1)
+	local byteStack = table.arrayRange(self.stack, 1, quantity)
+	self.stack = table.arrayRange(self.stack, quantity + 1)
 
 	local sLen = #byteStack
-	local fillVal = bytesQuantity - sLen
+	local fillVal = quantity - sLen
 	if fillVal > 0 then
 		for i = 1, fillVal do
 			byteStack[sLen + i] = 0
 		end
 	end
 
-	return (#byteStack ~= 1) and byteStack or byteStack[1]
+	return (quantity == 1 and byteStack[1] or byteStack)
 end
-
+--[[@
+	@desc Extracts a short integer from the packet stack.
+	@returns int A short integer.
+]]
 byteArray.read16 = function(self)
 	local shortStack = self:read8(2)
+	-- s[1] << 8 = s[2]
 	return bit.lshift(shortStack[1], 8) + shortStack[2]
 end
-
+--[[@
+	@desc Extracts an integer from the packet stack.
+	@returns int An integer.
+]]
 byteArray.read24 = function(self)
 	local intStack = self:read8(3)
+	-- i[1] << 16 + i[2] << 8 + i[3]
 	return bit.lshift(intStack[1], 16) + bit.lshift(intStack[2], 8) + intStack[3]
 end
-
+--[[@
+	@desc Extracts a long integer from the packet stack.
+	@returns int A long integer.
+]]
 byteArray.read32 = function(self)
 	local longStack = self:read8(4)
+	-- l[1] << 24 + l[2] << 16 + l[3] << 8 + l[4]
 	return bit.lshift(longStack[1], 24) + bit.lshift(longStack[2], 16) + bit.lshift(longStack[3], 8) + longStack[4]
 end
-
+--[[@
+	@desc Extracts a string from the packet stack.
+	@returns string A string.
+]]
 byteArray.readUTF = function(self)
 	local byte = self:read8(self:read16())
 
@@ -97,7 +156,10 @@ byteArray.readUTF = function(self)
 	end
 	return table.writeBytes(byte)
 end
-
+--[[@
+	@desc Extracts a long string from the packet stack.
+	@returns string A long string.
+]]
 byteArray.readBigUTF = function(self)
 	local byte = self:read8(self:read24())
 
@@ -106,7 +168,10 @@ byteArray.readBigUTF = function(self)
 	end
 	return table.writeBytes(byte)
 end
-
+--[[@
+	@desc Extracts a boolean from the packet stack. (Whether the next byte is 0 or 1)
+	@returns boolean A boolean.
+]]
 byteArray.readBool = function(self)
 	return self:read8() == 1
 end
@@ -114,5 +179,6 @@ end
 ----- Compatibility -----
 byteArray.readByte, byteArray.readShort, byteArray.readWrite, byteArray.readLong = byteArray.read8, byteArray.read16, byteArray.read24, byteArray.read32
 byteArray.writeByte, byteArray.writeShort, byteArray.writeWrite, byteArray.writeLong = byteArray.write8, byteArray.write16, byteArray.write24, byteArray.write32
+-------------------------
 
 return byteArray

@@ -7,7 +7,7 @@ Funny or not, donations are fundamental to keep the development of the project.
 
 If you have disponibility to donate any value, do not hesitate in helping us on PayPal!
 
-###### Thanks for all the <strong>$22</strong> of donations until now! ♥
+###### Thanks for all the **$22** of donations until now! ♥
 
 ## Documentation
 
@@ -81,28 +81,28 @@ If you are editing an existent event, please make the reasons clear in your pull
 
 ### Tribulle events
 Tribulle is everything related to the community platform.
-- Search for `-- Tribulle functions` or for the table `trib`;
+- Search for `-- Tribulle functions` or for the table `tribulleListener`;
 - Each function receives the parameters:
-	- `self`<sub>\<client></sub> The instance receiving the data;
-	- `packet`<sub>\<bArray></sub> The data received;
-	- `connection`<sub>\<connection></sub> The connection that received the data;
+	- `self`<sub>\<[client](docs/Client.md)></sub> The instance receiving the data;
+	- `packet`<sub>\<[byteArray](docs/Internal/bArray.md)></sub> The data received;
+	- `connection`<sub>\<[connection](docs/Internal/connection.md)></sub> The connection that received the data;
 	- `tribulleId`<sub>\<int></sub> The tribulle id (just for reference)
 
 ### Regular events
-- Search for `-- Recv functions` or for the table `exec`;
+- Search for `-- Normal functions` or for the table `packetListener`;
 - Each function receives the parameters:
-	- `self`<sub>\<client></sub> The instance receiving the data;
-	- `packet`<sub>\<bArray></sub> The data received;
-	- `connection`<sub>\<connection></sub> The connection that received the data.
+	- `self`<sub>\<[client](docs/Client.md)></sub> The instance receiving the data;
+	- `packet`<sub>\<[byteArray](docs/Internal/bArray.md)></sub> The data received;
+	- `connection`<sub>\<[connection](docs/Internal/connection.md)></sub> The connection that received the data.
 	- `identifiers`<sub>\<table></sub> The identifiers (C, CC) received. (just for reference)
 
 ### Old-Packet events
 Old packets were used in the old version of the system. They are the data extracted from the first UTF of the received packet.
-- Search for `-- Old packets` or for the table `oldPkt`;
+- Search for `-- Old packet functions` or for the table `oldPacketListener`;
 - Each function receives the parameters:
-	- `self`<sub>\<client></sub> The instance receiving the data;
-	- `packet`<sub>\<bArray></sub> The data extracted;
-	- `connection`<sub>\<connection></sub> The connection that received the data.
+	- `self`<sub>\<[client](docs/Client.md)></sub> The instance receiving the data;
+	- `packet`<sub>\<[byteArray](docs/Internal/bArray.md)></sub> The data extracted;
+	- `connection`<sub>\<[connection](docs/Internal/connection.md)></sub> The connection that received the data.
 	- `oldIdentifiers`<sub>\<table></sub> The identifiers (oldC, oldCC) received. (just for reference)
 
 ## Functions
@@ -111,29 +111,15 @@ Functions and methods are used by the instanced object to perform actions in the
 If you are editing an existent function, please make the reasons clear in your pull request commentary.
 
 It is not necessary that you handle parameter type errors, expect if the parameter needs an enumeration.<br>
-If the parameter requires an enumeration, use the following chunk:
-```Lua
-PARAMETER_NAME = PARAMETER_NAME and (tonumber(PARAMETER_NAME) or string.lower(PARAMETER_NAME))
-if PARAMETER_NAME then
-	local s = enum._checkEnum(enum.ENUM_NAME, PARAMETER_NAME)
-	if not s then
-		return error("[FUNCTION_NAME] @PARAMETER_NAME must be a valid 'ENUM_NAME' enumeration.", 2)
-	end
-	if s == 1 then
-		PARAMETER_NAME = enum.ENUM_NAME[PARAMETER_NAME]
-	end
-else
-	PARAMETER_NAME = enum.ENUM_NAME.DEFAULT_ENUM_VALUE
-end
-```
+If the parameter requires an enumeration, use the function (enum._validate)[docs/Internal/enum.md#enumvalidate--enumeration-default-value-errormsg-]
 
 ## Enumerations
 Enumerations should only be created if necessary. They indicate imutable values of an action or behavior.
 
 They must be created in the file [Enum.lua](libs/enum.lua) and must follow:
 
-\- Must use the function `e` or `enum._enum` to create enumerators;<br>
-→ Must set the third value as `true` if there are identical values in the table.<br>
+\- Must use the function (constructor) `enum` to create enumerators;<br>
+→ Must set the second value as `true` if there are identical values in the table.<br>
 \- Must space all its values in the same position:
 ```Lua
 {
@@ -151,3 +137,8 @@ They must be created in the file [Enum.lua](libs/enum.lua) and must follow:
 	soda      = 100
 }
 ```
+
+#Files
+New files must start with requires, constructors and auxiliar functions, and the main functions at the end.
+
+Your file must not overwrite functions or tables that are in other files.

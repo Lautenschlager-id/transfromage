@@ -1,3 +1,20 @@
+# Functions
+>### enum ( list, ignoreConflit, \_\_index )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| list | `table` | ✔ | The table to become an enumeration. |
+>| ignoreConflict | `boolean` | ✕ | If the system should ignore value conflicts. (if there are identical values in @list) <sub>(default = false)</sub> |
+>| \_\_index | `function` | ✕ | A function to handle the \_\_index metamethod of the enumeration. It receives the given index and @list. |
+>
+>Creates a new enumeration.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `enum` | A new enumeration. |
+>
+
 # Enums
 ### chatCommunity <sub>\<int></sub>
 ###### The ID of each chat community.
@@ -115,12 +132,27 @@
 | sad | 1 |
 | tongue | 2 |
 | angry | 3 |
-| :D | 4 |
+| laugh | 4 |
 | shades | 5 |
 | blush | 6 |
 | sweatdrop | 7 |
 | derp | 8 |
 | OMG | 9 |
+
+---
+### error <sub>\<string></sub>
+###### The API error messages.
+| Index | Value |
+| :-: | :-: |
+| invalidEnum | [%s] @%s must be a valid '%s' enumeration. |
+
+---
+### errorLevel <sub>\<int></sub>
+###### The API error levels.
+| Index | Value |
+| :-: | :-: |
+| low | -2 |
+| high | -1 |
 
 ---
 ### gender <sub>\<int></sub>
@@ -133,11 +165,11 @@
 
 ---
 ### identifier <sub>\<table></sub>
-###### The action identifiers (C_CC, Tribulle, ...) for packets.
+###### The action identifiers (identifiers, Tribulle, ...) for packets.
 | Index | Value |
 | :-: | :-: |
-| bulle | { 44, 01 } |
-| message | { 60, 03 } |
+| bulle | { 60, 03 } |
+| bulleConnection | { 44, 01 } |
 | command | { 06, 26 } |
 | community | { 08, 02 } |
 | correctVersion | { 26, 03 } |
@@ -178,10 +210,11 @@
 | module | 18 |
 
 ---
-### setting <sub>\<table></sub>
+### setting <sub>\<\*></sub>
 ###### Miscellaneous connection settings.
 | Index | Value |
 | :-: | :-: |
+| mainIp | 164.132.202.12 |
 | port | { 5555, 44444, 3724, 44440, 6112, 443 } |
 
 ---

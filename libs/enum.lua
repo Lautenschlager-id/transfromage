@@ -1,46 +1,57 @@
-local e = function(list, __index, ignoreConflit)
-	local reversed = { }
+local enum = setmetatable({ }, {
+	--[[@
+		@desc Creates a new enumeration.
+		@param list<table> The table to become an enumeration.
+		@param ignoreConflict?<boolean> If the system should ignore value conflicts. (if there are identical values in @list) @default false
+		@param __index?<function> A function to handle the __index metamethod of the enumeration. It receives the given index and @list.
+		@returns enum A new enumeration.
+	]]
+	__call = function(_, list, ignoreConflit, __index)
+		local reversed = { }
 
-	for k, v in next, list do
-		if not ignoreConflit and reversed[v] then
-			return error("Enumeration conflict in '" .. tostring(k) .. "' and '" .. tostring(reversed[v]) .. "'")
-		end
-		reversed[v] = k
-	end
-
-	return setmetatable({ }, {
-		__index = function(_, index)
-			if __index then
-				index = __index(index, list)
+		for k, v in next, list do
+			if not ignoreConflit and reversed[v] then
+				return error("↑failure↓[ENUM]↑ Enumeration conflict in ↑highlight↓" .. tostring(k) .. "↑ and ↑highlight↓" .. tostring(reversed[v]) .. "↑", -2)
 			end
-			return list[index]
-		end,
-		__call = function(_, value)
-			return reversed[value]
-		end,
-		__pairs = function()
-			return next, list
-		end,
-		__len = function()
-			return #list
-		end,
-		__newindex = function()
-			return error("Can not overwrite enumerations.")
-		end,
-		__metatable = "enumeration"
-	})
-end
+			reversed[v] = k
+		end
 
-local enum = { }
+		return setmetatable({ }, {
+			__index = function(_, index)
+				if __index then
+					index = __index(index, list)
+				end
+				return list[index]
+			end,
+			__call = function(_, value)
+				return reversed[value]
+			end,
+			__pairs = function()
+				return next, list
+			end,
+			__len = function()
+				return #list
+			end,
+			__newindex = function()
+				return error("↑failure↓[ENUM]↑ Can not overwrite enumerations.", -2)
+			end,
+			__metatable = "enumeration"
+		})
+	end
+})
 
 -- Functions
-enum._checkEnum = function(enumeration, value)
-	if type(enumeration) ~= "table" then
+--[[@
+	@desc Checks whether the inserted enumeration is valid or not.
+	@param enumeration<enum> An enumeration object, the source of the value.
+	@param value<*> The value (index or value) of the enumeration.
+	@returns int,boolean Whether @value is part of @enumeration or not. It's returned 0 if the value is a value, 1 if it is an index, and false if it's not a valid enumeration.
+]]
+enum._exists = function(enumeration, value)
+	if type(enumeration) ~= "table" or getmetatable(enumeration) ~= "enumeration" then
 		return false
 	end
-	if getmetatable(enumeration) ~= "enumeration" then
-		return false
-	end
+
 	-- Value = 0, Index = 1
 	if enumeration(value) then -- "00"
 		return 0
@@ -49,85 +60,39 @@ enum._checkEnum = function(enumeration, value)
 	end
 	return false
 end
+--[[@
+	@desc Validates an enumeration.
+	@param enumeration<enum> An enumeration object, the source of the value.
+	@param default<*> The default value of the enumeration
+	@param value?<string,number> The value (index or value) of the enumeration.
+	@param errorMsg?<string> The error message when the enumeration exists but is invalid.
+	@returns * The value associated to the source enumeration, or the default value if nil.
+]]
+enum._validate = function(enumeration, default, value, errorMsg)
+	value = tonumber(value) or value
+	if value then
+		local exists = enum._exists(enumeration, value)
 
-enum._enum = function(...)
-	return e(...)
+		if not exists then
+			return error((errorMsg or "↑failure↓[ENUM]↑ Invalid enumeration\n" .. tostring(debug.traceback())), -2)
+		end
+
+		if exists == 1 then
+			value = enumeration[value]
+		end
+	else
+		value = default
+	end
+
+	return value
 end
 
---[[@
-	@desc The action identifiers (C_CC, Tribulle, ...) for packets.
-	@type table
-]]
-enum.identifier = e {
-	bulle           = e { 44, 01 },
-	cafeData        = e { 30, 40 },
-	cafeState       = e { 30, 45 },
-	cafeLike        = e { 30, 46 },
-	cafeLoadData    = e { 30, 41 },
-	cafeNewTopic    = e { 30, 44 },
-	cafeSendMessage = e { 30, 43 },
-	command         = e { 06, 26 },
-	community       = e { 08, 02 },
-	correctVersion  = e { 26, 03 },
-	emote           = e { 08, 01 },
-	emoticon        = e { 08, 05 },
-	heartbeat       = e({ 26, 26 }, nil, true),
-	initialize      = e { 28, 01 },
-	joinTribeHouse  = e { 16, 01 },
-	loadLua         = e { 29, 01 },
-	login           = e { 26, 08 },
-	message         = e { 60, 03 },
-	modList         = e { 26, 05 },
-	os              = e { 28, 17 },
-	packetOffset    = e { 44, 22 },
-	room            = e { 05, 38 },
-	roomList        = e { 26, 35 },
-	roomMessage     = e({ 06, 06 }, nil, true)
-}
-
---[[@
-	@desc The ID of each community.
-	@type int
-]]
-enum.community = e {
-	en = 00,
-	fr = 01,
-	ru = 02,
-	br = 03,
-	es = 04,
-	cn = 05,
-	tr = 06,
-	vk = 07,
-	pl = 08,
-	hu = 09,
-	nl = 10,
-	ro = 11,
-	id = 12,
-	de = 13,
-	e2 = 14,
-	ar = 15,
-	ph = 16,
-	lt = 17,
-	jp = 18,
-	ch = 19,
-	fi = 20,
-	cz = 21,
-	sk = 22,
-	hr = 23,
-	bg = 24,
-	lv = 25,
-	he = 26,
-	it = 27,
-	et = 29,
-	az = 30,
-	pt = 31
-}
-
+-- Enums
 --[[@
 	@desc The ID of each chat community.
 	@type int
 ]]
-enum.chatCommunity = e {
+enum.chatCommunity = enum {
 	en = 01,
 	fr = 02,
 	ru = 03,
@@ -160,52 +125,48 @@ enum.chatCommunity = e {
 	az = 30,
 	pt = 31
 }
-
 --[[@
-	@desc Miscellaneous connection settings.
-	@type table
-]]
-enum.setting = e {
-	port = e { 5555, 44444, 3724, 44440, 6112, 443 }
-}
-
---[[@
-	@desc Possible states for the whisper.
+	@desc The ID of each community.
 	@type int
 ]]
-enum.whisperState = e {
-	enabled        = 1,
-	disabledPublic = 2,
-	disabledAll    = 3
+enum.community = enum {
+	en = 00,
+	fr = 01,
+	ru = 02,
+	br = 03,
+	es = 04,
+	cn = 05,
+	tr = 06,
+	vk = 07,
+	pl = 08,
+	hu = 09,
+	nl = 10,
+	ro = 11,
+	id = 12,
+	de = 13,
+	e2 = 14,
+	ar = 15,
+	ph = 16,
+	lt = 17,
+	jp = 18,
+	ch = 19,
+	fi = 20,
+	cz = 21,
+	sk = 22,
+	hr = 23,
+	bg = 24,
+	lv = 25,
+	he = 26,
+	it = 27,
+	et = 29,
+	az = 30,
+	pt = 31
 }
-
---[[@
-	@desc The id for staff role identifiers.
-	@type int
-]]
-enum.role = e {
-	normal        = 00,
-	moderator     = 05,
-	administrator = 10,
-	mapcrew       = 11,
-	funcorp       = 13
-}
-
---[[@
-	@desc The profile gender id.
-	@type int
-]]
-enum.gender = {
-	none   = 0,
-	female = 1,
-	male   = 2
-}
-
 --[[@
 	@desc The available emote ids.
 	@type int
 ]]
-enum.emote = e {
+enum.emote = enum {
 	dance               = 00,
 	laugh               = 01,
 	cry                 = 02,
@@ -235,29 +196,92 @@ enum.emote = e {
 	rockpaperscissors_1 = 26,
 	rockpaperscissor_2  = 27
 }
-
 --[[@
 	@desc The available emoticon ids.
 	@type int
 ]]
-enum.emoticon = e {
+enum.emoticon = enum {
 	smiley    = 0,
 	sad       = 1,
 	tongue    = 2,
 	angry     = 3,
-	[":D"]    = 4,
+	laugh     = 4,
 	shades    = 5,
 	blush     = 6,
 	sweatdrop = 7,
 	derp      = 8,
 	OMG       = 9
 }
-
+--[[@
+	@desc The API error messages.
+	@type string
+]]
+enum.error = enum {
+	invalidEnum = "↑failure↓[%s]↑ ↑highlight↓%s↑ must be a valid ↑highlight↓%s↑ enumeration.",
+}
+--[[@
+	@desc The API error levels.
+	@type int
+]]
+enum.errorLevel = enum {
+	low  = -2,
+	high = -1
+}
+--[[@
+	@desc The profile gender id.
+	@type int
+]]
+enum.gender = {
+	none   = 0,
+	female = 1,
+	male   = 2
+}
+--[[@
+	@desc The action identifiers (identifiers, Tribulle, ...) for packets.
+	@type table
+]]
+enum.identifier = enum {
+	bulle           = enum { 60, 03 },
+	bulleConnection = enum { 44, 01 },
+	cafeData        = enum { 30, 40 },
+	cafeState       = enum { 30, 45 },
+	cafeLike        = enum { 30, 46 },
+	cafeLoadData    = enum { 30, 41 },
+	cafeNewTopic    = enum { 30, 44 },
+	cafeSendMessage = enum { 30, 43 },
+	command         = enum { 06, 26 },
+	community       = enum { 08, 02 },
+	correctVersion  = enum { 26, 03 },
+	emote           = enum { 08, 01 },
+	emoticon        = enum { 08, 05 },
+	heartbeat       = enum({ 26, 26 }, true),
+	initialize      = enum { 28, 01 },
+	joinTribeHouse  = enum { 16, 01 },
+	loadLua         = enum { 29, 01 },
+	login           = enum { 26, 08 },
+	modList         = enum { 26, 05 },
+	os              = enum { 28, 17 },
+	packetOffset    = enum { 44, 22 },
+	room            = enum { 05, 38 },
+	roomList        = enum { 26, 35 },
+	roomMessage     = enum({ 06, 06 }, true)
+}
+--[[@
+	@desc The id for staff role identifiers.
+	@type int
+]]
+enum.role = enum {
+	normal        = 00,
+	moderator     = 05,
+	administrator = 10,
+	mapcrew       = 11,
+	funcorp       = 13
+}
 --[[@
 	@desc The available room modes.
 	@type int
 ]]
-enum.roomMode = e {
+enum.roomMode = enum {
 	normal    = 01,
 	bootcamp  = 02,
 	vanilla   = 03,
@@ -267,6 +291,23 @@ enum.roomMode = e {
 	defilante = 11,
 	village   = 16,
 	module    = 18
+}
+--[[@
+	@desc Miscellaneous connection settings.
+	@type *
+]]
+enum.setting = enum {
+	mainIp = "164.132.202.12",
+	port    = enum { 5555, 44444, 3724, 44440, 6112, 443 }
+}
+--[[@
+	@desc Possible states for the whisper.
+	@type int
+]]
+enum.whisperState = enum {
+	enabled        = 1,
+	disabledPublic = 2,
+	disabledAll    = 3
 }
 
 return enum
