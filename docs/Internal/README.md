@@ -41,6 +41,7 @@ Folder created specially for contributors. Learn more in [CONTRIBUTING](././CONT
 	- [receive](buffer.md#bufferreceive--length-)
 - [client](client.md)
 	- [closeAll](client.md#closeall--self-)
+	- [coroutineFunction](client.md#coroutinefunction--f-)
 	- [getKeys](client.md#getkeys--self-tfmid-token-)
 	- [handlePlayerField](client.md#handleplayerfield--self-packet-fieldname-eventname-methodname-fieldvalue-sendvalue-)
 	- [parsePacket](client.md#parsepacket--self-connection-packet-)
