@@ -63,7 +63,7 @@ end)
 	- insertOldPacketListener's f → (data, connection, oldIdentifiers)
 	- insertPacketListener's f → (packet, connection, identifiers)
 - Now you don't need to send _client.openCafe_ to reload it. Use _client.reloadCafe_ instead.
-- Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called _tribulleListener_, _oldPacketListener_ and _packetListener_, respectivelly..
+- Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called _tribulleListener_, _oldPacketListener_ and _packetListener_, respectively.
 - Renamed the class _connectionHandler_ to _connection_.
 - Renamed the enum _emote.:D_ to _emote.laugh_, due to facilities. **No compatibility maintained.**
 - Renamed the enum _identifier.message_ to _identifier.bulle_, since it was a grotesque mistake since the beginning. **No compatibility maintained.**
