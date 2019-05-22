@@ -58,7 +58,7 @@ end)
 - Renamed the tables _trib_, _oldPkt_, and _exec_ in Client.lua. They are now called, respectivelly: _tribulleListener_, _oldPacketListener_, _packetListener_.
 - Renamed the class _connectionHandler_ to _connection_.
 - Renamed the enum _emote.:D_ to _emote.laugh_, due to facilities. **No compatibility maintained.**
-- Renamed the enum _identifier.bulle_ to _identifier.bulle_, since it was a grotesque mistake since the beginning. **No compatibility maintained.**
+- Renamed the enum _identifier.message_ to _identifier.bulle_, since it was a grotesque mistake since the beginning. **No compatibility maintained.**
 - Renamed the enum _identifier.bulle_ to _identifier.bulleConnection_. **No compatibility maintained** because it was an internal enum.
 - Added the function _client.closeAll_, a brute-force to trigger the real and private _closeAll_ function.
 - Removed _client.gamePacketKeys_. It was never used.
