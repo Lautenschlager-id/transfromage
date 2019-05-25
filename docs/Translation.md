@@ -2,7 +2,7 @@
 >### download ( language )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| language | `enum.language` | ✔ | An enum from [language](Enums.md#language-string). (index or value) <sub>(default = en)</sub> |
+>| language | `enum.language` | ✔ | An enum from [language](Enum.md#language-string). (index or value) <sub>(default = en)</sub> |
 >
 >Downloads a Transformice language file.
 >
