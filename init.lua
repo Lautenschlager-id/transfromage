@@ -51,5 +51,6 @@ return {
     client = require("client"),
     enum = require("enum"),
     byteArray = require("bArray"),
-    encode = require("encode")
+    encode = require("encode"),
+    translation = require("translation")
 }

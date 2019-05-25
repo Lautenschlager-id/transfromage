@@ -2,6 +2,16 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.2.0 - 25/05/2019
+### News
+- Renamed the private function _coroutineFunction_ to _coroutine.makef_.
+- Added _translation.download_, _translation.get_ and _translation.free_.
+- Added the file _translation.lua_.
+- Added _string.utf8_.
+
+### Fixes
+- Now invalid enumerations, using an error handler that ignores low level ones, won't break the client functions anymore.
+
 ## v1.1.0 - 22/05/2019
 ### News
 - Added the internal function _client.coroutineFunction_.

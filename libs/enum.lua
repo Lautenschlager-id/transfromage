@@ -267,6 +267,42 @@ enum.identifier = enum {
 	roomMessage     = enum({ 06, 06 }, true)
 }
 --[[@
+	@desc The available community translation file communities.
+	@type string
+]]
+enum.language = enum {
+	en = "en",
+	fr = "fr",
+	ru = "ru",
+	br = "br",
+	es = "es",
+	cn = "cn",
+	tr = "tr",
+	vk = "vk",
+	pl = "pl",
+	hu = "hu",
+	nl = "nl",
+	ro = "ro",
+	id = "id",
+	de = "de",
+	ar = "ar",
+	ph = "ph",
+	lt = "lt",
+	jp = "jp",
+	ch = "ch",
+	fi = "fi",
+	cz = "cz",
+	sk = "sk",
+	hr = "hr",
+	bg = "bg",
+	lv = "lv",
+	he = "he",
+	it = "it",
+	et = "et",
+	az = "az",
+	pt = "pt"
+}
+--[[@
 	@desc The id for staff role identifiers.
 	@type int
 ]]

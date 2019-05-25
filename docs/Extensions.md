@@ -1,4 +1,19 @@
 # Helper Functions
+---
+>### coroutine.makef ( f )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| f | `function` | ✔ | Function to be executed inside a coroutine. |
+>
+>Creates a coroutine to execute the given function.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `function` | A coroutine with @f to be executed. |
+>
+---
 >### math.normalizePoint ( x )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -89,6 +104,20 @@
 >| `string` | The normalized nickname. |
 >
 ---
+>### string.utf8 ( str )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| str | `string` | ✔ | The string. |
+>
+>Transforms a Lua string into a UTF8 string.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `table` | A table split by UTF8 char. |
+>
+---
 >### table.add ( src, add )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -134,7 +163,7 @@
 >| :-: | :-: | :-: | - |
 >| list | `table` | ✔ | The table to be copied. |
 >
->Copies a table to remove its reference. (Doesn't cover table values)
+>Copies a table to remove its reference.
 >
 >**Returns**:
 >

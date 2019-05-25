@@ -1,6 +1,6 @@
 return {
 	name = "Lautenschlager-id/transfromage",
-	version = "1.1.0",
+	version = "1.2.0",
 	homepage = "https://github.com/Lautenschlager-id/Transfromage",
 	dependencies = {
 		"creationix/base64",
@@ -21,6 +21,7 @@ return {
 		"libs/connection.lua",
 		"libs/encode.lua",
 		"libs/enum.lua",
-		"libs/extensions.lua"
+		"libs/extensions.lua",
+		"libs/translation.lua"
 	}
 }

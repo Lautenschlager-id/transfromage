@@ -34,7 +34,10 @@
 >	_who_list = { }, -- A list of chat names associated to their own fingerprints.
 >	_process_xml = true, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
 >	_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
->	_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
+>	_handle_players = false, -- Whether the player-related events should be handled or not. (Set as false to save process)
+>	_translation = { }, -- The cached translations.
+>	_translationFormatCache = { }, -- The cached translation lines with formats fixed (%1 → %s)
+>	_translationGenderCache = { } -- The cached translation lines with the genders table, { male, female }
 >}
 >```
 ---
@@ -121,6 +124,21 @@
 >
 >Enters in a room.
 >
+---
+>### client:getTranslation ( language, index, raw )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| language | `enum.language` | ✕ | An enum from [language](Enums.md#language-int). (index or value) <sub>(default = en)</sub> |
+>| index | `string` | ✕ | The code of the translation line. |
+>| raw | `boolean` | ✕ | Whether the translation line must be sent in raw mode or filtered. <sub>(default = false)</sub> |
+>
+>Gets a translation line in one of the Transformice language files.
+>
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `string`, `table` | The translation line. If @index is nil, then it's the translation table (index = value). If @index exists, it may be the string, or @raw string, or a table if it has gender differences ({ male, female }). It may not exist. |
 ---
 >### client:insertPacketListener ( C, CC, f, append )
 >| Parameter | Type | Required | Description |

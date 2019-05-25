@@ -11,20 +11,6 @@ Private functions were created in the Client class because their use could compr
 >Note that a new Client instance should be created instead of closing and re-opening an existent one.
 >
 ---
->### coroutineFunction ( f )
->| Parameter | Type | Required | Description |
->| :-: | :-: | :-: | - |
->| f | `funciton` | ✔ | Function to be executed inside a coroutine. |
->
->Creates a coroutine to execute the given function.
->
->**Returns**:
->
->| Type | Description |
->| :-: | - |
->| `function` | A coroutine with @f to be executed. |
->
----
 >### getKeys ( self, tfmId, token )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -33,7 +19,7 @@ Private functions were created in the Client class because their use could compr
 >| token | `string` | ✔ | The developer's token. |
 >
 >Gets the connection keys in the API endpoint.<br>
->This function is destroyed when 'client.start' is called.
+>This function is destroyed when [start](./Client.md#clientstart--tfmid-token-) is called.
 >
 ---
 >### handlePlayerField ( self, packet, fieldName, eventName, methodName, fieldValue, sendValue )

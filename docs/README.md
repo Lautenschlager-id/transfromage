@@ -25,6 +25,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 - [Enum](Enum.md)
 - [Events](Events.md)
 - [Extensions](Extensions.md)
+- [Translation](Translation.md)
 
 ## Tree
 
@@ -74,6 +75,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [errorLevel](Enum.md#errorlevel-int)
 	- [gender](Enum.md#gender-int)
 	- [identifier](Enum.md#identifier-table)
+	- [language](Enum.md#language-string)
 	- [role](Enum.md#role-int)
 	- [roomMode](Enum.md#roommode-int)
 	- [setting](Enum.md#setting-table)
@@ -123,12 +125,14 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [updatePlayer](Events.md#updateplayer--playerdata-oldplayerdata-)
 	- [whisperMessage](Events.md#whispermessage--playername-message-playercommunity-)
 - [Extensions](Extensions.md)
+	- [coroutine.makef](Extensions.md#coroutinemakef--f-)
 	- [math.normalizePoint](Extensions.md#mathnormalizepoint--x-)
 	- [os.log](Extensions.md#oslog--str-returnvalue-)
 	- [string.fixEntity](Extensions.md#stringfixentity--str-)
 	- [string.getBytes](Extensions.md#stringgetbytes--str-)
 	- [string.split](Extensions.md#stringsplit--str-pat-)
 	- [string.toNickname](Extensions.md#stringtonickname--str-checkdiscriminator-)
+	- [string.utf8](Extensions.md#stringutf8--str-)
 	- [table.add](Extensions.md#tableadd--src-add-)
 	- [table.arrayRange](Extensions.md#tablearrayrange--array-i-j-)
 	- [table.copy](Extensions.md#tablecopy--list-)
@@ -137,3 +141,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [table.mapArray](Extensions.md#tablemaparray--arr-f-)
 	- [table.setNewClass](Extensions.md#tablesetnewclass---)
 	- [table.writeBytes](Extensions.md#tablewritebytes--bytes-)
+- [Translation](Translation.md)
+	- [download](Translation.md#download--language-)
+	- [free](Translation.md#free--language-whitelist-whitelistpattern-)
+	- [get](Translation.md#get--language-index-raw-)

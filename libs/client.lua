@@ -10,7 +10,7 @@ local zlibDecompress = require("miniz").inflate
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
-local handlePlayerField, coroutineFunction
+local handlePlayerField
 
 local client = table.setNewClass()
 client.__index = client
@@ -642,7 +642,7 @@ packetListener = {
 		end,
 		[66] = function(self, packet, connection, identifiers) -- Updates player vampire state
 			--[[@
-				@desc Triggered when a player is (un)transformed into a vampire.
+				@desc Triggered when a player is transformed from/into a vampire.
 				@param playerData<table> The data of the player.
 				@param isVampire<boolean> Whether the player is a vampire or not.
 				@struct @playerdata {
@@ -1168,7 +1168,7 @@ packetListener = {
 		end,
 		[6] = function(self, packet, connection, identifiers) -- Updates player cheese state
 			--[[@
-				@desc Triggered when a player gets (or gets removed) a cheese.
+				@desc Triggered when a player gets (or loses) a cheese.
 				@param playerData<table> The data of the player.
 				@param hasCheese<boolean> Whether the player has cheese or not.
 				@struct @playerdata {
@@ -1226,7 +1226,7 @@ client.insertPacketListener = function(self, C, CC, f, append)
 		packetListener[C] = { }
 	end
 
-	f = coroutineFunction(f)
+	f = coroutine.makef(f)
 	if append and packetListener[C][CC] then
 		packetListener[C][CC] = function(...)
 			packetListener[C][CC](...)
@@ -1243,7 +1243,7 @@ end
 	@param append?<boolean> True if the function should be appended to the (C, CC, tribulle) listener, false if the function should overwrite the (C, CC) listener. @default false
 ]]
 client.insertTribulleListener = function(self, tribulleId, f, append)
-	f = coroutineFunction(f)
+	f = coroutine.makef(f)
 	if append and tribulleListener[tribulleId] then
 		tribulleListener[tribulleId] = function(...)
 			tribulleListener[tribulleId](...)
@@ -1265,7 +1265,7 @@ client.insertOldPacketListener = function(self, C, CC, f, append)
 		oldPacketListener[C] = { }
 	end
 
-	f = coroutineFunction(f)
+	f = coroutine.makef(f)
 	if append and oldPacketListener[C][CC] then
 		oldPacketListener[C][CC] = function(...)
 			oldPacketListener[C][CC](...)
@@ -1319,7 +1319,7 @@ receive = function(self, connectionName)
 end
 --[[@
 	@desc Gets the connection keys in the API endpoint.
-	@desc This function is destroyed when 'client.start' is called.
+	@desc This function is destroyed when @see client.start is called.
 	@param self<client> A Client object.
 	@param tfmId<string,int> The developer's transformice id.
 	@param token<string> The developer's token.
@@ -1447,16 +1447,6 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 		self.event:emit((eventName or "updatePlayer"), self.playerList[playerId], (oldPlayerData or (sendValue and fieldValue)))
 	end
 end
---[[@
-	@desc Creates a coroutine to execute the given function.
-	@param f<function> Function to be executed inside a coroutine.
-	@returns function A coroutine with @f to be executed.
-]]
-coroutineFunction = function(f)
-	return function(...)
-		coroutine.wrap(f)(...)
-	end
-end
 
 --[[@
 	@desc Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
@@ -1528,7 +1518,7 @@ end)
 	@param callback<function> The function that must be called when the event is triggered.
 ]]
 client.on = function(self, eventName, callback)
-	return self.event:on(eventName, coroutineFunction(callback))
+	return self.event:on(eventName, coroutine.makef(callback))
 end
 --[[@
 	@desc Sets an event emitter that is triggered only once when a specific behavior happens.
@@ -1537,7 +1527,7 @@ end
 	@param callback<function> The function that must be called only once when the event is triggered.
 ]]
 client.once = function(self, eventName, callback)
-	return self.event:once(eventName, coroutineFunction(callback))
+	return self.event:once(eventName, coroutine.makef(callback))
 end
 --[[@
 	@desc Emits an event.
@@ -1576,6 +1566,8 @@ end
 ]]
 client.setCommunity = function(self, community)
 	community = enum._validate(enum.community, enum.community.en, community, string.format(enum.error.invalidEnum, "setCommunity", "community", "community"))
+	if not community then return end
+
 	self.community = community
 end
 --[[@
@@ -1635,6 +1627,8 @@ end
 ]]
 client.changeWhisperState = function(self, message, state)
 	state = enum._validate(enum.whisperState, enum.whisperState.enabled, state, string.format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
+	if not state then return end
+
 	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
 end
 -- Chat
@@ -1792,6 +1786,8 @@ end
 ]]
 client.playEmote = function(self, emote, flag)
 	emote = enum._validate(enum.emote, enum.emote.dance, emote, string.format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
+	if not emote then return end
+
 
 	local packet = byteArray:new():write8(emote):write32(0)
 	if emote == enum.emote.flag then
@@ -1806,6 +1802,8 @@ end
 ]]
 client.playEmoticon = function(self, emoticon)
 	emoticon = enum._validate(enum.emoticon, enum.emoticon.smiley, emoticon, string.format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
+	if not emoticon then return end
+
 	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
 end
 --[[@
@@ -1814,6 +1812,8 @@ end
 ]]
 client.requestRoomList = function(self, roomMode)
 	roomMode = enum._validate(enum.roomMode, enum.roomMode.normal, roomMode, string.format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
+	if not roomMode then return end
+
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
 end
 

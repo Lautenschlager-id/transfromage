@@ -1,4 +1,14 @@
 --[[@
+	@desc Creates a coroutine to execute the given function.
+	@param f<function> Function to be executed inside a coroutine.
+	@returns function A coroutine with @f to be executed.
+]]
+coroutine.makef = function(f)
+	return function(...)
+		return coroutine.wrap(f)(...)
+	end
+end
+--[[@
 	@desc Normalizes a Transformice coordinate point value.
 	@param x<number> The coordinate point value.
 	@returns int The normalized coordinate point value.
@@ -27,7 +37,7 @@ do
 		@returns nil,string The formated message, depending on @returnValue.
 	]]
 	os.log = function(str, returnValue)
-		str = string.gsub(str, "(↑(.-)↓(.-)↑)", function(format, code, text)
+		str = string.gsub(tostring(str), "(↑(.-)↓(.-)↑)", function(format, code, text)
 			return (theme[code] and string.format(color, theme[code], text) or format)
 		end)
 
@@ -105,6 +115,64 @@ string.toNickname = function(str, checkDiscriminator)
 
 	return str
 end
+do
+	-- Based on Luvit's ustring
+
+	--[[@
+		@desc Gets the quantity of bytes in a character.
+		@param byte<int> A byte to be used as source.
+		@returns int The quantity of bytes in a character - 1.
+	]]
+	local charLength = function(byte)
+		if bit.rshift(byte, 7) == 0x00 then
+			return 1
+		elseif bit.rshift(byte, 5) == 0x06 then
+			return 2
+		elseif bit.rshift(byte, 4) == 0x0E then
+			return 3
+		elseif bit.rshift(byte, 3) == 0x1E then
+			return 4
+		end
+		return 0
+	end
+
+	--[[@
+		@desc Transforms a Lua string into a UTF8 string.
+		@param str<string> The string.
+		@returns table A table split by UTF8 char.
+	]]
+	string.utf8 = function(str)
+		local utf8str = { }
+		local index, append = 1, 0
+
+		local charLen
+
+		for i = 1, #str do
+			repeat
+				local char = string.sub(str, i, i)
+				local byte = string.byte(char)
+				if append ~= 0 then
+					utf8str[index] = utf8str[index] .. char
+					append = append - 1
+
+					if append == 0 then
+						index = index + 1
+					end
+					break
+				end
+
+				charLen = charLength(byte)
+				utf8str[index] = char
+				if charLen == 1 then
+					index = index + 1
+				end
+				append = append + charLen - 1
+			until true
+		end
+
+		return utf8str
+	end
+end
 --[[@
 	@desc Links two arrays by reference.
 	@param str<table> The source table, the one receiving the new values.
@@ -136,14 +204,18 @@ table.arrayRange = function(arr, i, j)
 	return newArray
 end
 --[[@
-	@desc Copies a table to remove its reference. (Doesn't cover table values)
+	@desc Copies a table to remove its reference.
 	@param list<table> The table to be copied.
 	@returns table A new table with all values and indexes of @list.
 ]]
 table.copy = function(list)
 	local out = { }
 	for k, v in next, list do
-		out[k] = v
+		if type(v) == "table" then
+			out[k] = table.copy(v)
+		else
+			out[k] = v
+		end
 	end
 	return out
 end

@@ -364,7 +364,7 @@ end)
 >| hasCheese | `boolean` | Whether the player has cheese or not. |
 >
 >
->Triggered when a player gets (or gets removed) a cheese.
+>Triggered when a player gets (or loses) a cheese.
 >
 >**@playerData structure**:
 >```Lua
@@ -455,7 +455,7 @@ end)
 >| isVampire | `boolean` | Whether the player is a vampire or not. |
 >
 >
->Triggered when a player is (un)transformed into a vampire.
+>Triggered when a player is transformed from/into a vampire.
 >
 >**@playerData structure**:
 >```Lua
