@@ -1,5 +1,4 @@
 # Private Functions
----
 >### charLength ( byte )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

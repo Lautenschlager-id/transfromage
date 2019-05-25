@@ -1,5 +1,4 @@
 # Helper Functions
----
 >### coroutine.makef ( f )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

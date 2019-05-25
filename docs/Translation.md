@@ -1,5 +1,4 @@
 # Functions
----
 >### download ( language )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -11,7 +10,7 @@
 >### free ( language, whitelist, whitelistPattern )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| language | `enum.language` | ✔ | An enum from [language](Enums.md#language-string) that was downloaded before with [download](#download--language). |
+>| language | `enum.language` | ✔ | An enum from [language](Enums.md#language-string) that was downloaded before with [download](#download--language-). |
 >| whitelist | `table` | ✕ | A set ([index]=true) of indexes that must not be deleted. |
 >| whitelistPattern | `string` | ✕ | A pattern to match various indexes at once, these indexes won't be deleted. |
 >
@@ -22,7 +21,7 @@
 >### get ( language, index, raw )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| language | `enum.language` | ✔ | An enum from [language](Enums.md#language-string) that was downloaded before with [download](#download--language). |
+>| language | `enum.language` | ✔ | An enum from [language](Enums.md#language-string) that was downloaded before with [download](#download--language-). |
 >| index | `string` | ✕ | The code of the translation line. |
 >| raw | `boolean` | ✕ | Whether the translation line must be sent in raw mode or filtered. <sub>(default = false)</sub> |
 >

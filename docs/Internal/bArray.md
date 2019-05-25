@@ -1,6 +1,7 @@
 # ByteArray
 Byte arrays are used to control packets and are a lua recreation of the ByteStrings. 
 
+---
 >### byteArray:new ( stack )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

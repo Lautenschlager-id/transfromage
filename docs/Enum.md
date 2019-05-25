@@ -184,6 +184,42 @@
 | roomMessage | { 06, 06 } |
 
 ---
+### language <sub>\<string></sub>
+###### The available community translation file communities.
+| Index |
+| :-: |
+| en |
+| fr |
+| ru |
+| br |
+| es |
+| cn |
+| tr |
+| vk |
+| pl |
+| hu |
+| nl |
+| ro |
+| id |
+| de |
+| ar |
+| ph |
+| lt |
+| jp |
+| ch |
+| fi |
+| cz |
+| hr |
+| sk |
+| bg |
+| lv |
+| he |
+| it |
+| et |
+| az |
+| pt |
+
+---
 ### role <sub>\<int></sub>
 ###### The id for staff role identifiers.
 | Index | Value |

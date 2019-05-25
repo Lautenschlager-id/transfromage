@@ -1,6 +1,6 @@
 # Guide
 
-Folder created specially for contributors. Learn more in [CONTRIBUTING](././CONTRIBUTING.md).
+Folder created specially for contributors. Learn more in [CONTRIBUTING](../../CONTRIBUTING.md).
 
 ## Topics
 

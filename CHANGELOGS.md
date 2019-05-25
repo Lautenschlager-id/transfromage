@@ -9,6 +9,9 @@
 - Added the file _translation.lua_.
 - Added _string.utf8_.
 
+### Changes
+- _table.copy_ now cover tables.
+
 ### Fixes
 - Now invalid enumerations, using an error handler that ignores low level ones, won't break the client functions anymore.
 
