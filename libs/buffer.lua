@@ -1,4 +1,11 @@
-local buffer = table.setNewClass()
+-- Optimization --
+local string_getBytes = string.getBytes
+local table_add = table.add
+local table_remove = table.remove
+local table_setNewClass = table.setNewClass
+------------------
+
+local buffer = table_setNewClass()
 buffer.__index = buffer
 
 --[[@
@@ -37,7 +44,7 @@ buffer.receive = function(self, length)
 
 	local ret = { }
 	for b = 1, length do
-		ret[b] = table.remove(self.queue, 1)
+		ret[b] = table_remove(self.queue, 1)
 	end
 
 	return ret
@@ -49,10 +56,10 @@ end
 ]]
 buffer.push = function(self, bytes)
 	if type(bytes) == "string" then
-		bytes = string.getBytes(bytes)
+		bytes = string_getBytes(bytes)
 	end
 
-	table.add(self.queue, bytes)
+	table_add(self.queue, bytes)
 
 	return self
 end

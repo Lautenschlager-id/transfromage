@@ -1,3 +1,7 @@
+-- Optimization --
+local debug_traceback = debug.traceback
+------------------
+
 local enum = setmetatable({ }, {
 	--[[@
 		@desc Creates a new enumeration.
@@ -74,7 +78,7 @@ enum._validate = function(enumeration, default, value, errorMsg)
 		local exists = enum._exists(enumeration, value)
 
 		if not exists then
-			return error((errorMsg or "↑failure↓[ENUM]↑ Invalid enumeration\n" .. tostring(debug.traceback())), -2)
+			return error((errorMsg or "↑failure↓[ENUM]↑ Invalid enumeration\n" .. tostring(debug_traceback())), -2)
 		end
 
 		if exists == 1 then

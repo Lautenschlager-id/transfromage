@@ -11,6 +11,7 @@ Folder created specially for contributors. Learn more in [CONTRIBUTING](../../CO
 - [connection](connection.md)
 - [encode](encode.md)
 - [enum](enum.md)
+- [events](events.md)
 - [extensions](extensions.md)
 
 ## Tree
@@ -61,5 +62,8 @@ Folder created specially for contributors. Learn more in [CONTRIBUTING](../../CO
 - [enum](enum.md)
 	- [\_exists](enum.md#enum_exists--enumeration-value-)
 	- [\_validate](enum.md#enum_validate--enumeration-default-value-errormsg-)
+- [events](events.md)
+	- [\_receive](events.md#_receive--connection-packet-)
+	- [\_socketConnection](events.md#_socketconnection--connection-port-)
 - [extensions](extensions.md)
 	- [charLength](extensions.md#charlength--byte-)

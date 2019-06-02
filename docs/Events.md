@@ -552,7 +552,7 @@ end)
 >```Lua
 >{
 >	playerName = "", -- The player name.
->	id = 0, -- The player id.
+>	id = 0, -- The player id. It may be 0 if the player has no avatar.
 >	registrationDate = 0, -- The timestamp of when the player was created.
 >	role = 0, -- An enum from enum.role that specifies the player's role.
 >	gender = 0, -- An enum from enum.gender for the player's gender. 

@@ -145,3 +145,4 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [download](Translation.md#download--language-)
 	- [free](Translation.md#free--language-whitelist-whitelistpattern-)
 	- [get](Translation.md#get--language-index-raw-)
+	- [set](Translation.md#set--language-setpattern-f-isplain-)

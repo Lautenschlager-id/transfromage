@@ -1,3 +1,16 @@
+-- Optimization --
+local bit_band = bit.band
+local bit_lshift = bit.lshift
+local bit_rshift = bit.rshift
+local string_char = string.char
+local string_getBytes = string.getBytes
+local table_add = table.add
+local table_arrayRange = table.arrayRange
+local table_mapArray = table.mapArray
+local table_setNewClass = table.setNewClass
+local table_writeBytes = table.writeBytes
+------------------
+
 local byteArray = table.setNewClass()
 byteArray.__index = byteArray
 
@@ -25,10 +38,10 @@ byteArray.write8 = function(self, ...)
 		tbl = { 0 }
 	end
 
-	local bytes = table.mapArray(tbl, function(n)
+	local bytes = table_mapArray(tbl, function(n)
 		return n % 256
 	end)
-	table.add(self.stack, bytes)
+	table_add(self.stack, bytes)
 	return self
 end
 --[[@
@@ -38,7 +51,7 @@ end
 ]]
 byteArray.write16 = function(self, short)
 	-- (long >> 8) & 255, long & 255
-	return self:write8(bit.band(bit.rshift(short, 8), 255), bit.band(short, 255))
+	return self:write8(bit_band(bit_rshift(short, 8), 255), bit_band(short, 255))
 end
 --[[@
 	@desc Inserts an integer in the byte array.
@@ -47,7 +60,7 @@ end
 ]]
 byteArray.write24 = function(self, int)
 	-- (long >> 16) & 255, (long >> 8) & 255, long & 255
-	return self:write8(bit.band(bit.rshift(int, 16), 255), bit.band(bit.rshift(int, 8), 255), bit.band(int, 255))
+	return self:write8(bit_band(bit_rshift(int, 16), 255), bit_band(bit_rshift(int, 8), 255), bit_band(int, 255))
 end
 --[[@
 	@desc Inserts a long integer in the byte array.
@@ -56,7 +69,7 @@ end
 ]]
 byteArray.write32 = function(self, long)
 	-- (long >> 24) & 255, (long >> 16) & 255, (long >> 8) & 255, long & 255
-	return self:write8(bit.band(bit.rshift(long, 24), 255), bit.band(bit.rshift(long, 16), 255), bit.band(bit.rshift(long, 8), 255), bit.band(long, 255))
+	return self:write8(bit_band(bit_rshift(long, 24), 255), bit_band(bit_rshift(long, 16), 255), bit_band(bit_rshift(long, 8), 255), bit_band(long, 255))
 end
 --[[@
 	@desc Inserts a string in the byte array.
@@ -65,11 +78,11 @@ end
 ]]
 byteArray.writeUTF = function(self, utf)
 	if type(utf) == "string" then
-		utf = string.getBytes(utf)
+		utf = string_getBytes(utf)
 	end
 
 	self:write16(#utf)
-	table.add(self.stack, utf)
+	table_add(self.stack, utf)
 
 	return self
 end
@@ -80,11 +93,11 @@ end
 ]]
 byteArray.writeBigUTF = function(self, bigUtf)
 	if type(bigUtf) == "string" then
-		bigUtf = string.getBytes(bigUtf)
+		bigUtf = string_getBytes(bigUtf)
 	end
 
 	self:write24(#bigUtf)
-	table.add(self.stack, string.getBytes(bigUtf))
+	table_add(self.stack, string_getBytes(bigUtf))
 
 	return self
 end
@@ -104,8 +117,8 @@ end
 byteArray.read8 = function(self, quantity)
 	quantity = quantity or 1
 
-	local byteStack = table.arrayRange(self.stack, 1, quantity)
-	self.stack = table.arrayRange(self.stack, quantity + 1)
+	local byteStack = table_arrayRange(self.stack, 1, quantity)
+	self.stack = table_arrayRange(self.stack, quantity + 1)
 
 	local sLen = #byteStack
 	local fillVal = quantity - sLen
@@ -124,7 +137,7 @@ end
 byteArray.read16 = function(self)
 	local shortStack = self:read8(2)
 	-- s[1] << 8 = s[2]
-	return bit.lshift(shortStack[1], 8) + shortStack[2]
+	return bit_lshift(shortStack[1], 8) + shortStack[2]
 end
 --[[@
 	@desc Extracts an integer from the packet stack.
@@ -133,7 +146,7 @@ end
 byteArray.read24 = function(self)
 	local intStack = self:read8(3)
 	-- i[1] << 16 + i[2] << 8 + i[3]
-	return bit.lshift(intStack[1], 16) + bit.lshift(intStack[2], 8) + intStack[3]
+	return bit_lshift(intStack[1], 16) + bit_lshift(intStack[2], 8) + intStack[3]
 end
 --[[@
 	@desc Extracts a long integer from the packet stack.
@@ -142,7 +155,7 @@ end
 byteArray.read32 = function(self)
 	local longStack = self:read8(4)
 	-- l[1] << 24 + l[2] << 16 + l[3] << 8 + l[4]
-	return bit.lshift(longStack[1], 24) + bit.lshift(longStack[2], 16) + bit.lshift(longStack[3], 8) + longStack[4]
+	return bit_lshift(longStack[1], 24) + bit_lshift(longStack[2], 16) + bit_lshift(longStack[3], 8) + longStack[4]
 end
 --[[@
 	@desc Extracts a string from the packet stack.
@@ -152,9 +165,9 @@ byteArray.readUTF = function(self)
 	local byte = self:read8(self:read16())
 
 	if type(byte) == "number" then
-		return string.char(byte)
+		return string_char(byte)
 	end
-	return table.writeBytes(byte)
+	return table_writeBytes(byte)
 end
 --[[@
 	@desc Extracts a long string from the packet stack.
@@ -164,9 +177,9 @@ byteArray.readBigUTF = function(self)
 	local byte = self:read8(self:read24())
 
 	if type(byte) == "number" then
-		return string.char(byte)
+		return string_char(byte)
 	end
-	return table.writeBytes(byte)
+	return table_writeBytes(byte)
 end
 --[[@
 	@desc Extracts a boolean from the packet stack. (Whether the next byte is 0 or 1)

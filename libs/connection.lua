@@ -1,10 +1,24 @@
-local net = require("net")
+local net_createConnection = require("net").createConnection
+local timer_setTimeout = require("timer").setTimeout
+
 local byteArray = require("bArray")
 local buffer = require("buffer")
-local timer = require("timer")
 local enum = require("enum")
 
-local connection = table.setNewClass()
+-- Optimization --
+local bit_lshift = bit.lshift
+local string_format = string.format
+local string_getBytes = string.getBytes
+local table_add = table.add
+local table_concat = table.concat
+local table_fuse = table.fuse
+local table_join = table.join
+local table_setNewClass = table.setNewClass
+local table_unpack = table.unpack
+local table_writeBytes = table.writeBytes
+------------------
+
+local connection = table_setNewClass()
 connection.__index = connection
 
 --[[@
@@ -62,7 +76,7 @@ connection.connect = function(self, ip, port)
 	end
 
 	local socket
-	socket = net.createConnection(port, ip, function()
+	socket = net_createConnection(port, ip, function()
 		self.socket = socket
 
 		self.ip = ip
@@ -72,10 +86,15 @@ connection.connect = function(self, ip, port)
 			self.buffer:push(data)
 		end)
 
+		--[[@
+			@desc Triggered when the socket gets connected.
+			@param connection<connection> The connection.
+			@param port<int> The port where the socket got connected.
+		]]
 		self.event:emit("_socketConnection", self, port)
 	end)
 
-	timer.setTimeout(3500, function()
+	timer_setTimeout(3500, function()
 		if not self.open then
 			if not hasPort then
 				self.port = self.port + 1
@@ -100,7 +119,7 @@ connection.receive = function(self)
 		local stackLen = 0
 
 		for i = 1, #byteArr do
-			stackLen = stackLen + bit.lshift(byteArr[i], (8 * (stackLenSize - i)))
+			stackLen = stackLen + bit_lshift(byteArr[i], (8 * (stackLenSize - i)))
 		end
 
 		return self.buffer:receive(stackLen)
@@ -116,20 +135,20 @@ connection.send = function(self, identifiers, alphaPacket)
 	local betaPacket
 	if type(alphaPacket) == "table" then
 		if alphaPacket.stack then
-			betaPacket = byteArray:new(table.fuse(identifiers, alphaPacket.stack))
+			betaPacket = byteArray:new(table_fuse(identifiers, alphaPacket.stack))
 		else
-			local bytes = { "0x" .. (string.format("%02x", identifiers[1]) .. string.format("%02x", identifiers[2])), 0x1, table.join(alphaPacket, 0x1) }
+			local bytes = { "0x" .. (string_format("%02x", identifiers[1]) .. string_format("%02x", identifiers[2])), 0x1, table_join(alphaPacket, 0x1) }
 			betaPacket = byteArray:new():write8(1, 1):writeUTF(bytes)
 		end
 	elseif type(alphaPacket) == "string" then
-		betaPacket = byteArray:new(table.fuse(identifiers, string.getBytes(alphaPacket)))
+		betaPacket = byteArray:new(table_fuse(identifiers, string_getBytes(alphaPacket)))
 	elseif type(alphaPacket) == "number" then
-		local arg = { table.unpack(identifiers) }
+		local arg = { table_unpack(identifiers) }
 		arg[#arg + 1] = alphaPacket
 
-		betaPacket = byteArray:new():write8(table.unpack(arg))
+		betaPacket = byteArray:new():write8(table_unpack(arg))
 	else
-		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " .. table.concat(identifiers, ','), enum.errorLevel.low)
+		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
 	end
 
 	local gammaPacket
@@ -141,15 +160,15 @@ connection.send = function(self, identifiers, alphaPacket)
 	elseif stackLen < 16777216 then
 		gammaPacket = byteArray:new():write8(3):write24(stackLen)
 	else
-		return error("↑failure↓[SEND]↑ The packet length is too big! ↑error↓(" .. stackLen .. ")↑\n\tIdentifiers: " .. table.concat(identifiers, ','), enum.errorLevel.low)
+		return error("↑failure↓[SEND]↑ The packet length is too big! ↑error↓(" .. stackLen .. ")↑\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
 	end
 
 	gammaPacket:write8(self.packetID)
 	self.packetID = (self.packetID + 1) % 100
 
-	table.add(gammaPacket.stack, betaPacket.stack)
+	table_add(gammaPacket.stack, betaPacket.stack)
 
-	local written = self.socket:write(table.writeBytes(gammaPacket.stack))
+	local written = self.socket:write(table_writeBytes(gammaPacket.stack))
 	if not written then
 		self.open = false
 		if self.ip ~= enum.setting.mainIp then -- Avoids that 'disconnection' gets triggered twice when it is the main instance.

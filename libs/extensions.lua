@@ -1,3 +1,20 @@
+-- Optimization --
+local bit_rshift = bit.rshift
+local coroutine_wrap = coroutine.wrap
+local math_ceil = math.ceil
+local math_floor = math.floor
+local string_byte = string.byte
+local string_char = string.char
+local string_find = string.find
+local string_format = string.format
+local string_gmatch = string.gmatch
+local string_gsub = string.gsub
+local string_lower = string.lower
+local string_sub = string.sub
+local string_upper = string.upper
+local table_concat = table.concat
+------------------
+
 --[[@
 	@desc Creates a coroutine to execute the given function.
 	@param f<function> Function to be executed inside a coroutine.
@@ -5,7 +22,7 @@
 ]]
 coroutine.makef = function(f)
 	return function(...)
-		return coroutine.wrap(f)(...)
+		return coroutine_wrap(f)(...)
 	end
 end
 --[[@
@@ -14,8 +31,8 @@ end
 	@returns int The normalized coordinate point value.
 ]]
 math.normalizePoint = function(x)
-	x = x *  (8 / 27)
-    return (x > 0 and math.floor(x) or x < 0 and math.ceil(x) or x)
+	x = x * (8 / 27)
+	return (x > 0 and math_floor(x) or x < 0 and math_ceil(x) or x)
 end
 do
 	local color = "\27[%sm%s\27[0m"
@@ -37,8 +54,8 @@ do
 		@returns nil,string The formated message, depending on @returnValue.
 	]]
 	os.log = function(str, returnValue)
-		str = string.gsub(tostring(str), "(↑(.-)↓(.-)↑)", function(format, code, text)
-			return (theme[code] and string.format(color, theme[code], text) or format)
+		str = string_gsub(tostring(str), "(↑(.-)↓(.-)↑)", function(format, code, text)
+			return (theme[code] and string_format(color, theme[code], text) or format)
 		end)
 
 		if returnValue then
@@ -61,8 +78,8 @@ end
 ]]
 string.fixEntity = function(str)
 	str = tostring(str)
-	str = string.gsub(str, "&lt;", '<')
-	str = string.gsub(str, "&amp;(#?)", '&%1')
+	str = string_gsub(str, "&lt;", '<')
+	str = string_gsub(str, "&amp;(#?)", '&%1')
 	return str
 end
 --[[@
@@ -75,11 +92,11 @@ string.getBytes = function(str)
 	if len > 8000 then -- avoids 'string slice too long'
 		local out = { }
 		for i = 1, len do
-			out[i] = string.byte(str, i, i)
+			out[i] = string_byte(str, i, i)
 		end
 		return out
 	else
-		return { string.byte(str, 1, -1) }
+		return { string_byte(str, 1, -1) }
 	end
 end
 --[[@
@@ -91,7 +108,7 @@ end
 string.split = function(str, pat)
 	local out, counter = { }, 0
 
-	for v in string.gmatch(str, pat) do
+	for v in string_gmatch(str, pat) do
 		counter = counter + 1
 		out[counter] = tonumber(v) or v
 	end
@@ -106,10 +123,10 @@ end
 ]]
 string.toNickname = function(str, checkDiscriminator)
 	str = tostring(str)
-	str = string.lower(str)
-	str = string.gsub(str, "%a", string.upper, 1)
+	str = string_lower(str)
+	str = string_gsub(str, "%a", string_upper, 1)
 
-	if checkDiscriminator and not string.find(str, '#', -5, true) then
+	if checkDiscriminator and not string_find(str, '#', -5, true) then
 		str = str .. "#0000"
 	end
 
@@ -124,13 +141,13 @@ do
 		@returns int The quantity of bytes in a character - 1.
 	]]
 	local charLength = function(byte)
-		if bit.rshift(byte, 7) == 0x00 then
+		if bit_rshift(byte, 7) == 0x00 then
 			return 1
-		elseif bit.rshift(byte, 5) == 0x06 then
+		elseif bit_rshift(byte, 5) == 0x06 then
 			return 2
-		elseif bit.rshift(byte, 4) == 0x0E then
+		elseif bit_rshift(byte, 4) == 0x0E then
 			return 3
-		elseif bit.rshift(byte, 3) == 0x1E then
+		elseif bit_rshift(byte, 3) == 0x1E then
 			return 4
 		end
 		return 0
@@ -149,8 +166,8 @@ do
 
 		for i = 1, #str do
 			repeat
-				local char = string.sub(str, i, i)
-				local byte = string.byte(char)
+				local char = string_sub(str, i, i)
+				local byte = string_byte(char)
 				if append ~= 0 then
 					utf8str[index] = utf8str[index] .. char
 					append = append - 1
@@ -284,5 +301,5 @@ end
 	@returns string A string from the array of bytes.
 ]]
 table.writeBytes = function(bytes)
-	return table.concat(table.mapArray(bytes, string.char))
+	return table_concat(table.mapArray(bytes, string_char))
 end

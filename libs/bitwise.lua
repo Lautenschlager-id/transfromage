@@ -1,4 +1,8 @@
+-- Optimization --
+local math_floor = math.floor
+------------------
 -- Thanks to @Turkitutu @ https://pastebin.com/raw/Nw3y1A42
+
 local bitwise = { }
 
 --[[@
@@ -17,7 +21,7 @@ end
 	@returns int The integer @x shifted @disp bits to the right.
 ]]
 bitwise.rshift = function(x, disp)
-	return math.floor(x / 2 ^ disp)
+	return math_floor(x / 2 ^ disp)
 end
 --[[@
 	@desc Returns the bitwise _& (and)_ between two integers.
@@ -26,7 +30,7 @@ end
 	@returns int The result of the & operation.
 ]]
 bitwise.band = function(x, y)
-	-- \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n (\lfloor \dfrac{x}{2^n} \rfloor mod 2)(\lfloor \dfrac{y}{2^n} \rfloor mod 2)
+	-- x > y → \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n (\lfloor \dfrac{x}{2^n} \rfloor mod 2)(\lfloor \dfrac{y}{2^n} \rfloor mod 2)
 	local aux = 1
 	local out = 0
 
@@ -53,7 +57,7 @@ end
 	@returns int The result of the ^ operation.
 ]]
 bitwise.bxor = function(x, y)
-	-- \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n [(\lfloor \dfrac{x}{2^n} \rfloor + \lfloor \dfrac{y}{2^n} \rfloor) mod 2)]
+	-- x > y → \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n [(\lfloor \dfrac{x}{2^n} \rfloor + \lfloor \dfrac{y}{2^n} \rfloor) mod 2)]
 	local out = 0
 
 	local aux
@@ -63,8 +67,8 @@ bitwise.bxor = function(x, y)
 			out = out + 2 ^ n
 		end
 
-		x = math.floor(x / 2)
-		y = math.floor(y / 2)
+		x = math_floor(x / 2)
+		y = math_floor(y / 2)
 	end
 
 	return out

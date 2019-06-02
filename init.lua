@@ -1,30 +1,43 @@
 require("extensions")
 
+-- Optimization --
+local coroutine_wrap = coroutine.wrap
+local io_open = io.open
+local io_read = io.read
+local os_execute = os.execute
+local os_exit = os.exit
+local os_log = os.log
+local os_remove = os.remove
+local string_match = string.match
+local string_upper = string.upper
+local table_concat = table.concat
+------------------
+
 do
 	local isSemi
-	local update = io.open("autoupdate", 'r') or io.open("autoupdate.txt", 'r')
+	local update = io_open("autoupdate", 'r') or io_open("autoupdate.txt", 'r')
 	if not update then
-		update = io.open("semiautoupdate", 'r') or io.open("semiautoupdate.txt", 'r')
+		update = io_open("semiautoupdate", 'r') or io_open("semiautoupdate.txt", 'r')
 		isSemi = true
 	end
 
 	if update then
 		update:close()
 
-		coroutine.wrap(function()
+		coroutine_wrap(function()
 			local pkg = require("deps/transfromage/package")
 			if pkg then
 				local version = pkg.version
 				local _, lastVersion = require("coro-http").request("GET", "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/package.lua")
 				if lastVersion then
-					lastVersion = string.match(lastVersion, "version = \"(.-)\"")
+					lastVersion = string_match(lastVersion, "version = \"(.-)\"")
 					if version ~= lastVersion then
 						local confirmation
 						if isSemi then
 							repeat
-								os.log("↑info↓[UPDATE]↑ New version ↑highlight↓Transfromage@" .. lastVersion .. "↑ available.")
-								os.log("↑info↓[UPDATE]↑ Update it now? ( ↑success↓Y↑ / ↑error↓N↑ )")
-								confirmation = string.upper(io.read())
+								os_log("↑info↓[UPDATE]↑ New version ↑highlight↓Transfromage@" .. lastVersion .. "↑ available.")
+								os_log("↑info↓[UPDATE]↑ Update it now? ( ↑success↓Y↑ / ↑error↓N↑ )")
+								confirmation = string_upper(io_read())
 							until confirmation == 'N' or confirmation == 'Y'
 						else
 							confirmation = 'Y'
@@ -32,25 +45,25 @@ do
 
 						if confirmation == 'Y' then
 							for i = 1, #pkg.files do
-								os.remove("deps/transfromage/" .. pkg.files[i]) -- avoids permissions error
+								os_remove("deps/transfromage/" .. pkg.files[i]) -- avoids permissions error
 							end
-							os.execute("lit install Lautenschlager-id/transfromage") -- Installs the new lib
-							os.execute("luvit " .. table.concat(args, ' ')) -- Luvit's command
-							return os.exit()
+							os_execute("lit install Lautenschlager-id/transfromage") -- Installs the new lib
+							os_execute("luvit " .. table_concat(args, ' ')) -- Luvit's command
+							return os_exit()
 						end
 					end
 				end
 			else
-				os.log("↑failure↓[WARNING]↑ Could not find the file ↑highlight↓package.lua↑.")
+				os_log("↑failure↓[WARNING]↑ Could not find the file ↑highlight↓package.lua↑.")
 			end
 		end)()
 	end
 end
 
 return {
-    client = require("client"),
-    enum = require("enum"),
-    byteArray = require("bArray"),
-    encode = require("encode"),
-    translation = require("translation")
+	client = require("client"),
+	enum = require("enum"),
+	byteArray = require("bArray"),
+	encode = require("encode"),
+	translation = require("translation")
 }

@@ -2,6 +2,16 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.3.0 - 02/06/2019
+## News
+- Added _translation.set_.
+
+### Changes
+- Added optimization variables.
+
+### Fixes
+- _translation.free_ wouldn't work correctly when both whitelist parameters were set simultaneously.
+
 ## v1.2.0 - 25/05/2019
 ### News
 - Renamed the private function _coroutineFunction_ to _coroutine.makef_.

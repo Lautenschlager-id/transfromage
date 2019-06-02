@@ -1,18 +1,43 @@
-local connection = require("connection")
-local byteArray = require("bArray")
-local encode = require("encode")
-local http = require("coro-http")
-local json = require("json")
 local timer = require("timer")
-local enum = require("enum")
 local event = require("core").Emitter
 local zlibDecompress = require("miniz").inflate
+
+local byteArray = require("bArray")
+local connection = require("connection")
+local encode = require("encode")
+local enum = require("enum")
+
+-- Optimization --
+local bit_bxor = bit.bxor
+local coroutine_makef = coroutine.makef
+local coroutine_wrap = coroutine.wrap
+local encode_btea = encode.btea
+local encode_getPasswordHash = encode.getPasswordHash
+local encode_setPacketKeys = encode.setPacketKeys
+local encode_xorCipher = encode.xorCipher
+local enum_validate = enum._validate
+local math_normalizePoint = math.normalizePoint
+local string_byte = string.byte
+local string_fixEntity = string.fixEntity
+local string_format = string.format
+local string_gsub = string.gsub
+local string_split = string.split
+local string_sub = string.sub
+local string_toNickname = string.toNickname
+local table_copy = table.copy
+local table_remove = table.remove
+local table_setNewClass = table.setNewClass
+local table_writeBytes = table.writeBytes
+local timer_clearInterval = timer.clearInterval
+local timer_setInterval = timer.setInterval
+local timer_setTimeout = timer.setTimeout
+------------------
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
 local handlePlayerField
 
-local client = table.setNewClass()
+local client = table_setNewClass()
 client.__index = client
 
 --[[@
@@ -88,7 +113,7 @@ tribulleListener = {
 			@desc Triggered when a friend connects to the game.
 			@param playerName<string> The player name.
 		]]
-		self.event:emit("friendConnection", string.toNickname(playerName, true))
+		self.event:emit("friendConnection", string_toNickname(playerName, true))
 	end,
 	[33] = function(self, packet, connection, tribulleId) -- Friend disconnected
 		local playerName = packet:readUTF()
@@ -96,7 +121,7 @@ tribulleListener = {
 			@desc Triggered when a friend disconnects from the game.
 			@param playerName<string> The player name.
 		]]
-		self.event:emit("friendDisconnection", string.toNickname(playerName, true))
+		self.event:emit("friendDisconnection", string_toNickname(playerName, true))
 	end,
 	[59] = function(self, packet, connection, tribulleId) -- /who
 		local fingerprint = packet:read32()
@@ -106,7 +131,7 @@ tribulleListener = {
 		local total = packet:read16()
 		local data = { }
 		for i = 1, total do
-			data[i] = string.toNickname(packet:readUTF(), true)
+			data[i] = string_toNickname(packet:readUTF(), true)
 		end
 
 		local chatName = self._who_list[fingerprint]
@@ -127,7 +152,7 @@ tribulleListener = {
 			@param message<string> The message.
 			@param playerCommunity<int> The community id of @playerName.
 		]]
-		self.event:emit("chatMessage", chatName, string.toNickname(playerName, true), string.fixEntity(message), community)
+		self.event:emit("chatMessage", chatName, string_toNickname(playerName, true), string_fixEntity(message), community)
 	end,
 	[65] = function(self, packet, connection, tribulleId) -- Tribe message
 		local memberName, message = packet:readUTF(), packet:readUTF()
@@ -136,7 +161,7 @@ tribulleListener = {
 			@param memberName<string> The member who sent the message.
 			@param message<string> The message.
 		]]
-		self.event:emit("tribeMessage", string.toNickname(memberName, true), string.fixEntity(message))
+		self.event:emit("tribeMessage", string_toNickname(memberName, true), string_fixEntity(message))
 	end,
 	[66] = function(self, packet, connection, tribulleId) -- Whisper message
 		local playerName, community, _, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
@@ -146,7 +171,7 @@ tribulleListener = {
 			message<string> The message.
 			playerCommunity<int> The community id of @playerName.
 		]]
-		self.event:emit("whisperMessage", string.toNickname(playerName, true), string.fixEntity(message), community)
+		self.event:emit("whisperMessage", string_toNickname(playerName, true), string_fixEntity(message), community)
 	end,
 	[88] = function(self, packet, connection, tribulleId) -- Tribe member connected
 		local memberName = packet:readUTF()
@@ -154,7 +179,7 @@ tribulleListener = {
 			@desc Triggered when a tribe member connects to the game.
 			@param memberName<string> The member name.
 		]]
-		self.event:emit("tribeMemberConnection", string.toNickname(memberName, true))
+		self.event:emit("tribeMemberConnection", string_toNickname(memberName, true))
 	end,
 	[90] = function(self, packet, connection, tribulleId) -- Tribe member disconnected
 		local memberName = packet:readUTF()
@@ -162,7 +187,7 @@ tribulleListener = {
 			@desc Triggered when a tribe member disconnects to the game.
 			@param memberName<string> The member name.
 		]]
-		self.event:emit("tribeMemberDisconnection", string.toNickname(memberName, true))
+		self.event:emit("tribeMemberDisconnection", string_toNickname(memberName, true))
 	end,
 	[91] = function(self, packet, connection, tribulleId) -- New tribe member
 		local memberName = packet:readUTF()
@@ -170,7 +195,7 @@ tribulleListener = {
 			@desc Triggered when a player joins the tribe.
 			@param memberName<string> The member who joined the tribe.
 		]]
-		self.event:emit("newTribeMember", string.toNickname(memberName, true))
+		self.event:emit("newTribeMember", string_toNickname(memberName, true))
 	end,
 	[92] = function(self, packet, connection, tribulleId) -- Tribe member leave
 		local memberName = packet:readUTF()
@@ -178,7 +203,7 @@ tribulleListener = {
 			@desc Triggered when a member leaves the tribe.
 			@param memberName<string> The member who left the tribe.
 		]]
-		self.event:emit("tribeMemberLeave", string.toNickname(memberName, true))
+		self.event:emit("tribeMemberLeave", string_toNickname(memberName, true))
 	end,
 	[93] = function(self, packet, connection, tribulleId) -- Tribe member kicked
 		local memberName, kickerName = packet:readUTF(), packet:readUTF()
@@ -187,7 +212,7 @@ tribulleListener = {
 			@param memberName<string> The member name.
 			@param kickerName<string> The name of who kicked the member.
 		]]
-		self.event:emit("tribeMemberKick", string.toNickname(memberName, true), string.toNickname(kickerName, true))
+		self.event:emit("tribeMemberKick", string_toNickname(memberName, true), string_toNickname(kickerName, true))
 	end,
 	[124] = function(self, packet, connection, tribulleId) -- Tribe member kicked
 		local setterName, memberName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
@@ -197,7 +222,7 @@ tribulleListener = {
 			@param setterName<string> The name of who set the role to the member.
 			@param role<string> The role name.
 		]]
-		self.event:emit("tribeMemberGetRole", string.toNickname(memberName, true), string.toNickname(setterName, true), role)
+		self.event:emit("tribeMemberGetRole", string_toNickname(memberName, true), string_toNickname(setterName, true), role)
 	end
 }
 -- Old packet functions
@@ -295,7 +320,7 @@ oldPacketListener = {
 
 				-- Removes the numeric reference and decreases 1 for all the next players in the queue.
 				local pos = self.playerList[playerId]._pos
-				table.remove(self.playerList, self.playerList[playerId]._pos)
+				table_remove(self.playerList, self.playerList[playerId]._pos)
 
 				self.playerList.count = self.playerList.count - 1
 				for i = pos, self.playerList.count do
@@ -313,8 +338,8 @@ oldPacketListener = {
 packetListener = {
 	[1] = {
 		[1] = function(self, packet, connection, identifiers) -- Old packets format
-			local data = string.split(packet:readUTF(), "[^\x01]+")
-			local oldIdentifiers = { string.byte(table.remove(data, 1), 1, 2) }
+			local data = string_split(packet:readUTF(), "[^\x01]+")
+			local oldIdentifiers = { string_byte(table_remove(data, 1), 1, 2) }
 
 			if oldPacketListener[oldIdentifiers[1]] and oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]] then
 				return oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]](self, data, connection, oldIdentifiers)
@@ -337,14 +362,14 @@ packetListener = {
 			if self.playerList[playerId] then
 				packet:read32() -- round code
 
-				local oldPlayerData = table.copy(self.playerList[playerId])
+				local oldPlayerData = table_copy(self.playerList[playerId])
 
 				-- It's intended that, based on Lua behavior, all the hashes get updated automatically.
 				self.playerList[playerId].movingRight = packet:readBool()
 				self.playerList[playerId].movingLeft = packet:readBool()
 
-				self.playerList[playerId].x = math.normalizePoint(packet:read32())
-				self.playerList[playerId].y = math.normalizePoint(packet:read32())
+				self.playerList[playerId].x = math_normalizePoint(packet:read32())
+				self.playerList[playerId].y = math_normalizePoint(packet:read32())
 				self.playerList[playerId].vx = packet:read16()
 				self.playerList[playerId].vy = packet:read16()
 
@@ -376,7 +401,7 @@ packetListener = {
 
 			local xml = packet:read8(packet:read16())
 			if self._process_xml then
-				xml = table.writeBytes(xml)
+				xml = table_writeBytes(xml)
 				if xml ~= '' then
 					map.xml = zlibDecompress(xml, 1)
 				end
@@ -402,25 +427,25 @@ packetListener = {
 		[21] = function(self, packet, connection, identifiers) -- Room changed
 			local isPrivate, roomName = packet:readBool(), packet:readUTF()
 
-			if string.byte(roomName, 2) == 3 then
+			if string_byte(roomName, 2) == 3 then
 				--[[@
 					@desc Triggered when the player joins a tribe house.
 					@param tribeName<string> The name of the tribe.
 				]]
-				self.event:emit("joinTribeHouse", string.sub(roomName, 3))
+				self.event:emit("joinTribeHouse", string_sub(roomName, 3))
 			else
 				--[[@
 					@desc Triggered when the player changes the room.
 					@param roomName<string> The name of the room.
 					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
 				]]
-				self.event:emit("roomChanged", string.fixEntity(roomName), isPrivate)
+				self.event:emit("roomChanged", string_fixEntity(roomName), isPrivate)
 			end
 		end
 	},
 	[6] = {
 		[6] = function(self, packet, connection, identifiers) -- Room message
-			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string.fixEntity(packet:readUTF())
+			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string_fixEntity(packet:readUTF())
 			--[[@
 				@desc Triggered when the room receives a new user message.
 				@param playerName<string> The player who sent the message.
@@ -428,7 +453,7 @@ packetListener = {
 				@param playerCommunity<int> The community id of @playerName.
 				@param playerId<int> The temporary id of @playerName.
 			]]
-			self.event:emit("roomMessage", string.toNickname(playerName, true), string.fixEntity(message), playerCommu, playerId)
+			self.event:emit("roomMessage", string_toNickname(playerName, true), string_fixEntity(message), playerCommu, playerId)
 		end,
 		[20] = function(self, packet, connection, identifiers) -- /time
 			packet:read8() -- ?
@@ -521,7 +546,7 @@ packetListener = {
 			local oldPlayerData
 			for i = 1, 2 do
 				if self.playerList[shaman[i]] then
-					oldPlayerData = table.copy(self.playerList[shaman[i]])
+					oldPlayerData = table_copy(self.playerList[shaman[i]])
 
 					self.playerList[shaman[i]][(i == 1 and "isBlueShaman" or "isPinkShaman")] = true
 
@@ -596,7 +621,7 @@ packetListener = {
 				@param data<table> The player profile data.
 				@struct @data {
 					playerName = "", -- The player name.
-					id = 0, -- The player id.
+					id = 0, -- The player id. It may be 0 if the player has no avatar.
 					registrationDate = 0, -- The timestamp of when the player was created.
 					role = 0, -- An enum from enum.role that specifies the player's role.
 					gender = 0, -- An enum from enum.gender for the player's gender. 
@@ -694,7 +719,7 @@ packetListener = {
 
 			self._receivedAuthkey = packet:read32() -- Receives an authentication key, parsed in the login function
 
-			self._hbTimer = timer.setInterval(10 * 1000, sendHeartbeat, self)
+			self._hbTimer = timer_setInterval(10 * 1000, sendHeartbeat, self)
 
 			community = byteArray:new():write8(self.community):write8(0)
 			self.main:send(enum.identifier.community, community)
@@ -866,7 +891,7 @@ packetListener = {
 				data.messages[totalMessages].authorId = packet:read32()
 				data.messages[totalMessages].timestamp = os.time() - packet:read32()
 				data.messages[totalMessages].author = packet:readUTF()
-				data.messages[totalMessages].content = string.gsub(packet:readUTF(), "\r", "\r\n")
+				data.messages[totalMessages].content = string_gsub(packet:readUTF(), "\r", "\r\n")
 				data.messages[totalMessages].canLike = packet:readBool()
 				data.messages[totalMessages].likes = packet:read16()
 			end
@@ -1089,7 +1114,7 @@ packetListener = {
 			data.nameColor = (color == 0xFFFFFFFF and -1 or color)
 
 			-- Custom or delayed data
-			data.isSouris = (string.sub(data.playerName, 1, 1) == '*')
+			data.isSouris = (string_sub(data.playerName, 1, 1) == '*')
 			data.isVampire = false
 			data.hasWon = false
 			data.winPosition = -1
@@ -1118,7 +1143,7 @@ packetListener = {
 					data._pos = self.playerList.count
 				end
 			else
-				oldPlayerData = table.copy(self.playerList[data.id])
+				oldPlayerData = table_copy(self.playerList[data.id])
 				data._pos = self.playerList[data.playerName]._pos
 			end
 
@@ -1226,7 +1251,7 @@ client.insertPacketListener = function(self, C, CC, f, append)
 		packetListener[C] = { }
 	end
 
-	f = coroutine.makef(f)
+	f = coroutine_makef(f)
 	if append and packetListener[C][CC] then
 		packetListener[C][CC] = function(...)
 			packetListener[C][CC](...)
@@ -1243,7 +1268,7 @@ end
 	@param append?<boolean> True if the function should be appended to the (C, CC, tribulle) listener, false if the function should overwrite the (C, CC) listener. @default false
 ]]
 client.insertTribulleListener = function(self, tribulleId, f, append)
-	f = coroutine.makef(f)
+	f = coroutine_makef(f)
 	if append and tribulleListener[tribulleId] then
 		tribulleListener[tribulleId] = function(...)
 			tribulleListener[tribulleId](...)
@@ -1265,7 +1290,7 @@ client.insertOldPacketListener = function(self, C, CC, f, append)
 		oldPacketListener[C] = { }
 	end
 
-	f = coroutine.makef(f)
+	f = coroutine_makef(f)
 	if append and oldPacketListener[C][CC] then
 		oldPacketListener[C][CC] = function(...)
 			oldPacketListener[C][CC](...)
@@ -1307,11 +1332,16 @@ end
 	@param connectionName<string> The name of the Connection object to get the timer attached to.
 ]]
 receive = function(self, connectionName)
-	self["_" .. connectionName .. "Loop"] = timer.setInterval(10, function(self)
+	self["_" .. connectionName .. "Loop"] = timer_setInterval(10, function(self)
 		if self[connectionName] and self[connectionName].open then
 			local packet = self[connectionName]:receive()
 			if not packet then return end
 
+			--[[@
+				@desc Triggered when the socket receives a packet. (Initial stage, before @see receive)
+				@param connection<connection> The connection where the packet came from.
+				@param packet<bArray> The packet received.
+			]]
 			self.event:emit("_receive", self[connectionName], byteArray:new(packet))
 			parsePacket(self, self[connectionName], byteArray:new(packet))
 		end
@@ -1325,11 +1355,12 @@ end
 	@param token<string> The developer's token.
 ]]
 getKeys = function(self, tfmId, token)
-	local _, result = http.request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
+	-- Uses requires because it's used only once before it gets deleted.
+	local _, result = require("coro-http").request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
 		{ "User-Agent", "Mozilla/5.0" }
 	})
 	local _r = result
-	result = json.decode(result)
+	result = require("json").decode(result)
 	if not result then
 		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is invalid.\n\t" .. tostring(_r), enum.errorLevel.high)
 	end
@@ -1342,7 +1373,7 @@ getKeys = function(self, tfmId, token)
 			self._gameIdentificationKeys = result.identification_keys
 			self._gameMsgKeys = result.msg_keys
 
-			encode.setPacketKeys(self._gameIdentificationKeys, self._gameMsgKeys)
+			encode_setPacketKeys(self._gameIdentificationKeys, self._gameMsgKeys)
 		else
 			return error("↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\n\t'" .. result.internal_error_step .. "'" .. ((result.internal_error_step == 2) and ": The game may be in maintenance." or ''), enum.errorLevel.high)
 		end
@@ -1374,10 +1405,10 @@ end
 closeAll = function(self)
 	if self.main then
 		if self.bulle then
-			timer.clearInterval(self._bulleLoop)
+			timer_clearInterval(self._bulleLoop)
 			self.bulle:close()
 		end
-		timer.clearInterval(self._mainLoop)
+		timer_clearInterval(self._mainLoop)
 		self.main:close()
 	end
 end
@@ -1402,7 +1433,7 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 
 		local oldPlayerData
 		if not eventName then -- updatePlayer
-			oldPlayerData = table.copy(self.playerList[playerId])
+			oldPlayerData = table_copy(self.playerList[playerId])
 		end
 
 		self.playerList[playerId][fieldName] = fieldValue
@@ -1454,7 +1485,7 @@ end
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token<string> The API Endpoint token to get access to the authentication keys.
 ]]
-client.start = coroutine.wrap(function(self, tfmId, token)
+client.start = coroutine_wrap(function(self, tfmId, token)
 	getKeys(self, tfmId, token)
 	getKeys = nil -- Saves memory
 
@@ -1472,10 +1503,10 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 		receive(self, "main")
 		receive(self, "bulle")
 		local loop
-		loop = timer.setInterval(10, function(self, loop)
+		loop = timer_setInterval(10, function(self, loop)
 			if not self.main.open then
-				timer.clearInterval(self._hbTimer)
-				timer.clearInterval(loop)
+				timer_clearInterval(self._hbTimer)
+				timer_clearInterval(loop)
 				closeAll(self)
 			end
 		end, self, loop)
@@ -1486,7 +1517,7 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 
 		if connection.name == "main" then
 			if enum.identifier.correctVersion[1] == identifiers[1] and enum.identifier.correctVersion[2] == identifiers[2] then
-				return timer.setTimeout(5000, function(self)
+				return timer_setTimeout(5000, function(self)
 					--[[@
 						@desc Triggered when the connection is live.
 					]]
@@ -1494,7 +1525,7 @@ client.start = coroutine.wrap(function(self, tfmId, token)
 				end, self)
 			elseif enum.identifier.bulleConnection[1] == identifiers[1] and enum.identifier.bulleConnection[2] == identifiers[2] then
 				self._connectionTime = os.time()
-				return timer.setTimeout(5000, function(self)
+				return timer_setTimeout(5000, function(self)
 					--[[@
 						@desc Triggered when the player is logged and ready to perform actions.
 					]]
@@ -1518,7 +1549,7 @@ end)
 	@param callback<function> The function that must be called when the event is triggered.
 ]]
 client.on = function(self, eventName, callback)
-	return self.event:on(eventName, coroutine.makef(callback))
+	return self.event:on(eventName, coroutine_makef(callback))
 end
 --[[@
 	@desc Sets an event emitter that is triggered only once when a specific behavior happens.
@@ -1527,7 +1558,7 @@ end
 	@param callback<function> The function that must be called only once when the event is triggered.
 ]]
 client.once = function(self, eventName, callback)
-	return self.event:once(eventName, coroutine.makef(callback))
+	return self.event:once(eventName, coroutine_makef(callback))
 end
 --[[@
 	@desc Emits an event.
@@ -1565,7 +1596,7 @@ end
 	@param community?<enum.community> An enum from @see community. (index or value) @default EN
 ]]
 client.setCommunity = function(self, community)
-	community = enum._validate(enum.community, enum.community.en, community, string.format(enum.error.invalidEnum, "setCommunity", "community", "community"))
+	community = enum_validate(enum.community, enum.community.en, community, string_format(enum.error.invalidEnum, "setCommunity", "community", "community"))
 	if not community then return end
 
 	self.community = community
@@ -1578,16 +1609,16 @@ end
 	@param startRoom?<string> The name of the initial room. @default "*#bolodefchoco"
 ]]
 client.connect = function(self, userName, userPassword, startRoom, timeout)
-	userName = string.toNickname(userName, true)
+	userName = string_toNickname(userName, true)
 
-	local packet = byteArray:new():writeUTF(userName):writeUTF(encode.getPasswordHash(userPassword))
+	local packet = byteArray:new():writeUTF(userName):writeUTF(encode_getPasswordHash(userPassword))
 	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-	packet:write32(bit.bxor(self._receivedAuthkey, self._gameAuthkey))
+	packet:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey))
 
 	self.playerName = userName
-	self.main:send(enum.identifier.login, encode.btea(packet):write8(0))
+	self.main:send(enum.identifier.login, encode_btea(packet):write8(0))
 
-	timer.setTimeout((timeout or (20 * 1000)), function(self)
+	timer_setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then
 			return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.", enum.errorLevel.low)
 		end
@@ -1608,7 +1639,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendRoomMessage = function(self, message)
-	self.bulle:send(enum.identifier.roomMessage, encode.xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
+	self.bulle:send(enum.identifier.roomMessage, encode_xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
 end
 -- Whisper
 --[[@
@@ -1618,7 +1649,7 @@ end
 	@param targetUser<string> The user to receive the whisper.
 ]]
 client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Sets the account's whisper state.
@@ -1626,10 +1657,10 @@ end
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
 ]]
 client.changeWhisperState = function(self, message, state)
-	state = enum._validate(enum.whisperState, enum.whisperState.enabled, state, string.format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
+	state = enum_validate(enum.whisperState, enum.whisperState.enabled, state, string_format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
 	if not state then return end
 
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
 end
 -- Chat
 --[[@
@@ -1637,7 +1668,7 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
 	@desc Sends a message to a #chat.
@@ -1646,14 +1677,14 @@ end
 	@param message<string> The message.
 ]]
 client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Leaves a #chat.
 	@param chatName<string> The name of the chat.
 ]]
 client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
 end
 --[[@
 	@desc Gets who is in a specific chat. (/who)
@@ -1663,7 +1694,7 @@ client.chatWho = function(self, chatName)
 	self._who_fingerprint = (self._who_fingerprint + 1) % 500
 	self._who_list[self._who_fingerprint] = chatName
 
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
 end
 -- Tribe
 --[[@
@@ -1678,7 +1709,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendTribeMessage = function(self, message)
-    self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@desc Sends a recruitment invite to the player.
@@ -1686,7 +1717,7 @@ end
 	@param playerName<string> The name of player to be recruited.
 ]]
 client.recruitPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@desc Kicks a member of the tribe.
@@ -1694,7 +1725,7 @@ end
 	@param memberName<string> The name of the member to be kicked.
 ]]
 client.kickTribeMember = function(self, memberName)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
 end
 --[[@
 	@desc Sets the role of a member in the tribe.
@@ -1703,7 +1734,7 @@ end
 	@param roleId<int> The role id. (starts in 0, for the initial role. Increases until the Chief role)
 ]]
 client.setTribeMemberRole = function(self, memberName, roleId)
-	self.main:send(enum.identifier.bulle, encode.xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
 end
 --[[@
 	@desc Loads a lua script in the room.
@@ -1738,7 +1769,7 @@ end
 	@param message<string> The content of the topic.
 ]]
 client.createCafeTopic = function(self, title, message)
-	message = string.gsub(message, "\r\n", "\r")
+	message = string_gsub(message, "\r\n", "\r")
 	self.main:send(enum.identifier.cafeNewTopic, byteArray:new():writeUTF(title):writeUTF(message))
 end
 --[[@
@@ -1756,7 +1787,7 @@ end
 	@param message<string> The message to be posted.
 ]]
 client.sendCafeMessage = function(self, topicId, message)
-	message = string.gsub(message, "\r\n", "\r")
+	message = string_gsub(message, "\r\n", "\r")
 	self.main:send(enum.identifier.cafeSendMessage, byteArray:new():write32(topicId):writeUTF(message))
 end
 --[[@
@@ -1777,7 +1808,7 @@ end
 	@param command<string> The command. (without /)
 ]]
 client.sendCommand = function(self, command, crypted)
-	self.main:send(enum.identifier.command, encode.xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
+	self.main:send(enum.identifier.command, encode_xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@
 	@desc Plays an emote.
@@ -1785,7 +1816,7 @@ end
 	@param flag?<string> The country code of the flag when @emote is flag.
 ]]
 client.playEmote = function(self, emote, flag)
-	emote = enum._validate(enum.emote, enum.emote.dance, emote, string.format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
+	emote = enum_validate(enum.emote, enum.emote.dance, emote, string_format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
 	if not emote then return end
 
 
@@ -1801,7 +1832,7 @@ end
 	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
 ]]
 client.playEmoticon = function(self, emoticon)
-	emoticon = enum._validate(enum.emoticon, enum.emoticon.smiley, emoticon, string.format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
+	emoticon = enum_validate(enum.emoticon, enum.emoticon.smiley, emoticon, string_format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
 	if not emoticon then return end
 
 	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
@@ -1811,7 +1842,7 @@ end
 	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
 ]]
 client.requestRoomList = function(self, roomMode)
-	roomMode = enum._validate(enum.roomMode, enum.roomMode.normal, roomMode, string.format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
+	roomMode = enum_validate(enum.roomMode, enum.roomMode.normal, roomMode, string_format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
 	if not roomMode then return end
 
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))

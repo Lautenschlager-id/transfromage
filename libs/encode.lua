@@ -1,6 +1,19 @@
 local byteArray = require("bArray")
 local bitwise = require("bitwise")
 
+-- Optimization --
+local bit_band = bit.band
+local bit_bxor = bit.bxor
+local bitwise_band = bitwise.band
+local bitwise_bxor = bitwise.bxor
+local bitwise_lshift = bitwise.lshift
+local bitwise_rshift = bitwise.rshift
+local math_floor = math.floor
+local string_char = string.char
+local string_sub = string.sub
+local table_concat = table.concat
+------------------
+
 local getPasswordHash
 do
 	local openssl = require("openssl") -- built-in
@@ -26,13 +39,13 @@ do
 	do
 		local chars = { }
 		for i = 1, #saltBytes do
-			chars[i] = string.char(saltBytes[i])
+			chars[i] = string_char(saltBytes[i])
 		end
 
-		saltBytes = table.concat(chars)
+		saltBytes = table_concat(chars)
 	end
 
-	local base64 = require("base64") -- built-in
+	local base64_encode = require("base64").encode -- built-in
 	--[[@
 		@desc Encrypts the account's password.
 		@param password<string> The account's password.
@@ -46,10 +59,10 @@ do
 		local out, counter = { }, 0
 		for i = 1, len, 2 do
 			counter = counter + 1
-			out[counter] = string.char(tonumber(string.sub(hash, i, (i + 1)), 16))
+			out[counter] = string_char(tonumber(string_sub(hash, i, (i + 1)), 16))
 		end
 
-		return base64.encode(table.concat(out))
+		return base64_encode(table_concat(out))
 	end
 end
 
@@ -73,7 +86,7 @@ do
 	-- Aux function for XXTEA
 	local MX = function(z, y, sum, p, e)
 		-- (((z >> 5) ^ (y << 2)) + ((y >> 3) ^ (z << 4))) ^ ((sum ^ y) + (keys[((p & 3) ^ e) + 1] ^ z))
-		return bitwise.bxor(bitwise.bxor(bitwise.rshift(z, 5), bitwise.lshift(y, 2)) + bitwise.bxor(bitwise.rshift(y, 3), bitwise.lshift(z, 4)), bitwise.bxor(sum, y) + bitwise.bxor(identificationKeys[bitwise.bxor(bitwise.band(p, 3), e) + 1], z))
+		return bitwise_bxor(bitwise_bxor(bitwise_rshift(z, 5), bitwise_lshift(y, 2)) + bitwise_bxor(bitwise_rshift(y, 3), bitwise_lshift(z, 4)), bitwise_bxor(sum, y) + bitwise_bxor(identificationKeys[bitwise_bxor(bitwise_band(p, 3), e) + 1], z))
 	end
 
 	--[[@
@@ -90,18 +103,18 @@ do
 		local sum = 0
 
 		local e, p
-		local q = math.floor(6 + 52 / decode)
+		local q = math_floor(6 + 52 / decode)
 		while q > 0 do
 			q = q - 1
 
-			sum = bitwise.band((sum + DELTA), LIM)
-			e = bitwise.band(bitwise.band(bitwise.rshift(sum, 2), LIM), 3)
+			sum = bitwise_band((sum + DELTA), LIM)
+			e = bitwise_band(bitwise_band(bitwise_rshift(sum, 2), LIM), 3)
 
 			p = 0
 			while p < (decode - 1) do
 				y = data[p + 2]
 
-				z = bitwise.band((data[p + 1] + MX(z, y, sum, p, e)), LIM)
+				z = bitwise_band((data[p + 1] + MX(z, y, sum, p, e)), LIM)
 				data[p + 1] = z
 
 				p = p + 1
@@ -109,7 +122,7 @@ do
 
 			y = data[1]
 
-			z = bitwise.band((data[decode] + MX(z, y, sum, p, e)), LIM)
+			z = bitwise_band((data[decode] + MX(z, y, sum, p, e)), LIM)
 			data[decode] = z
 		end
 
@@ -163,7 +176,7 @@ local xorCipher = function(packet, fingerprint)
 
 	for i = 1, #packet.stack do
 		fingerprint = fingerprint + 1
-		stack[i] = bit.band(bit.bxor(packet.stack[i], messageKeys[(fingerprint % 20) + 1]), 255)
+		stack[i] = bit_band(bit_bxor(packet.stack[i], messageKeys[(fingerprint % 20) + 1]), 255)
 	end
 
 	return byteArray:new(stack)
