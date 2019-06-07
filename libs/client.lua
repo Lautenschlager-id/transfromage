@@ -123,6 +123,59 @@ tribulleListener = {
 		]]
 		self.event:emit("friendDisconnection", string_toNickname(playerName, true))
 	end,
+	[34] = function(self, packet, connection, tribulleId)
+		local soulmate = { }
+		soulmate.id = packet:read32()
+		soulmate.playerName = packet:readUTF()
+ 		soulmate.gender = packet:read8()
+ 		packet:read32() -- id again
+		soulmate.isFriend = packet:readBool()
+		soulmate.isConnected = packet:readBool()
+		packet:read32() -- ?
+		soulmate.roomName = packet:readUTF()
+		soulmate.lastConnection = packet:read32()
+
+		local friendList = { }
+		for i = 1, packet:read16() do
+			friendList[i] = { }
+			friendList[i].id = packet:read32()
+			friendList[i].playerName = packet:readUTF()
+ 			friendList[i].gender = packet:read8()
+ 			packet:read32() -- id again
+			friendList[i].isFriend = packet:readBool()
+			friendList[i].isConnected = packet:readBool()
+			packet:read32() -- ?
+			friendList[i].roomName = packet:readUTF()
+			friendList[i].lastConnection = packet:read32()
+		end
+
+		--[[@
+			@desc Triggered when the friend list is loaded.
+			@param friendList<table> The data of the players in the account's friend list.
+			@param soulmate<table> The separated data of the account's soulmate.
+			@struct @friendlist {
+				[i] = {
+					id = 0, -- The player id.
+					playerName = "", -- The player name.
+					gender = 0, -- The gender of the player. Enum in enum.gender.
+					isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+					isConnected = true, -- Whether the player is online or not.
+					roomName = "", -- The name of the room where the player is.
+					lastConnection = 0 -- Timestamp of when was the last connection of the player.
+				}
+			}
+			@struct @soulmate {
+				id = 0, -- The player id.
+				playerName = "", -- The player name.
+				gender = 0, -- The gender of the player. Enum in enum.gender.
+				isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+				isConnected = true, -- Whether the player is online or not.
+				roomName = "", -- The name of the room where the player is.
+				lastConnection = 0 -- Timestamp of when was the last connection of the player.
+			}
+		]]
+		self.event:emit("friendList", friendList, soulmate)
+	end,
 	[59] = function(self, packet, connection, tribulleId) -- /who
 		local fingerprint = packet:read32()
 
@@ -774,7 +827,7 @@ packetListener = {
 				@param rooms<table> The data of the rooms in the list.
 				@param pinned<tablet> The data of the pinned objects in the list.
 				@struct @rooms {
-					[n] = {
+					[i] = {
 						name = "", -- The name of the room.
 						totalPlayers = 0, -- The quantity of players in the room.
 						maxPlayers = 0, -- The maximum quantity of players the room can get.
@@ -782,7 +835,7 @@ packetListener = {
 					}
 				}
 				@struct @pinned {
-					[n] = {
+					[i] = {
 						name = "", -- The name of the object.
 						totalPlayers = 0 -- The quantity of players in the object counter. (Might be a string)
 					}
@@ -1800,7 +1853,6 @@ end
 client.likeCafeMessage = function(self, topicId, messageId, dislike)
 	self.main:send(enum.identifier.cafeLike, byteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
 end
-
 -- Miscellaneous
 --[[@
 	@desc Sends a command (/).
@@ -1846,6 +1898,12 @@ client.requestRoomList = function(self, roomMode)
 	if not roomMode then return end
 
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
+end
+--[[@
+	@desc Requests the friend list.
+]]
+client.requestFriendList = function(self)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(28):write32(3), self.main.packetID))
 end
 
 return client

@@ -2,6 +2,11 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.4.0 - 07/06/2019
+## News
+- Added the event _friendList ( friendList, soulmate )_.
+- Added _client.requestFriendList_.
+
 ## v1.3.0 - 02/06/2019
 ## News
 - Added _translation.set_.

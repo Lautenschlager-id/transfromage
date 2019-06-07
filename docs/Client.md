@@ -279,6 +279,11 @@
 >Reloads the Café data.
 >
 ---
+>### client:requestFriendList (  )
+>
+>Requests the friend list.
+>
+---
 >### client:requestRoomList ( roomMode )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

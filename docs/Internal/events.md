@@ -1,5 +1,5 @@
 # Private Events
-Private events should never be overwrited or the API will not work as it should.
+Private events should never be overwritten or the API will not work as it should.
 
 ---
 >### \_receive ( connection, packet )

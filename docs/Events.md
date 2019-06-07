@@ -176,6 +176,43 @@ end)
 >Triggered when a friend disconnects from the game.
 >
 ---
+>### friendList ( friendList, soulmate )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| friendList | `table` | The data of the players in the account's friend list. |
+>| soulmate | `table` | The separated data of the account's soulmate. |
+>
+>Triggered when the friend list is loaded.
+>
+>**@friendlist structure**:
+>```Lua
+>{
+>	[i] = {
+>		id = 0, -- The player id.
+>		playerName = "", -- The player name.
+>		gender = 0, -- The gender of the player. Enum in enum.gender.
+>		isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+>		isConnected = true, -- Whether the player is online or not.
+>		roomName = "", -- The name of the room where the player is.
+>		lastConnection = 0 -- Timestamp of when was the last connection of the player.
+>	}
+>}
+>```
+>
+>**@soulmate structure**:
+>```Lua
+>{
+>	id = 0, -- The player id.
+>	playerName = "", -- The player name.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+>	isConnected = true, -- Whether the player is online or not.
+>	roomName = "", -- The name of the room where the player is.
+>	lastConnection = 0 -- Timestamp of when was the last connection of the player.
+>}
+>```
+>
+---
 >### heartbeat ( time )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -681,7 +718,7 @@ end)
 >**@rooms structure**:
 >```Lua
 >{
->	[n] = {
+>	[i] = {
 >		name = "", -- The name of the room.
 >		totalPlayers = 0, -- The quantity of players in the room.
 >		maxPlayers = 0, -- The maximum quantity of players the room can get.
@@ -693,7 +730,7 @@ end)
 >**@pinned structure**:
 >```Lua
 >{
->	[n] = {
+>	[i] = {
 >		name = "", -- The name of the object.
 >		totalPlayers = 0 -- The quantity of players in the object counter. (Might be a string)
 >	}
