@@ -26,8 +26,9 @@ local translation = { }
 --[[@
 	@desc Downloads a Transformice language file.
 	@param language<enum.language> An enum from @see language. (index or value) @default en
+	@param f?<function> A function to be executed when the language is downloaded.
 ]]
-translation.download = coroutine_makef(function(language)
+translation.download = coroutine_makef(function(language, f)
 	language = enum_validate(enum.language, enum.language.en, language, string_format(enum.error.invalidEnum, "download", "language", "language"))
 	if not language then return end
 
@@ -54,6 +55,10 @@ translation.download = coroutine_makef(function(language)
 	end
 
 	cache[language] = data
+
+	if f then
+		f()
+	end
 end)
 --[[@
 	@desc Deletes translation lines that are not going to be used. (Saves process)

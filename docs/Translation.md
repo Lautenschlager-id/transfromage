@@ -1,8 +1,9 @@
 # Functions
->### download ( language )
+>### download ( language, f )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| language | `enum.language` | ✔ | An enum from [language](Enum.md#language-string). (index or value) <sub>(default = en)</sub> |
+>| f | `function` | ✕ | A function to be executed when the language is downloaded. |
 >
 >Downloads a Transformice language file.
 >

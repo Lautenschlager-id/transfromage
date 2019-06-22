@@ -152,6 +152,11 @@ end)
 >Triggered when the player is logged and ready to perform actions.
 >
 ---
+>### connectionFailed (  )
+>
+>Triggered when the login connection fails.
+>
+---
 >### disconnection ( connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |

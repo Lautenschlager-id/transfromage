@@ -373,7 +373,6 @@
 >| tfmId | `string`, `int` | ✔ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |
 >| token | `string` | ✔ | The API Endpoint token to get access to the authentication keys. |
 >
->Initializes the API connection with the authentication keys. It must be the first method of the API to be called.<br>
->This function can be called only once.
+>Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
 >
 ---

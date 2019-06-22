@@ -2,6 +2,19 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.5.0 - 22/06/2019
+## News
+- Added the event _connectionFailed ( )_.
+- Added a new parameter in _translation.download_, now it accepts a function to execute after the file download.
+
+## Changes
+- _client.start_ can now be called more than once.
+- Now the internal function _getKeys_ is not deleted after client.start is called.
+
+## Fixes
+- The _timed out_ constant problems were reduced.
+- Now the field from the event profileLoaded _soulmate_ has its nickname normalized with _string.toNickname_.
+
 ## v1.4.0 - 07/06/2019
 ## News
 - Added the event _friendList ( friendList, soulmate )_.

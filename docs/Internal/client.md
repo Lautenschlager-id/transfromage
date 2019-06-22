@@ -18,8 +18,7 @@ Private functions were created in the Client class because their use could compr
 >| tfmId | `string`, `int` | ✔ | The developer's transformice id. |
 >| token | `string` | ✔ | The developer's token. |
 >
->Gets the connection keys in the API endpoint.<br>
->This function is destroyed when [start](../Client.md#clientstart--tfmid-token-) is called.
+>Gets the connection keys in the API endpoint.
 >
 ---
 >### handlePlayerField ( self, packet, fieldName, eventName, methodName, fieldValue, sendValue )

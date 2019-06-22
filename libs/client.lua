@@ -10,7 +10,6 @@ local enum = require("enum")
 -- Optimization --
 local bit_bxor = bit.bxor
 local coroutine_makef = coroutine.makef
-local coroutine_wrap = coroutine.wrap
 local encode_btea = encode.btea
 local encode_getPasswordHash = encode.getPasswordHash
 local encode_setPacketKeys = encode.setPacketKeys
@@ -619,7 +618,7 @@ packetListener = {
 
 			data.gender = packet:read8() -- enum.gender
 			data.tribeName = packet:readUTF()
-			data.soulmate = packet:readUTF()
+			data.soulmate = string_toNickname(packet:readUTF())
 
 			data.saves = { }
 			data.saves.normal = packet:read32()
@@ -1402,7 +1401,6 @@ receive = function(self, connectionName)
 end
 --[[@
 	@desc Gets the connection keys in the API endpoint.
-	@desc This function is destroyed when @see client.start is called.
 	@param self<client> A Client object.
 	@param tfmId<string,int> The developer's transformice id.
 	@param token<string> The developer's token.
@@ -1534,13 +1532,14 @@ end
 
 --[[@
 	@desc Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
-	@desc This function can be called only once.
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token<string> The API Endpoint token to get access to the authentication keys.
 ]]
-client.start = coroutine_wrap(function(self, tfmId, token)
+client.start = coroutine_makef(function(self, tfmId, token)
+	self:closeAll()
+	self.isConnected = false
+
 	getKeys(self, tfmId, token)
-	getKeys = nil -- Saves memory
 
 	self.main:connect(enum.setting.mainIp)
 
@@ -1556,13 +1555,13 @@ client.start = coroutine_wrap(function(self, tfmId, token)
 		receive(self, "main")
 		receive(self, "bulle")
 		local loop
-		loop = timer_setInterval(10, function(self, loop)
+		loop = timer_setInterval(10, function(self)
 			if not self.main.open then
 				timer_clearInterval(self._hbTimer)
 				timer_clearInterval(loop)
 				closeAll(self)
 			end
-		end, self, loop)
+		end, self)
 	end)
 
 	self.main.event:on("_receive", function(connection, packet)
@@ -1673,7 +1672,17 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 
 	timer_setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then
-			return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.", enum.errorLevel.low)
+			self:closeAll()
+			timer_setTimeout(1000, function() -- This timer prevents the time out issue, since it gives time to closeAll work.
+				if self.event.handlers.connectionFailed then
+					--[[@
+						@desc Triggered when the login connection fails.
+					]]
+					self.event:emit("connectionFailed")
+				else
+					return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.", enum.errorLevel.low)
+				end
+			end)
 		end
 	end, self)
 end
