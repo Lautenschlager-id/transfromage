@@ -138,7 +138,7 @@ They must be created in the file [Enum.lua](libs/enum.lua) and must follow:
 }
 ```
 
-#Files
+# Files
 New files must start with requires, constructors and auxiliar functions, and the main functions at the end.
 
 Your file must not overwrite functions or tables that are in other files.
