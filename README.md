@@ -24,7 +24,7 @@ This API depends on an [endpoint](https://api.tocu.tk/get_transformice_keys.php)
 
 To get access to it you need to request a token, after explaining your project, to one of the following players:
 - **[Tocutoeltuco](https://github.com/Tocutoeltuco)** @discord=> `Tocutoeltuco#0018`;
-- **Blank#3495** @discord=> `󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪#8737`;
+- **[tlbl4nk](https://github.com/tlbl4nk)** @discord=> `󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪#8737`;
 - **[Bolodefchoco](https://github.com/Lautenschlager-id)** @discord=> `Lautenschlager#2555`.
 
 ## Installation
