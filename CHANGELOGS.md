@@ -2,6 +2,10 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.5.1 - 26/06/2019
+## Fixes
+- _client.\_process\_xml_ was set to true as default.
+
 ## v1.5.0 - 22/06/2019
 ## News
 - Added the event _connectionFailed ( )_.

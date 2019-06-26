@@ -52,10 +52,10 @@ The best way to contribute for this API is ~~donating~~ creating pull requests w
 Read [CONTRIBUTING](CONTRIBUTING.md) to learn more about contributions for the API.
 
 ## Base example
-
+###### You can check more examples [here](https://github.com/Lautenschlager-id/Transfromage/tree/master/examples).
 ```Lua
 local api = require("transfromage")
-local client = api.client:new()
+local client = api.client()
 
 client:once("ready", function()
 	client:connect("Username#0000", "password")
@@ -63,3 +63,4 @@ end)
 
 client:start("Owner ID", "API Token")
 ```
+

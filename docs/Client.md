@@ -32,7 +32,7 @@
 >	_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
 >	_who_fingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
 >	_who_list = { }, -- A list of chat names associated to their own fingerprints.
->	_process_xml = true, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+>	_process_xml = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
 >	_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
 >	_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
 >}
