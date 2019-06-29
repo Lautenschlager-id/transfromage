@@ -38,6 +38,22 @@
 >}
 >```
 ---
+>### client:addFriend ( playerName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| playerName | `string` | ✔ | The player name to be added. |
+>
+>Adds a friend to the friend list.
+>
+---
+>### client:blacklistPlayer ( playerName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| playerName | `string` | ✔ | The player name to be added. |
+>
+>Adds a friend to the black list.
+>
+---
 >### client:changeWhisperState ( message, state )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -279,6 +295,11 @@
 >Reloads the Café data.
 >
 ---
+>### client:requestBlackList (  )
+>
+>Requests the black list.
+>
+---
 >### client:requestFriendList (  )
 >
 >Requests the friend list.
@@ -290,6 +311,14 @@
 >| roomMode | `enum.roomMode` | ✕ | An enum from [roomMode](Enum.md#roomMode-int). (index or value) <sub>(default = normal)</sub> |
 >
 >Requests the data of a room mode list.
+>
+---
+>### client:removeFriend ( playerName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| playerName | `string` | ✔ | The player name to be removed. |
+>
+>Removes a player from the friend list.
 >
 ---
 >### client:sendCafeMessage ( topicId, message )
@@ -376,3 +405,10 @@
 >Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
 >
 ---
+>### client:whitelistPlayer ( playerName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| playerName | `string` | ✔ | The player name to be removed. |
+>
+>Removes a player from the black list.
+>

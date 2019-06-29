@@ -44,6 +44,7 @@ Folder created specially for contributors. Learn more in [CONTRIBUTING](../../CO
 - [client](client.md)
 	- [closeAll](client.md#closeall--self-)
 	- [getKeys](client.md#getkeys--self-tfmid-token-)
+	- [handleFriendData](client.md#handlefrienddata--packet-)
 	- [handlePlayerField](client.md#handleplayerfield--self-packet-fieldname-eventname-methodname-fieldvalue-sendvalue-)
 	- [parsePacket](client.md#parsepacket--self-connection-packet-)
 	- [receive](client.md#receive--self-connectionname-)

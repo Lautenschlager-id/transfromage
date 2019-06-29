@@ -9,6 +9,7 @@ local buffer = table_setNewClass()
 buffer.__index = buffer
 
 --[[@
+	@name new
 	@desc Creates a new instance of Buffer. Alias: `buffer()`.
 	@returns buffer The new Buffer object.
 	@struct {
@@ -28,6 +29,7 @@ buffer.isEmpty = function(self)
 	return #self.queue == 0
 end
 --[[@
+	@name receive
 	@desc Retrieves bytes from the queue.
 	@param length<int> The quantity of bytes to be extracted.
 	@returns table An array of bytes. 
@@ -50,6 +52,7 @@ buffer.receive = function(self, length)
 	return ret
 end
 --[[@
+	@name push
 	@desc Inserts bytes to the queue.
 	@param bytes<table,string> A string/table of bytes.
 	@returns buffer Object instance.

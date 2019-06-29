@@ -24,6 +24,7 @@ local cache = {
 
 local translation = { }
 --[[@
+	@name translation.download
 	@desc Downloads a Transformice language file.
 	@param language<enum.language> An enum from @see language. (index or value) @default en
 	@param f?<function> A function to be executed when the language is downloaded.
@@ -61,6 +62,7 @@ translation.download = coroutine_makef(function(language, f)
 	end
 end)
 --[[@
+	@name translation.free
 	@desc Deletes translation lines that are not going to be used. (Saves process)
 	@desc If the whitelist parameters are not set, it will delete the whole translation data.
 	@param language<enum.language> An enum from @see language that was downloaded before.
@@ -95,6 +97,7 @@ translation.free = function(language, whitelist, whitelistPattern)
 	end
 end
 --[[@
+	@name translation.get
 	@desc Gets a translation line.
 	@param language<enum.language> An enum from @see language that was downloaded before.
 	@param index?<string> The code of the translation line.
@@ -163,6 +166,7 @@ translation.get = function(language, index, raw)
 	end
 end
 --[[@
+	@name translation.set
 	@desc Sets the value of translation codes.
 	@param language<enum.language> An enum from @see language that was downloaded before.
 	@param setPattern<string> The pattern to match all translation line codes that will be edited.

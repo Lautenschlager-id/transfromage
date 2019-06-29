@@ -7,6 +7,14 @@ client:on("event_name", function(parameters) -- replace 'on' to 'once' if you wa
 end)
 ```
 ---
+>### blackList ( blackList )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| blackList | `table` | An array of strings with the names that are in the black list. |
+>
+>Triggered when the black list is loaded.
+>
+---
 >### cafeTopicList ( data )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -198,6 +206,7 @@ end)
 >		gender = 0, -- The gender of the player. Enum in enum.gender.
 >		isFriend = true, -- Whether the player has the account as a friend (added back) or not.
 >		isConnected = true, -- Whether the player is online or not.
+>		gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
 >		roomName = "", -- The name of the room where the player is.
 >		lastConnection = 0 -- Timestamp of when was the last connection of the player.
 >	}
@@ -212,6 +221,7 @@ end)
 >	gender = 0, -- The gender of the player. Enum in enum.gender.
 >	isFriend = true, -- Whether the player has the account as a friend (added back) or not.
 >	isConnected = true, -- Whether the player is online or not.
+>	gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
 >	roomName = "", -- The name of the room where the player is.
 >	lastConnection = 0 -- Timestamp of when was the last connection of the player.
 >}
@@ -270,6 +280,28 @@ end)
 >| connection | `connection` | The connection object. |
 >
 >Triggered when a tribulle packet is not handled by the tribulle packet parser.
+>
+---
+>### newFriend ( friend )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| friend | `table` | The data of the new friend. |
+>
+>Triggered when a new friend is added to the friend list.
+>
+>**@friend structure**:
+>```Lua
+>{
+>	id = 0, -- The player id.
+>	playerName = "", -- The player name.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+>	isConnected = true, -- Whether the player is online or not.
+>	gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
+>	roomName = "", -- The name of the room where the player is.
+>	lastConnection = 0 -- Timestamp of when was the last connection of the player.
+>}
+>```
 >
 ---
 >### newGame ( map )
@@ -700,6 +732,14 @@ end)
 >	[id] = { } -- Reference of [playerName]
 >}
 >```
+>
+---
+>### removeFriend ( playerId )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerId | `int` | The id of the player that was removed. |
+>
+>Triggered when a player is removed from the friend list.
 >
 ---
 >### roomChanged ( roomName, isPrivateRoom )

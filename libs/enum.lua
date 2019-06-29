@@ -4,6 +4,7 @@ local debug_traceback = debug.traceback
 
 local enum = setmetatable({ }, {
 	--[[@
+		@name enum
 		@desc Creates a new enumeration.
 		@param list<table> The table to become an enumeration.
 		@param ignoreConflict?<boolean> If the system should ignore value conflicts. (if there are identical values in @list) @default false
@@ -46,6 +47,7 @@ local enum = setmetatable({ }, {
 
 -- Functions
 --[[@
+	@name _exists
 	@desc Checks whether the inserted enumeration is valid or not.
 	@param enumeration<enum> An enumeration object, the source of the value.
 	@param value<*> The value (index or value) of the enumeration.
@@ -65,6 +67,7 @@ enum._exists = function(enumeration, value)
 	return false
 end
 --[[@
+	@name _validate
 	@desc Validates an enumeration.
 	@param enumeration<enum> An enumeration object, the source of the value.
 	@param default<*> The default value of the enumeration
@@ -93,6 +96,7 @@ end
 
 -- Enums
 --[[@
+	@name chatCommunity
 	@desc The ID of each chat community.
 	@type int
 ]]
@@ -130,6 +134,7 @@ enum.chatCommunity = enum {
 	pt = 31
 }
 --[[@
+	@name community
 	@desc The ID of each community.
 	@type int
 ]]
@@ -167,7 +172,8 @@ enum.community = enum {
 	pt = 31
 }
 --[[@
-	@desc The available emote ids.
+	@name emote
+	@desc The available emote IDs.
 	@type int
 ]]
 enum.emote = enum {
@@ -201,7 +207,8 @@ enum.emote = enum {
 	rockpaperscissor_2  = 27
 }
 --[[@
-	@desc The available emoticon ids.
+	@name emoticon
+	@desc The available emoticon IDs.
 	@type int
 ]]
 enum.emoticon = enum {
@@ -217,6 +224,7 @@ enum.emoticon = enum {
 	OMG       = 9
 }
 --[[@
+	@name error
 	@desc The API error messages.
 	@type string
 ]]
@@ -224,6 +232,7 @@ enum.error = enum {
 	invalidEnum = "↑failure↓[%s]↑ ↑highlight↓%s↑ must be a valid ↑highlight↓%s↑ enumeration.",
 }
 --[[@
+	@name errorLevel
 	@desc The API error levels.
 	@type int
 ]]
@@ -232,7 +241,22 @@ enum.errorLevel = enum {
 	high = -1
 }
 --[[@
-	@desc The profile gender id.
+	@name game
+	@desc The ID of each game.
+	@type int
+]]
+enum.game = enum {
+	unknown      = 00,
+	none         = 01,
+	transformice = 04,
+	fortoresse   = 06,
+	bouboum      = 07,
+	nekodancer   = 15,
+	deadmaze     = 17
+}
+--[[@
+	@name gender
+	@desc The profile gender ID.
 	@type int
 ]]
 enum.gender = {
@@ -241,6 +265,7 @@ enum.gender = {
 	male   = 2
 }
 --[[@
+	@name identifier
 	@desc The action identifiers (identifiers, Tribulle, ...) for packets.
 	@type table
 ]]
@@ -271,6 +296,7 @@ enum.identifier = enum {
 	roomMessage     = enum({ 06, 06 }, true)
 }
 --[[@
+	@name language
 	@desc The available community translation file communities.
 	@type string
 ]]
@@ -307,7 +333,8 @@ enum.language = enum {
 	pt = "pt"
 }
 --[[@
-	@desc The id for staff role identifiers.
+	@name role
+	@desc The ID for staff role identifiers.
 	@type int
 ]]
 enum.role = enum {
@@ -318,6 +345,7 @@ enum.role = enum {
 	funcorp       = 13
 }
 --[[@
+	@name roomMode
 	@desc The available room modes.
 	@type int
 ]]
@@ -333,6 +361,7 @@ enum.roomMode = enum {
 	module    = 18
 }
 --[[@
+	@name setting
 	@desc Miscellaneous connection settings.
 	@type *
 ]]
@@ -341,6 +370,7 @@ enum.setting = enum {
 	port    = enum { 5555, 44444, 3724, 44440, 6112, 443 }
 }
 --[[@
+	@name whisperState
 	@desc Possible states for the whisper.
 	@type int
 ]]

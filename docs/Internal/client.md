@@ -21,6 +21,34 @@ Private functions were created in the Client class because their use could compr
 >Gets the connection keys in the API endpoint.
 >
 ---
+>### handleFriendData ( packet )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| packet | `byteArray` | ✔ | A Byte Array object with the data to be extracted. |
+>
+>Handles the data of a friend from the friend list.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `table` | The data of the player. |
+>
+>**Table structure**:
+>```Lua
+>{
+>	id = 0, -- The player id.
+>	playerName = "", -- The player name.
+>	gender = 0, -- The gender of the player. Enum in enum.gender.
+>	isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+>	isConnected = true, -- Whether the player is online or not.
+>	gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
+>	roomName = "", -- The name of the room where the player is.
+>	lastConnection = 0 -- Timestamp of when was the last connection of the player.
+>}
+>```
+>
+---
 >### handlePlayerField ( self, packet, fieldName, eventName, methodName, fieldValue, sendValue )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

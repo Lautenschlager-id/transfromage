@@ -34,12 +34,13 @@ local timer_setTimeout = timer.setTimeout
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
-local handlePlayerField
+local handlePlayerField, handleFriendData
 
 local client = table_setNewClass()
-client.__index = client
+client.__index = client	
 
 --[[@
+	@name new
 	@desc Creates a new instance of Client. Alias: `client()`.
 	@returns client The new Client object.
 	@struct {
@@ -109,6 +110,7 @@ tribulleListener = {
 	[32] = function(self, packet, connection, tribulleId) -- Friend connected
 		local playerName = packet:readUTF()
 		--[[@
+			@name friendConnection
 			@desc Triggered when a friend connects to the game.
 			@param playerName<string> The player name.
 		]]
@@ -117,38 +119,22 @@ tribulleListener = {
 	[33] = function(self, packet, connection, tribulleId) -- Friend disconnected
 		local playerName = packet:readUTF()
 		--[[@
+			@name friendDisconnection
 			@desc Triggered when a friend disconnects from the game.
 			@param playerName<string> The player name.
 		]]
 		self.event:emit("friendDisconnection", string_toNickname(playerName, true))
 	end,
-	[34] = function(self, packet, connection, tribulleId)
-		local soulmate = { }
-		soulmate.id = packet:read32()
-		soulmate.playerName = packet:readUTF()
- 		soulmate.gender = packet:read8()
- 		packet:read32() -- id again
-		soulmate.isFriend = packet:readBool()
-		soulmate.isConnected = packet:readBool()
-		packet:read32() -- ?
-		soulmate.roomName = packet:readUTF()
-		soulmate.lastConnection = packet:read32()
+	[34] = function(self, packet, connection, tribulleId) -- Loaded friendlist
+		local soulmate = handleFriendData(packet)
 
 		local friendList = { }
 		for i = 1, packet:read16() do
-			friendList[i] = { }
-			friendList[i].id = packet:read32()
-			friendList[i].playerName = packet:readUTF()
- 			friendList[i].gender = packet:read8()
- 			packet:read32() -- id again
-			friendList[i].isFriend = packet:readBool()
-			friendList[i].isConnected = packet:readBool()
-			packet:read32() -- ?
-			friendList[i].roomName = packet:readUTF()
-			friendList[i].lastConnection = packet:read32()
+			friendList[i] = handleFriendData(packet)
 		end
 
 		--[[@
+			@name friendList
 			@desc Triggered when the friend list is loaded.
 			@param friendList<table> The data of the players in the account's friend list.
 			@param soulmate<table> The separated data of the account's soulmate.
@@ -159,6 +145,7 @@ tribulleListener = {
 					gender = 0, -- The gender of the player. Enum in enum.gender.
 					isFriend = true, -- Whether the player has the account as a friend (added back) or not.
 					isConnected = true, -- Whether the player is online or not.
+					gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
 					roomName = "", -- The name of the room where the player is.
 					lastConnection = 0 -- Timestamp of when was the last connection of the player.
 				}
@@ -169,11 +156,50 @@ tribulleListener = {
 				gender = 0, -- The gender of the player. Enum in enum.gender.
 				isFriend = true, -- Whether the player has the account as a friend (added back) or not.
 				isConnected = true, -- Whether the player is online or not.
+				gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
 				roomName = "", -- The name of the room where the player is.
 				lastConnection = 0 -- Timestamp of when was the last connection of the player.
 			}
 		]]
 		self.event:emit("friendList", friendList, soulmate)
+	end,
+	[36] = function(self, packet, connection, tribulleId) -- Add friend
+		--[[
+			@desc Triggered when a new friend is added to the friend list.
+			@param friend<table> The data of the new friend.
+			@struct @friend {
+				id = 0, -- The player id.
+				playerName = "", -- The player name.
+				gender = 0, -- The gender of the player. Enum in enum.gender.
+				isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+				isConnected = true, -- Whether the player is online or not.
+				gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
+				roomName = "", -- The name of the room where the player is.
+				lastConnection = 0 -- Timestamp of when was the last connection of the player.
+			}
+		]]
+		self.event:emit("newFriend", handleFriendData(packet))
+	end,
+	[37] = function(self, packet, connection, tribulleId) -- Remove friend
+		--[[@
+			@name removeFriend
+			@desc Triggered when a player is removed from the friend list.
+			@param playerId<int> The id of the player that was removed.
+		]]
+		self.event:emit("removeFriend", packet:read32())
+	end,
+	[47] = function(self, packet, connection, tribulleId) -- Loaded blacklist
+		local blackList = { }
+		for i = 1, packet:read16() do
+			blackList[i] = packet:readUTF()
+		end
+
+		--[[@
+			@name blackList
+			@desc Triggered when the black list is loaded.
+			@param blackList<table> An array of strings with the names that are in the black list.
+		]]
+		self.event:emit("blackList", blackList)
 	end,
 	[59] = function(self, packet, connection, tribulleId) -- /who
 		local fingerprint = packet:read32()
@@ -188,6 +214,7 @@ tribulleListener = {
 
 		local chatName = self._who_list[fingerprint]
 		--[[@
+			@name chatWho
 			@desc Triggered when the /who command is loaded in a chat.
 			@param chatName<string> The name of the chat.
 			@param data<table> An array with the nicknames of the current users in the chat.
@@ -198,6 +225,7 @@ tribulleListener = {
 	[64] = function(self, packet, connection, tribulleId) -- #Chat Message
 		local playerName, community, chatName, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
 		--[[@
+			@name chatMessage
 			@desc Triggered when a #chat receives a new message.
 			@param chatName<string> The name of the chat.
 			@param playerName<string> The player who sent the message.
@@ -209,6 +237,7 @@ tribulleListener = {
 	[65] = function(self, packet, connection, tribulleId) -- Tribe message
 		local memberName, message = packet:readUTF(), packet:readUTF()
 		--[[@
+			@name tribeMessage
 			@desc Triggered when the tribe chat receives a new message.
 			@param memberName<string> The member who sent the message.
 			@param message<string> The message.
@@ -218,6 +247,7 @@ tribulleListener = {
 	[66] = function(self, packet, connection, tribulleId) -- Whisper message
 		local playerName, community, _, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
 		--[[@
+			@name whisperMessage
 			@desc Triggered when the player receives a whisper.
 			playerName<string> Who sent the whisper message.
 			message<string> The message.
@@ -228,6 +258,7 @@ tribulleListener = {
 	[88] = function(self, packet, connection, tribulleId) -- Tribe member connected
 		local memberName = packet:readUTF()
 		--[[@
+			@name tribeMemberConnection
 			@desc Triggered when a tribe member connects to the game.
 			@param memberName<string> The member name.
 		]]
@@ -236,6 +267,7 @@ tribulleListener = {
 	[90] = function(self, packet, connection, tribulleId) -- Tribe member disconnected
 		local memberName = packet:readUTF()
 		--[[@
+			@name tribeMemberDisconnection
 			@desc Triggered when a tribe member disconnects to the game.
 			@param memberName<string> The member name.
 		]]
@@ -244,6 +276,7 @@ tribulleListener = {
 	[91] = function(self, packet, connection, tribulleId) -- New tribe member
 		local memberName = packet:readUTF()
 		--[[@
+			@name newTribeMember
 			@desc Triggered when a player joins the tribe.
 			@param memberName<string> The member who joined the tribe.
 		]]
@@ -252,6 +285,7 @@ tribulleListener = {
 	[92] = function(self, packet, connection, tribulleId) -- Tribe member leave
 		local memberName = packet:readUTF()
 		--[[@
+			@name tribeMemberLeave
 			@desc Triggered when a member leaves the tribe.
 			@param memberName<string> The member who left the tribe.
 		]]
@@ -260,15 +294,17 @@ tribulleListener = {
 	[93] = function(self, packet, connection, tribulleId) -- Tribe member kicked
 		local memberName, kickerName = packet:readUTF(), packet:readUTF()
 		--[[@
+			@name tribeMemberKick
 			@desc Triggered when a tribe member is kicked.
 			@param memberName<string> The member name.
 			@param kickerName<string> The name of who kicked the member.
 		]]
 		self.event:emit("tribeMemberKick", string_toNickname(memberName, true), string_toNickname(kickerName, true))
 	end,
-	[124] = function(self, packet, connection, tribulleId) -- Tribe member kicked
+	[124] = function(self, packet, connection, tribulleId) -- Tribe member get role
 		local setterName, memberName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
 		--[[@
+			@name tribeMemberGetRole
 			@desc Triggered when a tribe member gets a role.
 			@param memberName<string> The member name.
 			@param setterName<string> The name of who set the role to the member.
@@ -289,6 +325,7 @@ oldPacketListener = {
 				self.playerList[playerId].score = score
 
 				--[[@
+					@name playerDied
 					@desc Triggered when a player dies.
 					@param playerData<table> The data of the player.
 					@struct @playerData {
@@ -333,6 +370,7 @@ oldPacketListener = {
 			local playerId = tonumber(data[1])
 			if self.playerList[playerId] then
 				--[[@
+					@name playerLeft
 					@desc Triggered when a player leaves the room.
 					@param playerData<table> The data of the player.
 					@struct @playerData {
@@ -398,6 +436,7 @@ packetListener = {
 			end
 
 			--[[@
+				@name missedOldPacket
 				@desc Triggered when an old packet is not handled by the old packet parser.
 				@param oldIdentifiers<table> The oldC, oldCC identifiers that were not handled.
 				@param data<table> The data that was not handled.
@@ -463,6 +502,7 @@ packetListener = {
 			map.isMirrored = packet:readBool()
 
 			--[[@
+				@name newGame
 				@desc Triggered when a new map is loaded.
 				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_process_xml` as false to avoid processing it.
 				@param map<table> The new map data.
@@ -481,12 +521,14 @@ packetListener = {
 
 			if string_byte(roomName, 2) == 3 then
 				--[[@
+					@name joinTribeHouse
 					@desc Triggered when the player joins a tribe house.
 					@param tribeName<string> The name of the tribe.
 				]]
 				self.event:emit("joinTribeHouse", string_sub(roomName, 3))
 			else
 				--[[@
+					@name roomChanged
 					@desc Triggered when the player changes the room.
 					@param roomName<string> The name of the room.
 					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
@@ -499,6 +541,7 @@ packetListener = {
 		[6] = function(self, packet, connection, identifiers) -- Room message
 			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string_fixEntity(packet:readUTF())
 			--[[@
+				@name roomMessage
 				@desc Triggered when the room receives a new user message.
 				@param playerName<string> The player who sent the message.
 				@param message<string> The message.
@@ -519,6 +562,7 @@ packetListener = {
 			time.second = tonumber(packet:readUTF())
 
 			--[[@
+				@name time
 				@desc Triggered when the command /time is requested.
 				@param time<table> The account's time data.
 				@struct @param {
@@ -545,6 +589,7 @@ packetListener = {
 				self.playerList[playerId].winTimeElapsed = packet:read16() / 100
 
 				--[[@
+					@name playerWon
 					@desc Triggered when a player joins the hole.
 					@param playerData<table> The data of the player.
 					@param position<int> The position where the player joined the hole.
@@ -669,6 +714,7 @@ packetListener = {
 			data.adventurePoints = packet:read32()
 
 			--[[@
+				@name profileLoaded
 				@desc Triggered when the profile of an player is loaded.
 				@param data<table> The player profile data.
 				@struct @data {
@@ -719,6 +765,7 @@ packetListener = {
 		end,
 		[66] = function(self, packet, connection, identifiers) -- Updates player vampire state
 			--[[@
+				@name playerVampire
 				@desc Triggered when a player is transformed from/into a vampire.
 				@param playerData<table> The data of the player.
 				@param isVampire<boolean> Whether the player is a vampire or not.
@@ -821,6 +868,7 @@ packetListener = {
 			end
 
 			--[[@
+				@name roomList
 				@desc Triggered when the room list of a mode is loaded.
 				@param roomMode<int> The id of the room mode.
 				@param rooms<table> The data of the rooms in the list.
@@ -847,6 +895,7 @@ packetListener = {
 		[5] = function(self, packet, connection, identifiers) -- /mod, /mapcrew
 			packet:read16() -- ?
 			--[[@
+				@name staffList
 				@desc Triggered when a staff list is loaded (/mod, /mapcrew).
 				@param list<string> The staff list content.
 			]]
@@ -854,6 +903,7 @@ packetListener = {
 		end,
 		[6] = function(self, packet, connection, identifiers) -- Ping
 			--[[@
+				@name ping
 				@desc Triggered when a server heartbeat is received.
 				@param time<int> The current time.
 			]]
@@ -863,6 +913,7 @@ packetListener = {
 	[29] = {
 		[6] = function(self, packet, connection, identifiers) -- Lua logs
 			--[[@
+				@name lua
 				@desc Triggered when the #lua chat receives a log message.
 				@param log<string> The log message.
 			]]
@@ -891,6 +942,7 @@ packetListener = {
 			end
 
 			--[[@
+				@name cafeTopicList
 				@desc Triggered when the Café is opened or refreshed, and the topics are loaded partially.
 				@param data<table> The data of the topics.
 				@struct @data
@@ -951,6 +1003,7 @@ packetListener = {
 			data.author = data.messages[1].author
 
 			--[[@
+				@name cafeTopicLoad
 				@desc Triggered when a Café topic is opened or refreshed.
 				@param topic<table> The data of the topic.
 				@struct @topic
@@ -983,6 +1036,7 @@ packetListener = {
 					self._cafeCachedMessages[data.messages[i].id] = true
 
 					--[[@
+						@name cafeTopicMessage
 						@desc Triggered when a new message in a Café topic is cached.
 						@param message<table> The data of the message.
 						@param topic<table> The data of the topic.
@@ -1028,6 +1082,7 @@ packetListener = {
 			local topicId = packet:read32()
 
 			--[[@
+				@name unreadCafeMessage
 				@desc Triggered when new messages are posted on Café.
 				@param topicId<int> The id of the topic where the new messages were posted.
 				@param topic<table> The data of the topic. It **may be** nil.
@@ -1083,6 +1138,7 @@ packetListener = {
 				return tribulleListener[tribulleId](self, packet, connection, tribulleId)
 			end
 			--[[@
+				@name missedTribulle
 				@desc Triggered when a tribulle packet is not handled by the tribulle packet parser.
 				@param tribulleId<int> The tribulle id.
 				@param packet<byteArray> The Byte Array object with the packet that was not handled.
@@ -1102,6 +1158,7 @@ packetListener = {
 			end
 
 			--[[@
+				@name refreshPlayerList
 				@desc Triggered when the data of all players are refreshed (mostly in new games).
 				@param playerList<table> The data of all players.
 				@struct @playerList {
@@ -1205,6 +1262,7 @@ packetListener = {
 
 			if not _pos and not (isNew and data.playerName == self.playerName) then
 				--[[@
+					@name newPlayer
 					@desc Triggered when a new player joins the room.
 					@param playerData<table> The data of the player.
 					@struct @playerdata {
@@ -1245,6 +1303,7 @@ packetListener = {
 		end,
 		[6] = function(self, packet, connection, identifiers) -- Updates player cheese state
 			--[[@
+				@name playerGetCheese
 				@desc Triggered when a player gets (or loses) a cheese.
 				@param playerData<table> The data of the player.
 				@param hasCheese<boolean> Whether the player has cheese or not.
@@ -1292,6 +1351,7 @@ packetListener = {
 -- System
 -- Packet listeners and parsers
 --[[@
+	@name insertPacketListener
 	@desc Inserts a new function to the packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
@@ -1314,6 +1374,7 @@ client.insertPacketListener = function(self, C, CC, f, append)
 	end
 end
 --[[@
+	@name insertTribulleListener
 	@desc Inserts a new function to the tribulle (60, 3) packet parser.
 	@param tribulleId<int> The tribulle id.
 	@param f<function> The function to be triggered when this tribulle packet is received. The parameters are (packet, connection, tribulleId).
@@ -1331,6 +1392,7 @@ client.insertTribulleListener = function(self, tribulleId, f, append)
 	end
 end
 --[[@
+	@name insertOldPacketListener
 	@desc Inserts a new function to the old packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
@@ -1358,6 +1420,7 @@ client.insertReceiveFunction, client.insertTribulleFunction = client.insertPacke
 -------------------------
 
 --[[@
+	@name parsePacket
 	@desc Handles the received packets by triggering their listeners.
 	@param self<client> A Client object.
 	@param connection<connection> A Connection object attached to @self.
@@ -1371,6 +1434,7 @@ parsePacket = function(self, connection, packet)
 		return packetListener[C][CC](self, packet, connection, identifiers)
 	end
 	--[[@
+		@name missedPacket
 		@desc Triggered when an identifier is not handled by the system.
 		@param identifiers<table> The C, CC identifiers that were not handled.
 		@param packet<byteArray> The Byte Array object with the packet that was not handled.
@@ -1379,6 +1443,7 @@ parsePacket = function(self, connection, packet)
 	self.event:emit("missedPacket", identifiers, packet, connection)
 end
 --[[@
+	@name receive
 	@desc Creates a new timer attached to a connection object to receive packets and parse them.
 	@param self<client> A Client object.
 	@param connectionName<string> The name of the Connection object to get the timer attached to.
@@ -1390,6 +1455,7 @@ receive = function(self, connectionName)
 			if not packet then return end
 
 			--[[@
+				@name _receive
 				@desc Triggered when the socket receives a packet. (Initial stage, before @see receive)
 				@param connection<connection> The connection where the packet came from.
 				@param packet<bArray> The packet received.
@@ -1400,6 +1466,7 @@ receive = function(self, connectionName)
 	end, self)
 end
 --[[@
+	@name getKeys
 	@desc Gets the connection keys in the API endpoint.
 	@param self<client> A Client object.
 	@param tfmId<string,int> The developer's transformice id.
@@ -1433,6 +1500,7 @@ getKeys = function(self, tfmId, token)
 	end
 end
 --[[@
+	@name sendHeartbeat
 	@desc Sends server heartbeats/pings to the servers.
 	@param self<client> A Client object.
 ]]
@@ -1443,12 +1511,14 @@ sendHeartbeat = function(self)
 	end
 
 	--[[@
+		@name heartbeat
 		@desc Triggered when a heartbeat is sent to the connection, every 10 seconds.
 		@param time<int> The current time.
 	]]
 	self.event:emit("heartbeat", os.time())
 end
 --[[@
+	@name closeAll
 	@desc Closes all the Connection objects.
 	@desc Note that a new Client instance should be created instead of closing and re-opening an existent one.
 	@param self<client> A Client object.
@@ -1464,6 +1534,7 @@ closeAll = function(self)
 	end
 end
 --[[@
+	@name handlePlayerField
 	@desc Handles the packets that alters only one player data field.
 	@param self<client> A Client object.
 	@param packet<byteArray> A Byte Array object with the data to be extracted.
@@ -1490,6 +1561,7 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 		self.playerList[playerId][fieldName] = fieldValue
 
 		--[[@
+			@name updatePlayer
 			@desc Triggered when a player field is updated.
 			@param playerData<table> The data of the player.
 			@param oldPlayerData<table> The data of the player before the new values.
@@ -1529,8 +1601,38 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 		self.event:emit((eventName or "updatePlayer"), self.playerList[playerId], (oldPlayerData or (sendValue and fieldValue)))
 	end
 end
+--[[@
+	@name handleFriendData
+	@desc Handles the data of a friend from the friend list.
+	@param packet<byteArray> A Byte Array object with the data to be extracted.
+	@returns table The data of the player.
+	@struct {
+		id = 0, -- The player id.
+		playerName = "", -- The player name.
+		gender = 0, -- The gender of the player. Enum in enum.gender.
+		isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+		isConnected = true, -- Whether the player is online or not.
+		gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
+		roomName = "", -- The name of the room where the player is.
+		lastConnection = 0 -- Timestamp of when was the last connection of the player.
+	}
+]]
+handleFriendData = function(packet)
+	local player = { }
+	player.id = packet:read32()
+	player.playerName = string.toNickname(packet:readUTF())
+ 	player.gender = packet:read8()
+ 	packet:read32() -- id again
+	player.isFriend = packet:readBool()
+	player.isConnected = packet:readBool()
+	player.gameId = packet:read32()
+	player.roomName = packet:readUTF()
+	player.lastConnection = packet:read32()
+	return player
+end
 
 --[[@
+	@name start
 	@desc Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token<string> The API Endpoint token to get access to the authentication keys.
@@ -1571,6 +1673,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			if enum.identifier.correctVersion[1] == identifiers[1] and enum.identifier.correctVersion[2] == identifiers[2] then
 				return timer_setTimeout(5000, function(self)
 					--[[@
+						@name ready
 						@desc Triggered when the connection is live.
 					]]
 					self.event:emit("ready")
@@ -1579,6 +1682,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 				self._connectionTime = os.time()
 				return timer_setTimeout(5000, function(self)
 					--[[@
+						@name connection
 						@desc Triggered when the player is logged and ready to perform actions.
 					]]
 					self.event:emit("connection")
@@ -1586,6 +1690,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			end
 		end
 		--[[@
+			@name receive
 			@desc Triggered when the client receives packets from the server.
 			@param connection<connection> The connection object that received the packets.
 			@param identifiers<table> The C, CC identifiers that were received.
@@ -1595,6 +1700,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	end)
 end)
 --[[@
+	@name on
 	@desc Sets an event emitter that is triggered everytime the specific behavior happens.
 	@desc See the available events in @see Events.
 	@param eventName<string> The name of the event.
@@ -1604,6 +1710,7 @@ client.on = function(self, eventName, callback)
 	return self.event:on(eventName, coroutine_makef(callback))
 end
 --[[@
+	@name once
 	@desc Sets an event emitter that is triggered only once when a specific behavior happens.
 	@desc See the available events in @see Events.
 	@param eventName<string> The name of the event.
@@ -1613,6 +1720,7 @@ client.once = function(self, eventName, callback)
 	return self.event:once(eventName, coroutine_makef(callback))
 end
 --[[@
+	@name emit
 	@desc Emits an event.
 	@desc See the available events in @see Events. You can also create your own events / emitters.
 	@param eventName<string> The name of the event.
@@ -1622,6 +1730,7 @@ client.emit = function(self, eventName, ...)
 	return self.event:emit(eventName, ...)
 end
 --[[@
+	@name connectionTime
 	@desc Gets the total time of the connection.
 	@returns int The total time since the connection.
 ]]
@@ -1629,6 +1738,7 @@ client.connectionTime = function(self)
 	return os.time() - self._connectionTime
 end
 --[[@
+	@name closeAll
 	@desc Forces the private function @see closeAll to be called.
 	@returns boolean Whether the Connection objects can be destroyed or not.
 ]]
@@ -1643,6 +1753,7 @@ end
 -- Methods
 -- Initialization
 --[[@
+	@name setCommunity
 	@desc Sets the community where the bot will be connected to.
 	@desc /!\ This method must be called before the @see start.
 	@param community?<enum.community> An enum from @see community. (index or value) @default EN
@@ -1654,6 +1765,7 @@ client.setCommunity = function(self, community)
 	self.community = community
 end
 --[[@
+	@name connect
 	@desc Connects to an account in-game.
 	@desc It will try to connect using all the available ports before throwing a timing out error.
 	@param userName<string> The name of the account. It must contain the discriminator tag (#).
@@ -1676,6 +1788,7 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 			timer_setTimeout(1000, function() -- This timer prevents the time out issue, since it gives time to closeAll work.
 				if self.event.handlers.connectionFailed then
 					--[[@
+						@name connectionFailed
 						@desc Triggered when the login connection fails.
 					]]
 					self.event:emit("connectionFailed")
@@ -1688,6 +1801,7 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 end
 -- Room
 --[[@
+	@name enterRoom
 	@desc Enters in a room.
 	@param roomName<string> The name of the room.
 	@param isSalonAuto?<boolean> Whether the change room must be /salonauto or not. @default false
@@ -1696,6 +1810,7 @@ client.enterRoom = function(self, roomName, isSalonAuto)
 	self.main:send(enum.identifier.room, byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
 end
 --[[@
+	@name sendRoomMessage
 	@desc Sends a message in the room chat.
 	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 	@param message<string> The message.
@@ -1705,6 +1820,7 @@ client.sendRoomMessage = function(self, message)
 end
 -- Whisper
 --[[@
+	@name sendWhisper
 	@desc Sends a whisper to an user.
 	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 	@param message<string> The message.
@@ -1714,6 +1830,7 @@ client.sendWhisper = function(self, targetUser, message)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
 end
 --[[@
+	@name changeWhisperState
 	@desc Sets the account's whisper state.
 	@param message?<string> The /silence message. @default ''
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
@@ -1726,6 +1843,7 @@ client.changeWhisperState = function(self, message, state)
 end
 -- Chat
 --[[@
+	@name joinChat
 	@desc Joins a #chat.
 	@param chatName<string> The name of the chat.
 ]]
@@ -1733,6 +1851,7 @@ client.joinChat = function(self, chatName)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
+	@name sendChatMessage
 	@desc Sends a message to a #chat.
 	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 	@param chatName<string> The name of the chat.
@@ -1742,6 +1861,7 @@ client.sendChatMessage = function(self, chatName, message)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
 end
 --[[@
+	@name closeChat
 	@desc Leaves a #chat.
 	@param chatName<string> The name of the chat.
 ]]
@@ -1749,6 +1869,7 @@ client.closeChat = function(self, chatName)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
 end
 --[[@
+	@name chatWho
 	@desc Gets who is in a specific chat. (/who)
 	@param chatName<string> The name of the chat.
 ]]
@@ -1760,12 +1881,14 @@ client.chatWho = function(self, chatName)
 end
 -- Tribe
 --[[@
+	@name joinTribeHouse
 	@desc Joins the tribe house, if the account is in a tribe.
 ]]
 client.joinTribeHouse = function(self)
 	self.main:send(enum.identifier.joinTribeHouse, byteArray:new())
 end
 --[[@
+	@name sendTribeMessage
 	@desc Sends a message to the tribe chat.
 	@desc /!\ Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
 	@param message<string> The message.
@@ -1774,6 +1897,7 @@ client.sendTribeMessage = function(self, message)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
 end
 --[[@
+	@name recruitPlayer
 	@desc Sends a recruitment invite to the player.
 	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
 	@param playerName<string> The name of player to be recruited.
@@ -1782,6 +1906,7 @@ client.recruitPlayer = function(self, playerName)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
+	@name kickTribeMember
 	@desc Kicks a member of the tribe.
 	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
 	@param memberName<string> The name of the member to be kicked.
@@ -1790,6 +1915,7 @@ client.kickTribeMember = function(self, memberName)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
 end
 --[[@
+	@name setTribeMemberRole
 	@desc Sets the role of a member in the tribe.
 	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
 	@param memberName<string> The name of the member to get the role.
@@ -1799,6 +1925,7 @@ client.setTribeMemberRole = function(self, memberName, roleId)
 	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
 end
 --[[@
+	@name loadLua
 	@desc Loads a lua script in the room.
 	@param script<string> The lua script.
 ]]
@@ -1807,12 +1934,14 @@ client.loadLua = function(self, script)
 end
 -- Café
 --[[@
+	@name reloadCafe
 	@desc Reloads the Café data.
 ]]
 client.reloadCafe = function(self)
 	self.main:send(enum.identifier.cafeData, byteArray:new())
 end
 --[[@
+	@name openCafe
 	@desc Toggles the current Café state (open / closed).
 	@desc It will send @see client.reloadCafe automatically if close is false.
 	@param close?<boolean> If the Café must be closed. @default false
@@ -1825,6 +1954,7 @@ client.openCafe = function(self, close)
 	end
 end
 --[[@
+	@name createCafeTopic
 	@desc Creates a Café topic.
 	@desc /!\ The method does not handle the Café's cooldown system.
 	@param title<string> The title of the topic.
@@ -1835,6 +1965,7 @@ client.createCafeTopic = function(self, title, message)
 	self.main:send(enum.identifier.cafeNewTopic, byteArray:new():writeUTF(title):writeUTF(message))
 end
 --[[@
+	@name openCafeTopic
 	@desc Opens a Café topic.
 	@desc You may use this method to reload the topic (refresh).
 	@param topicId<int> The id of the topic to be opened.
@@ -1843,6 +1974,7 @@ client.openCafeTopic = function(self, topicId)
 	self.main:send(enum.identifier.cafeLoadData, byteArray:new():write32(topicId))
 end
 --[[@
+	@name sendCafeMessage
 	@desc Sends a message in a Café topic.
 	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds if the last post is from the same account, otherwise 10 seconds.
 	@param topicId<int> The id of the topic where the message will be posted.
@@ -1853,6 +1985,7 @@ client.sendCafeMessage = function(self, topicId, message)
 	self.main:send(enum.identifier.cafeSendMessage, byteArray:new():write32(topicId):writeUTF(message))
 end
 --[[@
+	@name likeCafeMessage
 	@desc Likes/Dislikes a message in a Café topic.
 	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds to react in a message.
 	@param topicId<int> The id of the topic where the message is located.
@@ -1862,8 +1995,56 @@ end
 client.likeCafeMessage = function(self, topicId, messageId, dislike)
 	self.main:send(enum.identifier.cafeLike, byteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
 end
+-- Friends
+--[[@
+	@name requestFriendList
+	@desc Requests the friend list.
+]]
+client.requestFriendList = function(self)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(28):write32(3), self.main.packetID))
+end
+--[[@
+	@name requestBlackList
+	@desc Requests the black list.
+]]
+client.requestBlackList = function(self)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(46):write32(3), self.main.packetID))
+end
+--[[@
+	@name addFriend
+	@desc Adds a friend to the friend list.
+	@param playerName<string> The player name to be added.
+]]
+client.addFriend = function(self, playerName)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
+end
+--[[@
+	@name removeFriend
+	@desc Removes a player from the friend list.
+	@param playerName<string> The player name to be removed.
+]]
+client.removeFriend = function(self, playerName)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
+end
+--[[@
+	@name blacklistPlayer
+	@desc Adds a friend to the black list.
+	@param playerName<string> The player name to be added.
+]]
+client.blacklistPlayer = function(self, playerName)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
+end
+--[[@
+	@name whitelistPlayer
+	@desc Removes a player from the black list.
+	@param playerName<string> The player name to be removed.
+]]
+client.whitelistPlayer = function(self, playerName)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
+end
 -- Miscellaneous
 --[[@
+	@name sendCommand
 	@desc Sends a command (/).
 	@desc /!\ Note that some unlisted commands cannot be triggered by this function.
 	@param command<string> The command. (without /)
@@ -1872,6 +2053,7 @@ client.sendCommand = function(self, command, crypted)
 	self.main:send(enum.identifier.command, encode_xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@
+	@name playEmote
 	@desc Plays an emote.
 	@param emote?<enum.emote> An enum from @see emote. (index or value) @default dance
 	@param flag?<string> The country code of the flag when @emote is flag.
@@ -1889,6 +2071,7 @@ client.playEmote = function(self, emote, flag)
 	self.bulle:send(enum.identifier.emote, packet)
 end
 --[[@
+	@name playEmoticon
 	@desc Plays an emoticon.
 	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
 ]]
@@ -1899,6 +2082,7 @@ client.playEmoticon = function(self, emoticon)
 	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
 end
 --[[@
+	@name requestRoomList
 	@desc Requests the data of a room mode list.
 	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
 ]]
@@ -1907,12 +2091,6 @@ client.requestRoomList = function(self, roomMode)
 	if not roomMode then return end
 
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
-end
---[[@
-	@desc Requests the friend list.
-]]
-client.requestFriendList = function(self)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(28):write32(3), self.main.packetID))
 end
 
 return client

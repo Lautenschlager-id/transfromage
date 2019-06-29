@@ -91,7 +91,7 @@
 
 ---
 ### emote <sub>\<int></sub>
-###### The available emote ids.
+###### The available emote IDs.
 | Index | Value |
 | :-: | :-: |
 | dance | 00 |
@@ -125,7 +125,7 @@
 
 ---
 ### emoticon <sub>\<int></sub>
-###### The available emoticon ids.
+###### The available emoticon IDs.
 | Index | Value |
 | :-: | :-: |
 | smiley | 0 |
@@ -155,8 +155,21 @@
 | high | -1 |
 
 ---
+### game <sub>\<int></sub>
+###### The ID of each game.
+| Index | Value |
+| :-: | :-: |
+| unknown | 00 |
+| none | 01 |
+| transformice | 04 |
+| fortoresse | 06 |
+| bouboum | 07 |
+| nekodancer | 15 |
+| deadmaze | 17 |
+
+---
 ### gender <sub>\<int></sub>
-###### The profile gender id.
+###### The profile gender ID.
 | Index | Value |
 | :-: | :-: |
 | none | 0 |
@@ -221,7 +234,7 @@
 
 ---
 ### role <sub>\<int></sub>
-###### The id for staff role identifiers.
+###### The ID for staff role identifiers.
 | Index | Value |
 | :-: | :-: |
 | normal | 00 |

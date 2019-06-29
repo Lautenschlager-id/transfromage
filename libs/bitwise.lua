@@ -6,6 +6,7 @@ local math_floor = math.floor
 local bitwise = { }
 
 --[[@
+	@name lshift
 	@desc Shifts an integer number to the left.
 	@param x<int> An integer.
 	@param disp<int> Quantity of bits to be left-shifted in @x.
@@ -15,6 +16,7 @@ bitwise.lshift = function(x, disp)
 	return x * 2 ^ disp
 end
 --[[@
+	@name rshift
 	@desc Shifts an integer number to the right.
 	@param x<int> An integer.
 	@param disp<int> Quantity of bits to be right-shifted in @x.
@@ -24,6 +26,7 @@ bitwise.rshift = function(x, disp)
 	return math_floor(x / 2 ^ disp)
 end
 --[[@
+	@name band
 	@desc Returns the bitwise _& (and)_ between two integers.
 	@param x<int> The first integer.
 	@param y<int> The second integer.
@@ -51,6 +54,7 @@ bitwise.band = function(x, y)
 	return out
 end
 --[[@
+	@name bxor
 	@desc Returns the bitwise _^ (xor)_ between two integers.
 	@param x<int> The first integer.
 	@param y<int> The second integer.

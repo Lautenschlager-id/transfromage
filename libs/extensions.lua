@@ -16,6 +16,7 @@ local table_concat = table.concat
 ------------------
 
 --[[@
+	@name coroutine.makef
 	@desc Creates a coroutine to execute the given function.
 	@param f<function> Function to be executed inside a coroutine.
 	@returns function A coroutine with @f to be executed.
@@ -26,6 +27,7 @@ coroutine.makef = function(f)
 	end
 end
 --[[@
+	@name math.normalizePoint
 	@desc Normalizes a Transformice coordinate point value.
 	@param x<number> The coordinate point value.
 	@returns int The normalized coordinate point value.
@@ -45,6 +47,7 @@ do
 	}
 
 	--[[@
+		@name os.log
 		@desc Sends a log message with colors to the prompt of command.
 		@desc Color format is given as `↑name↓text↑`, as in `↑error↓[FAIL]↑`.
 		@desc Available code names: `error`, `failure`, `highlight`, `info`, `success`.
@@ -72,6 +75,7 @@ do
 	end
 end
 --[[@
+	@name string.fixEntity
 	@desc Normalizes a string that has HTML entities.
 	@param str<string> The string.
 	@returns string The normalized string.
@@ -83,6 +87,7 @@ string.fixEntity = function(str)
 	return str
 end
 --[[@
+	@name string.getBytes
 	@desc Gets the bytes of the characters of a string.
 	@param str<string> The string.
 	@returns table An array of bytes.
@@ -100,6 +105,7 @@ string.getBytes = function(str)
 	end
 end
 --[[@
+	@name string.split
 	@desc Splits a string into parts based on a pattern.
 	@param str<string> The string to be split.
 	@param pat<string> The pattern to split the string. Note that it doesn't auto-include '[^%s]'
@@ -116,6 +122,7 @@ string.split = function(str, pat)
 	return out
 end
 --[[@
+	@name string.toNickname
 	@desc Normalizes an inserted nickname.
 	@param str<string> The nickname to be normalized. May not included the #tag.
 	@param checkDiscriminator?<boolean> If it must append '#0000' if no #tag is detected. @default false
@@ -136,6 +143,7 @@ do
 	-- Based on Luvit's ustring
 
 	--[[@
+		@name charLength
 		@desc Gets the quantity of bytes in a character.
 		@param byte<int> A byte to be used as source.
 		@returns int The quantity of bytes in a character - 1.
@@ -154,6 +162,7 @@ do
 	end
 
 	--[[@
+		@name string.utf8
 		@desc Transforms a Lua string into a UTF8 string.
 		@param str<string> The string.
 		@returns table A table split by UTF8 char.
@@ -191,6 +200,7 @@ do
 	end
 end
 --[[@
+	@name table.add
 	@desc Links two arrays by reference.
 	@param str<table> The source table, the one receiving the new values.
 	@param add<table> The table where the new values are coming from.
@@ -202,6 +212,7 @@ table.add = function(src, add)
 	end
 end
 --[[@
+	@name table.arrayRange
 	@desc Gets the values of an array within a given range.
 	@param arr<table> The array.
 	@param i?<int> The initial index of the range. @default 1
@@ -221,6 +232,7 @@ table.arrayRange = function(arr, i, j)
 	return newArray
 end
 --[[@
+	@name table.copy
 	@desc Copies a table to remove its reference.
 	@param list<table> The table to be copied.
 	@returns table A new table with all values and indexes of @list.
@@ -237,6 +249,7 @@ table.copy = function(list)
 	return out
 end
 --[[@
+	@name table.fuse
 	@desc Links two given arrays.
 	@param arrA<table> The source table, the one receiving the new values.
 	@param arrB<table> The table where the new values are coming from.
@@ -253,6 +266,7 @@ table.fuse = function(arrA, arrB)
 	return out
 end
 --[[@
+	@name table.join
 	@desc Splits an array, adding a value between each value.
 	@param arr<table> The array to be split.
 	@param value<*> The value to be added between the values of @arr.
@@ -272,6 +286,7 @@ table.join = function(arr, value)
 	return out
 end
 --[[@
+	@name table.mapArray
 	@desc Transforms the values in a given array.
 	@param arr<table> The array to have its values altered.
 	@param f<function> The function that handles the values of the array. It receives the values of the array as parameter.
@@ -285,6 +300,7 @@ table.mapArray = function(arr, f)
 	return newArray
 end
 --[[@
+	@name table.setNewClass
 	@desc Creates a new class constructor, where '__call' calls 'new'.
 	@returns table a metatable with a '__call' constructor.
 ]]
@@ -296,6 +312,7 @@ table.setNewClass = function()
 	})
 end
 --[[@
+	@name table.writeBytes
 	@desc Converts an array of bytes into a string. (Not a bytestring)
 	@param bytes<table> The array of bytes.
 	@returns string A string from the array of bytes.

@@ -47,6 +47,7 @@ do
 
 	local base64_encode = require("base64").encode -- built-in
 	--[[@
+		@name getPasswordHash
 		@desc Encrypts the account's password.
 		@param password<string> The account's password.
 		@returns string The encrypted password.
@@ -70,6 +71,7 @@ local identificationKeys = { }
 local messageKeys = { }
 
 --[[@
+	@name setPacketKeys
 	@desc Sets the packet keys.
 	@param idKeys<table> The identification keys of the SWF/endpoint.
 	@param msgKeys<table> The message keys of the SWF/endpoint.
@@ -90,6 +92,7 @@ do
 	end
 
 	--[[@
+		@name xxtea
 		@desc XXTEA partial 64bits encoder.
 		@param data<table> A table with data to be encoded.
 		@returns table The encoded data.
@@ -131,6 +134,7 @@ do
 end
 
 --[[@
+	@name btea
 	@desc Encodes a packet with the BTEA block cipher.
 	@param packet<byteArray> A Byte Array object to be encoded.
 	@returns byteArray The encoded Byte Array object.
@@ -166,6 +170,7 @@ local btea = function(packet)
 end
 
 --[[@
+	@name xorCipher
 	@desc Encodes a packet using the XOR cipher.
 	@param packet<byteArray> A Byte Array object to be encoded.
 	@param fingerprint<int> The fingerprint of the encode.

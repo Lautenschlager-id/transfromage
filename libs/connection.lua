@@ -22,6 +22,7 @@ local connection = table_setNewClass()
 connection.__index = connection
 
 --[[@
+	@name new
 	@desc Creates a new instance of Connection.
 	@param name<string> The connection name, for referece.
 	@param event<Emitter> An event emitter object.
@@ -52,12 +53,14 @@ connection.new = function(self, name, event)
 	return setmetatable(data, connection)
 end
 --[[@
+	@name close
 	@desc Ends the socket connection.
 ]]
 connection.close = function(self)
 	self.open = false
 	self.socket:destroy()
 	--[[@
+		@name disconnection
 		@desc Triggered when a connection dies or fails.
 		@param connection<connection> The connection object.
 	]]
@@ -65,6 +68,7 @@ connection.close = function(self)
 end
 
 --[[@
+	@name connect
 	@desc Creates a socket to connect to the server of the game.
 	@param ip<string> The server IP.
 	@param port?<int> The server port. If nil, all the available ports are going to be used until one gets connected.
@@ -87,6 +91,7 @@ connection.connect = function(self, ip, port)
 		end)
 
 		--[[@
+			@name _socketConnection
 			@desc Triggered when the socket gets connected.
 			@param connection<connection> The connection.
 			@param port<int> The port where the socket got connected.
@@ -107,6 +112,7 @@ connection.connect = function(self, ip, port)
 	end)
 end
 --[[@
+	@name receive
 	@desc Retrieves the data received from the server.
 	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty.
 ]]
@@ -127,6 +133,7 @@ connection.receive = function(self)
 	return { }
 end
 --[[@
+	@name send
 	@desc Sends a packet to the server.
 	@param identifiers<table> The packet identifiers in the format (C, CC).
 	@param alphaPacket<byteArray,string,number> The packet ByteArray, ByteString or byte to be sent to the server.
@@ -177,6 +184,7 @@ connection.send = function(self, identifiers, alphaPacket)
 	end
 
 	--[[@
+		@name send
 		@desc Triggered when the client sends packets to the server.
 		@param identifiers<table> The C, CC identifiers sent in the request.
 		@param packet<byteArray> The Byte Array object that was sent.

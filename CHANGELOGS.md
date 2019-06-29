@@ -2,6 +2,23 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.6.0 - 29/06/2019
+### News
+- Added _enum.game_.
+- Added the private function _handleFriendData_.
+- Added the event _removeFriend( playerId )_.
+- Added the event _newFriend( friend )_.
+- Added the event _blackList( blackList )_.
+- Added _client.whitelistPlayer_.
+- Added _client.blacklistPlayer_.
+- Added _client.removeFriend_.
+- Added _client.addFriend_.
+- Added _client.requestBlackList_.
+- Added a new data value for the parameters of the event _friendList_, `gameId`.
+
+### Fixes
+- Now the field from the handleFriendData _playerName_ has its nickname normalized with _string.toNickname_.
+
 ## v1.5.1 - 26/06/2019
 ## Fixes
 - _client.\_process\_xml_ was set to true as default.
