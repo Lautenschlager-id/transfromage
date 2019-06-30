@@ -372,7 +372,7 @@ end)
 >### newTribeMember ( memberName )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| memberName | `string` | The name of the new tribeMember. |
+>| memberName | `string` | The name of the new tribe member. |
 >
 >Triggered when a player joins the tribe.
 >
