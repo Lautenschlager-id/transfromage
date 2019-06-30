@@ -43,7 +43,7 @@ end)
 >				timestamp = 0, -- When the topic was created.
 >				author = "", -- The name of the topic author.
 >				content = "", -- The content of the message.
->				canLike = false, -- Whether the bot can like/dislike a message.
+>				canLike = false, -- Whether the account can like/dislike the message.
 >				likes = 0 -- The number of likes on the message.
 >			}
 >		}
