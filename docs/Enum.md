@@ -2,7 +2,7 @@
 >### enum ( list, ignoreConflit, \_\_index )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| list | `table` | ✔ | The table to become an enumeration. |
+>| list | `table` | ✔ | The table that will become an enumeration. |
 >| ignoreConflict | `boolean` | ✕ | If the system should ignore value conflicts. (if there are identical values in @list) <sub>(default = false)</sub> |
 >| \_\_index | `function` | ✕ | A function to handle the \_\_index metamethod of the enumeration. It receives the given index and @list. |
 >
@@ -151,30 +151,30 @@
 ###### The API error levels.
 | Index | Value |
 | :-: | :-: |
-| low | -2 |
-| high | -1 |
+| Low | -2 |
+| High | -1 |
 
 ---
 ### game <sub>\<int></sub>
 ###### The ID of each game.
 | Index | Value |
 | :-: | :-: |
-| unknown | 00 |
-| none | 01 |
-| transformice | 04 |
-| fortoresse | 06 |
-| bouboum | 07 |
-| nekodancer | 15 |
-| deadmaze | 17 |
+| Unknown | 00 |
+| None | 01 |
+| Transformice | 04 |
+| Fortoresse | 06 |
+| Bouboum | 07 |
+| Nekodancer | 15 |
+| Deadmaze | 17 |
 
 ---
 ### gender <sub>\<int></sub>
 ###### The profile gender ID.
 | Index | Value |
 | :-: | :-: |
-| none | 0 |
-| female | 1 |
-| male | 2 |
+| None | 0 |
+| Female | 1 |
+| Male | 2 |
 
 ---
 ### identifier <sub>\<table></sub>
@@ -237,26 +237,26 @@
 ###### The ID for staff role identifiers.
 | Index | Value |
 | :-: | :-: |
-| normal | 00 |
-| moderator | 05 |
-| administrator | 10 |
-| mapcrew | 11 |
-| funcorp | 13 |
+| Normal | 00 |
+| Moderator | 05 |
+| Administrator | 10 |
+| Mapcrew | 11 |
+| Funcorp | 13 |
 
 ---
 ### roomMode <sub>\<int></sub>
 ###### The available room modes.
 | Index | Value |
 | :-: | :-: |
-| normal | 01 |
-| bootcamp | 02 |
-| vanilla | 03 |
-| survivor | 08 |
-| racing | 09 |
-| music | 10 |
-| defilante | 11 |
-| village | 16 |
-| module | 18 |
+| Normal | 01 |
+| Bootcamp | 02 |
+| Vanilla | 03 |
+| Survivor | 08 |
+| Racing | 09 |
+| Music | 10 |
+| Defilante | 11 |
+| Village | 16 |
+| Module | 18 |
 
 ---
 ### setting <sub>\<\*></sub>
@@ -272,7 +272,7 @@
 | Index | Value |
 | :-: | :-: |
 | enabled | 1 |
-| disabledPublic | 2 |
-| disabledAll | 3 |
+| friendsOnly | 2 |
+| disabled | 3 |
 
 ---
