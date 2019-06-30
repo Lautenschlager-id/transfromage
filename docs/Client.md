@@ -376,7 +376,7 @@
 >| targetUser | `string` | ✔ | The user who will recieve the whisper. |
 >
 >Sends a whisper to an user.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the character limit for a message is 255 characters, but if the account is new the limit is 80 characters instead. You must set the limit yourself or the bot may get disconnected.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 ---
 >### client:setCommunity ( community )
