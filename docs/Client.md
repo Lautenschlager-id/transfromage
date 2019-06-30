@@ -180,7 +180,7 @@
 >| :-: | :-: | :-: | - |
 >| tribulleId | `int` | ✔ | The tribulle id. |
 >| f | `function` | ✔ | The function to be triggered when this tribulle packet is received. |
->| append | `boolean` | ✕ | `True` if the function should be appended to the (C, CC, tribulle) listener, `False` if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
+>| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC, tribulle) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
 >Inserts a new function to the tribulle (60, 3) packet parser. The parameters are (packet, connection, tribulleId).
 >
