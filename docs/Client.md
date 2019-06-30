@@ -170,7 +170,7 @@
 >| C | `int` | ✔ | The C packet. |
 >| CC | `int` | ✔ | The CC packet. |
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
->| append | `boolean` | ✕ | `True` if the function should be appended to the (C, CC) listener, `False` if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
+>| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
 >Inserts a new function to the old packet parser. The parameters are (data, connection, oldIdentifiers).
 >
