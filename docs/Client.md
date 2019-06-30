@@ -107,7 +107,7 @@
 >
 >| Type | Description |
 >| :-: | - |
->| `int` | The total time the account is logged in. |
+>| `int` | The total time since the account was logged in |
 ---
 >### client:createCafeTopic ( title, message )
 >| Parameter | Type | Required | Description |
