@@ -392,7 +392,7 @@
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| memberName | `string` | ✔ | The name of the member to get the role. |
->| roleId | `int` | ✔ | The role id. (starts from 0, the initial role, increases until the Chief role) |
+>| roleId | `int` | ✔ | The role id. (starts from 0, the initial role, and goes until the Chief role) |
 >
 >Sets the role of a member in the tribe.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
