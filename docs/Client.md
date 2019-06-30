@@ -203,7 +203,7 @@
 >| :-: | :-: | :-: | - |
 >| memberName | `string` | ✔ | The name of the member to be kicked. |
 >
->Kicks a tribemember from the tribe.<br>
+>Kicks a tribe member from the tribe.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions to kick.
 >
 ---
