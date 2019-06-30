@@ -3,11 +3,11 @@
 ## Donations
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TSTEG3PXK4HJ4&source=url)
 
-Funny or not, donations are fundamental to keep the development of the project.
+Funny or not, donations are fundamental to keep the development of the project going.
 
-If you have disponibility to donate any value, do not hesitate in helping us on PayPal!
+If you are able to donate any value, do not hesitate in helping us via PayPal!
 
-###### Thanks for all the **$22** of donations until now! ♥
+###### Thanks for all the donations until now! **($22)** ♥ 
 
 ## Documentation
 
@@ -17,8 +17,8 @@ To document [Methods](docs/Client.md) use the format provided [here](https://git
 Currently the [Events documentation](docs/Events.md) has to be done manually using the functions format.
 
 ## Coding Convention
-The code style does matter in your pull requests.<br>
-Please, follow the clear convention used in the files or you risk not to get your pull request accepted.
+The code style matters in your pull requests.<br>
+Please follow the clear conventions used in the files or you risk your pull request getting rejected.
 
 \- Use tab to indent the code:
 ```Lua
@@ -73,11 +73,11 @@ local x = 1+1 -- Wrong
 \- Use an underscore, `_`, in variables and indexes that are (or should be) only used internally in the API.
 
 ## Packet parsers
-The packet parsers in the file [Client.lua](libs/client.lua) handle the `C` and `CC` individually in hashed tables, making the system ellegant and efficient.
+The packet parsers in the file [Client.lua](libs/client.lua) handle the `C` and `CC` individually in hashed tables, making the system elegant and efficient.
 
 Use their specific tables to add new events as necessary. Pull requests with the _insertXListener_ are not going to be accepted.
 
-If you are editing an existent event, please make the reasons clear in your pull request commentary.
+If you are editing an event which already exists, please make sure you include clear reasons in your pull request commentary.
 
 ### Tribulle events
 Tribulle is everything related to the community platform.
@@ -108,13 +108,13 @@ Old packets were used in the old version of the system. They are the data extrac
 ## Functions
 Functions and methods are used by the instanced object to perform actions in the game.
 
-If you are editing an existent function, please make the reasons clear in your pull request commentary.
+If you are editing a function which already exists, please make sure you include clear reasons in your pull request commentary.
 
-It is not necessary that you handle parameter type errors, expect if the parameter needs an enumeration.<br>
+It is not necessary that you handle parameter type errors, except if the parameter needs an enumeration.<br>
 If the parameter requires an enumeration, use the function (enum._validate)[docs/Internal/enum.md#enumvalidate--enumeration-default-value-errormsg-]
 
 ## Enumerations
-Enumerations should only be created if necessary. They indicate imutable values of an action or behavior.
+Enumerations should only be created if necessary. They indicate immutable values of an action or behavior.
 
 They must be created in the file [Enum.lua](libs/enum.lua) and must follow:
 
@@ -128,7 +128,7 @@ They must be created in the file [Enum.lua](libs/enum.lua) and must follow:
 	sandwich  = 3
 }
 ```
-\- Enumerators must be aligned, and if the values are numbers, they must be appended to zeroes based on the highest value:
+\- Enumerators must be aligned, and if the values are numbers they must be appended to zeroes based on the highest value:
 ```Lua
 {
 	apple     = 001,
