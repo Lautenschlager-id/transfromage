@@ -2,13 +2,17 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.6.1 - 02/07/2019
+### Fixes
+- _bArray.writeBigUtf_ would not work when the input was string.
+
 ## v1.6.0 - 29/06/2019
 ### News
 - Added _enum.game_.
 - Added the private function _handleFriendData_.
-- Added the event _removeFriend( playerId )_.
-- Added the event _newFriend( friend )_.
-- Added the event _blackList( blackList )_.
+- Added the event _removeFriend ( playerId )_.
+- Added the event _newFriend ( friend )_.
+- Added the event _blackList ( blackList )_.
 - Added _client.whitelistPlayer_.
 - Added _client.blacklistPlayer_.
 - Added _client.removeFriend_.

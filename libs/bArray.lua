@@ -104,7 +104,7 @@ byteArray.writeBigUTF = function(self, bigUtf)
 	end
 
 	self:write24(#bigUtf)
-	table_add(self.stack, string_getBytes(bigUtf))
+	table_add(self.stack, bigUtf)
 
 	return self
 end

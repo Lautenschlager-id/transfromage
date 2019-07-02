@@ -12,6 +12,7 @@ local math_floor = math.floor
 local string_char = string.char
 local string_sub = string.sub
 local table_concat = table.concat
+local table_writeBytes = table.writeBytes
 ------------------
 
 local getPasswordHash
@@ -26,7 +27,7 @@ do
 		return hash:final()
 	end
 
-	local saltBytes = {
+	local saltBytes = table_writeBytes({
 		247, 026, 166, 222,
 		143, 023, 118, 168,
 		003, 157, 050, 184,
@@ -35,15 +36,7 @@ do
 		197, 221, 206, 086,
 		211, 183, 164, 005,
 		074, 013, 008, 176
-	}
-	do
-		local chars = { }
-		for i = 1, #saltBytes do
-			chars[i] = string_char(saltBytes[i])
-		end
-
-		saltBytes = table_concat(chars)
-	end
+	})
 
 	local base64_encode = require("base64").encode -- built-in
 	--[[@
