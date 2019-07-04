@@ -5,7 +5,7 @@
 
 Funny or not, donations are fundamental to keep the development of the project going.
 
-If you are able to donate any value, do not hesitate in helping us via PayPal!
+If you have disponibility to donate any value, do not hesitate in helping us via PayPal!
 
 ###### Thanks for all the donations until now! **($22)** ♥ 
 
