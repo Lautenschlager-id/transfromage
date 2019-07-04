@@ -241,7 +241,7 @@ end)
 >| :-: | :-: | - |
 >| tribeName | `string` | The name of the tribe. |
 >
->Triggered when a player joins a tribe house.
+>Triggered when the account joins a tribe house.
 >
 ---
 >### lua ( log )
