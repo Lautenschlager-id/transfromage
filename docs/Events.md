@@ -352,7 +352,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
@@ -414,7 +414,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
@@ -460,7 +460,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
@@ -505,7 +505,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
@@ -551,7 +551,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
@@ -598,7 +598,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
@@ -714,7 +714,7 @@ end)
 >		isVampire = false, -- Whether the player is vampire or not.
 >		hasWon = false, -- Whether the player has entered the hole in the round or not.
 >		winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->		winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>		winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >		isFacingRight = false, -- Whether the player is facing right.
 >		movingRight = false, -- Whether the player is moving right.
 >		movingLeft = false, -- Whether the player is moving left.
@@ -947,7 +947,7 @@ end)
 >	isVampire = false, -- Whether the player is vampire or not.
 >	hasWon = false, -- Whether the player has entered the hole in the round or not.
 >	winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
->	winTimeElapsed = 0, -- The time elapsed till the player enters the hole. It is set to -1 if it has not won yet.
+>	winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
 >	isFacingRight = false, -- Whether the player is facing right.
 >	movingRight = false, -- Whether the player is moving right.
 >	movingLeft = false, -- Whether the player is moving left.
