@@ -287,7 +287,7 @@
 >| playerName | `string` | ✔ | The name of player to be recruited. |
 >
 >Sends a tribe invite to a player.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions to invite.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:reloadCafe (  )
