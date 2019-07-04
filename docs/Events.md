@@ -691,7 +691,7 @@ end)
 >| playerList | `table` | The data of all players. |
 >
 >
->Triggered when the data of all players are refreshed (mostly when a new map is loadedgames).
+>Triggered when the data of all players are refreshed (mostly when a new map is loaded).
 >
 >**@playerList structure**:
 >```Lua
