@@ -581,7 +581,7 @@ end)
 >**@playerData structure**:
 >```Lua
 >{
->>	playerName = "", -- The nickname of the player.
+>	playerName = "", -- The nickname of the player.
 >	id = 0, -- The temporary id of the player during the section.
 >	isShaman = false, -- Whether the player is shaman or not.
 >	isDead = false, -- Whether the player is dead or alive.
