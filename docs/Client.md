@@ -43,7 +43,7 @@
 >| :-: | :-: | :-: | - |
 >| playerName | `string` | ✔ | The player name to be added. |
 >
->Adds a friend to the friend list.
+>Adds a player to the friend list.
 >
 ---
 >### client:blacklistPlayer ( playerName )
@@ -51,7 +51,7 @@
 >| :-: | :-: | :-: | - |
 >| playerName | `string` | ✔ | The player name to be added. |
 >
->Adds a friend to the black list.
+>Adds a player to the black list.
 >
 ---
 >### client:changeWhisperState ( message, state )
@@ -77,7 +77,7 @@
 >| :-: | :-: | :-: | - |
 >| chatName | `string` | ✔ | The name of the chat. |
 >
->Gets who is in a specific chat. (/who)
+>Gets the names of players in a specific chat. (/who)
 >
 ---
 >### client:closeChat ( chatName )
@@ -101,13 +101,13 @@
 >
 ---
 >### client:connectionTime (  )
->Gets the total time of the connection.
+>Gets the total time since the account was connected.
 >
 >**Returns:**
 >
 >| Type | Description |
 >| :-: | - |
->| `int` | The total time since the connection. |
+>| `int` | The total time since the account was logged in |
 ---
 >### client:createCafeTopic ( title, message )
 >| Parameter | Type | Required | Description |
@@ -135,7 +135,7 @@
 >| roomName | `string` | ✔ | The name of the room. |
 >| isSalonAuto | `boolean` | ✕ | Whether the change room must be /salonauto or not. <sub>(default = false)</sub> |
 >
->Enters in a room.
+>Enters a room.
 >
 ---
 >### client:getTranslation ( language, index, raw )
@@ -159,7 +159,7 @@
 >| C | `int` | ✔ | The C packet. |
 >| CC | `int` | ✔ | The CC packet. |
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
->| append | `boolean` | ✕ | True if the function should be appended to the (C, CC) listener, false if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
+>| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
 >Inserts a new function to the packet parser. The parameters are (packet, connection, identifiers).
 >
@@ -170,7 +170,7 @@
 >| C | `int` | ✔ | The C packet. |
 >| CC | `int` | ✔ | The CC packet. |
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
->| append | `boolean` | ✕ | True if the function should be appended to the (C, CC) listener, false if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
+>| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
 >Inserts a new function to the old packet parser. The parameters are (data, connection, oldIdentifiers).
 >
@@ -180,7 +180,7 @@
 >| :-: | :-: | :-: | - |
 >| tribulleId | `int` | ✔ | The tribulle id. |
 >| f | `function` | ✔ | The function to be triggered when this tribulle packet is received. |
->| append | `boolean` | ✕ | True if the function should be appended to the (C, CC, tribulle) listener, false if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
+>| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC, tribulle) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
 >Inserts a new function to the tribulle (60, 3) packet parser. The parameters are (packet, connection, tribulleId).
 >
@@ -195,7 +195,7 @@
 ---
 >### client:joinTribeHouse (  )
 >
->Joins the tribe house, if the account is in a tribe.
+>Joins the tribe house (if the account is in a tribe).
 >
 ---
 >### client:kickTribeMember ( memberName )
@@ -203,8 +203,8 @@
 >| :-: | :-: | :-: | - |
 >| memberName | `string` | ✔ | The name of the member to be kicked. |
 >
->Kicks a member of the tribe.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>Kicks a tribe member from the tribe.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:likeCafeMessage ( topicId, messageId, dislike )
@@ -232,7 +232,7 @@
 >| eventName | `string` | ✔ | The name of the event. |
 >| callback | `function` | ✔ | The function that must be called when the event is triggered. |
 >
->Sets an event emitter that is triggered everytime the specific behavior happens.<br>
+>Sets an event emitter that is triggered everytime a specific behavior happens.<br>
 >See the available events in [Events](Events.md).
 >
 ---
@@ -242,16 +242,16 @@
 >| eventName | `string` | ✔ | The name of the event. |
 >| callback | `function` | ✔ | The function that must be called only once when the event is triggered. |
 >
->Sets an event emitter that is triggered only once when a specific behavior happens.<br>
+>Sets an event emitter that is triggered only once a specific behavior happens.<br>
 >See the available events in [Events](Events.md).
 >
 ---
 >### client:openCafe ( close )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| close | `boolean` | ✕ | If the Café must be closed. <sub>(default = false)</sub> |
+>| close | `boolean` | ✕ | If the Café should be closed. <sub>(default = false)</sub> |
 >
->Toggles the current Café state (open / closed).<br>
+>Toggles the current Café state (open / close).<br>
 >It will send [reloadCafe](Client.md#clientreloadcafe---) automatically if close is false.
 >
 ---
@@ -261,7 +261,7 @@
 >| topicId | `int` | ✔ | The id of the topic to be opened. |
 >
 >Opens a Café topic.<br>
->You may use this method to reload the topic (refresh).
+>You may use this method to reload (or refresh) the topic.
 >
 ---
 >### client:playEmote ( emote, flag )
@@ -286,8 +286,8 @@
 >| :-: | :-: | :-: | - |
 >| playerName | `string` | ✔ | The name of player to be recruited. |
 >
->Sends a recruitment invite to the player.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>Sends a tribe invite to a player.<br>
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:reloadCafe (  )
@@ -338,7 +338,7 @@
 >| message | `string` | ✔ | The message. |
 >
 >Sends a message to a #chat.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 ---
 >### client:sendCommand ( command )
@@ -346,7 +346,7 @@
 >| :-: | :-: | :-: | - |
 >| command | `string` | ✔ | The command. (without /) |
 >
->Sends a command (/).
+>Sends a (/)command.
 >
 ---
 >### client:sendRoomMessage ( message )
@@ -355,7 +355,8 @@
 >| message | `string` | ✔ | The message. |
 >
 >Sends a message in the room chat.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
+>
 >
 ---
 >### client:sendTribeMessage ( message )
@@ -364,17 +365,18 @@
 >| message | `string` | ✔ | The message. |
 >
 >Sends a message to the tribe chat.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
+>
 >
 ---
 >### client:sendWhisper ( targetUser, message )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
->| targetUser | `string` | ✔ | The user to receive the whisper. |
+>| targetUser | `string` | ✔ | The user who will recieve the whisper. |
 >
 >Sends a whisper to an user.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that the limit of characters for the message is 255, but if the account is new the limit is set to 80. You must limit it yourself or the bot may get disconnected.
+>![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 ---
 >### client:setCommunity ( community )
@@ -382,7 +384,7 @@
 >| :-: | :-: | :-: | - |
 >| community | `string`, `int` | ✕ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
 >
->Sets the community where the bot will be connected to.<br>
+>Sets the community the bot will connect to.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [start](Client.md#clientstart--self-tfmid-token-).
 >
 ---
@@ -390,7 +392,7 @@
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| memberName | `string` | ✔ | The name of the member to get the role. |
->| roleId | `int` | ✔ | The role id. (starts in 0, for the initial role. Increases until the Chief role) |
+>| roleId | `int` | ✔ | The role id. (starts from 0, the initial role, and goes until the Chief role) |
 >
 >Sets the role of a member in the tribe.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
@@ -408,7 +410,7 @@
 >### client:whitelistPlayer ( playerName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| playerName | `string` | ✔ | The player name to be removed. |
+>| playerName | `string` | ✔ | The player name to be removed from the blacklist. |
 >
 >Removes a player from the black list.
 >
