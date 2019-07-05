@@ -2,7 +2,7 @@
 >### enum ( list, ignoreConflit, \_\_index )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| list | `table` | ✔ | The table to become an enumeration. |
+>| list | `table` | ✔ | The table that will become an enumeration. |
 >| ignoreConflict | `boolean` | ✕ | If the system should ignore value conflicts. (if there are identical values in @list) <sub>(default = false)</sub> |
 >| \_\_index | `function` | ✕ | A function to handle the \_\_index metamethod of the enumeration. It receives the given index and @list. |
 >

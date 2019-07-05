@@ -107,7 +107,7 @@
 >
 >| Type | Description |
 >| :-: | - |
->| `int` | The total time since the account was logged in |
+>| `int` | The total time since the account was logged in. |
 ---
 >### client:createCafeTopic ( title, message )
 >| Parameter | Type | Required | Description |
@@ -316,7 +316,7 @@
 >### client:removeFriend ( playerName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| playerName | `string` | ✔ | The player name to be removed. |
+>| playerName | `string` | ✔ | The player name to be removed from the friend list. |
 >
 >Removes a player from the friend list.
 >
@@ -373,7 +373,7 @@
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
->| targetUser | `string` | ✔ | The user who will recieve the whisper. |
+>| targetUser | `string` | ✔ | The user who will receive the whisper. |
 >
 >Sends a whisper to an user.<br>
 >![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.

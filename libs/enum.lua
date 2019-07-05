@@ -6,7 +6,7 @@ local enum = setmetatable({ }, {
 	--[[@
 		@name enum
 		@desc Creates a new enumeration.
-		@param list<table> The table to become an enumeration.
+		@param list<table> The table that will become an enumeration.
 		@param ignoreConflict?<boolean> If the system should ignore value conflicts. (if there are identical values in @list) @default false
 		@param __index?<function> A function to handle the __index metamethod of the enumeration. It receives the given index and @list.
 		@returns enum A new enumeration.
