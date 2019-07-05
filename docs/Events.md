@@ -637,7 +637,7 @@ end)
 >		hard = 0, -- Total saves in hard mode.
 >		divine = 0 -- Total saves in divine mode.
 >	}, -- Total saves of the player.
->	shamanCheese = 0, -- Total cheese gathered as shaman.
+>	shamanCheese = 0, -- Number of cheese gathered as shaman.
 >	firsts = 0, -- Number of firsts.
 >	cheeses = 0, -- Number of cheese gathered.
 >	bootcamps = 0, -- Number of bootcamps completed.
@@ -665,7 +665,7 @@ end)
 >	orbs = {
 >		[id] = true -- The id of the shaman orb as index.
 >	}, -- The list of unlocked shaman orbs.
->	adventurePoints = 0 -- The total adventure points.
+>	adventurePoints = 0 -- Number of adventure points.
 >}
 >```
 >
@@ -765,8 +765,8 @@ end)
 >{
 >	[i] = {
 >		name = "", -- The name of the room.
->		totalPlayers = 0, -- The quantity of players in the room.
->		maxPlayers = 0, -- The maximum quantity of players the room can get.
+>		totalPlayers = 0, -- Number of players in the room.
+>		maxPlayers = 0, -- Maximum number of players the room can get.
 >		onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
 >	}
 >}
@@ -777,7 +777,7 @@ end)
 >{
 >	[i] = {
 >		name = "", -- The name of the object.
->		totalPlayers = 0 -- The quantity of players in the object counter. (Might be a string)
+>		totalPlayers = 0 -- Number of players in the object counter. (Might be a string)
 >	}
 >}
 >```
