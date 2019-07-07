@@ -2062,7 +2062,6 @@ client.playEmote = function(self, emote, flag)
 	emote = enum_validate(enum.emote, enum.emote.dance, emote, string_format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
 	if not emote then return end
 
-
 	local packet = byteArray:new():write8(emote):write32(0)
 	if emote == enum.emote.flag then
 		packet = packet:writeUTF(flag)
