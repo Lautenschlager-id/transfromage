@@ -301,15 +301,29 @@ table.mapArray = function(arr, f)
 end
 --[[@
 	@name table.setNewClass
-	@desc Creates a new class constructor, where '__call' calls 'new'.
-	@returns table a metatable with a '__call' constructor.
+	@desc Creates a new class constructor.
+	@desc If the table receives a new index with a string value, it'll create an alias.
+	@returns table A metatable with constructor and alias handlers.
 ]]
 table.setNewClass = function()
-	return setmetatable({ }, {
+	local class = setmetatable({ }, {
 		__call = function(this, ...)
 			return this:new(...)
+		end,
+		__newindex = function(this, index, value)
+			if type(value) == "string" then -- Aliases / Compatibility
+				rawset(this, index, function(...)
+					os.log("↑failure↓[/!\\]↑ ↑highlight↓" .. index .. "↑ is deprecated, use ↑highlight↓" .. value .. "↑ instead.")
+					return this[value](this, ...)
+				end)
+			else
+				rawset(this, index, value)
+			end
 		end
 	})
+	class.__index = class
+
+	return class
 end
 --[[@
 	@name table.writeBytes

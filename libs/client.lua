@@ -37,7 +37,28 @@ local tribulleListener, oldPacketListener, packetListener
 local handlePlayerField, handleFriendData
 
 local client = table_setNewClass()
-client.__index = client	
+
+local meta = {
+	playerList = {
+		__len = function(this)
+			return this.count or -1
+		end,
+		__pairs = function(this)
+			local indexes = { }
+			for i = 1, #this do
+				indexes[i] = this[i].playerName
+			end
+
+			local i = 0
+			return function()
+				i = i + 1
+				if this[indexes[i]] then
+					return this[indexes[i]].playerName, this[indexes[i]]
+				end
+			end
+		end
+	}
+}
 
 --[[@
 	@name new
@@ -79,11 +100,7 @@ client.new = function(self)
 		bulle = nil,
 		event = eventEmitter,
 		cafe = { },
-		playerList = setmetatable({ }, {
-			__len = function(this)
-				return this.count or -1
-			end
-		}),
+		playerList = setmetatable({ }, meta.playerList),
 		-- Private
 		_mainLoop = nil,
 		_bulleLoop = nil,
@@ -414,7 +431,11 @@ oldPacketListener = {
 
 				self.playerList.count = self.playerList.count - 1
 				for i = pos, self.playerList.count do
-					self.playerList[i]._pos = self.playerList[i]._pos - 1
+					if self.playerList[i] then
+						self.playerList[i]._pos = self.playerList[i]._pos - 1
+					else
+						-- TODO : Error ?
+					end
 				end
 
 				-- Removes the other references
@@ -517,6 +538,8 @@ packetListener = {
 			self.event:emit("newGame", map)
 		end,
 		[21] = function(self, packet, connection, identifiers) -- Room changed
+			self.playerList = setmetatable({ }, meta.playerList) -- Refreshes it
+
 			local isPrivate, roomName = packet:readBool(), packet:readUTF()
 
 			if string_byte(roomName, 2) == 3 then
@@ -1415,10 +1438,6 @@ client.insertOldPacketListener = function(self, C, CC, f, append)
 	end
 end
 
------ Compatibility -----
-client.insertReceiveFunction, client.insertTribulleFunction = client.insertPacketListener, client.insertTribulleListener
--------------------------
-
 --[[@
 	@name parsePacket
 	@desc Handles the received packets by triggering their listeners.
@@ -1637,9 +1656,14 @@ end
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token<string> The API Endpoint token to get access to the authentication keys.
 ]]
+local first = true
 client.start = coroutine_makef(function(self, tfmId, token)
-	self:closeAll()
-	self.isConnected = false
+	if first then
+		first = nil
+	else
+		self:disconnect()
+		self.isConnected = false
+	end
 
 	getKeys(self, tfmId, token)
 
@@ -1737,18 +1761,6 @@ end
 client.connectionTime = function(self)
 	return os.time() - self._connectionTime
 end
---[[@
-	@name closeAll
-	@desc Forces the private function @see closeAll to be called.
-	@returns boolean Whether the Connection objects can be destroyed or not.
-]]
-client.closeAll = function(self)
-	if self.main then
-		self.main.open = false
-		return true
-	end
-	return false
-end
 
 -- Methods
 -- Initialization
@@ -1764,6 +1776,37 @@ client.setCommunity = function(self, community)
 
 	self.community = community
 end
+--[[@
+	@name handlePlayers
+	@desc Toggles the field _\_handle\_players_ of the instance.
+	@desc If 'true', the following events are going to be handled: _playerGetCheese_, _playerVampire_, _playerWon_, _playerLeft_, _playerDied_, _newPlayer_, _refreshPlayerList_, _updatePlayer_.
+	@param handle?<boolean> Whether the bot should handle the player events. The default value is the inverse of the current value. The instance starts the field as 'false'.
+	@returns boolean Whether the bot will handle the player events.
+]]
+client.handlePlayers = function(self, handle)
+	if handle == nil then
+		self._handle_players = not self._handle_players
+	else
+		self._handle_players = handle
+	end
+	return self._handle_players
+end
+--[[@
+	@name processXml
+	@desc Toggles the field _\_process\_xml_ of the instance.
+	@desc If 'true', the XML will be processed in the event _newGame_.
+	@param process?<boolean> Whether map XMLs should be processed.
+	@returns boolean Whether map XMLs will be processed.
+]]
+client.processXml = function(self, process)
+	if process == nil then
+		self._process_xml = not self._process_xml
+	else
+		self._process_xml = handprocessle
+	end
+	return self._process_xml
+end
+-- Connection
 --[[@
 	@name connect
 	@desc Connects to an account in-game.
@@ -1784,7 +1827,7 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 
 	timer_setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then
-			self:closeAll()
+			self:disconnect()
 			timer_setTimeout(1000, function() -- This timer prevents the time out issue, since it gives time to closeAll work.
 				if self.event.handlers.connectionFailed then
 					--[[@
@@ -1798,6 +1841,18 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 			end)
 		end
 	end, self)
+end
+--[[@
+	@name disconnect
+	@desc Forces the private function @see closeAll to be called. (Ends the connections)
+	@returns boolean Whether the Connection objects can be destroyed or not.
+]]
+client.disconnect = function(self)
+	if self.main then
+		self.main.open = false
+		return true
+	end
+	return false
 end
 -- Room
 --[[@
@@ -2091,5 +2146,10 @@ client.requestRoomList = function(self, roomMode)
 
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
 end
+
+----- Compatibility -----
+client.insertReceiveFunction, client.insertTribulleFunction = "insertPacketListener", "insertTribulleListener"
+client.closeAll = "disconnect"
+-------------------------
 
 return client

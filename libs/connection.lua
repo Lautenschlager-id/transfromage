@@ -19,7 +19,6 @@ local table_writeBytes = table.writeBytes
 ------------------
 
 local connection = table_setNewClass()
-connection.__index = connection
 
 --[[@
 	@name new
@@ -39,7 +38,7 @@ connection.__index = connection
 	}
 ]]
 connection.new = function(self, name, event)
-	local data = {
+	return setmetatable({
 		event = event,
 		socket = nil,
 		buffer = buffer:new(),
@@ -48,9 +47,7 @@ connection.new = function(self, name, event)
 		port = 1,
 		name = name,
 		open = false
-	}
-
-	return setmetatable(data, connection)
+	}, self)
 end
 --[[@
 	@name close

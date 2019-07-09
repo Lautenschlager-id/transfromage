@@ -13,20 +13,24 @@ local string_upper = string.upper
 local table_concat = table.concat
 ------------------
 
+local pkg = require("transfromage/package")
+if not pkg then
+	os_log("↑failure↓[WARNING]↑ Could not find the file ↑highlight↓package.lua↑.")
+end
+
 do
-	local isSemi
-	local update = io_open("autoupdate", 'r') or io_open("autoupdate.txt", 'r')
-	if not update then
-		update = io_open("semiautoupdate", 'r') or io_open("semiautoupdate.txt", 'r')
-		isSemi = true
-	end
+	if pkg then
+		local isSemi
+		local update = io_open("autoupdate", 'r') or io_open("autoupdate.txt", 'r')
+		if not update then
+			update = io_open("semiautoupdate", 'r') or io_open("semiautoupdate.txt", 'r')
+			isSemi = true
+		end
 
-	if update then
-		update:close()
+		if update then
+			update:close()
 
-		coroutine_wrap(function()
-			local pkg = require("deps/transfromage/package")
-			if pkg then
+			coroutine_wrap(function()
 				local version = pkg.version
 				local _, lastVersion = require("coro-http").request("GET", "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/package.lua")
 				if lastVersion then
@@ -53,14 +57,13 @@ do
 						end
 					end
 				end
-			else
-				os_log("↑failure↓[WARNING]↑ Could not find the file ↑highlight↓package.lua↑.")
-			end
-		end)()
+			end)()
+		end
 	end
 end
 
 return {
+	version = (pkg and pkg.version or nil),
 	client = require("client"),
 	enum = require("enum"),
 	byteArray = require("bArray"),

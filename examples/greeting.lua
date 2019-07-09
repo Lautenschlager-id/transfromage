@@ -8,7 +8,7 @@ client._handle_players = true -- Handles players
 
 client:once("ready", function()
 	print("Ready to connect!")
-	client:connect("NICKNAME#0000", "PASSWORD", 1) -- Joins the room 1
+	client:connect("Username#0000", "password", 1) -- Joins the room 1
 end)
 
 client:once("connection", function()

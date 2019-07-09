@@ -6,7 +6,6 @@ local table_setNewClass = table.setNewClass
 ------------------
 
 local buffer = table_setNewClass()
-buffer.__index = buffer
 
 --[[@
 	@name new

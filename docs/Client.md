@@ -138,6 +138,20 @@
 >Enters a room.
 >
 ---
+>### client:handlePlayers ( handle )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| handle | `boolean` | ✕ | Whether the bot should handle the player events. The default value is the inverse of the current value. The instance starts the field as 'false'. |
+>
+>Toggles the field _\_handle\_players_ of the instance.<br>
+>If 'true', the following events are going to be handled: _playerGetCheese_, _playerVampire_, _playerWon_, _playerLeft_, _playerDied_, _newPlayer_, _refreshPlayerList_, _updatePlayer_.
+>
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean` | Whether the bot will handle the player events. |
+---
 >### client:getTranslation ( language, index, raw )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -280,6 +294,20 @@
 >
 >Plays an emoticon
 >
+---
+>### client:processXml ( process )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| process | `boolean` | ✕ | Whether map XMLs should be processed. |
+>
+>Toggles the field _\_process\_xml_ of the instance.<br>
+>If 'true', the XML will be processed in the event _newGame_.
+>
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean` | Whether map XMLs will be processed. |
 ---
 >### client:recruitPlayer ( playerName )
 >| Parameter | Type | Required | Description |

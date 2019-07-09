@@ -2,6 +2,46 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.7.0 - 09/07/2019
+### News
+- Added _transfromage.version_.
+- Added the metamethod \_\_pairs in _client.playerList_ so it can iter over string indexes only.
+```Lua
+-- How to use client.playerList
+
+-- An event that returns a player id
+client:on("removeFriend", function(playerId)
+	if client.playerList[playerId] then
+		print("You removed the player '" .. client.playerList[playerId].playerName .. "' from your friend list. This player is in your room.")
+	end
+end)
+
+-- Iter over the players
+local names = { }
+for player = 1, #client.playerList do
+	names[player] = client.playerList[player].playerName
+end
+print("Players in the room: " .. table.concat(names, ", "))
+
+-- Iter over their names (same code as above, but with an extra comma :)
+print("Players in the room: ")
+for k, v in pairs(client.playerList) do -- pairs is necessary to trigger __pairs
+	io.write(v.playerName .. ", ")
+end
+```
+- Added two helpers for readability and to avoid using private fields: _client.handlePlayers_, client.processXml_
+- Added a small alias / compatibility system through _table.setNewClass_.
+
+### Changes
+- Renamed _client.closeAll_ to _client.disconnect_, but kept compatibility.
+
+### Fixes
+- Fixed a possible memory leak from _connection_. :thinking:
+- _playerList[i].\_pos_ is not to as stable as it seemed to be, a fix might come soon but for now it'll ignore invalid indexes. 
+
+### Fix
+- _client.playerList_ wouldn't refresh when the account changed the room.
+
 ## v1.6.1 - 02/07/2019
 ### Fixes
 - _bArray.writeBigUtf_ would not work when the input was string.

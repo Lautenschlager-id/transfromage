@@ -203,13 +203,14 @@
 ---
 >### table.setNewClass (  )
 >
->Creates a new class constructor, where '\_\_call' calls 'new'.
+>Creates a new class constructor.<br>
+>If the table receives a new index with a string value, it'll create an alias.
 >
 >**Returns**:
 >
 >| Type | Description |
 >| :-: | - |
->| `table` | a metatable with a '\_\_call' constructor. |
+>| `table` | A metatable with constructor and alias handlers. |
 >
 ---
 >### table.writeBytes ( bytes )

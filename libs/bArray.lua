@@ -12,7 +12,6 @@ local table_writeBytes = table.writeBytes
 ------------------
 
 local byteArray = table.setNewClass()
-byteArray.__index = byteArray
 
 --[[@
 	@name new
@@ -205,8 +204,8 @@ byteArray.readBool = function(self)
 end
 
 ----- Compatibility -----
-byteArray.readByte, byteArray.readShort, byteArray.readWrite, byteArray.readLong = byteArray.read8, byteArray.read16, byteArray.read24, byteArray.read32
-byteArray.writeByte, byteArray.writeShort, byteArray.writeWrite, byteArray.writeLong = byteArray.write8, byteArray.write16, byteArray.write24, byteArray.write32
+byteArray.readByte, byteArray.readShort, byteArray.readWrite, byteArray.readLong = "read8", "read16", "read24", "read32"
+byteArray.writeByte, byteArray.writeShort, byteArray.writeWrite, byteArray.writeLong = "write8", "write16", "write24", "write32"
 -------------------------
 
 return byteArray

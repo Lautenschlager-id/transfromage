@@ -68,7 +68,7 @@ client:start("PLAYER_ID", "API_TOKEN")
 client:on("whisperMessage", function(playerName, message, playerCommunity)
 	if playerName == "OWNER_NAME#0000" then -- Not the bot name, but yours (the bot developer)
 		if message == "shutdown" then -- Command shutdown
-			client:closeAll() -- Disconnects the player
+			client:disconnect()
 		end
 	end
 end)

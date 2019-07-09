@@ -10,7 +10,7 @@ local timer = require("timer")
 
 client:once("ready", function()
 	print("Ready to connect!")
-	client:connect("NICKNAME#0000", "PASSWORD")
+	client:connect("Username#0000", "password")
 end)
 
 client:once("connection", function()
