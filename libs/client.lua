@@ -1656,14 +1656,9 @@ end
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token<string> The API Endpoint token to get access to the authentication keys.
 ]]
-local first = true
 client.start = coroutine_makef(function(self, tfmId, token)
-	if first then
-		first = nil
-	else
-		self:disconnect()
-		self.isConnected = false
-	end
+	self:disconnect()
+	self.isConnected = false
 
 	getKeys(self, tfmId, token)
 

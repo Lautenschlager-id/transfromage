@@ -2,6 +2,10 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.7.1 - 09/07/2019
+### Fixes
+- Pray for the connection memory leak, an undo was necessary...
+
 ## v1.7.0 - 09/07/2019
 ### News
 - Added _transfromage.version_.

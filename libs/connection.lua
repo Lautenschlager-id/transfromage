@@ -47,7 +47,7 @@ connection.new = function(self, name, event)
 		port = 1,
 		name = name,
 		open = false
-	}, self)
+	}, connection)
 end
 --[[@
 	@name close
