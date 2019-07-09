@@ -312,9 +312,9 @@ table.setNewClass = function()
 		end,
 		__newindex = function(this, index, value)
 			if type(value) == "string" then -- Aliases / Compatibility
-				rawset(this, index, function(...)
+				rawset(this, index, function(self, ...)
 					os.log("↑failure↓[/!\\]↑ ↑highlight↓" .. index .. "↑ is deprecated, use ↑highlight↓" .. value .. "↑ instead.")
-					return this[value](this, ...)
+					return this[value](self, ...)
 				end)
 			else
 				rawset(this, index, value)

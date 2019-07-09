@@ -2,6 +2,10 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v1.7.2 - 09/07/2019
+### Fixes
+- Small glitch in the alias system.
+
 ## v1.7.1 - 09/07/2019
 ### Fixes
 - Pray for the connection memory leak, an undo was necessary...
