@@ -172,11 +172,12 @@ connection.send = function(self, identifiers, alphaPacket)
 
 	table_add(gammaPacket.stack, betaPacket.stack)
 
-	local written = self.socket:write(table_writeBytes(gammaPacket.stack))
+	local written = self.socket and self.socket:write(table_writeBytes(gammaPacket.stack))
 	if not written then
 		self.open = false
 		if self.ip ~= enum.setting.mainIp then -- Avoids that 'disconnection' gets triggered twice when it is the main instance.
 			self.event:emit("disconnection", self)
+			return
 		end
 	end
 

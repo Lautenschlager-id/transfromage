@@ -2,6 +2,17 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v2.0.0 - 10/07/2019
+### Changes
+- Transformice's IP and Ports have changed. All previous versions won't work unless these values get edited in the enumerations.
+```
+New IP = 94.23.193.229
+New ports = 13801, 11801, 12801, 14801
+```
+
+### Fixes
+- _connection.send_ would trigger an error when the socket was closed.
+
 ## v1.7.2 - 09/07/2019
 ### Fixes
 - Small glitch in the alias system.

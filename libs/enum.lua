@@ -366,8 +366,8 @@ enum.roomMode = enum {
 	@type *
 ]]
 enum.setting = enum {
-	mainIp = "164.132.202.12",
-	port    = enum { 5555, 44444, 3724, 44440, 6112, 443 }
+	mainIp = "94.23.193.229",
+	port   = enum { 13801, 11801, 12801, 14801 }
 }
 --[[@
 	@name whisperState
