@@ -13,7 +13,7 @@ local string_upper = string.upper
 local table_concat = table.concat
 ------------------
 
-local pkg = require("Transfromage/package")
+local pkg = require("transfromage/package") or require("Transfromage/package")
 if not pkg then
 	os_log("↑failure↓[WARNING]↑ Could not find the file ↑highlight↓package.lua↑.")
 end

@@ -2,6 +2,10 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
+## v.2.0.1 - 12/07/2019
+### Fixes
+- Windows vs Linux require behavior was in conflict. Now it handles both.
+
 ## v2.0.0 - 10/07/2019
 ### Changes
 - Transformice's IP and Ports have changed. All previous versions won't work unless these values get edited in the enumerations.
