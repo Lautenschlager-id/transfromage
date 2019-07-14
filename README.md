@@ -73,3 +73,15 @@ client:on("whisperMessage", function(playerName, message, playerCommunity)
 	end
 end)
 ```
+###### Suggestion for reconnection on login failure to prevent [this issue](https://github.com/Lautenschlager-id/Transfromage/issues/8)
+```Lua
+client:on("ready", function()
+	client:connect("Username#0000", "password")
+end)
+
+client:on("connectionFailed", function()
+	client:start("PLAYER_ID", "API_TOKEN")
+end)
+
+client:emit("connectionFailed")
+```
