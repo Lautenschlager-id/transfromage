@@ -74,6 +74,21 @@ do
 		return err('^', level)
 	end
 end
+do
+	local req = require
+	_G.require = function(path)
+		local hasAPI = string_find(path, "[Tt]ransfromage")
+		if hasAPI then
+			local _, f
+			_, f = pcall(req, (string_gsub(path, "^.", string_lower, 1)))
+			if not _ then
+				_, f = pcall(req, (string_gsub(path, "^.", string_upper, 1)))
+			end
+			return f
+		end
+		return req(path)
+	end
+end
 --[[@
 	@name string.fixEntity
 	@desc Normalizes a string that has HTML entities.

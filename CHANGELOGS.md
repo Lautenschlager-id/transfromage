@@ -7,6 +7,7 @@
 - _\_\_tostring_ metamethod in byteArray.
 
 ### Fixes
+- Added a fix for the require issue with different OS.
 - Fixed some login issues due to the new connection system. (google, facebook, etc)
 
 ## v2.0.1 - 12/07/2019
