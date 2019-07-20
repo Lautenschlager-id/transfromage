@@ -1815,7 +1815,7 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 
 	local packet = byteArray:new():writeUTF(userName):writeUTF(encode_getPasswordHash(userPassword))
 	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-	packet:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey))
+	packet:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey)):write8(0):writeUTF('')
 
 	self.playerName = userName
 	self.main:send(enum.identifier.login, encode_btea(packet):write8(0))

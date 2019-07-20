@@ -12,6 +12,9 @@ local table_writeBytes = table.writeBytes
 ------------------
 
 local byteArray = table.setNewClass()
+byteArray.__tostring = function(this)
+	return table_writeBytes(this.stack)
+end
 
 --[[@
 	@name new

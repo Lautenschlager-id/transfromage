@@ -2,7 +2,14 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 
-## v.2.0.1 - 12/07/2019
+## v2.1.0 - 20/07/2019
+### News
+- _\_\_tostring_ metamethod in byteArray.
+
+### Fixes
+- Fixed some login issues due to the new connection system. (google, facebook, etc)
+
+## v2.0.1 - 12/07/2019
 ### Fixes
 - Windows vs Linux require behavior was in conflict. Now it handles both.
 
