@@ -57,7 +57,7 @@ Read [CONTRIBUTING](CONTRIBUTING.md) to learn about how you can contribute to th
 ## Base example
 ###### You can check more examples [here](https://github.com/Lautenschlager-id/Transfromage/tree/master/examples).
 ```Lua
-local api = require("transfromage")
+local api = require("Transfromage")
 local client = api.client()
 
 client:once("ready", function()

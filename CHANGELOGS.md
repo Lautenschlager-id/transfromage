@@ -1,13 +1,15 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v2.1.1 - 20/07/2019
+### Fixes
+- Removed the handler of lit OS glitch. Lua's require, **BURN IN HELL**
 
 ## v2.1.0 - 20/07/2019
 ### News
 - _\_\_tostring_ metamethod in byteArray.
 
 ### Fixes
-- Added a fix for the require issue with different OS.
 - Fixed some login issues due to the new connection system. (google, facebook, etc)
 
 ## v2.0.1 - 12/07/2019
