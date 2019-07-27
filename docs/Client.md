@@ -116,7 +116,7 @@
 >| message | `string` | ✔ | The content of the topic. |
 >
 >Creates a Café topic.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system.
+>![/!\\](https://i.imgur.com/HQ188PK.png) The method does not handle the Café's cooldown system.
 >
 ---
 >### client:emit ( eventName, ... )
@@ -218,7 +218,7 @@
 >| memberName | `string` | ✔ | The name of the member to be kicked. |
 >
 >Kicks a tribe member from the tribe.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:likeCafeMessage ( topicId, messageId, dislike )
@@ -229,7 +229,7 @@
 >| dislike | `boolean` | ✕ | Whether the reaction must be a dislike or not. <sub>(default = false)</sub> |
 >
 >Likes/Dislikes a message in a Café topic.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system: 300 seconds to react in a message.
+>![/!\\](https://i.imgur.com/HQ188PK.png) The method does not handle the Café's cooldown system: 300 seconds to react in a message.
 >
 ---
 >### client:loadLua ( script )
@@ -315,7 +315,7 @@
 >| playerName | `string` | ✔ | The name of player to be recruited. |
 >
 >Sends a tribe invite to a player.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:reloadCafe (  )
@@ -356,7 +356,7 @@
 >| message | `string` | ✔ | The message to be posted. |
 >
 >Sends a message in a Café topic.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) The method does not handle the Café's cooldown system: 300 seconds if the last post is from the same account, otherwise 10 seconds.
+>![/!\\](https://i.imgur.com/HQ188PK.png) The method does not handle the Café's cooldown system: 300 seconds if the last post is from the same account, otherwise 10 seconds.
 >
 ---
 >### client:sendChatMessage ( chatName, message )
@@ -366,7 +366,7 @@
 >| message | `string` | ✔ | The message. |
 >
 >Sends a message to a #chat.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 ---
 >### client:sendCommand ( command )
@@ -383,7 +383,7 @@
 >| message | `string` | ✔ | The message. |
 >
 >Sends a message in the room chat.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 >
 ---
@@ -393,7 +393,7 @@
 >| message | `string` | ✔ | The message. |
 >
 >Sends a message to the tribe chat.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 >
 ---
@@ -404,7 +404,7 @@
 >| targetUser | `string` | ✔ | The user who will receive the whisper. |
 >
 >Sends a whisper to an user.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 ---
 >### client:setCommunity ( community )
@@ -413,7 +413,7 @@
 >| community | `string`, `int` | ✕ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
 >
 >Sets the community the bot will connect to.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) This method must be called before the [start](Client.md#clientstart--self-tfmid-token-).
+>![/!\\](https://i.imgur.com/HQ188PK.png) This method must be called before the [start](Client.md#clientstart--self-tfmid-token-).
 >
 ---
 >### client:setTribeMemberRole ( memberName, roleId )
@@ -423,7 +423,7 @@
 >| roleId | `int` | ✔ | The role id. (starts from 0, the initial role, and goes until the Chief role) |
 >
 >Sets the role of a member in the tribe.<br>
->![/!\\](http://images.atelier801.com/168395f0cbc.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
 >
 ---
 >### client:start ( tfmId, token )
