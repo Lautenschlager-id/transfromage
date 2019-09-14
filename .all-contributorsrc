@@ -27,16 +27,6 @@
       ]
     },
     {
-      "login": "Blank3495",
-      "name": "Blank3495",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/49693827?v=4",
-      "profile": "https://github.com/Blank3495",
-      "contributions": [
-        "financial",
-        "doc"
-      ]
-    },
-    {
       "login": "Tocutoeltuco",
       "name": "Iván",
       "avatar_url": "https://avatars2.githubusercontent.com/u/24902450?v=4",
@@ -46,6 +36,16 @@
 		"infra",
         "code",
         "ideas"
+      ]
+    },
+	{
+      "login": "Blank3495",
+      "name": "Blank3495",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/49693827?v=4",
+      "profile": "https://github.com/Blank3495",
+      "contributions": [
+        "financial",
+        "doc"
       ]
     },
     {
