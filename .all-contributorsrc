@@ -1,0 +1,73 @@
+{
+  "projectName": "Transfromage",
+  "projectOwner": "Lautenschlager-id",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "CONTRIBUTORS.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "Lautenschlager-id",
+      "name": "Lautenschlager",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/26045253?v=4",
+      "profile": "http://bit.ly/laut-id",
+      "contributions": [
+        "code",
+        "doc",
+        "bug",
+        "content",
+        "test",
+        "example",
+        "review",
+        "design"
+      ]
+    },
+    {
+      "login": "Blank3495",
+      "name": "Blank3495",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/49693827?v=4",
+      "profile": "https://github.com/Blank3495",
+      "contributions": [
+        "financial",
+        "doc"
+      ]
+    },
+    {
+      "login": "Tocutoeltuco",
+      "name": "Iván",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/24902450?v=4",
+      "profile": "https://github.com/Tocutoeltuco",
+      "contributions": [
+		"projectManagement",
+		"infra",
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "Turkitutu",
+      "name": "Turkitutu",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/26797321?v=4",
+      "profile": "http://yatsuki.cf",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    },
+    {
+      "login": "Athesdrake",
+      "name": "Athesdrake",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/22529611?v=4",
+      "profile": "https://github.com/Athesdrake",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 5
+}

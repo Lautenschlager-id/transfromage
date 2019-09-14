@@ -52,7 +52,8 @@ For semi-automatic updates (which asks for your permission before updating), cre
 
 The best way to contribute to this API is by ~~donating~~ creating pull requests with bug fixes and new events / methods (like joining the map editor, getting a map XML, loading Lua...)
 
-Read [CONTRIBUTING](CONTRIBUTING.md) to learn about how you can contribute to the API.
+Read [CONTRIBUTING](CONTRIBUTING.md) to learn about how you can contribute to the API.<br>
+See [CONTRIBUTORS](CONTRIBUTORS.md).
 
 ## Base example
 ###### You can check more examples [here](https://github.com/Lautenschlager-id/Transfromage/tree/master/examples).
