@@ -599,6 +599,18 @@ packetListener = {
 		end
 	},
 	[8] = {
+		[1] = function(self, packet, connection, identifier) -- Plays an action
+			if not self._handle_players or self.playerList.count == 0 then return end
+			local playerId = packet:read32()
+			local action = packet:read8()
+			local flags = ""
+			if action == 10 then
+				flags = packet.readUTF()
+			end
+			if self.playerList[playerId] then
+				self.event:emit("playerAction", self.playerList[playerId], action, flags)
+			end
+		end,
 		[6] = function(self, packet, connection, identifiers) -- Updates player win state
 			if not self._handle_players or self.playerList.count == 0 then return end
 
