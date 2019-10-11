@@ -144,7 +144,7 @@
 >| handle | `boolean` | ✕ | Whether the bot should handle the player events. The default value is the inverse of the current value. The instance starts the field as 'false'. |
 >
 >Toggles the field _\_handle\_players_ of the instance.<br>
->If 'true', the following events are going to be handled: _playerGetCheese_, _playerVampire_, _playerWon_, _playerLeft_, _playerDied_, _newPlayer_, _refreshPlayerList_, _updatePlayer_, _playerAction_.
+>If 'true', the following events are going to be handled: _playerGetCheese_, _playerVampire_, _playerWon_, _playerLeft_, _playerDied_, _newPlayer_, _refreshPlayerList_, _updatePlayer_, _playerEmote_.
 >
 >**Returns:**
 >

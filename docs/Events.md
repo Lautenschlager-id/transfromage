@@ -974,15 +974,15 @@ end)
 >Triggered when the player receives a whisper.
 >
 ---
->### playerAction ( playerData, action, flags )
+>### playerEmote ( playerData, emote, flag )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| playerData | `table` | The data of the player. |
->| action | `int` | The action id played by the player. |
->| flags | `string` | Optional flags. |
+>| emote | `enum.emote` | The id of the emote played the player. |
+>| flag | `string` | The country code of the flag when @emote is flag. |
 >
 >
->Triggered when a player executes an action (such as dance).
+>Triggered when a player plays an emote.
 >
 >**@playerData structure**:
 >```Lua
