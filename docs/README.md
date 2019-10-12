@@ -114,6 +114,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [newTribeMember](Events.md#newtribemember--membername-)
 	- [ping](Events.md#ping--time-)
 	- [playerDied](Events.md#playerdied--playerdata-)
+	- [playerEmote](Events.md#playere,pte--playerdata-emote-flag-)
 	- [playerGetCheese](Events.md#playergetcheese--playerdata-hascheese-)
 	- [playerLeft](Events.md#playerleft--playerdata-)
 	- [playerVampire](Events.md#playervampire--playerdata-isvampire-)

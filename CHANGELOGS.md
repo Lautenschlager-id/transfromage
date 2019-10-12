@@ -1,6 +1,13 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v2.2.0 - 11/10/2019
+### News
+- Added the event _playerEmote( playerData, emote, flag )_.
+
+### Fixes
+- The _append_ parameter in the insertion methods were not working.
+
 ## v2.1.1 - 20/07/2019
 ### Fixes
 - Removed the handler of lit OS glitch. Lua's require, **BURN IN HELL**

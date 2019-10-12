@@ -32,13 +32,13 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/24902450?v=4",
       "profile": "https://github.com/Tocutoeltuco",
       "contributions": [
-		"projectManagement",
-		"infra",
+        "projectManagement",
+        "infra",
         "code",
         "ideas"
       ]
     },
-	{
+    {
       "login": "Blank3495",
       "name": "Blank3495",
       "avatar_url": "https://avatars1.githubusercontent.com/u/49693827?v=4",
@@ -66,6 +66,16 @@
       "contributions": [
         "ideas",
         "code"
+      ]
+    },
+    {
+      "login": "Robotex",
+      "name": "Robotex",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/74515?v=4",
+      "profile": "http://projectsperanza.com",
+      "contributions": [
+        "code",
+        "doc"
       ]
     }
   ],

@@ -13,6 +13,9 @@
     <td align="center"><a href="http://yatsuki.cf"><img src="https://avatars1.githubusercontent.com/u/26797321?v=4" width="100px;" alt="Turkitutu"/><br /><sub><b>Turkitutu</b></sub></a><br /><a href="#ideas-Turkitutu" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Turkitutu" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Athesdrake"><img src="https://avatars0.githubusercontent.com/u/22529611?v=4" width="100px;" alt="Athesdrake"/><br /><sub><b>Athesdrake</b></sub></a><br /><a href="#ideas-Athesdrake" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Athesdrake" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="http://projectsperanza.com"><img src="https://avatars3.githubusercontent.com/u/74515?v=4" width="100px;" alt="Robotex"/><br /><sub><b>Robotex</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Robotex" title="Code">💻</a> <a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Robotex" title="Documentation">📖</a></td>
+  </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
