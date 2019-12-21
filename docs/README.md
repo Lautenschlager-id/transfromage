@@ -30,16 +30,16 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 ## Tree
 
 - [Client](Client.md)
-	- [new](Client.md#clientnew---)
+	- [new](Client.md#clientnew--tfmid-token-)
 	- [addFriend](Client.md#clientaddfriend--playername-)
 	- [blacklistPlayer](Client.md#clientblacklistplayer--playername-)
 	- [changeWhisperState](Client.md#clientchangewhisperstate--message-state-)
 	- [chatWho](Client.md#clientchatwho--chatname-)
-	- [closeAll](Client.md#clientcloseall---)
 	- [closeChat](Client.md#clientclosechat--chatname-)
 	- [connect](Client.md#clientconnect--username-userpassword-startroom-timeout-)
 	- [connectionTime](Client.md#clientconnectiontime---)
 	- [createCafeTopic](Client.md#clientcreatecafetopic--title-message-)
+	- [disconnect](Client.md#clientdisconnect---)
 	- [emit](Client.md#clientemit--eventname--)
 	- [enterRoom](Client.md#cliententerroom--roomname-issalonauto-)
 	- [handlePlayers](Client.md#clienthandleplayers--handle-)

@@ -1,7 +1,12 @@
 # API Functions
->### client:new (  )
+>### client:new ( tfmId, token )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| tfmId | `string`, `int` | ✕ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |
+>| token | `string` | ✕ | The API Endpoint token to get access to the authentication keys. |
 >
->Creates a new instance of Client. Alias: `client()`.
+>Creates a new instance of Client. Alias: `client()`.<br>
+>The function [start](Client.md#clientstart--self-tfmid-token-) is automatically called if you pass its arguments.
 >
 >**Returns**:
 >
@@ -63,15 +68,6 @@
 >Sets the account's whisper state.
 >
 ---
->### client:closeAll (  )
->Forces the private function [closeAll](Internal/client.md#closeall-self--) to be called.
->
->**Returns:**
->
->| Type | Description |
->| :-: | - |
->| `boolean` | Whether the Connection objects can be destroyed or not. |
----
 >### client:chatWho ( chatName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -118,6 +114,15 @@
 >Creates a Café topic.<br>
 >![/!\\](https://i.imgur.com/HQ188PK.png) The method does not handle the Café's cooldown system.
 >
+---
+>### client:disconnect (  )
+>Forces the private function [closeAll](Internal/client.md#closeall-self--) to be called.
+>
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean` | Whether the Connection objects can be destroyed or not. |
 ---
 >### client:emit ( eventName, ... )
 >| Parameter | Type | Required | Description |

@@ -1,5 +1,7 @@
 local timer = require("timer")
 local event = require("core").Emitter
+local http_request = require("coro-http").request
+local json_decode = require("json").decode
 local zlibDecompress = require("miniz").inflate
 
 local byteArray = require("bArray")
@@ -63,6 +65,9 @@ local meta = {
 --[[@
 	@name new
 	@desc Creates a new instance of Client. Alias: `client()`.
+	@desc The function @see start is automatically called if you pass its arguments.
+	@param tfmId?<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
+	@param token?<string> The API Endpoint token to get access to the authentication keys.
 	@returns client The new Client object.
 	@struct {
 		playerName = "", -- The nickname of the account that is attached to this instance, if there's any.
@@ -90,10 +95,10 @@ local meta = {
 		_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
 	}
 ]]
-client.new = function(self)
+client.new = function(self, tfmId, token)
 	local eventEmitter = event:new()
 
-	return setmetatable({
+	local obj = setmetatable({
 		playerName = nil,
 		community = enum.community.en,
 		main = connection:new("main", eventEmitter),
@@ -119,6 +124,12 @@ client.new = function(self)
 		_cafeCachedMessages = { },
 		_handle_players = false
 	}, self)
+
+	if tfmId and token then
+		obj:start(tfmId, token)
+	end
+
+	return obj
 end
 
 -- Receive
@@ -379,7 +390,7 @@ oldPacketListener = {
 					}
 				]]
 				self.event:emit("playerDied", self.playerList[playerId])
-			end			
+			end
 		end,
 		[7] = function(self, data, connection, oldIdentifiers) -- Removes player
 			if not self._handle_players or self.playerList.count == 0 then return end
@@ -799,7 +810,7 @@ packetListener = {
 					id = 0, -- The player id. It may be 0 if the player has no avatar.
 					registrationDate = 0, -- The timestamp of when the player was created.
 					role = 0, -- An enum from enum.role that specifies the player's role.
-					gender = 0, -- An enum from enum.gender for the player's gender. 
+					gender = 0, -- An enum from enum.gender for the player's gender.
 					tribeName = "", -- The name of the tribe.
 					soulmate = "", -- The name of the soulmate.
 					saves = {
@@ -827,7 +838,7 @@ packetListener = {
 						[id] = {
 							progress = 0, -- The current score in the status.
 							progressLimit = 0, -- The status score limit.
-							imageId = 0 -- The image id of the status. 
+							imageId = 0 -- The image id of the status.
 						} -- The status id.
 					}, -- The list of mode statuses.
 					orbId = 0, -- The id of the current shaman orb.
@@ -1549,11 +1560,11 @@ end
 ]]
 getKeys = function(self, tfmId, token)
 	-- Uses requires because it's used only once before it gets deleted.
-	local _, result = require("coro-http").request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
+	local _, result = http_request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
 		{ "User-Agent", "Mozilla/5.0" }
 	})
 	local _r = result
-	result = require("json").decode(result)
+	result = json_decode(result)
 	if not result then
 		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is invalid.\n\t" .. tostring(_r), enum.errorLevel.high)
 	end
@@ -2056,7 +2067,7 @@ client.openCafe = function(self, close)
 	close = not close
 	self.main:send(enum.identifier.cafeState, byteArray:new():writeBool(close))
 	if close then -- open = reload
-		client:reloadCafe()
+		self:reloadCafe()
 	end
 end
 --[[@

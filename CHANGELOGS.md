@@ -1,6 +1,14 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v2.3.0 - 21/12/2019
+### News
+- Now you can call the client constructor passing the parameters `tfmId` and `token` so that it automatically calls the start function.
+
+### Fixes
+- The method _client.openCafe_ would not work correctly.
+- Fixed weird require behavior depending on the operational system. ~~(i hope)~~
+
 ## v2.2.0 - 11/10/2019
 ### News
 - Added the event _playerEmote( playerData, emote, flag )_.
@@ -77,7 +85,7 @@ end
 
 ### Fixes
 - Fixed a possible memory leak from _connection_. :thinking:
-- _playerList[i].\_pos_ is not to as stable as it seemed to be, a fix might come soon but for now it'll ignore invalid indexes. 
+- _playerList[i].\_pos_ is not to as stable as it seemed to be, a fix might come soon but for now it'll ignore invalid indexes.
 
 ### Fix
 - _client.playerList_ wouldn't refresh when the account changed the room.
@@ -188,7 +196,7 @@ client:on("updatePlayer", playerData, oldPlayerData)
 		client:emit("playerGetCheese", playerData, true)
 	elseif oldPlayerData.hasCheese and not playerData.hasCheese then
 		client:emit("playerGetCheese", playerData, false)
-	end		
+	end
 end)
 ```
 - Added the event _newPlayer ( playerData )_.
@@ -365,8 +373,8 @@ client._process_xml = false
 - Added a new parameter `timeout` in _client.connect_.
 
 ### Fixes
-- The function _string.getBytes_ could break if it was too big. 
-- When someone sent the character `<` it was accidentally replaced by `>`. 
+- The function _string.getBytes_ could break if it was too big.
+- When someone sent the character `<` it was accidentally replaced by `>`.
 
 ## v0.4.0 - 17/02/2019
 ### News
