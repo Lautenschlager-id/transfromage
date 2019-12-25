@@ -15,6 +15,7 @@
   </tr>
   <tr>
     <td align="center"><a href="http://projectsperanza.com"><img src="https://avatars3.githubusercontent.com/u/74515?v=4" width="100px;" alt="Robotex"/><br /><sub><b>Robotex</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Robotex" title="Code">💻</a> <a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Robotex" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Minstfm"><img src="https://avatars3.githubusercontent.com/u/22301175?v=4" width="100px;" alt="Minstfm"/><br /><sub><b>Minstfm</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/issues?q=author%3AMinstfm" title="Bug reports">🐛</a> <a href="#maintenance-Minstfm" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->

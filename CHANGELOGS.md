@@ -1,6 +1,15 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v2.4.0 - 24/12/2019
+## News
+- Added new parameters in the event _ready_: `onlinePlayers`, `community`, `country`.
+- Added new parameters in the event _connection_: `playerName`, `community`, `playerId`, `playedTime`.
+- Added the event _bulleSwitchConnection ( bulleId, bulleIp )_
+
+### Fixes
+- Changing room would disconnect the bots due to a bulle connection change that has been implemented internally in the game.
+
 ## v2.3.0 - 21/12/2019
 ### News
 - Now you can call the client constructor passing the parameters `tfmId` and `token` so that it automatically calls the start function.

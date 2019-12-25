@@ -77,6 +77,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Minstfm",
+      "name": "Minstfm",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/22301175?v=4",
+      "profile": "https://github.com/Minstfm",
+      "contributions": [
+        "bug",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 5

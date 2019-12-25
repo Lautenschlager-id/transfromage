@@ -894,8 +894,26 @@ packetListener = {
 		end
 	},
 	[26] = {
-		[2] = function(self, packet, connection, identifiers) -- Set connection
+		[2] = function(self, packet, connection, identifiers) -- Login
 			self._isConnected = true
+			self._connectionTime = os.time()
+
+			local playerId = packet:read32()
+			self.playerName = packet:readUTF()
+			local playedTime = packet:read32()
+			local community = packet:read8()
+
+			timer_setTimeout(5000, function()
+				--[[@
+					@name connection
+					@desc Triggered when the player is logged in and ready to perform actions.
+					@param playerName<string> The name of the player that has connected.
+					@param community<int> The community ID that the account has been logged into.
+					@param playerId<int> The temporary id of the player during the section.
+					@param playedTime<int> The time played by the player.
+				]]
+				self.event:emit("connection", playerId, self.playerName, playedTime, community)
+			end)
 		end,
 		[3] = function(self, packet, connection, identifiers) -- Correct handshake identifiers
 			local onlinePlayers = packet:read32()
@@ -908,12 +926,21 @@ packetListener = {
 
 			self._hbTimer = timer_setInterval(10 * 1000, sendHeartbeat, self)
 
-			community = byteArray:new():write8(self.community):write8(0)
-			self.main:send(enum.identifier.community, community)
+			local communityPacket = byteArray:new():write8(self.community):write8(0)
+			self.main:send(enum.identifier.community, communityPacket)
 
 			local osInfo = byteArray:new():writeUTF("en"):writeUTF("Linux")
 			osInfo:writeUTF("LNX 29,0,0,140"):write8(0)
 			self.main:send(enum.identifier.os, osInfo)
+
+			--[[@
+				@name ready
+				@desc Triggered when the connection is alive and ready to login.
+				@param onlinePlayers<int> The number of players connected in the game.
+				@param community<string> The community that the account has been logged into.
+				@param country<string> The country related to the community connected.
+			]]
+			self.event:emit("ready", onlinePlayers, community, country)
 		end,
 		[35] = function(self, packet, connection, identifiers) -- Room list
 			for i = 1, packet:read8() do packet:read8() end -- Room types
@@ -1208,11 +1235,23 @@ packetListener = {
 			local bulleId = packet:read32()
 			local bulleIp = packet:readUTF()
 
+			local oldBulle = self.bulle
 			self.bulle = connection:new("bulle", self.event)
 			self.bulle:connect(bulleIp, enum.setting.port[self.main.port])
 
 			self.bulle.event:once("_socketConnection", function()
+				if oldBulle then
+					oldBulle:close()
+				end
+
 				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(bulleId))
+				--[[@
+					@name switchBulleConnection
+					@desc Triggered when the bulle connection is switched.
+					@param bulleId<int> The ID of the new bulle.
+					@param bulleIp<string> The IP of the new bulle.
+				]]
+				self.event:emit("switchBulleConnection", bulleId, bulleIp)
 			end)
 		end,
 		[22] = function(self, packet, connection, identifiers) -- PacketID offset identifiers
@@ -1753,28 +1792,6 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	end)
 
 	self.main.event:on("_receive", function(connection, packet)
-		local identifiers = { packet:read8(), packet:read8() }
-
-		if connection.name == "main" then
-			if enum.identifier.correctVersion[1] == identifiers[1] and enum.identifier.correctVersion[2] == identifiers[2] then
-				return timer_setTimeout(5000, function(self)
-					--[[@
-						@name ready
-						@desc Triggered when the connection is live.
-					]]
-					self.event:emit("ready")
-				end, self)
-			elseif enum.identifier.bulleConnection[1] == identifiers[1] and enum.identifier.bulleConnection[2] == identifiers[2] then
-				self._connectionTime = os.time()
-				return timer_setTimeout(5000, function(self)
-					--[[@
-						@name connection
-						@desc Triggered when the player is logged in and ready to perform actions.
-					]]
-					self.event:emit("connection")
-				end, self)
-			end
-		end
 		--[[@
 			@name receive
 			@desc Triggered when the client receives packets from the server.
@@ -1782,7 +1799,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			@param identifiers<table> The C, CC identifiers that were received.
 			@param packet<byteArray> The Byte Array object that was received.
 		]]
-		self.event:emit("receive", connection, identifiers, packet)
+		self.event:emit("receive", connection, { packet:read8(), packet:read8() }, packet)
 	end)
 end)
 --[[@
@@ -1885,7 +1902,7 @@ client.connect = function(self, userName, userPassword, startRoom, timeout)
 	packet:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey)):write8(0):writeUTF('')
 
 	self.playerName = userName
-	self.main:send(enum.identifier.login, encode_btea(packet):write8(0))
+	self.main:send(enum.identifier.loginSend, encode_btea(packet):write8(0))
 
 	timer_setTimeout((timeout or (20 * 1000)), function(self)
 		if not self._isConnected then

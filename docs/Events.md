@@ -155,7 +155,13 @@ end)
 >Triggered when the /who command is loaded in a chat.
 >
 ---
->### connection (  )
+>### connection ( playerName, community, playerId, playedTime )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerName | `string` | The name of the player that has connected. |
+>| community | `int` | The community ID that the account has been logged into. |
+>| playerId | `int` | The temporary id of the player during the section. |
+>| playedTime | `int` | The time played by the player. |
 >
 >Triggered when the player is logged in and ready to perform actions.
 >
@@ -676,7 +682,7 @@ end)
 >	id = 0, -- The player id. It may be 0 if the player has no avatar.
 >	registrationDate = 0, -- The timestamp of when the player was created.
 >	role = 0, -- An enum from enum.role that specifies the player's role.
->	gender = 0, -- An enum from enum.gender for the player's gender. 
+>	gender = 0, -- An enum from enum.gender for the player's gender.
 >	tribeName = "", -- The name of the tribe.
 >	soulmate = "", -- The name of the soulmate.
 >	saves = {
@@ -704,7 +710,7 @@ end)
 >		[id] = {
 >			progress = 0, -- The current score in the status.
 >			progressLimit = 0, -- The status score limit.
->			imageId = 0 -- The image id of the status. 
+>			imageId = 0 -- The image id of the status.
 >		} -- The status id.
 >	}, -- The list of mode statuses.
 >	orbId = 0, -- The id of the current shaman orb.
@@ -717,9 +723,14 @@ end)
 >```
 >
 ---
->### ready (  )
+>### ready ( onlinePlayers, community, country )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| onlinePlayers | `int` | The number of players connected in the game. |
+>| community | `string` | The community that the account has been logged into. |
+>| country | `string` | The country related to the community connected. |
 >
->Triggered when the connection is live.
+>Triggered when the connection is alive and ready to login.
 >
 ---
 >### receive ( connection, identifiers, packet )
@@ -856,6 +867,15 @@ end)
 >| list | `string` | The staff list content. |
 >
 >Triggered when a staff list is loaded (/mod, /mapcrew).
+>
+---
+>### switchBulleConnection ( bulleId, bulleIp )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| bulleId | `int` | The ID of the new bulle. |
+>| bulleIp | `string` | The IP of the new bulle. |
+>
+>Triggered when the bulle connection is switched.
 >
 ---
 >### time ( time )

@@ -6,7 +6,7 @@
 >| token | `string` | ✕ | The API Endpoint token to get access to the authentication keys. |
 >
 >Creates a new instance of Client. Alias: `client()`.<br>
->The function [start](Client.md#clientstart--self-tfmid-token-) is automatically called if you pass its arguments.
+>The function [start](Client.md#clientstart--tfmid-token-) is automatically called if you pass its arguments.
 >
 >**Returns**:
 >
@@ -116,7 +116,7 @@
 >
 ---
 >### client:disconnect (  )
->Forces the private function [closeAll](Internal/client.md#closeall-self--) to be called.
+>Forces the private function [closeAll](Internal/client.md#closeall--self-) to be called.
 >
 >**Returns:**
 >
@@ -418,7 +418,7 @@
 >| community | `string`, `int` | ✕ | An enum from [community](Enum.md#community-int). (index or value) <sub>(default = EN)</sub> |
 >
 >Sets the community the bot will connect to.<br>
->![/!\\](https://i.imgur.com/HQ188PK.png) This method must be called before the [start](Client.md#clientstart--self-tfmid-token-).
+>![/!\\](https://i.imgur.com/HQ188PK.png) This method must be called before the [start](Client.md#clientstart--tfmid-token-).
 >
 ---
 >### client:setTribeMemberRole ( memberName, roleId )
