@@ -1881,7 +1881,7 @@ client.processXml = function(self, process)
 	if process == nil then
 		self._process_xml = not self._process_xml
 	else
-		self._process_xml = handprocessle
+		self._process_xml = process
 	end
 	return self._process_xml
 end
@@ -1955,7 +1955,7 @@ end
 -- Whisper
 --[[@
 	@name sendWhisper
-	@desc Sends a whisper to an user.
+	@desc Sends a whisper to a user.
 	@desc /!\ Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 	@param message<string> The message.
 	@param targetUser<string> The user who will receive the whisper.
