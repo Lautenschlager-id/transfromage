@@ -907,10 +907,10 @@ packetListener = {
 				--[[@
 					@name connection
 					@desc Triggered when the player is logged in and ready to perform actions.
-					@param playerName<string> The name of the player that has connected.
-					@param community<int> The community ID that the account has been logged into.
 					@param playerId<int> The temporary id of the player during the section.
+					@param playerName<string> The name of the player that has connected.
 					@param playedTime<int> The time played by the player.
+					@param community<int> The community ID that the account has been logged into.
 				]]
 				self.event:emit("connection", playerId, self.playerName, playedTime, community)
 			end)

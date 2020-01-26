@@ -158,10 +158,10 @@ end)
 >### connection ( playerName, community, playerId, playedTime )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| playerName | `string` | The name of the player that has connected. |
->| community | `int` | The community ID that the account has been logged into. |
 >| playerId | `int` | The temporary id of the player during the section. |
+>| playerName | `string` | The name of the player that has connected. |
 >| playedTime | `int` | The time played by the player. |
+>| community | `int` | The community ID that the account has been logged into. |
 >
 >Triggered when the player is logged in and ready to perform actions.
 >

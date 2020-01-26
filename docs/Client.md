@@ -408,7 +408,7 @@
 >| message | `string` | ✔ | The message. |
 >| targetUser | `string` | ✔ | The user who will receive the whisper. |
 >
->Sends a whisper to an user.<br>
+>Sends a whisper to a user.<br>
 >![/!\\](https://i.imgur.com/HQ188PK.png) Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 >
 ---
