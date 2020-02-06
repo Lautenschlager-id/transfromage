@@ -25,7 +25,7 @@ end)
 >**@data structure**:
 >```Lua
 >{
->	[i] = {
+>	[x] = {
 >		id = 0, -- The id of the topic.
 >		title = "", -- The title of the topic.
 >		authorId = 0, -- The id of the topic author.

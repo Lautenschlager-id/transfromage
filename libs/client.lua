@@ -1062,7 +1062,7 @@ packetListener = {
 				@param data<table> The data of the topics.
 				@struct @data
 				{
-					[i] = {
+					[x] = {
 						id = 0, -- The id of the topic.
 						title = "", -- The title of the topic.
 						authorId = 0, -- The id of the topic author.
