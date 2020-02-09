@@ -7,6 +7,11 @@
 >
 >Downloads a Transformice language file.
 >
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean`, `nil` | Whether the language has been downloaded. |
 ---
 >### free ( language, whitelist, whitelistPattern )
 >| Parameter | Type | Required | Description |
@@ -18,6 +23,11 @@
 >Deletes translation lines that are not going to be used. (Save process)<br>
 >If the whitelist parameters are not set, it will delete the whole translation data.
 >
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean`, `nil` | Whether the given data got deleted successfully. |
 ---
 >### get ( language, index, raw )
 >| Parameter | Type | Required | Description |
@@ -45,3 +55,8 @@
 >
 >Hard-set the value of translation codes.
 >
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean`, `nil` | Whether the given daata was set successfully. |

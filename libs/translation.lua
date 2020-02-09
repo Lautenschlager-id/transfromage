@@ -28,6 +28,7 @@ local translation = { }
 	@desc Downloads a Transformice language file.
 	@param language<enum.language> An enum from @see language. (index or value) @default en
 	@param f?<function> A function to be executed when the language is downloaded.
+	@returns boolean,nil Whether the language has been downloaded.
 ]]
 translation.download = coroutine_makef(function(language, f)
 	language = enum_validate(enum.language, enum.language.en, language, string_format(enum.error.invalidEnum, "download", "language", "language"))
@@ -60,6 +61,8 @@ translation.download = coroutine_makef(function(language, f)
 	if f then
 		f()
 	end
+
+	return true
 end)
 --[[@
 	@name translation.free
@@ -68,6 +71,7 @@ end)
 	@param language<enum.language> An enum from @see language that was downloaded before.
 	@param whitelist?<table> A set ([index]=true) of indexes that must not be deleted.
 	@param whitelistPattern?<string> A pattern to match various indexes at once, these indexes won't be deleted.
+	@returns boolean,nil Whether the given data got deleted successfully.
 ]]
 translation.free = function(language, whitelist, whitelistPattern)
 	language = string_lower(language)
@@ -79,7 +83,7 @@ translation.free = function(language, whitelist, whitelistPattern)
 		cache[language] = nil
 		cache._format[language] = nil
 		cache._gender[language] = nil
-		return
+		return true
 	end
 
 	for code in next, cache[language] do
@@ -93,8 +97,10 @@ translation.free = function(language, whitelist, whitelistPattern)
 			elseif cache._gender[language] then
 				cache._gender[language][code] = nil
 			end
-		until true		
+		until true
 	end
+
+	return true
 end
 --[[@
 	@name translation.get
@@ -130,7 +136,7 @@ translation.get = function(language, index, raw)
 			else
 				if not cache._verified[language] then
 					cache._verified[language] = { }
-				end	
+				end
 				if not cache._verified[language][index] then
 					cache._verified[language][index] = true
 				end
@@ -172,6 +178,7 @@ end
 	@param setPattern<string> The pattern to match all translation line codes that will be edited.
 	@param f<function> The function to be executed over the current translation line. Receives (value, code).
 	@oaram isPlain?<boolean> Whether the pattern is plain (no pattern) or not. @default false
+	@returns boolean,nil Whether the given daata was set successfully.
 ]]
 translation.set = function(language, setPattern, f, isPlain)
 	language = string_lower(language)
@@ -194,6 +201,8 @@ translation.set = function(language, setPattern, f, isPlain)
 			end
 		end
 	end
+
+	return true
 end
 
 return translation

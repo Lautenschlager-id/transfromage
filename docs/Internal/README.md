@@ -20,6 +20,7 @@ Folder created specially for contributors. Learn more in [CONTRIBUTING](../../CO
 	- [new](bArray.md#bytearraynew--stack-)
 	- [read8](bArray.md#bytearrayread8--quantity-)
 	- [read16](bArray.md#bytearrayread16---)
+	- [readSigned16](bArray.md#bytearrayreadsigned16---)
 	- [read24](bArray.md#bytearrayread24---)
 	- [read32](bArray.md#bytearrayread32---)
 	- [readBigUtf](bArray.md#bytearrayreadbigutf---)

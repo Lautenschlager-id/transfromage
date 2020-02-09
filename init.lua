@@ -13,7 +13,7 @@ local string_upper = string.upper
 local table_concat = table.concat
 ------------------
 
-local pkg = require("package")
+local pkg = require("./package")
 
 do
 	local isSemi
@@ -58,7 +58,7 @@ do
 end
 
 return {
-	version = (pkg and pkg.version or nil),
+	version = pkg.version,
 	client = require("client"),
 	enum = require("enum"),
 	byteArray = require("bArray"),

@@ -1,6 +1,17 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v2.5.0 - 09/02/2020
+## News
+- Added function _byteArray.readSigned16_.
+
+## Changes
+- The translation methods will now return booleans based on whether the action happened or not.
+
+## Fixes
+- The autoupdater system should be fixed.
+- Likes of cafe messages were not working properly due to unsigned shorts.
+
 ## v2.4.0 - 24/12/2019
 ## News
 - Added new parameters in the event _ready_: `onlinePlayers`, `community`, `country`.

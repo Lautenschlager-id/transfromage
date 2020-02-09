@@ -1,5 +1,7 @@
 -- Optimization --
 local bit_band = bit.band
+local bit_bor = bit.bor
+local bit_bxor = bit.bxor
 local bit_lshift = bit.lshift
 local bit_rshift = bit.rshift
 local string_char = string.char
@@ -150,6 +152,16 @@ byteArray.read16 = function(self)
 	local shortStack = self:read8(2)
 	-- s[1] << 8 = s[2]
 	return bit_lshift(shortStack[1], 8) + shortStack[2]
+end
+--[[@
+	@name readSigned16
+	@desc Extracts a short signed integer from the packet stack.
+	@returns int A short signed integer.
+]]
+byteArray.readSigned16 = function(self)
+	local shortStack = self:read8(2)
+	-- ((s[1] << 8 | s[2] << 0) ~ 0x8000) - 0x8000
+	return bit_bxor(bit_bor(bit_lshift(shortStack[1], 8), bit_lshift(shortStack[2], 0)), 0x8000) - 0x8000
 end
 --[[@
 	@name read24

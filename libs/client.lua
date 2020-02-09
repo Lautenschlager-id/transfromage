@@ -1112,7 +1112,7 @@ packetListener = {
 				data.messages[totalMessages].author = packet:readUTF()
 				data.messages[totalMessages].content = string_gsub(packet:readUTF(), "\r", "\r\n")
 				data.messages[totalMessages].canLike = packet:readBool()
-				data.messages[totalMessages].likes = packet:read16()
+				data.messages[totalMessages].likes = packet:readSigned16()
 			end
 
 			data.author = data.messages[1].author

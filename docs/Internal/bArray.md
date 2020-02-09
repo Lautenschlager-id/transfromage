@@ -1,5 +1,5 @@
 # ByteArray
-Byte arrays are used to control packets and are a lua recreation of the ByteStrings. 
+Byte arrays are used to control packets and are a lua recreation of the ByteStrings.
 
 ---
 >### byteArray:new ( stack )
@@ -46,6 +46,17 @@ Byte arrays are used to control packets and are a lua recreation of the ByteStri
 >| Type | Description |
 >| :-: | - |
 >| `int` | A short integer. |
+>
+---
+>### byteArray:readSigned16 (  )
+>
+>Extracts a short signed integer from the packet stack.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `int` | A short signed integer. |
 >
 ---
 >### byteArray:read24 (  )
