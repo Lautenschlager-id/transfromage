@@ -58,7 +58,7 @@ See [CONTRIBUTORS](CONTRIBUTORS.md).
 ## Base example
 ###### You can check more examples [here](https://github.com/Lautenschlager-id/Transfromage/tree/master/examples).
 ```Lua
-local api = require("Transfromage")
+local api = require("transfromage")
 local client = api.client()
 
 client:once("ready", function()
