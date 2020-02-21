@@ -1232,7 +1232,8 @@ packetListener = {
 	},
 	[44] = {
 		[1] = function(self, packet, connection, identifiers) -- Switch bulle identifiers
-			local bulleId = packet:read32()
+			local bulleCred1 = packet:read32()
+			local bulleCred2 = packet:read32()
 			local bulleIp = packet:readUTF()
 
 			local oldBulle = self.bulle
@@ -1244,7 +1245,7 @@ packetListener = {
 					oldBulle:close()
 				end
 
-				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(bulleId))
+				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(bulleCred1):write32(bulleCred2))
 				--[[@
 					@name switchBulleConnection
 					@desc Triggered when the bulle connection is switched.
