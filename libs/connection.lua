@@ -6,6 +6,9 @@ local buffer = require("buffer")
 local enum = require("enum")
 
 -- Optimization --
+local bit_bor = bit.bor
+local bit_band = bit.band
+local bit_rshift = bit.rshift
 local bit_lshift = bit.lshift
 local string_format = string.format
 local string_getBytes = string.getBytes
@@ -46,7 +49,10 @@ connection.new = function(self, name, event)
 		packetID = 0,
 		port = 1,
 		name = name,
-		open = false
+		open = false,
+		length_bytes = 0,
+		length = 0,
+		read_length = false
 	}, connection)
 end
 --[[@
@@ -114,20 +120,29 @@ end
 	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty.
 ]]
 connection.receive = function(self)
-	if self.buffer:isEmpty() then return end
-	local stackLenSize = self.buffer:receive(1)[1]
+	local byte
+	while not self.buffer:isEmpty() and not self.read_length do
+		byte = self.buffer:receive(1)[1]
+		self.length = bit_bor(self.length, bit_lshift(bit_band(byte, 127), self.length_bytes * 7))
+		self.length_bytes = self.length_bytes + 1
 
-	if stackLenSize > 0 then
-		local byteArr = self.buffer:receive(stackLenSize)
-		local stackLen = 0
-
-		for i = 1, #byteArr do
-			stackLen = stackLen + bit_lshift(byteArr[i], (8 * (stackLenSize - i)))
+		if not (bit_band(byte, 128) == 128 and self.length_byets < 5) then
+			self.read_length = true
+			break
 		end
-
-		return self.buffer:receive(stackLen)
 	end
-	return { }
+
+	if self.read_length and #self.buffer.queue >= self.length then
+		local byteArr = self.buffer:receive(self.length)
+
+		self.length_bytes = 0
+		self.length = 0
+		self.read_length = false
+
+		return byteArr
+	else
+		return
+	end
 end
 --[[@
 	@name send
@@ -155,18 +170,16 @@ connection.send = function(self, identifiers, alphaPacket)
 		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
 	end
 
-	local gammaPacket
-	local stackLen = #betaPacket.stack
-	if stackLen < 256 then
-		gammaPacket = byteArray:new():write8(1, stackLen)
-	elseif stackLen < 65536 then
-		gammaPacket = byteArray:new():write8(2):write16(stackLen)
-	elseif stackLen < 16777216 then
-		gammaPacket = byteArray:new():write8(3):write24(stackLen)
-	else
-		return error("↑failure↓[SEND]↑ The packet length is too big! ↑error↓(" .. stackLen .. ")↑\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
+	local gammaPacket = byteArray:new()
+	local size = #betaPacket.stack
+	local size_type = bit_rshift(size, 7)
+	while size_type ~= 0 do
+		gammaPacket:write8(bit_bor(bit_band(size, 127), 128))
+		size = size_type
+		size_type = bit_rshit(size_type, 7)
 	end
 
+	gammaPacket:write8(bit_band(size, 127))
 	gammaPacket:write8(self.packetID)
 	self.packetID = (self.packetID + 1) % 100
 
