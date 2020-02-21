@@ -126,7 +126,7 @@ connection.receive = function(self)
 		self.length = bit_bor(self.length, bit_lshift(bit_band(byte, 127), self.length_bytes * 7))
 		self.length_bytes = self.length_bytes + 1
 
-		if not (bit_band(byte, 128) == 128 and self.length_byets < 5) then
+		if bit_band(byte, 128) ~= 128 or self.length_bytes >= 5 then
 			self.read_length = true
 			break
 		end
@@ -141,7 +141,7 @@ connection.receive = function(self)
 
 		return byteArr
 	else
-		return
+		return { }
 	end
 end
 --[[@
@@ -176,7 +176,7 @@ connection.send = function(self, identifiers, alphaPacket)
 	while size_type ~= 0 do
 		gammaPacket:write8(bit_bor(bit_band(size, 127), 128))
 		size = size_type
-		size_type = bit_rshit(size_type, 7)
+		size_type = bit_rshift(size_type, 7)
 	end
 
 	gammaPacket:write8(bit_band(size, 127))
