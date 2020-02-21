@@ -50,9 +50,9 @@ connection.new = function(self, name, event)
 		port = 1,
 		name = name,
 		open = false,
-		length_bytes = 0,
+		lengthBytes = 0,
 		length = 0,
-		read_length = false
+		readLength = false
 	}, connection)
 end
 --[[@
@@ -117,31 +117,29 @@ end
 --[[@
 	@name receive
 	@desc Retrieves the data received from the server.
-	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty.
+	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty, or if a packet has been partialled received for now.
 ]]
 connection.receive = function(self)
 	local byte
-	while not self.buffer:isEmpty() and not self.read_length do
+	while not self.buffer:isEmpty() and not self.readLength do
 		byte = self.buffer:receive(1)[1]
-		self.length = bit_bor(self.length, bit_lshift(bit_band(byte, 127), self.length_bytes * 7))
-		self.length_bytes = self.length_bytes + 1
+		self.length = bit_bor(self.length, bit_lshift(bit_band(byte, 127), self.lengthBytes * 7))
+		self.lengthBytes = self.lengthBytes + 1
 
-		if bit_band(byte, 128) ~= 128 or self.length_bytes >= 5 then
-			self.read_length = true
+		if bit_band(byte, 128) ~= 128 or self.lengthBytes >= 5 then
+			self.readLength = true
 			break
 		end
 	end
 
-	if self.read_length and #self.buffer.queue >= self.length then
+	if self.readLength and #self.buffer.queue >= self.length then
 		local byteArr = self.buffer:receive(self.length)
 
-		self.length_bytes = 0
+		self.lengthBytes = 0
 		self.length = 0
-		self.read_length = false
+		self.readLength = false
 
 		return byteArr
-	else
-		return { }
 	end
 end
 --[[@
