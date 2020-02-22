@@ -6,7 +6,10 @@ local buffer = require("buffer")
 local enum = require("enum")
 
 -- Optimization --
+local bit_band = bit.band
+local bit_bor = bit.bor
 local bit_lshift = bit.lshift
+local bit_rshift = bit.rshift
 local string_format = string.format
 local string_getBytes = string.getBytes
 local table_add = table.add
@@ -34,7 +37,10 @@ local connection = table_setNewClass()
 		packetID = 0, -- An identifier ID to send the packets in the correct format.
 		port = 1, -- The index of one of the ports from the enumeration 'ports'. It gets constant once a port is accepted in the server.
 		name = "", -- The name of the connection object, for reference.
-		open = false -- Whether the connection is open or not.
+		open = false, -- Whether the connection is open or not.
+		_isReadingStackLength = true, -- Whether the connection is reading the length of the received packet or not.
+		_readStackLength = 0, -- Length read at the moment.
+		_lengthBytes = 0 -- Number of bytes read (real value needs a divison by 7).
 	}
 ]]
 connection.new = function(self, name, event)
@@ -46,7 +52,10 @@ connection.new = function(self, name, event)
 		packetID = 0,
 		port = 1,
 		name = name,
-		open = false
+		open = false,
+		_isReadingStackLength = true,
+		_readStackLength = 0,
+		_lengthBytes = 0
 	}, connection)
 end
 --[[@
@@ -111,23 +120,29 @@ end
 --[[@
 	@name receive
 	@desc Retrieves the data received from the server.
-	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty.
+	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty or if a packet is only partially received.
 ]]
 connection.receive = function(self)
-	if self.buffer:isEmpty() then return end
-	local stackLenSize = self.buffer:receive(1)[1]
+	local byte
+	while self._isReadingStackLength and not self.buffer:isEmpty() do
+		byte = self.buffer:receive(1)[1]
+		-- r | (b&0x7F << l)
+		self._readStackLength = bit_bor(self._readStackLength, bit_lshift(bit_band(byte, 0x7F), self._lengthBytes))
+		-- Using multiples of 7 saves unnecessary multiplication in the formula above
+		self._lengthBytes = self._lengthBytes + 7
 
-	if stackLenSize > 0 then
-		local byteArr = self.buffer:receive(stackLenSize)
-		local stackLen = 0
-
-		for i = 1, #byteArr do
-			stackLen = stackLen + bit_lshift(byteArr[i], (8 * (stackLenSize - i)))
-		end
-
-		return self.buffer:receive(stackLen)
+		self._isReadingStackLength = (self._lengthBytes < 35 and bit_band(byte, 0x80) == 0x80)
 	end
-	return { }
+
+	if not self._isReadingStackLength and self.buffer._count >= self._lengthBytes then
+		local byteArr = self.buffer:receive(self._readStackLength)
+
+		self._isReadingStackLength = true
+		self._readStackLength = 0
+		self._lengthBytes = 0
+
+		return byteArr
+	end
 end
 --[[@
 	@name send
@@ -155,17 +170,16 @@ connection.send = function(self, identifiers, alphaPacket)
 		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
 	end
 
-	local gammaPacket
+	local gammaPacket = byteArray:new()
+
 	local stackLen = #betaPacket.stack
-	if stackLen < 256 then
-		gammaPacket = byteArray:new():write8(1, stackLen)
-	elseif stackLen < 65536 then
-		gammaPacket = byteArray:new():write8(2):write16(stackLen)
-	elseif stackLen < 16777216 then
-		gammaPacket = byteArray:new():write8(3):write24(stackLen)
-	else
-		return error("↑failure↓[SEND]↑ The packet length is too big! ↑error↓(" .. stackLen .. ")↑\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
+	local stackType = bit_rshift(stackLen, 7)
+	while stackType ~= 0 do
+		gammaPacket:write8(bit_bor(bit_band(stackLen, 0x7F), 0x80)) -- s&0x7F | 0x80
+		stackLen = stackType
+		stackType = bit_rshift(stackLen, 7)
 	end
+	gammaPacket:write8(bit_band(stackLen, 0x7F))
 
 	gammaPacket:write8(self.packetID)
 	self.packetID = (self.packetID + 1) % 100

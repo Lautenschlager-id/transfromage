@@ -15,7 +15,8 @@ Buffers control the packets queue from inside.
 >**Table structure**:
 >```Lua
 >{
->	queue = { } -- The bytes queue
+>	queue = { }, -- The bytes queue
+>	_count = 0 -- The number of bytes in the queue
 >}
 >```
 >

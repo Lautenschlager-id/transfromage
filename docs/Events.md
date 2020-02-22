@@ -171,6 +171,66 @@ end)
 >Triggered when it fails to login.
 >
 ---
+>### connectionInfo ( playerData, friendList, soulmate, blackList, tribeData )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| playerData | `table` | The data of the player that has connected. |
+>| friendList | `table` | The data of the players in the account's friend list. |
+>| soulmate | `table` | The separated data of the account's soulmate. |
+>| blackList | `table` | An array of strings of the names that are in the black list. |
+>
+>Triggered when the client logs in and its data gets loaded.
+>**@playerData structure**:
+>```Lua
+>{
+>	id = 0, -- The player id.
+>	gender = 0 -- The soulmate's gender. Enum in enum.gender.
+>}
+>```
+>
+>**@friendlist structure**:
+>```Lua
+>{
+>	[i] = {
+>		id = 0, -- The player id.
+>		playerName = "", -- The player's name.
+>		gender = 0, -- The player's gender. Enum in enum.gender.
+>		isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+>		isConnected = true, -- Whether the player is online or offline.
+>		gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
+>		roomName = "", -- The name of the room the player is in.
+>		lastConnection = 0 -- Timestamp of when the player was last online.
+>	}
+>}
+>```
+>
+>**@soulmate structure**:
+>```Lua
+>{
+>	id = 0, -- The player id.
+>	playerName = "", -- The soulmate's name.
+>	gender = 0, -- The soulmate's gender. Enum in enum.gender.
+>	isFriend = true, -- Whether the soulmate has the account as a friend (added back) or not.
+>	isConnected = true, -- Whether the soulmate is online or offline.
+>	gameId = 0, -- The id of the game where the soulmate is connected. Enum in enum.game.
+>	roomName = "", -- The name of the room the soulmate is in.
+>	lastConnection = 0 -- Timestamp of when the soulmate was last online.
+>}
+>```
+>
+>**@tribeData structure**:
+>```Lua
+>{
+>	tribeName = "", -- The name of the tribe.
+>	tribeId = 0, -- The id of the tribe.
+>	tribeMessage = "", -- The greetings message of the tribe.
+>	tribeHouseMap = 0, -- The map code of the tribe house.
+>	tribeRankName = "", -- The name of the rank that the account has in the tribe.
+>	tribeRankPermissions = 0 -- The permissions of the rank that the account has in the tribe.
+>}
+>```
+>
+---
 >### disconnection ( connection )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -825,7 +885,8 @@ end)
 >		name = "", -- The name of the room.
 >		totalPlayers = 0, -- Number of players in the room.
 >		maxPlayers = 0, -- Maximum number of players the room can get.
->		onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
+>		onFuncorpMode = false, -- Whether the room is having a funcorp event (orange name) or not.
+>		community = 0 -- The community of the room.
 >	}
 >}
 >```
@@ -835,7 +896,8 @@ end)
 >{
 >	[i] = {
 >		name = "", -- The name of the object.
->		totalPlayers = 0 -- Number of players in the object counter. (Might be a string)
+>		totalPlayers = 0, -- Number of players in the object counter. (Might be a string)
+>		community = 0 -- The community of the object.
 >	}
 >}
 >```

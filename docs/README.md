@@ -98,6 +98,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [chatWho](Events.md#chatwho--chatname-data-)
 	- [connection](Events.md#connection--playername-community-playerid-playedtime-)
 	- [connectionFailed](Events.md#connectionfailed---)
+	- [connectionInfo](Events.md#connectioninfo--playerdata-friendlist-soulmate-blacklist-tribedata-)
 	- [disconnection](Events.md#disconnection--connection-)
 	- [friendConnection](Events.md#friendconnection--playername-)
 	- [friendDisconnection](Events.md#frienddisconnection--playername-)

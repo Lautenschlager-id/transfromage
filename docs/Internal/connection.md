@@ -26,7 +26,10 @@ Handles the connection with the Transformice's servers.
 >	packetID = 0, -- An identifier ID to send the packets in the correct format.
 >	port = 1, -- The index of one of the ports from the enumeration 'ports'. It gets constant once a port is accepted in the server.
 >	name = "", -- The name of the connection object, for reference.
->	open = false -- Whether the connection is open or not.
+>	open = false, -- Whether the connection is open or not.
+>	_isReadingStackLength = true, -- Whether the connection is reading the length of the received packet or not.
+>	_readStackLength = 0, -- Length read at the moment.
+>	_lengthBytes = 0 -- Number of bytes read (real value needs a divison by 7).
 >}
 >```
 >
@@ -52,7 +55,7 @@ Handles the connection with the Transformice's servers.
 >
 >| Type | Description |
 >| :-: | - |
->| `table`, `nil` | The bytes that were removed from the buffer queue. Can be nil if the queue is empty. |
+>| `table`, `nil` | The bytes that were removed from the buffer queue. Can be nil if the queue is empty or if a packet is only partially received. |
 >
 ---
 >### connection:send ( identifiers, alphaPacket )

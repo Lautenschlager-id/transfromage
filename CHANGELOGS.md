@@ -1,6 +1,16 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v3.0.0 - 22/02/2020
+## News
+- New event _connectionInfo ( playerData, friendList, soulmate, blackList, tribeData )_.
+- New parameter added to _switchBulleConnection_: _serverTimestamp_.
+- The _roomList_ event now has the community value for each table of _@rooms_/_@pinned_.
+
+## Changes
+- New protocol system for the new protocol system of the game.
+- Minor optimizations in the code.
+
 ## v2.5.0 - 09/02/2020
 ## News
 - Added function _byteArray.readSigned16_.

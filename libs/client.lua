@@ -135,6 +135,75 @@ end
 -- Receive
 -- Tribulle functions
 tribulleListener = {
+	[3] = function(self, packet, connection, tribulleId) -- Connection info
+		local gender = packet:read8()
+		local playerId = packet:read32()
+
+		local friendList, soulmate = tribulleListener[34](self, packet, connection, tribulleId, true) -- Gets the friendList data
+		local blackList = tribulleListener[47](self, packet, connection, tribulleId, true) -- Gets the blackList data
+
+		local tribeName = packet:readUTF()
+		local tribeId = packet:read32()
+		local tribeMessage = packet:readUTF()
+		local tribeHouseMap = packet:read32()
+		local tribeRankName = packet:readUTF()
+		local tribeRankPermissions = packet:read32()
+
+		--[[@
+			@name connectionInfo
+			@desc Triggered when the client logs in and its data gets loaded.
+			@param playerData<table> The data of the player that has connected.
+			@param friendList<table> The data of the players in the account's friend list.
+			@param soulmate<table> The separated data of the account's soulmate.
+			@param blackList<table> An array of strings of the names that are in the black list.
+			@param tribeData<table> The data of the player's tribe.
+			@struct @playerData {
+				id = 0, -- The player's name.
+				gender = 0 -- The player's gender. Enum in enum.gender.
+			}
+			@struct @friendlist {
+				[i] = {
+					id = 0, -- The player id.
+					playerName = "", -- The player's name.
+					gender = 0, -- The player's gender. Enum in enum.gender.
+					isFriend = true, -- Whether the player has the account as a friend (added back) or not.
+					isConnected = true, -- Whether the player is online or offline.
+					gameId = 0, -- The id of the game where the player is connected. Enum in enum.game.
+					roomName = "", -- The name of the room the player is in.
+					lastConnection = 0 -- Timestamp of when the player was last online.
+				}
+			}
+			@struct @soulmate {
+				id = 0, -- The player id.
+				playerName = "", -- The soulmate's name.
+				gender = 0, -- The soulmate's gender. Enum in enum.gender.
+				isFriend = true, -- Whether the soulmate has the account as a friend (added back) or not.
+				isConnected = true, -- Whether the soulmate is online or offline.
+				gameId = 0, -- The id of the game where the soulmate is connected. Enum in enum.game.
+				roomName = "", -- The name of the room the soulmate is in.
+				lastConnection = 0 -- Timestamp of when the soulmate was last online.
+			}
+			@struct @tribeInfo {
+				tribeName = "", -- The name of the tribe.
+				tribeId = 0, -- The id of the tribe.
+				tribeMessage = "", -- The greetings message of the tribe.
+				tribeHouseMap = 0, -- The map code of the tribe house.
+				tribeRankName = "", -- The name of the rank that the account has in the tribe.
+				tribeRankPermissions = 0 -- The permissions of the rank that the account has in the tribe.
+			}
+		]]
+		self.event:emit("connectionInfo", {
+			id = playerId,
+			gender = gender
+		}, friendList, soulmate, blackList, {
+			tribeName = tribeName,
+			tribeId = tribeId,
+			tribeMessage = tribeMessage,
+			tribeHouseMap = tribeHouseMap,
+			tribeRankName = tribeRankName,
+			tribeRankPermissions = tribeRankPermissions
+		})
+	end,
 	[32] = function(self, packet, connection, tribulleId) -- Friend connected
 		local playerName = packet:readUTF()
 		--[[@
@@ -153,12 +222,16 @@ tribulleListener = {
 		]]
 		self.event:emit("friendDisconnection", string_toNickname(playerName, true))
 	end,
-	[34] = function(self, packet, connection, tribulleId) -- Loaded friendlist
+	[34] = function(self, packet, connection, tribulleId, _return) -- Loaded friendlist
 		local soulmate = handleFriendData(packet)
 
 		local friendList = { }
 		for i = 1, packet:read16() do
 			friendList[i] = handleFriendData(packet)
+		end
+
+		if _return then
+			return friendList, soulmate
 		end
 
 		--[[@
@@ -216,10 +289,14 @@ tribulleListener = {
 		]]
 		self.event:emit("removeFriend", packet:read32())
 	end,
-	[47] = function(self, packet, connection, tribulleId) -- Loaded blacklist
+	[47] = function(self, packet, connection, tribulleId, _return) -- Loaded blacklist
 		local blackList = { }
 		for i = 1, packet:read16() do
 			blackList[i] = packet:readUTF()
+		end
+
+		if _return then
+			return blackList
 		end
 
 		--[[@
@@ -793,8 +870,9 @@ packetListener = {
 			data.orbId = packet:read8()
 			data.totalOrbs = packet:read8()
 			data.orbs = { }
+
 			for i = 1, data.totalOrbs do
-				data.orbs[packet:read8()] = true
+				data.orbs[packet:read8()] = true -- Can't be optimized because totalOrbs may be < 2
 			end
 
 			packet:read8() -- ?
@@ -943,17 +1021,18 @@ packetListener = {
 			self.event:emit("ready", onlinePlayers, community, country)
 		end,
 		[35] = function(self, packet, connection, identifiers) -- Room list
-			for i = 1, packet:read8() do packet:read8() end -- Room types
+			 -- Room types
+			packet:read8(packet:read8())
 
 			local rooms, counter = { }, 0
 			local pinned, pinnedCounter = { }, 0
 
-			local roomType, name, count, max, onFcMode
+			local roomType, community, name, count, max, onFcMode
 			local roomMode = packet:read8()
 			while #packet.stack > 0 do
 				roomType = packet:read8()
 				if roomType == 0 then -- Normal room
-					packet:read8() -- community
+					community = packet:read8()
 					name = packet:readUTF()
 					count = packet:read16() -- total mice
 					max = packet:read8() -- max total mice
@@ -964,10 +1043,11 @@ packetListener = {
 						name = name,
 						totalPlayers = count,
 						maxPlayers = max,
-						onFuncorpMode = onFcMode
+						onFuncorpMode = onFcMode,
+						community = community
 					}
 				elseif roomType == 1 then -- Pinned rooms / modules
-					packet:read8() -- community
+					community = packet:read8()
 					name = packet:readUTF()
 					count = packet:readUTF() -- total mice
 					count = tonumber(count) or count -- Make it a number
@@ -977,7 +1057,8 @@ packetListener = {
 					pinnedCounter = pinnedCounter + 1
 					pinned[pinnedCounter] = {
 						name = name,
-						totalPlayers = count
+						totalPlayers = count,
+						community = community
 					}
 				end
 			end
@@ -993,13 +1074,15 @@ packetListener = {
 						name = "", -- The name of the room.
 						totalPlayers = 0, -- Number of players in the room.
 						maxPlayers = 0, -- Maximum Number of players the room can get.
-						onFuncorpMode = false -- Whether the room is having a funcorp event (orange name) or not.
+						onFuncorpMode = false, -- Whether the room is having a funcorp event (orange name) or not.
+						community = 0 -- The community of the room.
 					}
 				}
 				@struct @pinned {
 					[i] = {
 						name = "", -- The name of the object.
-						totalPlayers = 0 -- Number of players in the object counter. (Might be a string)
+						totalPlayers = 0, -- Number of players in the object counter. (Might be a string)
+						community = 0 -- The community of the object.
 					}
 				}
 			]]
@@ -1232,6 +1315,7 @@ packetListener = {
 	},
 	[44] = {
 		[1] = function(self, packet, connection, identifiers) -- Switch bulle identifiers
+			local serverTimestamp = packet:read32()
 			local bulleId = packet:read32()
 			local bulleIp = packet:readUTF()
 
@@ -1244,14 +1328,15 @@ packetListener = {
 					oldBulle:close()
 				end
 
-				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(bulleId))
+				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(serverTimestamp):write32(bulleId))
 				--[[@
 					@name switchBulleConnection
 					@desc Triggered when the bulle connection is switched.
 					@param bulleId<int> The ID of the new bulle.
 					@param bulleIp<string> The IP of the new bulle.
+					@param serverTimestamp<int> The timestamp of the server.
 				]]
-				self.event:emit("switchBulleConnection", bulleId, bulleIp)
+				self.event:emit("switchBulleConnection", bulleId, bulleIp, serverTimestamp)
 			end)
 		end,
 		[22] = function(self, packet, connection, identifiers) -- PacketID offset identifiers
@@ -1552,8 +1637,8 @@ end
 	@param packet<byteArray> THe packet to be parsed.
 ]]
 parsePacket = function(self, connection, packet)
-	local C, CC = packet:read8(), packet:read8()
-	local identifiers = { C, CC }
+	local identifiers = packet:read8(2)
+	local C, CC = identifiers[1], identifiers[2]
 
 	if packetListener[C] and packetListener[C][CC] then
 		return packetListener[C][CC](self, packet, connection, identifiers)
@@ -1772,10 +1857,10 @@ client.start = coroutine_makef(function(self, tfmId, token)
 
 	self.main.event:once("_socketConnection", function()
 		local packet = byteArray:new():write16(self._gameVersion):writeUTF(self._gameConnectionKey)
-		packet:writeUTF("Desktop"):writeUTF('-'):write32(8125):writeUTF('')
+		packet:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
 		packet:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
 		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&PR64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
-		packet:write32(0):write32(25175):writeUTF('')
+		packet:write32(0):write32(0x6257):writeUTF('')
 
 		self.main:send(enum.identifier.initialize, packet)
 
@@ -1799,7 +1884,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			@param identifiers<table> The C, CC identifiers that were received.
 			@param packet<byteArray> The Byte Array object that was received.
 		]]
-		self.event:emit("receive", connection, { packet:read8(), packet:read8() }, packet)
+		self.event:emit("receive", connection, packet:read8(2), packet)
 	end)
 end)
 --[[@

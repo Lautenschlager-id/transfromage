@@ -12,12 +12,14 @@ local buffer = table_setNewClass()
 	@desc Creates a new instance of Buffer. Alias: `buffer()`.
 	@returns buffer The new Buffer object.
 	@struct {
-		queue = { } -- The bytes queue
+		queue = { }, -- The bytes queue
+		_count = 0 -- The number of bytes in the queue
 	}
 ]]
 buffer.new = function(self)
 	return setmetatable({
-		queue = { }
+		queue = { },
+		_count = 0
 	}, self)
 end
 --[[
@@ -25,13 +27,13 @@ end
 	@returns boolean Whether the queue is empty or not.
 ]]
 buffer.isEmpty = function(self)
-	return #self.queue == 0
+	return self._count == 0
 end
 --[[@
 	@name receive
 	@desc Retrieves bytes from the queue.
 	@param length<int> The quantity of bytes to be extracted.
-	@returns table An array of bytes. 
+	@returns table An array of bytes.
 ]]
 buffer.receive = function(self, length)
 	local bufferSize = #self.queue
@@ -40,6 +42,7 @@ buffer.receive = function(self, length)
 	if length >= bufferSize then
 		local ret = self.queue
 		self.queue = { }
+		self._count = 0
 		return ret
 	end
 
@@ -47,6 +50,7 @@ buffer.receive = function(self, length)
 	for b = 1, length do
 		ret[b] = table_remove(self.queue, 1)
 	end
+	self._count = self._count - length
 
 	return ret
 end
@@ -62,6 +66,7 @@ buffer.push = function(self, bytes)
 	end
 
 	table_add(self.queue, bytes)
+	self._count = self._count + #bytes
 
 	return self
 end

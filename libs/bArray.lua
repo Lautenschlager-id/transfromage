@@ -150,7 +150,7 @@ end
 ]]
 byteArray.read16 = function(self)
 	local shortStack = self:read8(2)
-	-- s[1] << 8 = s[2]
+	-- s[1] << 8 + s[2]
 	return bit_lshift(shortStack[1], 8) + shortStack[2]
 end
 --[[@
