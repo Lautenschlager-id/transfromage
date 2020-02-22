@@ -6,10 +6,10 @@ local buffer = require("buffer")
 local enum = require("enum")
 
 -- Optimization --
-local bit_bor = bit.bor
 local bit_band = bit.band
-local bit_rshift = bit.rshift
+local bit_bor = bit.bor
 local bit_lshift = bit.lshift
+local bit_rshift = bit.rshift
 local string_format = string.format
 local string_getBytes = string.getBytes
 local table_add = table.add
@@ -169,15 +169,16 @@ connection.send = function(self, identifiers, alphaPacket)
 	end
 
 	local gammaPacket = byteArray:new()
-	local size = #betaPacket.stack
-	local size_type = bit_rshift(size, 7)
-	while size_type ~= 0 do
-		gammaPacket:write8(bit_bor(bit_band(size, 127), 128))
-		size = size_type
-		size_type = bit_rshift(size_type, 7)
-	end
 
-	gammaPacket:write8(bit_band(size, 127))
+	local stackLen = #betaPacket.stack
+	local stackType = bit_rshift(stackLen, 7)
+	while stackType ~= 0 do
+		gammaPacket:write8(bit_bor(bit_band(stackLen, 127), 128))
+		stackLen = stackType
+		stackType = bit_rshift(stackLen, 7)
+	end
+	gammaPacket:write8(bit_band(stackLen, 127))
+
 	gammaPacket:write8(self.packetID)
 	self.packetID = (self.packetID + 1) % 100
 
