@@ -31,12 +31,14 @@ local translation = { }
 	@returns boolean,nil Whether the language has been downloaded.
 ]]
 translation.download = coroutine_makef(function(language, f)
-	language = enum_validate(enum.language, enum.language.en, language, string_format(enum.error.invalidEnum, "download", "language", "language"))
+	language = enum_validate(enum.language, enum.language.en, language,
+		string_format(enum.error.invalidEnum, "download", "language", "language"))
 	if not language then return end
 
 	local head, body = http_request("GET", "http://transformice.com/langues/tfz_" .. language)
 	if head.code ~= 200 then -- The enum must prevent it, but we never know
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ could not be downloaded. File not found in Transformice archives.", enum.errorLevel.low)
+		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ could not \z
+			be downloaded. File not found in Transformice archives.", enum.errorLevel.low)
 	end
 
 	body = zlibDecompress(body, 1) -- Decodes
@@ -76,7 +78,8 @@ end)
 translation.free = function(language, whitelist, whitelistPattern)
 	language = string_lower(language)
 	if not cache[language] then
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not downloaded yet.", enum.errorLevel.low)
+		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not down\z
+			loaded yet.", enum.errorLevel.low)
 	end
 
 	if not whitelist and not whitelistPattern then
@@ -114,7 +117,8 @@ end
 translation.get = function(language, index, raw)
 	language = string_lower(language)
 	if not cache[language] then
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not downloaded yet.", enum.errorLevel.low)
+		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not down\z
+			loaded yet.", enum.errorLevel.low)
 	end
 
 	if not index then
@@ -152,15 +156,20 @@ translation.get = function(language, index, raw)
 		end
 
 		-- Handles the gender system (male|female)
-		if not (cache._gender[language] and cache._gender[language][index] == false) and string_find(cache._format[language][index], '|', nil, true) then
+		if not (
+			cache._gender[language] and cache._gender[language][index] == false)
+			and string_find(cache._format[language][index], '|', nil, true
+		) then
 			if not cache._gender[language] then
 				cache._gender[language] = { }
 			end
 
 			if not cache._gender[language][index] then
-				local male, changes = string_gsub(cache._format[language][index], "%((.-)|.-%)", "%1")
+				local male, changes = string_gsub(cache._format[language][index], "%((.-)|.-%)",
+					"%1")
 				local female = string_gsub(cache._format[language][index], "%(.-|(.-)%)", "%1")
-				cache._gender[language][index] = (changes > 0 and ({ male, female }) or false) -- Cache possible non-translated lines with |
+				-- Cache possible non-translated lines with |
+				cache._gender[language][index] = (changes > 0 and ({ male, female }) or false)
 			end
 
 			if cache._gender[language][index] then
@@ -183,7 +192,8 @@ end
 translation.set = function(language, setPattern, f, isPlain)
 	language = string_lower(language)
 	if not cache[language] then
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not downloaded yet.", enum.errorLevel.low)
+		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not down\z
+			loaded yet.", enum.errorLevel.low)
 	end
 
 	for code, value in next, cache[language] do

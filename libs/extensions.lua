@@ -26,15 +26,18 @@ coroutine.makef = function(f)
 		return coroutine_wrap(f)(...)
 	end
 end
---[[@
-	@name math.normalizePoint
-	@desc Normalizes a Transformice coordinate point value.
-	@param x<number> The coordinate point value.
-	@returns int The normalized coordinate point value.
-]]
-math.normalizePoint = function(x)
-	x = x * (8 / 27)
-	return (x > 0 and math_floor(x) or x < 0 and math_ceil(x) or x)
+do
+	local pixelFrame = 8 / 27
+	--[[@
+		@name math.normalizePoint
+		@desc Normalizes a Transformice coordinate point value.
+		@param n<number> The coordinate point value.
+		@returns int The normalized coordinate point value.
+	]]
+	math.normalizePoint = function(n)
+		n = n * pixelFrame
+		return (n > 0 and math_floor(n) or n < 0 and math_ceil(n) or n)
+	end
 end
 do
 	local color = "\27[%sm%s\27[0m"
@@ -45,6 +48,10 @@ do
 		info = "1;36",
 		success = "0;32"
 	}
+
+	local formatColor = function(format, code, text)
+		return (theme[code] and string_format(color, theme[code], text) or format)
+	end
 
 	--[[@
 		@name os.log
@@ -57,15 +64,12 @@ do
 		@returns nil,string The formated message, depending on @returnValue.
 	]]
 	os.log = function(str, returnValue)
-		str = string_gsub(tostring(str), "(↑(.-)↓(.-)↑)", function(format, code, text)
-			return (theme[code] and string_format(color, theme[code], text) or format)
-		end)
+		str = string_gsub(tostring(str), "(↑(.-)↓(.-)↑)", formatColor)
 
 		if returnValue then
 			return str
-		else
-			print(str)
 		end
+		print(str)
 	end
 
 	local err = error
@@ -313,7 +317,8 @@ table.setNewClass = function()
 		__newindex = function(this, index, value)
 			if type(value) == "string" then -- Aliases / Compatibility
 				rawset(this, index, function(self, ...)
-					os.log("↑failure↓[/!\\]↑ ↑highlight↓" .. index .. "↑ is deprecated, use ↑highlight↓" .. value .. "↑ instead.")
+					os.log("↑failure↓[/!\\]↑ ↑highlight↓" .. index .. "↑ is deprecated, use ↑highl\z
+						ight↓" .. value .. "↑ instead.")
 					return this[value](self, ...)
 				end)
 			else

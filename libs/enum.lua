@@ -16,7 +16,8 @@ local enum = setmetatable({ }, {
 
 		for k, v in next, list do
 			if not ignoreConflit and reversed[v] then
-				return error("↑failure↓[ENUM]↑ Enumeration conflict in ↑highlight↓" .. tostring(k) .. "↑ and ↑highlight↓" .. tostring(reversed[v]) .. "↑", -2)
+				return error("↑failure↓[ENUM]↑ Enumeration conflict in ↑highlight↓" .. tostring(k)
+					.. "↑ and ↑highlight↓" .. tostring(reversed[v]) .. "↑", -2)
 			end
 			reversed[v] = k
 		end
@@ -81,7 +82,8 @@ enum._validate = function(enumeration, default, value, errorMsg)
 		local exists = enum._exists(enumeration, value)
 
 		if not exists then
-			return error((errorMsg or "↑failure↓[ENUM]↑ Invalid enumeration\n" .. tostring(debug_traceback())), -2)
+			return error((errorMsg or "↑failure↓[ENUM]↑ Invalid enumeration\n" ..
+				tostring(debug_traceback())), -2)
 		end
 
 		if exists == 1 then

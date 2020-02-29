@@ -8,7 +8,7 @@ assignees: Lautenschlager-id
 
 ---
 
-##### -- It's important that you check the [news of the latest API version](https://github.com/Lautenschlager-id/Transfromage/blob/master/CONTRIBUTING.md) before suggesting new features. It might still exist.
+##### -- It's important that you check the [news of the latest API version](https://github.com/Lautenschlager-id/Transfromage/blob/master/CHANGELOGS.md) before suggesting new features. It might still exist.
 
 ```
 Please, describe the request with a clear and concise description.

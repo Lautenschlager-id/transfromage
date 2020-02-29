@@ -28,14 +28,14 @@ do
 	end
 
 	local saltBytes = table_writeBytes({
-		247, 026, 166, 222,
-		143, 023, 118, 168,
-		003, 157, 050, 184,
-		161, 086, 178, 169,
-		062, 221, 067, 157,
-		197, 221, 206, 086,
-		211, 183, 164, 005,
-		074, 013, 008, 176
+		0xF7, 0x1A, 0xA6, 0xDE,
+		0x8F, 0x17, 0x76, 0xA8,
+		0x03, 0x9D, 0x32, 0xB8,
+		0xA1, 0x56, 0xB2, 0xA9,
+		0x3E, 0xDD, 0x43, 0x9D,
+		0xC5, 0xDD, 0xCE, 0x56,
+		0xD3, 0xB7, 0xA4, 0x05,
+		0x4A, 0x0D, 0x08, 0xB0
 	})
 
 	local base64_encode = require("base64").encode -- built-in
@@ -81,7 +81,13 @@ do
 	-- Aux function for XXTEA
 	local MX = function(z, y, sum, p, e)
 		-- (((z >> 5) ^ (y << 2)) + ((y >> 3) ^ (z << 4))) ^ ((sum ^ y) + (keys[((p & 3) ^ e) + 1] ^ z))
-		return bitwise_bxor(bitwise_bxor(bitwise_rshift(z, 5), bitwise_lshift(y, 2)) + bitwise_bxor(bitwise_rshift(y, 3), bitwise_lshift(z, 4)), bitwise_bxor(sum, y) + bitwise_bxor(identificationKeys[bitwise_bxor(bitwise_band(p, 3), e) + 1], z))
+		return bitwise_bxor(
+			bitwise_bxor(bitwise_rshift(z, 5), bitwise_lshift(y, 2))
+			+ bitwise_bxor(bitwise_rshift(y, 3), bitwise_lshift(z, 4))
+			,
+			bitwise_bxor(sum, y)
+			+ bitwise_bxor(identificationKeys[bitwise_bxor(bitwise_band(p, 3), e) + 1], z)
+		)
 	end
 
 	--[[@
@@ -136,14 +142,14 @@ local btea = function(packet)
 	local stackLen = #packet.stack
 
 	if stackLen == 0 then
-		return error("↑failure↓[ENCODE]↑ BTEA algorithm can't be applied to an empty byteArray.", enum.errorLevel.low)
+		return error("↑failure↓[ENCODE]↑ BTEA algorithm can't be applied to an empty byteArray.",
+			enum.errorLevel.low)
 	end
 
 	while stackLen < 8 do
 		stackLen = stackLen + 1
 		packet.stack[stackLen] = 0
 	end
-
 	packet = byteArray:new(packet.stack) -- Saves resource, instead of using write8
 
 	local chunks, counter = { }, 0
@@ -174,7 +180,7 @@ local xorCipher = function(packet, fingerprint)
 
 	for i = 1, #packet.stack do
 		fingerprint = fingerprint + 1
-		stack[i] = bit_band(bit_bxor(packet.stack[i], messageKeys[(fingerprint % 20) + 1]), 255)
+		stack[i] = bit_band(bit_bxor(packet.stack[i], messageKeys[(fingerprint % 20) + 1]), 0xFF)
 	end
 
 	return byteArray:new(stack)

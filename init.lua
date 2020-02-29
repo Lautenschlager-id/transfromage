@@ -28,14 +28,16 @@ do
 
 		coroutine_wrap(function()
 			local version = pkg.version
-			local _, lastVersion = require("coro-http").request("GET", "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/package.lua")
+			local _, lastVersion = require("coro-http").request("GET", "https://raw.githubusercont\z
+				ent.com/Lautenschlager-id/Transfromage/master/package.lua")
 			if lastVersion then
 				lastVersion = string_match(lastVersion, "version = \"(.-)\"")
 				if version ~= lastVersion then
 					local confirmation
 					if isSemi then
 						repeat
-							os_log("↑info↓[UPDATE]↑ New version ↑highlight↓Transfromage@" .. lastVersion .. "↑ available.")
+							os_log("↑info↓[UPDATE]↑ New version ↑highlight↓Transfromage@" ..
+								lastVersion .. "↑ available.")
 							os_log("↑info↓[UPDATE]↑ Update it now? ( ↑success↓Y↑ / ↑error↓N↑ )")
 							confirmation = string_upper(io_read())
 						until confirmation == 'N' or confirmation == 'Y'
@@ -45,10 +47,13 @@ do
 
 					if confirmation == 'Y' then
 						for i = 1, #pkg.files do
-							os_remove("deps/transfromage/" .. pkg.files[i]) -- avoids permissions error
+							-- avoids permissions error
+							os_remove("deps/transfromage/" .. pkg.files[i])
 						end
-						os_execute("lit install Lautenschlager-id/transfromage") -- Installs the new lib
-						os_execute("luvit " .. table_concat(args, ' ')) -- Luvit's command
+						-- installs the new lib
+						os_execute("lit install Lautenschlager-id/transfromage")
+						-- Luvit's command
+						os_execute("luvit " .. table_concat(args, ' '))
 						return os_exit()
 					end
 				end

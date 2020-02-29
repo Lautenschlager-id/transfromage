@@ -13,10 +13,10 @@
 >| `function` | A coroutine with @f to be executed. |
 >
 ---
->### math.normalizePoint ( x )
+>### math.normalizePoint ( n )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
->| x | `number` | ✔ | The coordinate point value. |
+>| n | `number` | ✔ | The coordinate point value. |
 >
 >Normalizes a Transformice coordinate point value.
 >

@@ -127,7 +127,8 @@ connection.receive = function(self)
 	while self._isReadingStackLength and not self.buffer:isEmpty() do
 		byte = self.buffer:receive(1)[1]
 		-- r | (b&0x7F << l)
-		self._readStackLength = bit_bor(self._readStackLength, bit_lshift(bit_band(byte, 0x7F), self._lengthBytes))
+		self._readStackLength = bit_bor(self._readStackLength, bit_lshift(bit_band(byte, 0x7F),
+			self._lengthBytes))
 		-- Using multiples of 7 saves unnecessary multiplication in the formula above
 		self._lengthBytes = self._lengthBytes + 7
 
@@ -156,7 +157,11 @@ connection.send = function(self, identifiers, alphaPacket)
 		if alphaPacket.stack then
 			betaPacket = byteArray:new(table_fuse(identifiers, alphaPacket.stack))
 		else
-			local bytes = { "0x" .. (string_format("%02x", identifiers[1]) .. string_format("%02x", identifiers[2])), 0x1, table_join(alphaPacket, 0x1) }
+			local bytes = {
+				[1] = string_format("0x%02x%02x", identifiers[1], identifiers[2]),
+				[2] = 0x1,
+				[3] = table_join(alphaPacket, 0x1)
+			}
 			betaPacket = byteArray:new():write8(1, 1):writeUTF(bytes)
 		end
 	elseif type(alphaPacket) == "string" then
@@ -167,7 +172,8 @@ connection.send = function(self, identifiers, alphaPacket)
 
 		betaPacket = byteArray:new():write8(table_unpack(arg))
 	else
-		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " .. table_concat(identifiers, ','), enum.errorLevel.low)
+		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " ..
+			table_concat(identifiers, ','), enum.errorLevel.low)
 	end
 
 	local gammaPacket = byteArray:new()

@@ -30,7 +30,9 @@ client:on("joinTribeHouse", function()
 			end)
 		end
 
-		client:loadLua("ui.addTextArea(" .. uses .. ", '', nil, math.random(100, 700), math.random(100, 300), math.random(100, 300), math.random(100, 300), math.random(0xFFFFFF), math.random(0xFFFFFF), 1, true)")
+		client:loadLua("ui.addTextArea(" .. uses .. ", '', nil, math.random(100, 700),\
+			math.random(100, 300), math.random(100, 300), math.random(100, 300),\
+			math.random(0xFFFFFF), math.random(0xFFFFFF), 1, true)")
 	end)
 end)
 

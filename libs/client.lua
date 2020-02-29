@@ -139,8 +139,11 @@ tribulleListener = {
 		local gender = packet:read8()
 		local playerId = packet:read32()
 
-		local friendList, soulmate = tribulleListener[34](self, packet, connection, tribulleId, true) -- Gets the friendList data
-		local blackList = tribulleListener[47](self, packet, connection, tribulleId, true) -- Gets the blackList data
+		-- Gets the friendList data
+		local friendList, soulmate = tribulleListener[34](self, packet, connection, tribulleId,
+			true)
+		-- Gets the blackList data
+		local blackList = tribulleListener[47](self, packet, connection, tribulleId, true)
 
 		local tribeName = packet:readUTF()
 		local tribeId = packet:read32()
@@ -328,7 +331,8 @@ tribulleListener = {
 		self._who_list[fingerprint] = nil
 	end,
 	[64] = function(self, packet, connection, tribulleId) -- #Chat Message
-		local playerName, community, chatName, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
+		local playerName, community = packet:readUTF(), packet:read32()
+		local chatName, message = packet:readUTF(), packet:readUTF()
 		--[[@
 			@name chatMessage
 			@desc Triggered when a #chat receives a new message.
@@ -337,7 +341,8 @@ tribulleListener = {
 			@param message<string> The message.
 			@param playerCommunity<int> The community id of @playerName.
 		]]
-		self.event:emit("chatMessage", chatName, string_toNickname(playerName, true), string_fixEntity(message), community)
+		self.event:emit("chatMessage", chatName, string_toNickname(playerName, true),
+			string_fixEntity(message), community)
 	end,
 	[65] = function(self, packet, connection, tribulleId) -- Tribe message
 		local memberName, message = packet:readUTF(), packet:readUTF()
@@ -347,10 +352,12 @@ tribulleListener = {
 			@param memberName<string> The member who sent the message.
 			@param message<string> The message.
 		]]
-		self.event:emit("tribeMessage", string_toNickname(memberName, true), string_fixEntity(message))
+		self.event:emit("tribeMessage", string_toNickname(memberName, true),
+			string_fixEntity(message))
 	end,
 	[66] = function(self, packet, connection, tribulleId) -- Whisper message
-		local playerName, community, _, message = packet:readUTF(), packet:read32(), packet:readUTF(), packet:readUTF()
+		local playerName, community = packet:readUTF(), packet:read32()
+		local _, message = packet:readUTF(), packet:readUTF()
 		--[[@
 			@name whisperMessage
 			@desc Triggered when the player receives a whisper.
@@ -358,7 +365,8 @@ tribulleListener = {
 			message<string> The message.
 			playerCommunity<int> The community id of @playerName.
 		]]
-		self.event:emit("whisperMessage", string_toNickname(playerName, true), string_fixEntity(message), community)
+		self.event:emit("whisperMessage", string_toNickname(playerName, true),
+			string_fixEntity(message), community)
 	end,
 	[88] = function(self, packet, connection, tribulleId) -- Tribe member connected
 		local memberName = packet:readUTF()
@@ -404,7 +412,8 @@ tribulleListener = {
 			@param memberName<string> The member name.
 			@param kickerName<string> The name of the player who kicked the member.
 		]]
-		self.event:emit("tribeMemberKick", string_toNickname(memberName, true), string_toNickname(kickerName, true))
+		self.event:emit("tribeMemberKick", string_toNickname(memberName, true),
+			string_toNickname(kickerName, true))
 	end,
 	[124] = function(self, packet, connection, tribulleId) -- Tribe member get role
 		local setterName, memberName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()
@@ -415,7 +424,8 @@ tribulleListener = {
 			@param setterName<string> The name of the player who set the role.
 			@param role<string> The role name.
 		]]
-		self.event:emit("tribeMemberGetRole", string_toNickname(memberName, true), string_toNickname(setterName, true), role)
+		self.event:emit("tribeMemberGetRole", string_toNickname(memberName, true),
+			string_toNickname(setterName, true), role)
 	end
 }
 -- Old packet functions
@@ -540,8 +550,11 @@ packetListener = {
 			local data = string_split(packet:readUTF(), "[^\x01]+")
 			local oldIdentifiers = { string_byte(table_remove(data, 1), 1, 2) }
 
-			if oldPacketListener[oldIdentifiers[1]] and oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]] then
-				return oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]](self, data, connection, oldIdentifiers)
+			if oldPacketListener[oldIdentifiers[1]]
+				and oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]]
+			then
+				return oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]](self, data,
+					connection, oldIdentifiers)
 			end
 
 			--[[@
@@ -650,7 +663,8 @@ packetListener = {
 	},
 	[6] = {
 		[6] = function(self, packet, connection, identifiers) -- Room message
-			local playerId, playerName, playerCommu, message = packet:read32(), packet:readUTF(), packet:read8(), string_fixEntity(packet:readUTF())
+			local playerId, playerName = packet:read32(), packet:readUTF()
+			local playerCommu, message = packet:read8(), string_fixEntity(packet:readUTF())
 			--[[@
 				@name roomMessage
 				@desc Triggered when the room receives a new user message.
@@ -659,7 +673,8 @@ packetListener = {
 				@param playerCommunity<int> The community id of @playerName.
 				@param playerId<int> The temporary id of @playerName.
 			]]
-			self.event:emit("roomMessage", string_toNickname(playerName, true), string_fixEntity(message), playerCommu, playerId)
+			self.event:emit("roomMessage", string_toNickname(playerName, true),
+				string_fixEntity(message), playerCommu, playerId)
 		end,
 		[20] = function(self, packet, connection, identifiers) -- /time
 			packet:read8() -- ?
@@ -792,7 +807,8 @@ packetListener = {
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
 					}
 				]]
-				self.event:emit("playerWon", self.playerList[playerId], self.playerList[playerId].winPosition, self.playerList[playerId].winTimeElapsed)
+				self.event:emit("playerWon", self.playerList[playerId],
+					self.playerList[playerId].winPosition, self.playerList[playerId].winTimeElapsed)
 			end
 		end,
 		[7] = function(self, packet, connection, identifiers) -- Updates player score
@@ -1328,7 +1344,8 @@ packetListener = {
 					oldBulle:close()
 				end
 
-				self.bulle:send(enum.identifier.bulleConnection, byteArray:new():write32(serverTimestamp):write32(bulleId))
+				self.bulle:send(enum.identifier.bulleConnection,
+					byteArray:new():write32(serverTimestamp):write32(bulleId))
 				--[[@
 					@name switchBulleConnection
 					@desc Triggered when the bulle connection is switched.
@@ -1684,13 +1701,13 @@ end
 ]]
 getKeys = function(self, tfmId, token)
 	-- Uses requires because it's used only once before it gets deleted.
-	local _, result = http_request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" .. tfmId .. "&token=" .. token, {
-		{ "User-Agent", "Mozilla/5.0" }
-	})
-	local _r = result
+	local _, result = http_request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" ..
+		tfmId .. "&token=" .. token)
+	local rawresult = result
 	result = json_decode(result)
 	if not result then
-		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is invalid.\n\t" .. tostring(_r), enum.errorLevel.high)
+		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is inval\z
+			id.\n\t" .. tostring(rawresult), enum.errorLevel.high)
 	end
 
 	if result.success then
@@ -1703,10 +1720,14 @@ getKeys = function(self, tfmId, token)
 
 			encode_setPacketKeys(self._gameIdentificationKeys, self._gameMsgKeys)
 		else
-			return error("↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\n\t'" .. result.internal_error_step .. "'" .. ((result.internal_error_step == 2) and ": The game may be in maintenance." or ''), enum.errorLevel.high)
+			return error("↑error↓[API ENDPOINT]↑ An internal error occurred in the API \z
+				endpoint.\n\t'" .. result.internal_error_step .. "'" ..
+				((result.internal_error_step == 2) and ": The game may be in maintenance." or ''),
+				enum.errorLevel.high)
 		end
 	else
-		return error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " .. tostring(result.error), enum.errorLevel.high)
+		return error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " ..
+			tostring(result.error), enum.errorLevel.high)
 	end
 end
 --[[@
@@ -1754,7 +1775,9 @@ end
 	@param fieldValue?<*> The value to be set to the player data @fieldName. @default Extracted data
 	@param sendValue?<boolean> Whether the new value should be sent as second argument of the event or not. @default false
 ]]
-handlePlayerField = function(self, packet, fieldName, eventName, methodName, fieldValue, sendValue) -- It would be a table with settings, but since it's created many times I have decided to keep it as parameters.
+handlePlayerField = function(self, packet, fieldName, eventName, methodName, fieldValue, sendValue)
+	-- This method would be a table with settings, but since it's created many times I have decided
+	-- to keep it as parameters.
 	if not self._handle_players or self.playerList.count == 0 then return end
 
 	local playerId = packet:read32()
@@ -1808,7 +1831,8 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 				_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
 			}
 		]]
-		self.event:emit((eventName or "updatePlayer"), self.playerList[playerId], (oldPlayerData or (sendValue and fieldValue)))
+		self.event:emit((eventName or "updatePlayer"), self.playerList[playerId],
+			(oldPlayerData or (sendValue and fieldValue)))
 	end
 end
 --[[@
@@ -1859,7 +1883,9 @@ client.start = coroutine_makef(function(self, tfmId, token)
 		local packet = byteArray:new():write16(self._gameVersion):writeUTF(self._gameConnectionKey)
 		packet:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
 		packet:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
-		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&PR64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
+		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,\z
+			0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&P\z
+			R64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
 		packet:write32(0):write32(0x6257):writeUTF('')
 
 		self.main:send(enum.identifier.initialize, packet)
@@ -1935,7 +1961,8 @@ end
 	@param community?<enum.community> An enum from @see community. (index or value) @default EN
 ]]
 client.setCommunity = function(self, community)
-	community = enum_validate(enum.community, enum.community.en, community, string_format(enum.error.invalidEnum, "setCommunity", "community", "community"))
+	community = enum_validate(enum.community, enum.community.en, community,
+		string_format(enum.error.invalidEnum, "setCommunity", "community", "community"))
 	if not community then return end
 
 	self.community = community
@@ -1971,40 +1998,54 @@ client.processXml = function(self, process)
 	return self._process_xml
 end
 -- Connection
---[[@
-	@name connect
-	@desc Connects to an account in-game.
-	@desc It will try to connect using all the available ports before throwing a timing out error.
-	@param userName<string> The name of the account. It must contain the discriminator tag (#).
-	@param userPassword<string> The password of the account.
-	@param startRoom?<string> The name of the initial room. @default "*#bolodefchoco"
-]]
-client.connect = function(self, userName, userPassword, startRoom, timeout)
-	userName = string_toNickname(userName, true)
+do
+	local triggerConnectionFailed = function(self)
+		if self.event.handlers.connectionFailed then
+			--[[@
+				@name connectionFailed
+				@desc Triggered when it fails to login.
+			]]
+			self.event:emit("connectionFailed")
+		else
+			return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.",
+				enum.errorLevel.low)
+		end
+	end
 
-	local packet = byteArray:new():writeUTF(userName):writeUTF(encode_getPasswordHash(userPassword))
-	packet:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4"):writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-	packet:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey)):write8(0):writeUTF('')
-
-	self.playerName = userName
-	self.main:send(enum.identifier.loginSend, encode_btea(packet):write8(0))
-
-	timer_setTimeout((timeout or (20 * 1000)), function(self)
+	local checkConnection = function(self)
 		if not self._isConnected then
 			self:disconnect()
-			timer_setTimeout(1000, function() -- This timer prevents the time out issue, since it gives time to closeAll work.
-				if self.event.handlers.connectionFailed then
-					--[[@
-						@name connectionFailed
-						@desc Triggered when it fails to login.
-					]]
-					self.event:emit("connectionFailed")
-				else
-					return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.", enum.errorLevel.low)
-				end
-			end)
+			-- This timer prevents the time out issue, since it gives time to closeAll work.
+			timer_setTimeout(2000, triggerConnectionFailed, self)
 		end
-	end, self)
+	end
+
+	--[[@
+		@name connect
+		@desc Connects to an account in-game.
+		@desc It will try to connect using all the available ports before throwing a timing out error.
+		@param userName<string> The name of the account. It must contain the discriminator tag (#).
+		@param userPassword<string> The password of the account.
+		@param startRoom?<string> The name of the initial room. @default "*#bolodefchoco"
+		@param timeout<int> The time in ms to throw a timeout error if the connection takes too long to succeed. @default 20000
+	]]
+	client.connect = function(self, userName, userPassword, startRoom, timeout)
+		userName = string_toNickname(userName, true)
+
+		local packet = byteArray:new()
+			:writeUTF(userName)
+			:writeUTF(encode_getPasswordHash(userPassword))
+			:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4")
+			:writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
+			:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey))
+			:write8(0)
+			:writeUTF('')
+
+		self.playerName = userName
+		self.main:send(enum.identifier.loginSend, encode_btea(packet):write8(0))
+
+		timer_setTimeout((timeout or (20 * 1000)), checkConnection, self)
+	end
 end
 --[[@
 	@name disconnect
@@ -2026,7 +2067,8 @@ end
 	@param isSalonAuto?<boolean> Whether the change room must be /salonauto or not. @default false
 ]]
 client.enterRoom = function(self, roomName, isSalonAuto)
-	self.main:send(enum.identifier.room, byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
+	self.main:send(enum.identifier.room,
+		byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
 end
 --[[@
 	@name sendRoomMessage
@@ -2035,7 +2077,8 @@ end
 	@param message<string> The message.
 ]]
 client.sendRoomMessage = function(self, message)
-	self.bulle:send(enum.identifier.roomMessage, encode_xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
+	self.bulle:send(enum.identifier.roomMessage,
+		encode_xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
 end
 -- Whisper
 --[[@
@@ -2046,7 +2089,9 @@ end
 	@param targetUser<string> The user who will receive the whisper.
 ]]
 client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message),
+		self.main.packetID))
 end
 --[[@
 	@name changeWhisperState
@@ -2055,10 +2100,13 @@ end
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
 ]]
 client.changeWhisperState = function(self, message, state)
-	state = enum_validate(enum.whisperState, enum.whisperState.enabled, state, string_format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
+	state = enum_validate(enum.whisperState, enum.whisperState.enabled, state,
+		string_format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
 	if not state then return end
 
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''),
+		self.main.packetID))
 end
 -- Chat
 --[[@
@@ -2067,7 +2115,8 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
 	@name sendChatMessage
@@ -2077,7 +2126,9 @@ end
 	@param message<string> The message.
 ]]
 client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message),
+		self.main.packetID))
 end
 --[[@
 	@name closeChat
@@ -2085,7 +2136,9 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(56):write32(1):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(56):write32(1):writeUTF(chatName),
+		self.main.packetID))
 end
 --[[@
 	@name chatWho
@@ -2096,7 +2149,9 @@ client.chatWho = function(self, chatName)
 	self._who_fingerprint = (self._who_fingerprint + 1) % 500
 	self._who_list[self._who_fingerprint] = chatName
 
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName),
+		self.main.packetID))
 end
 -- Tribe
 --[[@
@@ -2113,7 +2168,8 @@ end
 	@param message<string> The message.
 ]]
 client.sendTribeMessage = function(self, message)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@name recruitPlayer
@@ -2122,7 +2178,8 @@ end
 	@param playerName<string> The name of player to be recruited.
 ]]
 client.recruitPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name kickTribeMember
@@ -2131,7 +2188,8 @@ end
 	@param memberName<string> The name of the member to be kicked.
 ]]
 client.kickTribeMember = function(self, memberName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
 end
 --[[@
 	@name setTribeMemberRole
@@ -2141,7 +2199,9 @@ end
 	@param roleId<int> The role id. (starts from 0, the initial role, and goes until the Chief role)
 ]]
 client.setTribeMemberRole = function(self, memberName, roleId)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId),
+		self.main.packetID))
 end
 --[[@
 	@name loadLua
@@ -2201,7 +2261,8 @@ end
 ]]
 client.sendCafeMessage = function(self, topicId, message)
 	message = string_gsub(message, "\r\n", "\r")
-	self.main:send(enum.identifier.cafeSendMessage, byteArray:new():write32(topicId):writeUTF(message))
+	self.main:send(enum.identifier.cafeSendMessage,
+		byteArray:new():write32(topicId):writeUTF(message))
 end
 --[[@
 	@name likeCafeMessage
@@ -2212,7 +2273,8 @@ end
 	@param dislike?<boolean> Whether the reaction must be a dislike or not. @default false
 ]]
 client.likeCafeMessage = function(self, topicId, messageId, dislike)
-	self.main:send(enum.identifier.cafeLike, byteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
+	self.main:send(enum.identifier.cafeLike,
+		byteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
 end
 -- Friends
 --[[@
@@ -2220,14 +2282,16 @@ end
 	@desc Requests the friend list.
 ]]
 client.requestFriendList = function(self)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(28):write32(3), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(28):write32(3), self.main.packetID))
 end
 --[[@
 	@name requestBlackList
 	@desc Requests the black list.
 ]]
 client.requestBlackList = function(self)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(46):write32(3), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(46):write32(3), self.main.packetID))
 end
 --[[@
 	@name addFriend
@@ -2235,7 +2299,8 @@ end
 	@param playerName<string> The player name to be added.
 ]]
 client.addFriend = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name removeFriend
@@ -2243,7 +2308,8 @@ end
 	@param playerName<string> The player name to be removed from the friend list.
 ]]
 client.removeFriend = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name blacklistPlayer
@@ -2251,7 +2317,8 @@ end
 	@param playerName<string> The player name to be added.
 ]]
 client.blacklistPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name whitelistPlayer
@@ -2259,7 +2326,8 @@ end
 	@param playerName<string> The player name to be removed from the black list.
 ]]
 client.whitelistPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(byteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
 end
 -- Miscellaneous
 --[[@
@@ -2269,7 +2337,8 @@ end
 	@param command<string> The command. (without /)
 ]]
 client.sendCommand = function(self, command, crypted)
-	self.main:send(enum.identifier.command, encode_xorCipher(byteArray:new():writeUTF(command), self.main.packetID))
+	self.main:send(enum.identifier.command, encode_xorCipher(
+		byteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@
 	@name playEmote
@@ -2278,7 +2347,8 @@ end
 	@param flag?<string> The country code of the flag when @emote is flag.
 ]]
 client.playEmote = function(self, emote, flag)
-	emote = enum_validate(enum.emote, enum.emote.dance, emote, string_format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
+	emote = enum_validate(enum.emote, enum.emote.dance, emote,
+		string_format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
 	if not emote then return end
 
 	local packet = byteArray:new():write8(emote):write32(0)
@@ -2294,7 +2364,8 @@ end
 	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
 ]]
 client.playEmoticon = function(self, emoticon)
-	emoticon = enum_validate(enum.emoticon, enum.emoticon.smiley, emoticon, string_format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
+	emoticon = enum_validate(enum.emoticon, enum.emoticon.smiley, emoticon,
+		string_format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
 	if not emoticon then return end
 
 	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
@@ -2305,14 +2376,16 @@ end
 	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
 ]]
 client.requestRoomList = function(self, roomMode)
-	roomMode = enum_validate(enum.roomMode, enum.roomMode.normal, roomMode, string_format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
+	roomMode = enum_validate(enum.roomMode, enum.roomMode.normal, roomMode,
+		string_format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
 	if not roomMode then return end
 
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
 end
 
 ----- Compatibility -----
-client.insertReceiveFunction, client.insertTribulleFunction = "insertPacketListener", "insertTribulleListener"
+client.insertReceiveFunction = "insertPacketListener"
+client.insertTribulleFunction = "insertTribulleListener"
 client.closeAll = "disconnect"
 -------------------------
 

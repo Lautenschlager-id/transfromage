@@ -7,7 +7,7 @@ assignees: Lautenschlager-id
 
 ---
 
-##### -- It's important that every bug issue reported occurs in the [latest API version](https://github.com/Lautenschlager-id/Transfromage/blob/master/CONTRIBUTING.md). Old versions will not be fixed.
+##### -- It's important that every bug issue reported occurs in the [latest API version](https://github.com/Lautenschlager-id/Transfromage/blob/master/CHANGELOGS.md). Old versions will not be fixed.
 
 ```
 Please, describe the issue with a clear and concise description of what the bug is.

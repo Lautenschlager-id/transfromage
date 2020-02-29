@@ -12,7 +12,7 @@
 
 **Transfromage API** is a [documented API](docs) that allows developers to make bots for the aforementioned game.
 
-Join the **_[Fifty Shades of Lua](https://discord.gg/quch83R)_** [discord](https://discordapp.com/) to discuss about this API and to receive special support.
+Join the **_[Fifty Shades of Lua](https://discord.gg/quch83R)_** [discord](https://discordapp.com/) server to discuss about this API and to receive special support.
 
 You can also check out **[Fromage API](https://github.com/Lautenschlager-id/Fromage)** for Atelier801's forum.
 
@@ -20,9 +20,9 @@ This API had many indirect contributors, including [@Tocutoeltuco](https://githu
 
 ![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 3.0 are no longer working due to internal changes of the game.**<br>
 
-## Keys Endpoint
+## Authentication keys Endpoint
 
-This API depends on an [endpoint](https://api.tocu.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
+This API relies on an [endpoint](https://api.tocu.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
 
 To use it you will need a token which you can get by [applying through this form](https://forms.gle/N6Et1hLGQ9hmg95F6). See below to know the names of Transfromage managers who handle the token system.
 - **[Tocutoeltuco](https://github.com/Tocutoeltuco)** @discord=> `Tocutoeltuco#0018` <sub>`212634414021214209`</sub>;
@@ -36,7 +36,7 @@ To use it you will need a token which you can get by [applying through this form
 - To install **Transfromage**, run `lit install Lautenschlager-id/transfromage`
 - Run your bot script using luvit, for example: `luvit bot.lua`
 
-###### If you are new and can't follow these steps, please consider using the _MyFirstBot.zip_ that has been premade with the executables and the API.<br>_(4MB)_ [Windows](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Windows.zip) | [Linux](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Linux.zip)
+###### If you are new and can't follow these steps, please consider using _MyFirstBot.zip_ that has been premade with the executables and the API.<br>_(4MB)_ [Windows](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Windows.zip) | [Linux](https://github.com/Lautenschlager-id/Transfromage/raw/master/MyFirstBot/Linux.zip)
 
 ### API Update
 
@@ -57,7 +57,7 @@ See [CONTRIBUTORS](CONTRIBUTORS.md).
 ## Base example
 ###### You can check more examples [here](https://github.com/Lautenschlager-id/Transfromage/tree/master/examples).
 ```Lua
-local api = require("Transfromage")
+local api = require("transfromage")
 local client = api.client()
 
 client:once("ready", function()

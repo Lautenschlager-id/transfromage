@@ -33,7 +33,7 @@ end
 	@returns int The result of the & operation.
 ]]
 bitwise.band = function(x, y)
-	-- x > y → \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n (\lfloor \dfrac{x}{2^n} \rfloor mod 2)(\lfloor \dfrac{y}{2^n} \rfloor mod 2)
+	-- x > y; \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n (\lfloor \dfrac{x}{2^n} \rfloor mod 2)(\lfloor \dfrac{y}{2^n} \rfloor mod 2)
 	local aux = 1
 	local out = 0
 
@@ -61,7 +61,7 @@ end
 	@returns int The result of the ^ operation.
 ]]
 bitwise.bxor = function(x, y)
-	-- x > y → \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n [(\lfloor \dfrac{x}{2^n} \rfloor + \lfloor \dfrac{y}{2^n} \rfloor) mod 2)]
+	-- x > y; \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n [(\lfloor \dfrac{x}{2^n} \rfloor + \lfloor \dfrac{y}{2^n} \rfloor) mod 2)]
 	local out = 0
 
 	local aux
