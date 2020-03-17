@@ -41,6 +41,14 @@ byteArray.new = function(self, stack)
 	}, self)
 end
 --[[@
+	@name bytesLeft
+	@desc Returns the number of bytes left in the stack.
+	@returns int Number of bytes left in the stack.
+]]
+byteArray.bytesLeft = function(self)
+	return #self.stack - self.pos + 1
+end
+--[[@
 	@name write8
 	@desc Inserts bytes in the byte array.
 	@param ...?<int> Bytes. @default 0
