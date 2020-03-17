@@ -13,8 +13,8 @@ local table_setNewClass = table.setNewClass
 local table_writeBytes = table.writeBytes
 ------------------
 
-local modulo256 = function(n)
-	return n % 256
+local band255 = function(n)
+	return bit_band(n, 255)
 end
 
 ------------------
@@ -52,7 +52,7 @@ byteArray.write8 = function(self, ...)
 		tbl = { 0 }
 	end
 
-	local bytes = table_mapArray(tbl, modulo256)
+	local bytes = table_mapArray(tbl, band255)
 	table_add(self.stack, bytes)
 	return self
 end
@@ -65,8 +65,8 @@ end
 byteArray.write16 = function(self, short)
 	-- (long >> 8) & 0xFF, long & 0xFF
 	return self:write8(
-		bit_band(bit_rshift(short, 8), 0xFF),
-		bit_band(short, 0xFF)
+		bit_rshift(short, 8),
+		short
 	)
 end
 --[[@
@@ -78,9 +78,9 @@ end
 byteArray.write24 = function(self, int)
 	-- (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
 	return self:write8(
-		bit_band(bit_rshift(int, 16), 0xFF),
-		bit_band(bit_rshift(int, 8), 0xFF),
-		bit_band(int, 0xFF)
+		bit_rshift(int, 16),
+		bit_rshift(int, 8),
+		int
 	)
 end
 --[[@
@@ -92,10 +92,10 @@ end
 byteArray.write32 = function(self, long)
 	-- (long >> 24) & 0xFF, (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
 	return self:write8(
-		bit_band(bit_rshift(long, 24), 0xFF),
-		bit_band(bit_rshift(long, 16), 0xFF),
-		bit_band(bit_rshift(long, 8), 0xFF),
-		bit_band(long, 0xFF)
+		bit_rshift(long, 24),
+		bit_rshift(long, 16),
+		bit_rshift(long, 8),
+		long
 	)
 end
 --[[@
