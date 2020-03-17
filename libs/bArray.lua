@@ -21,21 +21,23 @@ end
 
 local byteArray = table.setNewClass()
 byteArray.__tostring = function(this)
-	return table_writeBytes(this.stack)
+	return table_writeBytes(this.buffer)
 end
 
 --[[@
 	@name new
 	@desc Creates a new instance of a Byte Array. Alias: `byteArray()`.
-	@param stack?<table> An array of bytes.
+	@param buffer?<table> An array of bytes.
+	@param pos?<int> A pointer to the current position in the buffer when reading.
 	@returns byteArray The new Byte Array object.
 	@struct {
-		stack = { } -- The bytes stack
+		buffer = { } -- The bytes buffer
 	}
 ]]
-byteArray.new = function(self, stack)
+byteArray.new = function(self, buffer)
 	return setmetatable({
-		stack = (stack or { }) -- Array of bytes
+		pos = 1,
+		buffer = (buffer or { }) -- Array of bytes
 	}, self)
 end
 --[[@
@@ -51,7 +53,7 @@ byteArray.write8 = function(self, ...)
 	end
 
 	local bytes = table_mapArray(tbl, modulo256)
-	table_add(self.stack, bytes)
+	table_add(self.buffer, bytes)
 	return self
 end
 --[[@
@@ -108,7 +110,7 @@ byteArray.writeUTF = function(self, utf)
 	end
 
 	self:write16(#utf)
-	table_add(self.stack, utf)
+	table_add(self.buffer, utf)
 
 	return self
 end
@@ -124,7 +126,7 @@ byteArray.writeBigUTF = function(self, bigUtf)
 	end
 
 	self:write24(#bigUtf)
-	table_add(self.stack, bigUtf)
+	table_add(self.buffer, bigUtf)
 
 	return self
 end
@@ -139,71 +141,71 @@ byteArray.writeBool = function(self, bool)
 end
 --[[@
 	@name read8
-	@desc Extracts bytes from the packet stack. If there are not suficient bytes in the stack, it's filled with bytes with value 0.
+	@desc Extracts bytes from the packet buffer. If there are not suficient bytes in the buffer, it's filled with bytes with value 0.
 	@param quantity<int> The quantity of bytes to be extracted. @default 1
 	@returns table,int A table with the extracted bytes. If there's only one byte, it is sent instead of the table.
 ]]
 byteArray.read8 = function(self, quantity)
 	quantity = quantity or 1
 
-	local byteStack = table_arrayRange(self.stack, 1, quantity)
-	self.stack = table_arrayRange(self.stack, quantity + 1)
+	local byteBuffer = table_arrayRange(self.buffer, self.pos, self.pos + quantity)
+	self.pos = self.pos + quantity
 
-	local sLen = #byteStack
+	local sLen = #byteBuffer
 	local fillVal = quantity - sLen
 	if fillVal > 0 then
 		for i = 1, fillVal do
-			byteStack[sLen + i] = 0
+			byteBuffer[sLen + i] = 0
 		end
 	end
 
-	return (quantity == 1 and byteStack[1] or byteStack)
+	return (quantity == 1 and byteBuffer[1] or byteBuffer)
 end
 --[[@
 	@name read16
-	@desc Extracts a short integer from the packet stack.
+	@desc Extracts a short integer from the packet buffer.
 	@returns int A short integer.
 ]]
 byteArray.read16 = function(self)
-	local shortStack = self:read8(2)
+	local shortBuffer = self:read8(2)
 	-- s[1] << 8 + s[2]
-	return bit_lshift(shortStack[1], 8) + shortStack[2]
+	return bit_lshift(shortBuffer[1], 8) + shortBuffer[2]
 end
 --[[@
 	@name readSigned16
-	@desc Extracts a short signed integer from the packet stack.
+	@desc Extracts a short signed integer from the packet buffer.
 	@returns int A short signed integer.
 ]]
 byteArray.readSigned16 = function(self)
-	local shortStack = self:read8(2)
+	local shortBuffer = self:read8(2)
 	-- ((s[1] << 8 | s[2] << 0) ~ 0x8000) - 0x8000
-	return bit_bxor(bit_bor(bit_lshift(shortStack[1], 8), bit_lshift(shortStack[2], 0)), 0x8000)
+	return bit_bxor(bit_bor(bit_lshift(shortBuffer[1], 8), bit_lshift(shortBuffer[2], 0)), 0x8000)
 		- 0x8000
 end
 --[[@
 	@name read24
-	@desc Extracts an integer from the packet stack.
+	@desc Extracts an integer from the packet buffer.
 	@returns int An integer.
 ]]
 byteArray.read24 = function(self)
-	local intStack = self:read8(3)
+	local intBuffer = self:read8(3)
 	-- i[1] << 16 + i[2] << 8 + i[3]
-	return bit_lshift(intStack[1], 16) + bit_lshift(intStack[2], 8) + intStack[3]
+	return bit_lshift(intBuffer[1], 16) + bit_lshift(intBuffer[2], 8) + intBuffer[3]
 end
 --[[@
 	@name read32
-	@desc Extracts a long integer from the packet stack.
+	@desc Extracts a long integer from the packet buffer.
 	@returns int A long integer.
 ]]
 byteArray.read32 = function(self)
-	local longStack = self:read8(4)
+	local longBuffer = self:read8(4)
 	-- l[1] << 24 + l[2] << 16 + l[3] << 8 + l[4]
-	return bit_lshift(longStack[1], 24) + bit_lshift(longStack[2], 16) + bit_lshift(longStack[3], 8)
-		+ longStack[4]
+	return bit_lshift(longBuffer[1], 24) + bit_lshift(longBuffer[2], 16) + bit_lshift(longBuffer[3], 8)
+		+ longBuffer[4]
 end
 --[[@
 	@name readUTF
-	@desc Extracts a string from the packet stack.
+	@desc Extracts a string from the packet buffer.
 	@returns string A string.
 ]]
 byteArray.readUTF = function(self)
@@ -216,7 +218,7 @@ byteArray.readUTF = function(self)
 end
 --[[@
 	@name readBigUTF
-	@desc Extracts a long string from the packet stack.
+	@desc Extracts a long string from the packet buffer.
 	@returns string A long string.
 ]]
 byteArray.readBigUTF = function(self)
@@ -229,7 +231,7 @@ byteArray.readBigUTF = function(self)
 end
 --[[@
 	@name readBool
-	@desc Extracts a boolean from the packet stack. (Whether the next byte is 0 or 1)
+	@desc Extracts a boolean from the packet buffer. (Whether the next byte is 0 or 1)
 	@returns boolean A boolean.
 ]]
 byteArray.readBool = function(self)
