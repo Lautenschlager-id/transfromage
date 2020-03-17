@@ -28,6 +28,7 @@ end
 	@name new
 	@desc Creates a new instance of a Byte Array. Alias: `byteArray()`.
 	@param stack?<table> An array of bytes.
+	@param pos?<int> A pointer to the current position in the stack when reading.
 	@returns byteArray The new Byte Array object.
 	@struct {
 		stack = { } -- The bytes stack
@@ -35,6 +36,7 @@ end
 ]]
 byteArray.new = function(self, stack)
 	return setmetatable({
+		pos = 1,
 		stack = (stack or { }) -- Array of bytes
 	}, self)
 end
@@ -146,8 +148,8 @@ end
 byteArray.read8 = function(self, quantity)
 	quantity = quantity or 1
 
-	local byteStack = table_arrayRange(self.stack, 1, quantity)
-	self.stack = table_arrayRange(self.stack, quantity + 1)
+	local byteStack = table_arrayRange(self.stack, self.pos, self.pos + quantity)
+	self.pos = self.pos + quantity
 
 	local sLen = #byteStack
 	local fillVal = quantity - sLen
