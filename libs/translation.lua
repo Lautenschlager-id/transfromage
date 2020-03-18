@@ -35,7 +35,7 @@ translation.download = coroutine_makef(function(language, f)
 		string_format(enum.error.invalidEnum, "download", "language", "language"))
 	if not language then return end
 
-	local head, body = http_request("GET", "http://transformice.com/langues/tfz_" .. language)
+	local head, body = http_request("GET", string_format(enum.url.translation, language))
 	if head.code ~= 200 then -- The enum must prevent it, but we never know
 		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ could not \z
 			be downloaded. File not found in Transformice archives.", enum.errorLevel.low)

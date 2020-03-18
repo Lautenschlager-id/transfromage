@@ -88,6 +88,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [role](Enum.md#role-int)
 	- [roomMode](Enum.md#roommode-int)
 	- [setting](Enum.md#setting-table)
+	- [url](Enum.md#url-string)
 	- [whisperState](Enum.md#whisperstate-int)
 - [Events](Events.md)
 	- [blackList](Events.md#blacklist--blacklist-)

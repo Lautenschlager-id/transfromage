@@ -267,6 +267,14 @@
 | port | { 13801, 11801, 12801, 14801 } |
 
 ---
+### url <sub>\<string></sub>
+###### URLs used in the API.
+| Index | Value |
+| :-: | :-: |
+| authKeys | https://api.tocu.tk/get_transformice_keys.php?tfmid=%s&token=%s |
+| translation | http://transformice.com/langues/tfz_%s |
+
+---
 ### whisperState <sub>\<int></sub>
 ###### Possible states for the whisper.
 | Index | Value |

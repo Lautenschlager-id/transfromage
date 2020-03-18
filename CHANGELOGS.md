@@ -1,6 +1,10 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v3.1.0 - Unreleased
+## News
+- New enum _url_.
+
 ## v3.0.0 - 22/02/2020
 ## News
 - New event _connectionInfo ( playerData, friendList, soulmate, blackList, tribeData )_.

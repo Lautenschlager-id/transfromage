@@ -372,6 +372,15 @@ enum.setting = enum {
 	port   = enum { 13801, 11801, 12801, 14801 }
 }
 --[[@
+	@name url
+	@desc URLs used in the API.
+	@type string
+]]
+enum.url = enum {
+	translation = "http://transformice.com/langues/tfz_%s",
+	authKeys    = "https://api.tocu.tk/get_transformice_keys.php?tfmid=%s&token=%s"
+}
+--[[@
 	@name whisperState
 	@desc Possible states for the whisper.
 	@type int

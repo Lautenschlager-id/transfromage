@@ -1701,8 +1701,7 @@ end
 ]]
 getKeys = function(self, tfmId, token)
 	-- Uses requires because it's used only once before it gets deleted.
-	local _, result = http_request("GET", "https://api.tocu.tk/get_transformice_keys.php?tfmid=" ..
-		tfmId .. "&token=" .. token)
+	local _, result = http_request("GET", string_format(enum.url.authKeys, tfmId, token))
 	local rawresult = result
 	result = json_decode(result)
 	if not result then
