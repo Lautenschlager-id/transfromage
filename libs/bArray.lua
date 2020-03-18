@@ -14,7 +14,7 @@ local table_writeBytes = table.writeBytes
 ------------------
 
 local band255 = function(n)
-	return bit_band(n, 255)
+	return bit_band(n, 0xFF)
 end
 
 ------------------
