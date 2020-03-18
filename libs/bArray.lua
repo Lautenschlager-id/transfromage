@@ -114,8 +114,10 @@ byteArray.writeUTF = function(self, utf)
 		utf = string_getBytes(utf)
 	end
 
-	self:write16(#utf)
+	local utfLen = #utf
+	self:write16(utfLen)
 	table_add(self.stack, utf)
+	self.stackLen = self.stackLen + utfLen
 
 	return self
 end
@@ -130,8 +132,10 @@ byteArray.writeBigUTF = function(self, bigUtf)
 		bigUtf = string_getBytes(bigUtf)
 	end
 
-	self:write24(#bigUtf)
+	local bigUtfLen = #bigUtf
+	self:write24(bigUtfLen)
 	table_add(self.stack, bigUtf)
+	self.stackLen = self.stackLen + bigUtfLen
 
 	return self
 end
