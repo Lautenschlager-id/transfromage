@@ -1045,7 +1045,7 @@ packetListener = {
 
 			local roomType, community, name, count, max, onFcMode
 			local roomMode = packet:read8()
-			while #packet.stack > 0 do
+			while packet.stackLen > 0 do
 				roomType = packet:read8()
 				if roomType == 0 then -- Normal room
 					community = packet:read8()
@@ -1139,7 +1139,7 @@ packetListener = {
 			local id, data
 			local _messages, _totalMessages, _author
 
-			while #packet.stack > 0 do
+			while packet.stackLen > 0 do
 				id = packet:read32()
 				data = { id = id }
 				data.title = packet:readUTF()
@@ -1201,7 +1201,7 @@ packetListener = {
 
 			local totalMessages = 0
 
-			while #packet.stack > 0 do
+			while packet.stackLen > 0 do
 				totalMessages = totalMessages + 1
 				data.messages[totalMessages] = { }
 				data.messages[totalMessages].topicId = id

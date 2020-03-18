@@ -139,7 +139,7 @@ end
 	@returns byteArray The encoded Byte Array object.
 ]]
 local btea = function(packet)
-	local stackLen = #packet.stack
+	local stackLen = packet.stackLen
 
 	if stackLen == 0 then
 		return error("↑failure↓[ENCODE]↑ BTEA algorithm can't be applied to an empty byteArray.",
@@ -153,7 +153,7 @@ local btea = function(packet)
 	packet = byteArray:new(packet.stack) -- Saves resource, instead of using write8
 
 	local chunks, counter = { }, 0
-	while #packet.stack > 0 do
+	while packet.stackLen > 0 do
 		counter = counter + 1
 		chunks[counter] = packet:read32()
 	end
@@ -178,7 +178,7 @@ end
 local xorCipher = function(packet, fingerprint)
 	local stack = { }
 
-	for i = 1, #packet.stack do
+	for i = 1, packet.stackLen do
 		fingerprint = fingerprint + 1
 		stack[i] = bit_band(bit_bxor(packet.stack[i], messageKeys[(fingerprint % 20) + 1]), 0xFF)
 	end

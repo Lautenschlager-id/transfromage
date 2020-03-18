@@ -30,12 +30,14 @@ end
 	@param stack?<table> An array of bytes.
 	@returns byteArray The new Byte Array object.
 	@struct {
-		stack = { } -- The bytes stack
+		stack = { }, -- The bytes stack
+		stackLen = 0 -- Total bytes stored in @stack
 	}
 ]]
 byteArray.new = function(self, stack)
 	return setmetatable({
-		stack = (stack or { }) -- Array of bytes
+		stack = (stack or { }), -- Array of bytes
+		stackLen = 0
 	}, self)
 end
 --[[@
@@ -46,9 +48,14 @@ end
 ]]
 byteArray.write8 = function(self, ...)
 	local tbl = { ... }
-	if #tbl == 0 then
+
+	local tblLen = #tbl
+	if tblLen == 0 then
+		tblLen = 1
+
 		tbl = { 0 }
 	end
+	self.stackLen = self.stackLen + tblLen
 
 	local bytes = table_mapArray(tbl, modulo256)
 	table_add(self.stack, bytes)
@@ -150,6 +157,8 @@ byteArray.read8 = function(self, quantity)
 	self.stack = table_arrayRange(self.stack, quantity + 1)
 
 	local sLen = #byteStack
+	self.stackLen = self.stackLen - sLen
+
 	local fillVal = quantity - sLen
 	if fillVal > 0 then
 		for i = 1, fillVal do
