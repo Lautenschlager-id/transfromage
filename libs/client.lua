@@ -1716,8 +1716,8 @@ getKeys = function(self, tfmId, token)
 			self._gameAuthkey = result.auth_key
 			self._gameIdentificationKeys = result.identification_keys
 			self._gameMsgKeys = result.msg_keys
-			enum.settings.mainIp = result.ip
-			enum.settings.port = result.ports
+			enum.setting.mainIp = result.ip
+			enum.setting.port = result.ports
 
 			encode_setPacketKeys(self._gameIdentificationKeys, self._gameMsgKeys)
 		else

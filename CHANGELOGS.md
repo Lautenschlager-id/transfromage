@@ -3,7 +3,8 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v3.1.0 - Unreleased
 ## News
-- Improve bArray's performance.
+- Make IP and Ports be set by the endpoint.
+- Improve byteArray's performance.
 - New enum _url_.
 
 ## v3.0.0 - 22/02/2020
