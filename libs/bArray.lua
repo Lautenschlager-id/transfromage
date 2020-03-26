@@ -37,7 +37,7 @@ end
 byteArray.new = function(self, stack)
 	return setmetatable({
 		stack = (stack or { }), -- Array of bytes
-		stackLen = 0
+		stackLen = (stack and #stack or 0)
 	}, self)
 end
 --[[@
