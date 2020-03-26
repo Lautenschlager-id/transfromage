@@ -367,9 +367,9 @@ enum.roomMode = enum {
 	@desc Miscellaneous connection settings.
 	@type *
 ]]
-enum.setting = enum {
-	mainIp = "94.23.193.229",
-	port   = enum { 13801, 11801, 12801, 14801 }
+enum.setting = {
+	mainIp = "",
+	port   = { }
 }
 --[[@
 	@name url
