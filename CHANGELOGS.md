@@ -9,6 +9,7 @@
 - make encode a class
 - remove setPacketKeys
 - client.\_encode, xorCipher
+- rename_snake_toCamel in client
 
 ## News
 - Allow UserBots to use the API.

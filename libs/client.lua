@@ -93,7 +93,6 @@ local meta = {
 ]]
 client.new = function(self, tfmId, token, hasSpecialRole, useEndpointOnSpecialRole)
 	local eventEmitter = event:new()
-	local encode = encode:new(hasSpecialRole)
 
 	local obj = setmetatable({
 		playerName = nil,
@@ -119,7 +118,7 @@ client.new = function(self, tfmId, token, hasSpecialRole, useEndpointOnSpecialRo
 		_process_xml = false,
 		_cafeCachedMessages = { },
 		_handle_players = false,
-		_encode = encode,
+		_encode = encode:new(hasSpecialRole),
 		_hasSpecialRole = hasSpecialRole,
 		_useEndpointOnSpecialRole = useEndpointOnSpecialRole
 	}, self)
