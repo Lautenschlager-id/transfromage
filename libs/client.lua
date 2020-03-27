@@ -2046,7 +2046,7 @@ do
 		end
 		packet:write8(0):writeUTF('')
 		if not self._hasSpecialRole then
-			packet = self._encode.btea(packet)
+			packet = self._encode:btea(packet)
 		end
 		packet:write8(0)
 
