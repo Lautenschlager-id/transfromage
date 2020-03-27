@@ -12,10 +12,7 @@ local enum = require("enum")
 -- Optimization --
 local bit_bxor = bit.bxor
 local coroutine_makef = coroutine.makef
-local encode_btea = encode.btea
 local encode_getPasswordHash = encode.getPasswordHash
-local encode_setPacketKeys = encode.setPacketKeys
-local encode_xorCipher = encode.xorCipher
 local enum_validate = enum._validate
 local math_normalizePoint = math.normalizePoint
 local string_byte = string.byte
@@ -81,7 +78,6 @@ local meta = {
 		_mainLoop = { }, -- (userdata) A timer that retrieves the packets received from the game server.
 		_bulleLoop = { }, -- (userdata) A timer that retrieves the packets received from the room server.
 		_receivedAuthkey = 0, -- Authorization key, used to connect the account.
-		_gameVersion = 0, -- The game version, used to connect the account.
 		_gameConnectionKey = "", -- The game connection key, used to connect the account.
 		_gameIdentificationKeys = { }, -- The game identification keys, used to connect the account.
 		_gameMsgKeys = { }, -- The game message keys, used to connect the account.
@@ -95,8 +91,9 @@ local meta = {
 		_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
 	}
 ]]
-client.new = function(self, tfmId, token)
+client.new = function(self, tfmId, token, hasSpecialRole, useEndpointOnSpecialRole)
 	local eventEmitter = event:new()
+	local encode = encode:new(hasSpecialRole)
 
 	local obj = setmetatable({
 		playerName = nil,
@@ -110,7 +107,6 @@ client.new = function(self, tfmId, token)
 		_mainLoop = nil,
 		_bulleLoop = nil,
 		_receivedAuthkey = 0,
-		_gameVersion = 0,
 		_gameConnectionKey = "",
 		_gameAuthkey = 0,
 		_gameIdentificationKeys = { },
@@ -122,7 +118,10 @@ client.new = function(self, tfmId, token)
 		_who_list = { },
 		_process_xml = false,
 		_cafeCachedMessages = { },
-		_handle_players = false
+		_handle_players = false,
+		_encode = encode,
+		_hasSpecialRole = hasSpecialRole,
+		_useEndpointOnSpecialRole = useEndpointOnSpecialRole
 	}, self)
 
 	if tfmId and token then
@@ -1700,35 +1699,37 @@ end
 	@param token<string> The developer's token.
 ]]
 getKeys = function(self, tfmId, token)
-	-- Uses requires because it's used only once before it gets deleted.
-	local _, result = http_request("GET", string_format(enum.url.authKeys, tfmId, token))
-	local rawresult = result
-	result = json_decode(result)
-	if not result then
-		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is inval\z
-			id.\n\t" .. tostring(rawresult), enum.errorLevel.high)
-	end
-
-	if result.success then
-		if not result.internal_error then
-			self._gameVersion = result.version
-			self._gameConnectionKey = result.connection_key
-			self._gameAuthkey = result.auth_key
-			self._gameIdentificationKeys = result.identification_keys
-			self._gameMsgKeys = result.msg_keys
-			enum.setting.mainIp = result.ip
-			enum.setting.port = result.ports
-
-			encode_setPacketKeys(self._gameIdentificationKeys, self._gameMsgKeys)
-		else
-			return error("↑error↓[API ENDPOINT]↑ An internal error occurred in the API \z
-				endpoint.\n\t'" .. result.internal_error_step .. "'" ..
-				((result.internal_error_step == 2) and ": The game may be in maintenance." or ''),
-				enum.errorLevel.high)
+	if not self._hasSpecialRole or self._useEndpointOnSpecialRole then
+		-- Uses requires because it's used only once before it gets deleted.
+		local _, result = http_request("GET", string_format(enum.url.authKeys, tfmId, token))
+		local rawresult = result
+		result = json_decode(result)
+		if not result then
+			return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is \z
+				invalid.\n\t" .. tostring(rawresult), enum.errorLevel.high)
 		end
-	else
-		return error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " ..
-			tostring(result.error), enum.errorLevel.high)
+
+		if result.success then
+			if not result.internal_error then
+				enum.setting.mainIp = result.ip
+				enum.setting.port = result.ports
+				if not self._hasSpecialRole then
+					enum.setting.gameVersion = result.version
+					self._gameConnectionKey = result.connection_key
+					self._gameAuthkey = result.auth_key
+					self._encode.identificationKeys = result.identification_keys
+					self._encode.messageKeys = result.msg_keys
+				end
+			else
+				return error(string_format("↑error↓[API ENDPOINT]↑ An internal error occurred in \z
+					the API endpoint.\n\t'%s'%s", result.internal_error_step,
+					(result.internal_error_step == 2 and ": The game may be in maintenance." or '')
+				), enum.errorLevel.high)
+			end
+		else
+			return error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " ..
+				tostring(result.error), enum.errorLevel.high)
+		end
 	end
 end
 --[[@
@@ -1881,7 +1882,10 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	self.main:connect(enum.setting.mainIp)
 
 	self.main.event:once("_socketConnection", function()
-		local packet = byteArray:new():write16(self._gameVersion):writeUTF(self._gameConnectionKey)
+		local packet = byteArray:new():write16(enum.setting.gameVersion)
+		if not self._hasSpecialRole then
+			packet:writeUTF(self._gameConnectionKey)
+		end
 		packet:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
 		packet:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
 		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,\z
@@ -2038,12 +2042,17 @@ do
 			:writeUTF(encode_getPasswordHash(userPassword))
 			:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4")
 			:writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-			:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey))
-			:write8(0)
-			:writeUTF('')
+		if not self._hasSpecialRole then
+			packet:write32(bit_bxor(self._receivedAuthkey, self._gameAuthkey))
+		end
+		packet:write8(0):writeUTF('')
+		if not self._hasSpecialRole then
+			packet = self._encode.btea(packet)
+		end
+		packet:write8(0)
 
 		self.playerName = userName
-		self.main:send(enum.identifier.loginSend, encode_btea(packet):write8(0))
+		self.main:send(enum.identifier.loginSend, packet)
 
 		timer_setTimeout((timeout or (20 * 1000)), checkConnection, self)
 	end
@@ -2079,7 +2088,7 @@ end
 ]]
 client.sendRoomMessage = function(self, message)
 	self.bulle:send(enum.identifier.roomMessage,
-		encode_xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
+		self._encode:xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
 end
 -- Whisper
 --[[@
@@ -2090,7 +2099,7 @@ end
 	@param targetUser<string> The user who will receive the whisper.
 ]]
 client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message),
 		self.main.packetID))
 end
@@ -2105,7 +2114,7 @@ client.changeWhisperState = function(self, message, state)
 		string_format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
 	if not state then return end
 
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''),
 		self.main.packetID))
 end
@@ -2116,7 +2125,7 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
@@ -2127,7 +2136,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message),
 		self.main.packetID))
 end
@@ -2137,7 +2146,7 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(56):write32(1):writeUTF(chatName),
 		self.main.packetID))
 end
@@ -2150,7 +2159,7 @@ client.chatWho = function(self, chatName)
 	self._who_fingerprint = (self._who_fingerprint + 1) % 500
 	self._who_list[self._who_fingerprint] = chatName
 
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName),
 		self.main.packetID))
 end
@@ -2169,7 +2178,7 @@ end
 	@param message<string> The message.
 ]]
 client.sendTribeMessage = function(self, message)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
 end
 --[[@
@@ -2179,7 +2188,7 @@ end
 	@param playerName<string> The name of player to be recruited.
 ]]
 client.recruitPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
@@ -2189,7 +2198,7 @@ end
 	@param memberName<string> The name of the member to be kicked.
 ]]
 client.kickTribeMember = function(self, memberName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
 end
 --[[@
@@ -2200,7 +2209,7 @@ end
 	@param roleId<int> The role id. (starts from 0, the initial role, and goes until the Chief role)
 ]]
 client.setTribeMemberRole = function(self, memberName, roleId)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId),
 		self.main.packetID))
 end
@@ -2283,7 +2292,7 @@ end
 	@desc Requests the friend list.
 ]]
 client.requestFriendList = function(self)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(28):write32(3), self.main.packetID))
 end
 --[[@
@@ -2291,7 +2300,7 @@ end
 	@desc Requests the black list.
 ]]
 client.requestBlackList = function(self)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(46):write32(3), self.main.packetID))
 end
 --[[@
@@ -2300,7 +2309,7 @@ end
 	@param playerName<string> The player name to be added.
 ]]
 client.addFriend = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
@@ -2309,7 +2318,7 @@ end
 	@param playerName<string> The player name to be removed from the friend list.
 ]]
 client.removeFriend = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
@@ -2318,7 +2327,7 @@ end
 	@param playerName<string> The player name to be added.
 ]]
 client.blacklistPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
@@ -2327,7 +2336,7 @@ end
 	@param playerName<string> The player name to be removed from the black list.
 ]]
 client.whitelistPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
 end
 -- Miscellaneous
@@ -2338,7 +2347,7 @@ end
 	@param command<string> The command. (without /)
 ]]
 client.sendCommand = function(self, command, crypted)
-	self.main:send(enum.identifier.command, encode_xorCipher(
+	self.main:send(enum.identifier.command, self._encode:xorCipher(
 		byteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@

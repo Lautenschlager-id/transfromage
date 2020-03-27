@@ -1,8 +1,17 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
-## v3.1.0 - Unreleased
+## v4.0.0 - Unreleased
+## To document
+- add setting gameVersion
+- client.new \_hasSpecialRole \_useEndpointOnSpecialRole (param, self)
+- remove client.\_gameVersion
+- make encode a class
+- remove setPacketKeys
+- client.\_encode, xorCipher
+
 ## News
+- Allow UserBots to use the API.
 - Make IP and Ports be set by the endpoint.
 - Improve byteArray's performance.
 - New enum _url_.

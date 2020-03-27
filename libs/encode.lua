@@ -12,10 +12,20 @@ local math_floor = math.floor
 local string_char = string.char
 local string_sub = string.sub
 local table_concat = table.concat
+local table_setNewClass = table.setNewClass
 local table_writeBytes = table.writeBytes
 ------------------
 
-local getPasswordHash
+local encode = table_setNewClass()
+
+encode.new = function(self, hasSpecialRole)
+	return setmetatable({
+		hasSpecialRole = hasSpecialRole,
+		identificationKeys = nil,
+		messageKeys = nil
+	}, self)
+end
+
 do
 	local openssl = require("openssl") -- built-in
 	local sha256 = openssl.digest.get("sha256")
@@ -45,7 +55,7 @@ do
 		@param password<string> The account's password.
 		@returns string The encrypted password.
 	]]
-	getPasswordHash = function(password)
+	encode.getPasswordHash = function(password)
 		local hash = cryptToSha256(password)
 		hash = cryptToSha256(hash .. saltBytes)
 		local len = #hash
@@ -60,26 +70,11 @@ do
 	end
 end
 
-local identificationKeys = { }
-local messageKeys = { }
-
---[[@
-	@name setPacketKeys
-	@desc Sets the packet keys.
-	@param idKeys<table> The identification keys of the SWF/endpoint.
-	@param msgKeys<table> The message keys of the SWF/endpoint.
-]]
-local setPacketKeys = function(idKeys, msgKeys)
-	identificationKeys = idKeys
-	messageKeys = msgKeys
-end
-
-local xxtea
 do
 	local DELTA, LIM = 0x9E3779B9, 0xFFFFFFFF
 
 	-- Aux function for XXTEA
-	local MX = function(z, y, sum, p, e)
+	local MX = function(identificationKeys, z, y, sum, p, e)
 		-- (((z >> 5) ^ (y << 2)) + ((y >> 3) ^ (z << 4))) ^ ((sum ^ y) + (keys[((p & 3) ^ e) + 1] ^ z))
 		return bitwise_bxor(
 			bitwise_bxor(bitwise_rshift(z, 5), bitwise_lshift(y, 2))
@@ -96,7 +91,7 @@ do
 		@param data<table> A table with data to be encoded.
 		@returns table The encoded data.
 	]]
-	xxtea = function(data)
+	xxtea = function(self, data)
 		local decode = #data
 
 		local y = data[1]
@@ -116,7 +111,7 @@ do
 			while p < (decode - 1) do
 				y = data[p + 2]
 
-				z = bitwise_band((data[p + 1] + MX(z, y, sum, p, e)), LIM)
+				z = bitwise_band((data[p + 1] + MX(self.identificationKeys, z, y, sum, p, e)), LIM)
 				data[p + 1] = z
 
 				p = p + 1
@@ -124,7 +119,7 @@ do
 
 			y = data[1]
 
-			z = bitwise_band((data[decode] + MX(z, y, sum, p, e)), LIM)
+			z = bitwise_band((data[decode] + MX(self.identificationKeys, z, y, sum, p, e)), LIM)
 			data[decode] = z
 		end
 
@@ -138,7 +133,7 @@ end
 	@param packet<byteArray> A Byte Array object to be encoded.
 	@returns byteArray The encoded Byte Array object.
 ]]
-local btea = function(packet)
+encode.btea = function(self, packet)
 	local stackLen = packet.stackLen
 
 	if stackLen == 0 then
@@ -158,7 +153,7 @@ local btea = function(packet)
 		chunks[counter] = packet:read32()
 	end
 
-	chunks = xxtea(chunks)
+	chunks = xxtea(self, chunks)
 
 	packet:write16(#chunks)
 	for i = 1, #chunks do
@@ -175,20 +170,19 @@ end
 	@param fingerprint<int> The fingerprint of the encode.
 	@returns byteArray The encoded Byte Array object.
 ]]
-local xorCipher = function(packet, fingerprint)
+encode.xorCipher = function(self, packet, fingerprint)
+	if self.hasSpecialRole then
+		return packet
+	end
+
 	local stack = { }
 
 	for i = 1, packet.stackLen do
 		fingerprint = fingerprint + 1
-		stack[i] = bit_band(bit_bxor(packet.stack[i], messageKeys[(fingerprint % 20) + 1]), 0xFF)
+		stack[i] = bit_band(bit_bxor(packet.stack[i], self.messageKeys[(fingerprint % 20) + 1]), 0xFF)
 	end
 
 	return byteArray:new(stack)
 end
 
-return {
-	getPasswordHash = getPasswordHash,
-	setPacketKeys = setPacketKeys,
-	btea = btea,
-	xorCipher = xorCipher
-}
+return encode

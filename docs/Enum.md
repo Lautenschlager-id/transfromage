@@ -263,8 +263,8 @@
 ###### Miscellaneous connection settings.
 | Index | Value |
 | :-: | :-: |
-| mainIp | 94.23.193.229 |
-| port | { 13801, 11801, 12801, 14801 } |
+| mainIp | ? |
+| port | { ?, ... } |
 
 ---
 ### url <sub>\<string></sub>
