@@ -367,9 +367,18 @@ enum.roomMode = enum {
 	@desc Miscellaneous connection settings.
 	@type *
 ]]
-enum.setting = enum {
-	mainIp = "94.23.193.229",
-	port   = enum { 13801, 11801, 12801, 14801 }
+enum.setting = {
+	mainIp = "51.75.130.180",
+	port   = { 11801, 12801, 13801, 14801 }
+}
+--[[@
+	@name url
+	@desc URLs used in the API.
+	@type string
+]]
+enum.url = enum {
+	translation = "http://transformice.com/langues/tfz_%s",
+	authKeys    = "https://api.tocu.tk/get_transformice_keys.php?tfmid=%s&token=%s"
 }
 --[[@
 	@name whisperState

@@ -18,7 +18,8 @@ Byte arrays are used to control packets and are a lua recreation of the ByteStri
 >**Table structure**:
 >```Lua
 >{
->	stack = { } -- The bytes stack
+>	stack = { }, -- The bytes stack
+>	stackLen = 0 -- Total bytes stored in @stack
 >}
 >```
 >

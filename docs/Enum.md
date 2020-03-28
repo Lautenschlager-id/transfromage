@@ -263,8 +263,16 @@
 ###### Miscellaneous connection settings.
 | Index | Value |
 | :-: | :-: |
-| mainIp | 94.23.193.229 |
-| port | { 13801, 11801, 12801, 14801 } |
+| mainIp | ? |
+| port | { ?, ... } |
+
+---
+### url <sub>\<string></sub>
+###### URLs used in the API.
+| Index | Value |
+| :-: | :-: |
+| authKeys | https://api.tocu.tk/get_transformice_keys.php?tfmid=%s&token=%s |
+| translation | http://transformice.com/langues/tfz_%s |
 
 ---
 ### whisperState <sub>\<int></sub>

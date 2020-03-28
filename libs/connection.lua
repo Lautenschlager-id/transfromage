@@ -178,7 +178,7 @@ connection.send = function(self, identifiers, alphaPacket)
 
 	local gammaPacket = byteArray:new()
 
-	local stackLen = #betaPacket.stack
+	local stackLen = betaPacket.stackLen
 	local stackType = bit_rshift(stackLen, 7)
 	while stackType ~= 0 do
 		gammaPacket:write8(bit_bor(bit_band(stackLen, 0x7F), 0x80)) -- s&0x7F | 0x80

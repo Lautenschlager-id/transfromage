@@ -14,6 +14,7 @@ local table_writeBytes = table.writeBytes
 ------------------
 
 local modulo256 = function(n)
+	-- It could be n & 0xFF but, in Lua, modulo is slightly more performatic
 	return n % 256
 end
 
@@ -30,12 +31,14 @@ end
 	@param stack?<table> An array of bytes.
 	@returns byteArray The new Byte Array object.
 	@struct {
-		stack = { } -- The bytes stack
+		stack = { }, -- The bytes stack
+		stackLen = 0 -- Total bytes stored in @stack
 	}
 ]]
 byteArray.new = function(self, stack)
 	return setmetatable({
-		stack = (stack or { }) -- Array of bytes
+		stack = (stack or { }), -- Array of bytes
+		stackLen = (stack and #stack or 0)
 	}, self)
 end
 --[[@
@@ -46,9 +49,14 @@ end
 ]]
 byteArray.write8 = function(self, ...)
 	local tbl = { ... }
-	if #tbl == 0 then
+
+	local tblLen = #tbl
+	if tblLen == 0 then
+		tblLen = 1
+
 		tbl = { 0 }
 	end
+	self.stackLen = self.stackLen + tblLen
 
 	local bytes = table_mapArray(tbl, modulo256)
 	table_add(self.stack, bytes)
@@ -62,10 +70,7 @@ end
 ]]
 byteArray.write16 = function(self, short)
 	-- (long >> 8) & 0xFF, long & 0xFF
-	return self:write8(
-		bit_band(bit_rshift(short, 8), 0xFF),
-		bit_band(short, 0xFF)
-	)
+	return self:write8(bit_rshift(short, 8), short)
 end
 --[[@
 	@name write24
@@ -75,11 +80,7 @@ end
 ]]
 byteArray.write24 = function(self, int)
 	-- (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
-	return self:write8(
-		bit_band(bit_rshift(int, 16), 0xFF),
-		bit_band(bit_rshift(int, 8), 0xFF),
-		bit_band(int, 0xFF)
-	)
+	return self:write8(bit_rshift(int, 16), bit_rshift(int, 8), int)
 end
 --[[@
 	@name write32
@@ -89,12 +90,7 @@ end
 ]]
 byteArray.write32 = function(self, long)
 	-- (long >> 24) & 0xFF, (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
-	return self:write8(
-		bit_band(bit_rshift(long, 24), 0xFF),
-		bit_band(bit_rshift(long, 16), 0xFF),
-		bit_band(bit_rshift(long, 8), 0xFF),
-		bit_band(long, 0xFF)
-	)
+	return self:write8(bit_rshift(long, 24), bit_rshift(long, 16), bit_rshift(long, 8),	long)
 end
 --[[@
 	@name writeUTF
@@ -107,8 +103,10 @@ byteArray.writeUTF = function(self, utf)
 		utf = string_getBytes(utf)
 	end
 
-	self:write16(#utf)
+	local utfLen = #utf
+	self:write16(utfLen)
 	table_add(self.stack, utf)
+	self.stackLen = self.stackLen + utfLen
 
 	return self
 end
@@ -123,8 +121,10 @@ byteArray.writeBigUTF = function(self, bigUtf)
 		bigUtf = string_getBytes(bigUtf)
 	end
 
-	self:write24(#bigUtf)
+	local bigUtfLen = #bigUtf
+	self:write24(bigUtfLen)
 	table_add(self.stack, bigUtf)
+	self.stackLen = self.stackLen + bigUtfLen
 
 	return self
 end
@@ -150,6 +150,8 @@ byteArray.read8 = function(self, quantity)
 	self.stack = table_arrayRange(self.stack, quantity + 1)
 
 	local sLen = #byteStack
+	self.stackLen = self.stackLen - sLen
+
 	local fillVal = quantity - sLen
 	if fillVal > 0 then
 		for i = 1, fillVal do

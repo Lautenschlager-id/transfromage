@@ -30,7 +30,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 ## Tree
 
 - [Client](Client.md)
-	- [new](Client.md#clientnew--tfmid-token-)
+	- [new](Client.md#clientnew--tfmid-token-hasspecialrole-updatesettings-)
 	- [addFriend](Client.md#clientaddfriend--playername-)
 	- [blacklistPlayer](Client.md#clientblacklistplayer--playername-)
 	- [changeWhisperState](Client.md#clientchangewhisperstate--message-state-)
@@ -88,6 +88,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [role](Enum.md#role-int)
 	- [roomMode](Enum.md#roommode-int)
 	- [setting](Enum.md#setting-table)
+	- [url](Enum.md#url-string)
 	- [whisperState](Enum.md#whisperstate-int)
 - [Events](Events.md)
 	- [blackList](Events.md#blacklist--blacklist-)

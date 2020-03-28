@@ -1,6 +1,26 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v4.0.0 - 28/03/2020
+## News
+- Added the internal function _client.stopHandlingPlayers_.
+- Allow UserBots to use the API.
+- Two new fields in _client_ object: _\_hasSpecialRole_ and _\_updateSettings_.
+- Two new parameters in _client.new_: _hasSpecialRole_ and _updateSettings_.
+- Update IP and Ports with the endpoint content.
+- Improve byteArray's performance.
+- New enum _url_.
+
+## Changes
+- _client._who_fingerprint_ has been renamed to _client._whoFingerprint_.
+- _client._who_list_ has been renamed to _client._whoList_.
+- _client._process_xml_ has been renamed to _client._processXml_.
+- _client._handle_players_ has been renamed to _client._handlePlayers.
+- _encode.lua_ is now a class.
+	- _encode.getPasswordHash_ is a static function.
+	- _encode.btea_ and _encode.xorCipher_ are now class functions.
+	- _setPacketKeys_ has been removed.
+
 ## v3.0.0 - 22/02/2020
 ## News
 - New event _connectionInfo ( playerData, friendList, soulmate, blackList, tribeData )_.
