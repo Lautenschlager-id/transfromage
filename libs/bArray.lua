@@ -14,6 +14,7 @@ local table_writeBytes = table.writeBytes
 ------------------
 
 local modulo256 = function(n)
+	-- It could be n & 0xFF but, in Lua, modulo is slightly more performatic
 	return n % 256
 end
 
@@ -69,10 +70,7 @@ end
 ]]
 byteArray.write16 = function(self, short)
 	-- (long >> 8) & 0xFF, long & 0xFF
-	return self:write8(
-		bit_band(bit_rshift(short, 8), 0xFF),
-		bit_band(short, 0xFF)
-	)
+	return self:write8(bit_rshift(short, 8), short)
 end
 --[[@
 	@name write24
@@ -82,11 +80,7 @@ end
 ]]
 byteArray.write24 = function(self, int)
 	-- (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
-	return self:write8(
-		bit_band(bit_rshift(int, 16), 0xFF),
-		bit_band(bit_rshift(int, 8), 0xFF),
-		bit_band(int, 0xFF)
-	)
+	return self:write8(bit_rshift(int, 16), bit_rshift(int, 8), int)
 end
 --[[@
 	@name write32
@@ -96,12 +90,7 @@ end
 ]]
 byteArray.write32 = function(self, long)
 	-- (long >> 24) & 0xFF, (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
-	return self:write8(
-		bit_band(bit_rshift(long, 24), 0xFF),
-		bit_band(bit_rshift(long, 16), 0xFF),
-		bit_band(bit_rshift(long, 8), 0xFF),
-		bit_band(long, 0xFF)
-	)
+	return self:write8(bit_rshift(long, 24), bit_rshift(long, 16), bit_rshift(long, 8),	long)
 end
 --[[@
 	@name writeUTF

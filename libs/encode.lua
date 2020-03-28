@@ -91,8 +91,7 @@ do
 		return bitwise_bxor(
 			bitwise_bxor(bitwise_rshift(z, 5), bitwise_lshift(y, 2))
 			+ bitwise_bxor(bitwise_rshift(y, 3), bitwise_lshift(z, 4))
-			,
-			bitwise_bxor(sum, y)
+			, bitwise_bxor(sum, y)
 			+ bitwise_bxor(identificationKeys[bitwise_bxor(bitwise_band(p, 3), e) + 1], z)
 		)
 	end
@@ -177,7 +176,7 @@ end
 --[[@
 	@name xorCipher
 	@desc Encodes a packet using the XOR cipher.
-	@desc If hasSpecialRole is true, then the raw packet is returned.
+	@desc If @self.hasSpecialRole is true, then the raw packet is returned.
 	@param packet<byteArray> A Byte Array object to be encoded.
 	@param fingerprint<int> The fingerprint of the encode.
 	@returns byteArray The encoded Byte Array object.
@@ -191,7 +190,7 @@ encode.xorCipher = function(self, packet, fingerprint)
 
 	for i = 1, packet.stackLen do
 		fingerprint = fingerprint + 1
-		stack[i] = bit_band(bit_bxor(packet.stack[i], self.messageKeys[(fingerprint % 20) + 1]), 0xFF)
+		stack[i] = bit_bxor(packet.stack[i], self.messageKeys[(fingerprint % 20) + 1]) % 256
 	end
 
 	return byteArray:new(stack)
