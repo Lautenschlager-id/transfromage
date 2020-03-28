@@ -65,6 +65,8 @@ local meta = {
 	@desc The function @see start is automatically called if you pass its arguments.
 	@param tfmId?<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token?<string> The API Endpoint token to get access to the authentication keys.
+	@param hasSpecialRole?<boolean> Whether the bot has the game's special role bot or not.
+	@param updateSettings?<boolean> Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
 	@returns client The new Client object.
 	@struct {
 		playerName = "", -- The nickname of the account that is attached to this instance, if there's any.
@@ -78,20 +80,24 @@ local meta = {
 		_mainLoop = { }, -- (userdata) A timer that retrieves the packets received from the game server.
 		_bulleLoop = { }, -- (userdata) A timer that retrieves the packets received from the room server.
 		_receivedAuthkey = 0, -- Authorization key, used to connect the account.
+		_gameVersion = 0, -- The game version, used to connect the account.
 		_gameConnectionKey = "", -- The game connection key, used to connect the account.
 		_gameIdentificationKeys = { }, -- The game identification keys, used to connect the account.
 		_gameMsgKeys = { }, -- The game message keys, used to connect the account.
 		_connectionTime = 0, -- The timestamp of when the player logged in. It will be 0 if the account is not connected.
 		_isConnected = false, -- Whether the player is connected or not.
 		_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
-		_who_fingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
-		_who_list = { }, -- A list of chat names associated to their own fingerprints.
-		_process_xml = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+		_whoFingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
+		_whoList = { }, -- A list of chat names associated to their own fingerprints.
+		_processXML = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
 		_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
-		_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
+		_handlePlayers = false, -- Whether the player-related events should be handled or not. (Set as false to save process)
+		_encode = { }, -- The encode object, used to encryption.
+		_hasSpecialRole = false, -- Whether the bot has the game's special role bot or not.
+		_updateSettings = false -- Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
 	}
 ]]
-client.new = function(self, tfmId, token, hasSpecialRole, useEndpointOnSpecialRole)
+client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 	local eventEmitter = event:new()
 
 	local obj = setmetatable({
@@ -106,6 +112,7 @@ client.new = function(self, tfmId, token, hasSpecialRole, useEndpointOnSpecialRo
 		_mainLoop = nil,
 		_bulleLoop = nil,
 		_receivedAuthkey = 0,
+		_gameVersion = 666,
 		_gameConnectionKey = "",
 		_gameAuthkey = 0,
 		_gameIdentificationKeys = { },
@@ -113,14 +120,14 @@ client.new = function(self, tfmId, token, hasSpecialRole, useEndpointOnSpecialRo
 		_connectionTime = 0,
 		_isConnected = false,
 		_hbTimer = nil,
-		_who_fingerprint = 0,
-		_who_list = { },
-		_process_xml = false,
+		_whoFingerprint = 0,
+		_whoList = { },
+		_processXML = false,
 		_cafeCachedMessages = { },
-		_handle_players = false,
+		_handlePlayers = false,
 		_encode = encode:new(hasSpecialRole),
 		_hasSpecialRole = hasSpecialRole,
-		_useEndpointOnSpecialRole = useEndpointOnSpecialRole
+		_updateSettings = updateSettings
 	}, self)
 
 	if tfmId and token then
@@ -318,7 +325,7 @@ tribulleListener = {
 			data[i] = string_toNickname(packet:readUTF(), true)
 		end
 
-		local chatName = self._who_list[fingerprint]
+		local chatName = self._whoList[fingerprint]
 		--[[@
 			@name chatWho
 			@desc Triggered when the /who command is loaded in a chat.
@@ -326,7 +333,7 @@ tribulleListener = {
 			@param data<table> An array with the nicknames of the current users in the chat.
 		]]
 		self.event:emit("chatWho", chatName, data)
-		self._who_list[fingerprint] = nil
+		self._whoList[fingerprint] = nil
 	end,
 	[64] = function(self, packet, connection, tribulleId) -- #Chat Message
 		local playerName, community = packet:readUTF(), packet:read32()
@@ -430,7 +437,7 @@ tribulleListener = {
 oldPacketListener = {
 	[8] = {
 		[5] = function(self, data, connection, oldIdentifiers) -- Updates player dead state [true]
-			if not self._handle_players or self.playerList.count == 0 then return end
+			if not self._handlePlayers or self.playerList.count == 0 then return end
 
 			local playerId, score = data[1], data[2]
 			if self.playerList[playerId] then
@@ -478,7 +485,7 @@ oldPacketListener = {
 			end
 		end,
 		[7] = function(self, data, connection, oldIdentifiers) -- Removes player
-			if not self._handle_players or self.playerList.count == 0 then return end
+			if not self._handlePlayers or self.playerList.count == 0 then return end
 
 			local playerId = tonumber(data[1])
 			if self.playerList[playerId] then
@@ -567,7 +574,7 @@ packetListener = {
 	},
 	[4] = {
 		[4] = function(self, packet, connection, identifiers) -- Update player movement
-			if not self._handle_players or self.playerList.count == 0 then return end
+			if not self._handlePlayers or self.playerList.count == 0 then return end
 
 			local playerId = packet:read32()
 			if self.playerList[playerId] then
@@ -611,7 +618,7 @@ packetListener = {
 			packet:read16() -- ?
 
 			local xml = packet:read8(packet:read16())
-			if self._process_xml then
+			if self._processXML then
 				xml = table_writeBytes(xml)
 				if xml ~= '' then
 					map.xml = zlibDecompress(xml, 1)
@@ -624,7 +631,7 @@ packetListener = {
 			--[[@
 				@name newGame
 				@desc Triggered when a map is loaded.
-				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_process_xml` as false to avoid processing it.
+				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_processXML` as false to avoid processing it.
 				@param map<table> The new map data.
 				@struct @map {
 					code = 0, -- The map code.
@@ -701,7 +708,7 @@ packetListener = {
 	},
 	[8] = {
 		[1] = function(self, packet, connection, identifiers) -- Emote played
-			if not self._handle_players or self.playerList.count == 0 then return end
+			if not self._handlePlayers or self.playerList.count == 0 then return end
 
 			local playerId = packet:read32()
 			if self.playerList[playerId] then
@@ -755,7 +762,7 @@ packetListener = {
 			end
 		end,
 		[6] = function(self, packet, connection, identifiers) -- Updates player win state
-			if not self._handle_players or self.playerList.count == 0 then return end
+			if not self._handlePlayers or self.playerList.count == 0 then return end
 
 			packet:readBool() -- ?
 
@@ -813,7 +820,7 @@ packetListener = {
 			handlePlayerField(self, packet, "score", nil, "read16")
 		end,
 		[11] = function(self, packet, connection, identifiers) -- Updates blue/ping shaman
-			if not self._handle_players or self.playerList.count == 0 then return end
+			if not self._handlePlayers or self.playerList.count == 0 then return end
 
 			local shaman = { }
 			shaman[1] = packet:read32() -- Blue
@@ -1376,7 +1383,7 @@ packetListener = {
 	},
 	[144] = {
 		[1] = function(self, packet, connection, identifiers) -- Set player list
-			if not self._handle_players then return end
+			if not self._handlePlayers then return end
 
 			self.playerList.count = packet:read16() -- Total mice in the room
 
@@ -1428,7 +1435,7 @@ packetListener = {
 			self.event:emit("refreshPlayerList", self.playerList)
 		end,
 		[2] = function(self, packet, connection, identifiers, _pos) -- Updates player data
-			if not self._handle_players or (not _pos and self.playerList.count == 0) then return end
+			if not self._handlePlayers or (not _pos and self.playerList.count == 0) then return end
 
 			local data, color = { }
 			data.playerName = packet:readUTF()
@@ -1698,7 +1705,7 @@ end
 	@param token<string> The developer's token.
 ]]
 getKeys = function(self, tfmId, token)
-	if not self._hasSpecialRole or self._useEndpointOnSpecialRole then
+	if not self._hasSpecialRole or self._updateSettings then
 		-- Uses requires because it's used only once before it gets deleted.
 		local _, result = http_request("GET", string_format(enum.url.authKeys, tfmId, token))
 		local rawresult = result
@@ -1713,7 +1720,7 @@ getKeys = function(self, tfmId, token)
 				enum.setting.mainIp = result.ip
 				enum.setting.port = result.ports
 				if not self._hasSpecialRole then
-					enum.setting.gameVersion = result.version
+					self._gameVersion = result.version
 					self._gameConnectionKey = result.connection_key
 					self._gameAuthkey = result.auth_key
 					self._encode.identificationKeys = result.identification_keys
@@ -1779,7 +1786,7 @@ end
 handlePlayerField = function(self, packet, fieldName, eventName, methodName, fieldValue, sendValue)
 	-- This method would be a table with settings, but since it's created many times I have decided
 	-- to keep it as parameters.
-	if not self._handle_players or self.playerList.count == 0 then return end
+	if not self._handlePlayers or self.playerList.count == 0 then return end
 
 	local playerId = packet:read32()
 	if self.playerList[playerId] then
@@ -1881,7 +1888,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	self.main:connect(enum.setting.mainIp)
 
 	self.main.event:once("_socketConnection", function()
-		local packet = byteArray:new():write16(enum.setting.gameVersion)
+		local packet = byteArray:new():write16(self._gameVersion)
 		if not self._hasSpecialRole then
 			packet:writeUTF(self._gameConnectionKey)
 		end
@@ -1980,11 +1987,11 @@ end
 ]]
 client.handlePlayers = function(self, handle)
 	if handle == nil then
-		self._handle_players = not self._handle_players
+		self._handlePlayers = not self._handlePlayers
 	else
-		self._handle_players = handle
+		self._handlePlayers = handle
 	end
-	return self._handle_players
+	return self._handlePlayers
 end
 --[[@
 	@name processXml
@@ -1995,11 +2002,11 @@ end
 ]]
 client.processXml = function(self, process)
 	if process == nil then
-		self._process_xml = not self._process_xml
+		self._processXML = not self._processXML
 	else
-		self._process_xml = process
+		self._processXML = process
 	end
-	return self._process_xml
+	return self._processXML
 end
 -- Connection
 do
@@ -2155,11 +2162,11 @@ end
 	@param chatName<string> The name of the chat.
 ]]
 client.chatWho = function(self, chatName)
-	self._who_fingerprint = (self._who_fingerprint + 1) % 500
-	self._who_list[self._who_fingerprint] = chatName
+	self._whoFingerprint = (self._whoFingerprint + 1) % 500
+	self._whoList[self._whoFingerprint] = chatName
 
 	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(58):write32(self._who_fingerprint):writeUTF(chatName),
+		byteArray:new():write16(58):write32(self._whoFingerprint):writeUTF(chatName),
 		self.main.packetID))
 end
 -- Tribe

@@ -4,6 +4,8 @@
 >| :-: | :-: | :-: | - |
 >| tfmId | `string`, `int` | ✕ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |
 >| token | `string` | ✕ | The API Endpoint token to get access to the authentication keys. |
+>| hasSpecialRole | `boolean` | ✕ | Whether the bot has the game's special role bot or not. |
+>| updateSettings | `boolean` | ✕ | Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true. |
 >
 >Creates a new instance of Client. Alias: `client()`.<br>
 >The function [start](Client.md#clientstart--tfmid-token-) is automatically called if you pass its arguments.
@@ -35,11 +37,14 @@
 >	_connectionTime = 0, -- The timestamp of when the account logged in. It will be 0 if the account is not connected.
 >	_isConnected = false, -- Whether the account is connected or not.
 >	_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
->	_who_fingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
->	_who_list = { }, -- A list of chat names associated to their own fingerprints.
->	_process_xml = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+>	_whoFingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
+>	_whoList = { }, -- A list of chat names associated to their own fingerprints.
+>	_processXML = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
 >	_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
->	_handle_players = false -- Whether the player-related events should be handled or not. (Set as false to save process)
+>	_handlePlayers = false, -- Whether the player-related events should be handled or not. (Set as false to save process)
+>	_encode = { }, -- The encode object, used to encryption.
+>	_hasSpecialRole = false, -- Whether the bot has the game's special role bot or not.
+>	_updateSettings = false -- Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
 >}
 >```
 ---

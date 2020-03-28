@@ -2,20 +2,19 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v4.0.0 - Unreleased
-## To document
-- add setting gameVersion
-- client.new \_hasSpecialRole \_useEndpointOnSpecialRole (param, self)
-- remove client.\_gameVersion
-- make encode a class
-- remove setPacketKeys
-- client.\_encode, xorCipher
-- rename_snake_toCamel in client
-
 ## News
 - Allow UserBots to use the API.
-- Make IP and Ports be set by the endpoint.
+- Two new fields in _client_ object: _\_hasSpecialRole_ and _\_updateSettings_.
+- Two new parameters in _client.new_: _hasSpecialRole_ and _updateSettings_.
+- Update IP and Ports with the endpoint content.
 - Improve byteArray's performance.
 - New enum _url_.
+
+## Changes
+- _encode.lua_ is now a class.
+	- _encode.getPasswordHash_ is a static function.
+	- _encode.btea_ and _encode.xorCipher_ are now class functions.
+	- _setPacketKeys_ has been removed.
 
 ## v3.0.0 - 22/02/2020
 ## News
@@ -359,9 +358,9 @@ end
 
 ## v0.8.1 - 04/04/2019
 ### Fixes
-- Due to memory consumption the variable `_process_xml` is now exposed so you can enable or disable the XML processes. Default value is true. Set it as false if you are not using the event _newGame_.
+- Due to memory consumption the variable `_processXML` is now exposed so you can enable or disable the XML processes. Default value is true. Set it as false if you are not using the event _newGame_.
 ```Lua
-client._process_xml = false
+client._processXML = false
 ```
 
 ## v0.8.0 - 04/04/2019

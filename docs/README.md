@@ -30,7 +30,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 ## Tree
 
 - [Client](Client.md)
-	- [new](Client.md#clientnew--tfmid-token-)
+	- [new](Client.md#clientnew--tfmid-token-hasspecialrole-updatesettings-)
 	- [addFriend](Client.md#clientaddfriend--playername-)
 	- [blacklistPlayer](Client.md#clientblacklistplayer--playername-)
 	- [changeWhisperState](Client.md#clientchangewhisperstate--message-state-)

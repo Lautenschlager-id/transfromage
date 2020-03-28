@@ -368,9 +368,8 @@ enum.roomMode = enum {
 	@type *
 ]]
 enum.setting = {
-	gameVersion = 666,
-	mainIp      = "51.75.130.180",
-	port        = { 11801, 12801, 13801, 14801 }
+	mainIp = "51.75.130.180",
+	port   = { 11801, 12801, 13801, 14801 }
 }
 --[[@
 	@name url

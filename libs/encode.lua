@@ -18,6 +18,17 @@ local table_writeBytes = table.writeBytes
 
 local encode = table_setNewClass()
 
+--[[@
+	@name new
+	@desc Creates a new instance of Encode. Alias: `encode()`.
+	@param hasSpecialRole?<boolean> Whether the bot has the game's special role bot or not.
+	@returns encode The new Encode object.
+	@struct {
+		hasSpecialRole = false, -- Whether the bot has the game's special role bot or not.
+		identificationKeys = { }, -- The identification keys of the SWF/endpoint.
+		messageKeys = { } -- The message keys of the SWF/endpoint.
+	}
+]]
 encode.new = function(self, hasSpecialRole)
 	return setmetatable({
 		hasSpecialRole = hasSpecialRole,
@@ -70,6 +81,7 @@ do
 	end
 end
 
+local xxtea
 do
 	local DELTA, LIM = 0x9E3779B9, 0xFFFFFFFF
 
@@ -88,6 +100,7 @@ do
 	--[[@
 		@name xxtea
 		@desc XXTEA partial 64bits encoder.
+		@param self<encode> An Encode object.
 		@param data<table> A table with data to be encoded.
 		@returns table The encoded data.
 	]]
@@ -126,7 +139,6 @@ do
 		return data
 	end
 end
-
 --[[@
 	@name btea
 	@desc Encodes a packet with the BTEA block cipher.
@@ -162,10 +174,10 @@ encode.btea = function(self, packet)
 
 	return packet
 end
-
 --[[@
 	@name xorCipher
 	@desc Encodes a packet using the XOR cipher.
+	@desc If hasSpecialRole is true, then the raw packet is returned.
 	@param packet<byteArray> A Byte Array object to be encoded.
 	@param fingerprint<int> The fingerprint of the encode.
 	@returns byteArray The encoded Byte Array object.

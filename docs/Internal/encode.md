@@ -1,8 +1,24 @@
-# Functions
-Functions to encode data.
+# Encode
+Represents encoding functions.
 
 ---
->### btea ( packet )
+# Static Functions
+>### encode.getPasswordHash ( password )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| password | `string` | ✔ | The account's password. |
+>
+>Encrypts the account's password.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `string` | The encrypted password. |
+>
+
+# Functions
+>### encode:btea ( packet )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| packet | `byteArray` | ✔ | A Byte Array object to be encoded. |
@@ -16,36 +32,14 @@ Functions to encode data.
 >| `byteArray` | The encoded Byte Array object. |
 >
 ---
->### getPasswordHash ( password )
->| Parameter | Type | Required | Description |
->| :-: | :-: | :-: | - |
->| password | `string` | ✔ | The account's password. |
->
->Encrypts the account's password.
->
->**Returns**:
->
->| Type | Description |
->| :-: | - |
->| `string` | The encrypted password. |
->
----
->### setPacketKeys ( idKeys, msgKeys )
->| Parameter | Type | Required | Description |
->| :-: | :-: | :-: | - |
->| idKeys | `table` | ✔ | The identification keys of the SWF/endpoint. |
->| msgKeys | `table` | ✔ | The message keys of the SWF/endpoint. |
->
->Sets the packet keys.
->
----
->### xorCipher ( packet, fingerprint )
+>### encode:xorCipher ( packet, fingerprint )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| packet | `byteArray` | ✔ | A Byte Array object to be encoded. |
 >| fingerprint | `int` | ✔ | The fingerprint of the encode. |
 >
->Encodes a packet using the XOR cipher.
+>Encodes a packet using the XOR cipher.<br>
+>If hasSpecialRole is true, then the raw packet is returned.
 >
 >**Returns**:
 >
@@ -55,9 +49,10 @@ Functions to encode data.
 >
 
 # Private Functions
->### xxtea ( data )
+>### xxtea ( self, data )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
+>| self | `encode` | ✔ | An Encode object. |
 >| data | `table` | ✔ | A table with data to be encoded. |
 >
 >XXTEA partial 64bits encoder.

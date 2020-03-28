@@ -1,5 +1,5 @@
 # Bitwise
-Represents some 64bits-integer bitwise functions.
+Represents 64bits-integer bitwise functions.
 
 ---
 >### bitwise.band ( x, y )
