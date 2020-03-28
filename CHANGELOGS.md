@@ -11,6 +11,10 @@
 - New enum _url_.
 
 ## Changes
+- _client._who_fingerprint_ has been renamed to _client._whoFingerprint_.
+- _client._who_list_ has been renamed to _client._whoList_.
+- _client._process_xml_ has been renamed to _client._processXml_.
+- _client._handle_players_ has been renamed to _client._handlePlayers.
 - _encode.lua_ is now a class.
 	- _encode.getPasswordHash_ is a static function.
 	- _encode.btea_ and _encode.xorCipher_ are now class functions.
@@ -358,9 +362,9 @@ end
 
 ## v0.8.1 - 04/04/2019
 ### Fixes
-- Due to memory consumption the variable `_processXML` is now exposed so you can enable or disable the XML processes. Default value is true. Set it as false if you are not using the event _newGame_.
+- Due to memory consumption the variable `_process_xml` is now exposed so you can enable or disable the XML processes. Default value is true. Set it as false if you are not using the event _newGame_.
 ```Lua
-client._processXML = false
+client._process_xml = false
 ```
 
 ## v0.8.0 - 04/04/2019

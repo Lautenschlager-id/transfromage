@@ -376,7 +376,7 @@ end)
 >| map | `table` | The new map data. |
 >
 >Triggered when a map is loaded.<br>
->![/!\\](https://i.imgur.com/HQ188PK.png) This event may increase the memory consumption significantly due to the XML processes. Set the variable `_processXML` as false to avoid processing it.
+>![/!\\](https://i.imgur.com/HQ188PK.png) This event may increase the memory consumption significantly due to the XML processes. Set the variable `_processXml` as false to avoid processing it.
 >
 >**@map structure**:
 >```Lua

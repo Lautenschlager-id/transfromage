@@ -18,7 +18,8 @@ Private functions were created in the Client class because their use could compr
 >| tfmId | `string`, `int` | ✔ | The developer's transformice id. |
 >| token | `string` | ✔ | The developer's token. |
 >
->Gets the connection keys in the API endpoint.
+>Gets the connection keys and settings in the API endpoint.<br>
+>If hasSpecialRole is true, the endpoint is only going to be requested if updateSettings is also true, and only the IP/Ports are going to be updated.
 >
 ---
 >### handleFriendData ( packet )

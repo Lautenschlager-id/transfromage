@@ -89,7 +89,7 @@ local meta = {
 		_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
 		_whoFingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
 		_whoList = { }, -- A list of chat names associated to their own fingerprints.
-		_processXML = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+		_processXml = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
 		_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
 		_handlePlayers = false, -- Whether the player-related events should be handled or not. (Set as false to save process)
 		_encode = { }, -- The encode object, used to encryption.
@@ -122,7 +122,7 @@ client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 		_hbTimer = nil,
 		_whoFingerprint = 0,
 		_whoList = { },
-		_processXML = false,
+		_processXml = false,
 		_cafeCachedMessages = { },
 		_handlePlayers = false,
 		_encode = encode:new(hasSpecialRole),
@@ -618,7 +618,7 @@ packetListener = {
 			packet:read16() -- ?
 
 			local xml = packet:read8(packet:read16())
-			if self._processXML then
+			if self._processXml then
 				xml = table_writeBytes(xml)
 				if xml ~= '' then
 					map.xml = zlibDecompress(xml, 1)
@@ -631,7 +631,7 @@ packetListener = {
 			--[[@
 				@name newGame
 				@desc Triggered when a map is loaded.
-				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_processXML` as false to avoid processing it.
+				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_processXml` as false to avoid processing it.
 				@param map<table> The new map data.
 				@struct @map {
 					code = 0, -- The map code.
@@ -1699,7 +1699,8 @@ receive = function(self, connectionName)
 end
 --[[@
 	@name getKeys
-	@desc Gets the connection keys in the API endpoint.
+	@desc Gets the connection keys and settings in the API endpoint.<br>
+	@desc If hasSpecialRole is true, the endpoint is only going to be requested if updateSettings is also true, and only the IP/Ports are going to be updated.
 	@param self<client> A Client object.
 	@param tfmId<string,int> The developer's transformice id.
 	@param token<string> The developer's token.
@@ -2002,11 +2003,11 @@ end
 ]]
 client.processXml = function(self, process)
 	if process == nil then
-		self._processXML = not self._processXML
+		self._processXml = not self._processXml
 	else
-		self._processXML = process
+		self._processXml = process
 	end
-	return self._processXML
+	return self._processXml
 end
 -- Connection
 do

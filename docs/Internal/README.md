@@ -60,7 +60,7 @@ Folder created specially for contributors. Learn more in [CONTRIBUTING](../../CO
 	- [btea](encode.md#encodebtea--packet-)
 	- [getPasswordHash](encode.md#encodegetpasswordhash--password-)
 	- [xorCipher](encode.md#encodexorcipher--packet-fingerprint-)
-	- [xxtea](encode.md#xxtea--data-)
+	- [xxtea](encode.md#xxtea--self-data-)
 - [enum](enum.md)
 	- [\_exists](enum.md#enum_exists--enumeration-value-)
 	- [\_validate](enum.md#enum_validate--enumeration-default-value-errormsg-)

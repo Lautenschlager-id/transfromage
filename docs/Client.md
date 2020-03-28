@@ -1,5 +1,5 @@
 # API Functions
->### client:new ( tfmId, token )
+>### client:new ( tfmId, token, hasSpecialRole, updateSettings )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| tfmId | `string`, `int` | ✕ | The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat. |
@@ -39,7 +39,7 @@
 >	_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
 >	_whoFingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
 >	_whoList = { }, -- A list of chat names associated to their own fingerprints.
->	_processXML = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
+>	_processXml = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
 >	_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
 >	_handlePlayers = false, -- Whether the player-related events should be handled or not. (Set as false to save process)
 >	_encode = { }, -- The encode object, used to encryption.
