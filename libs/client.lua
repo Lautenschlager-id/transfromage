@@ -34,6 +34,7 @@ local timer_setTimeout = timer.setTimeout
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
 local handlePlayerField, handleFriendData
+local stopHandlingPlayers
 
 local client = table_setNewClass()
 
@@ -437,7 +438,7 @@ tribulleListener = {
 oldPacketListener = {
 	[8] = {
 		[5] = function(self, data, connection, oldIdentifiers) -- Updates player dead state [true]
-			if not self._handlePlayers or self.playerList.count == 0 then return end
+			if stopHandlingPlayers(self) then return end
 
 			local playerId, score = data[1], data[2]
 			if self.playerList[playerId] then
@@ -485,7 +486,7 @@ oldPacketListener = {
 			end
 		end,
 		[7] = function(self, data, connection, oldIdentifiers) -- Removes player
-			if not self._handlePlayers or self.playerList.count == 0 then return end
+			if stopHandlingPlayers(self) then return end
 
 			local playerId = tonumber(data[1])
 			if self.playerList[playerId] then
@@ -574,7 +575,7 @@ packetListener = {
 	},
 	[4] = {
 		[4] = function(self, packet, connection, identifiers) -- Update player movement
-			if not self._handlePlayers or self.playerList.count == 0 then return end
+			if stopHandlingPlayers(self) then return end
 
 			local playerId = packet:read32()
 			if self.playerList[playerId] then
@@ -708,7 +709,7 @@ packetListener = {
 	},
 	[8] = {
 		[1] = function(self, packet, connection, identifiers) -- Emote played
-			if not self._handlePlayers or self.playerList.count == 0 then return end
+			if stopHandlingPlayers(self) then return end
 
 			local playerId = packet:read32()
 			if self.playerList[playerId] then
@@ -762,7 +763,7 @@ packetListener = {
 			end
 		end,
 		[6] = function(self, packet, connection, identifiers) -- Updates player win state
-			if not self._handlePlayers or self.playerList.count == 0 then return end
+			if stopHandlingPlayers(self) then return end
 
 			packet:readBool() -- ?
 
@@ -820,7 +821,7 @@ packetListener = {
 			handlePlayerField(self, packet, "score", nil, "read16")
 		end,
 		[11] = function(self, packet, connection, identifiers) -- Updates blue/ping shaman
-			if not self._handlePlayers or self.playerList.count == 0 then return end
+			if stopHandlingPlayers(self) then return end
 
 			local shaman = { }
 			shaman[1] = packet:read32() -- Blue
@@ -1700,7 +1701,7 @@ end
 --[[@
 	@name getKeys
 	@desc Gets the connection keys and settings in the API endpoint.<br>
-	@desc If hasSpecialRole is true, the endpoint is only going to be requested if updateSettings is also true, and only the IP/Ports are going to be updated.
+	@desc If @self.hasSpecialRole is true, the endpoint is only going to be requested if updateSettings is also true, and only the IP/Ports are going to be updated.
 	@param self<client> A Client object.
 	@param tfmId<string,int> The developer's transformice id.
 	@param token<string> The developer's token.
@@ -1787,7 +1788,7 @@ end
 handlePlayerField = function(self, packet, fieldName, eventName, methodName, fieldValue, sendValue)
 	-- This method would be a table with settings, but since it's created many times I have decided
 	-- to keep it as parameters.
-	if not self._handlePlayers or self.playerList.count == 0 then return end
+	if stopHandlingPlayers(self) then return end
 
 	local playerId = packet:read32()
 	if self.playerList[playerId] then
@@ -1872,6 +1873,15 @@ handleFriendData = function(packet)
 	player.roomName = packet:readUTF()
 	player.lastConnection = packet:read32()
 	return player
+end
+--[[@
+	@name stopHandlingPlayers
+	@desc Checks whether the player handler should NOT be executed.
+	@param self<client> A Client object.
+	@returns boolean Whether player handling is disabled or if there are not enough players in the room.
+]]
+stopHandlingPlayers = function(self)
+	return not self._handlePlayers or self.playerList.count == 0
 end
 
 --[[@

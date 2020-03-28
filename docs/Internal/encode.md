@@ -39,7 +39,7 @@ Represents encoding functions.
 >| fingerprint | `int` | ✔ | The fingerprint of the encode. |
 >
 >Encodes a packet using the XOR cipher.<br>
->If hasSpecialRole is true, then the raw packet is returned.
+>If @self.hasSpecialRole is true, then the raw packet is returned.
 >
 >**Returns**:
 >

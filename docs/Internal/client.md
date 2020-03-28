@@ -19,7 +19,7 @@ Private functions were created in the Client class because their use could compr
 >| token | `string` | ✔ | The developer's token. |
 >
 >Gets the connection keys and settings in the API endpoint.<br>
->If hasSpecialRole is true, the endpoint is only going to be requested if updateSettings is also true, and only the IP/Ports are going to be updated.
+>If @self.hasSpecialRole is true, the endpoint is only going to be requested if updateSettings is also true, and only the IP/Ports are going to be updated.
 >
 ---
 >### handleFriendData ( packet )
@@ -89,4 +89,18 @@ Private functions were created in the Client class because their use could compr
 >| self | `client` | ✔ | A Client object. |
 >
 >Sends server heartbeats/pings to the servers.
+>
+---
+>### stopHandlingPlayers ( self )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| self | `client` | ✔ | A Client object. |
+>
+>Checks whether the player handler should NOT be executed.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean` | Whether player handling is disabled or if there are not enough players in the room. |
 >

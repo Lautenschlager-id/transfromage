@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v4.0.0 - Unreleased
 ## News
+- Added the internal function _client.stopHandlingPlayers_.
 - Allow UserBots to use the API.
 - Two new fields in _client_ object: _\_hasSpecialRole_ and _\_updateSettings_.
 - Two new parameters in _client.new_: _hasSpecialRole_ and _updateSettings_.
