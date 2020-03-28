@@ -1,7 +1,7 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
-## v4.0.0 - Unreleased
+## v4.0.0 - 28/03/2020
 ## News
 - Added the internal function _client.stopHandlingPlayers_.
 - Allow UserBots to use the API.
