@@ -1,6 +1,13 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v -
+## News
+- New event _playerEmoticon ( playerData, emoticon )_.
+
+## Changes
+- Errors will not be thrown anymore when getKey cannot retrieve data from the endpoint if the account is a bot.
+
 ## v4.0.0 - 28/03/2020
 ## News
 - Added the internal function _client.stopHandlingPlayers_.

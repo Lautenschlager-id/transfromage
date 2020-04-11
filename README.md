@@ -12,7 +12,7 @@
 
 **Transfromage API** is a [documented API](docs) that allows developers to make bots for the aforementioned game.
 
-Join the **_[Fifty Shades of Lua](https://discord.gg/quch83R)_** [discord](https://discordapp.com/) server to discuss about this API and to receive special support.
+Join the **_[Fifty Shades of Lua](https://discord.gg/qmdryEB)_** [discord](https://discordapp.com/) server to discuss about this API and to receive special support.
 
 You can also check out **[Fromage API](https://github.com/Lautenschlager-id/Fromage)** for Atelier801's forum.
 
