@@ -431,8 +431,9 @@
 >| :-: | :-: | :-: | - |
 >| message | `string` | ✔ | The message. |
 >
->Changes the greeting message of the tribe
+>Changes the greeting message of the tribe.<br>
 >![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+>
 ---
 >### client:setTribeMemberRole ( memberName, roleId )
 >| Parameter | Type | Required | Description |
