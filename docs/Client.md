@@ -426,6 +426,14 @@
 >![/!\\](https://i.imgur.com/HQ188PK.png) This method must be called before the [start](Client.md#clientstart--tfmid-token-).
 >
 ---
+>### client:setTribeGreetingMessage ( message )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| message | `string` | ✔ | The message. |
+>
+>Changes the greeting message of the tribe
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or do not have permissions.
+---
 >### client:setTribeMemberRole ( memberName, roleId )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
