@@ -2257,6 +2257,16 @@ client.recruitPlayer = function(self, playerName)
 		byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
+    @name setTribeGreetingMessage
+    @desc Changes the greeting message of the tribe
+    @desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+    @param message<string> The message
+]]
+client.setTribeGreetingMessage = function(self, message)
+    self.main:send(enum.identifier.bulle, self._encode:xorCipher(
+        byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
+end
+--[[@
 	@name kickTribeMember
 	@desc Kicks a member from the tribe.
 	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
