@@ -1,6 +1,10 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v5.0.1 -
+## Changes
+- Switched _enum.roomMode.defilante_ with _enum.roomMode.music_.
+
 ## v5.0.0 - 29/04/2020
 ## News
 - Added method _client.setTribeGreetingMessage_

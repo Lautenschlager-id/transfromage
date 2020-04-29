@@ -253,8 +253,8 @@
 | vanilla | 03 |
 | survivor | 08 |
 | racing | 09 |
-| music | 10 |
-| defilante | 11 |
+| defilante | 10 |
+| music | 11 |
 | village | 16 |
 | module | 18 |
 
