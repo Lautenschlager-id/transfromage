@@ -46,5 +46,5 @@ Buffers control the packets queue from inside.
 >
 >| Type | Description |
 >| :-: | - |
->| `table` | An array of bytes.  |
+>| `table` | An array of bytes. |
 >

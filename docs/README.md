@@ -71,6 +71,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [sendTribeMessage](Client.md#clientsendtribemessage--message-)
 	- [sendWhisper](Client.md#clientsendwhisper--targetuser-message-)
 	- [setCommunity](Client.md#clientsetcommunity--community-)
+	- [setTribeGreetingMessage](Client.md#clientsettribegreetingmessage--message-)
 	- [setTribeMemberRole](Client.md#clientsettribememberrole--membername-roleid-)
 	- [start](Client.md#clientstart--tfmid-token-)
 	- [whitelistPlayer](Client.md#clientwhitelistplayer--playername-)

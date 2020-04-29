@@ -49,8 +49,8 @@
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| language | `enum.language` | ✔ | An enum from [language](Enum.md#language-string) that was downloaded before with [download](#download--language-). |
->| setPattern | `string` | ✔  | The pattern to match all translation line codes that will be edited. |
->| f | `function` | ✔  | The function to be executed over the current translation line. Receives (value, code). |
+>| setPattern | `string` | ✔ | The pattern to match all translation line codes that will be edited. |
+>| f | `function` | ✔ | The function to be executed over the current translation line. Receives (value, code). |
 >| isPlain | `boolean` | ✕ | Whether the pattern is plain (no pattern) or not. <sub>(default = false)</sub> |
 >
 >Hard-set the value of translation codes.

@@ -1,11 +1,13 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
-## v -
+## v5.0.0 - 29/04/2020
 ## News
+- Added method _client.setTribeGreetingMessage_
 - New event _playerEmoticon ( playerData, emoticon )_.
 
 ## Changes
+- PacketID is not set on login anymore.
 - Errors will not be thrown anymore when getKey cannot retrieve data from the endpoint if the account is a bot.
 
 ## v4.0.0 - 28/03/2020

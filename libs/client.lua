@@ -474,9 +474,9 @@ oldPacketListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -519,9 +519,9 @@ oldPacketListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -751,9 +751,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -799,9 +799,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -853,9 +853,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1030,9 +1030,9 @@ packetListener = {
 					isBlueShaman = false, -- Whether the player is the blue shaman.
 					isPinkShaman = false, -- Whether the player is the pink shaman.
 					x = 0, -- Player's X coordinate in the map.
-					y =  0, -- Player's X coordinate in the map.
+					y = 0, -- Player's X coordinate in the map.
 					vx = 0, -- Player's X speed in the map.
-					vy =  0, -- Player's Y speed in the map.
+					vy = 0, -- Player's Y speed in the map.
 					isDucking = false, -- Whether the player is ducking.
 					isJumping = false, -- Whether the player is jumping.
 					_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1469,9 +1469,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1572,9 +1572,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1614,9 +1614,9 @@ packetListener = {
 					isBlueShaman = false, -- Whether the player is the blue shaman.
 					isPinkShaman = false, -- Whether the player is the pink shaman.
 					x = 0, -- Player's X coordinate in the map.
-					y =  0, -- Player's X coordinate in the map.
+					y = 0, -- Player's X coordinate in the map.
 					vx = 0, -- Player's X speed in the map.
-					vy =  0, -- Player's Y speed in the map.
+					vy = 0, -- Player's Y speed in the map.
 					isDucking = false, -- Whether the player is ducking.
 					isJumping = false, -- Whether the player is jumping.
 					_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1880,9 +1880,9 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 				isBlueShaman = false, -- Whether the player is the blue shaman.
 				isPinkShaman = false, -- Whether the player is the pink shaman.
 				x = 0, -- Player's X coordinate in the map.
-				y =  0, -- Player's X coordinate in the map.
+				y = 0, -- Player's X coordinate in the map.
 				vx = 0, -- Player's X speed in the map.
-				vy =  0, -- Player's Y speed in the map.
+				vy = 0, -- Player's Y speed in the map.
 				isDucking = false, -- Whether the player is ducking.
 				isJumping = false, -- Whether the player is jumping.
 				_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -2256,16 +2256,6 @@ client.recruitPlayer = function(self, playerName)
 		byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
-    @name setTribeGreetingMessage
-    @desc Changes the greeting message of the tribe
-    @desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-    @param message<string> The message
-]]
-client.setTribeGreetingMessage = function(self, message)
-    self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-        byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
-end
---[[@
 	@name kickTribeMember
 	@desc Kicks a member from the tribe.
 	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
@@ -2286,6 +2276,16 @@ client.setTribeMemberRole = function(self, memberName, roleId)
 	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId),
 		self.main.packetID))
+end
+--[[@
+	@name setTribeGreetingMessage
+	@desc Changes the greeting message of the tribe.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+	@param message<string> The message.
+]]
+client.setTribeGreetingMessage = function(self, message)
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
+		byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
 end
 --[[@
 	@name loadLua
