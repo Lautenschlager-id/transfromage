@@ -474,9 +474,9 @@ oldPacketListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -519,9 +519,9 @@ oldPacketListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -724,7 +724,7 @@ packetListener = {
 					@name playerEmote
 					@desc Triggered when a player plays an emote.
 					@param playerData<table> The data of the player.
-					@param emote<enum.emote> The id of the emote played the player.
+					@param emote<enum.emote> The id of the emote played by the player.
 					@param flag?<string> The country code of the flag when @emote is flag.
 					@struct @playerData {
 						playerName = "", -- The nickname of the player.
@@ -751,15 +751,63 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
 					}
 				]]
 				self.event:emit("playerEmote", self.playerList[playerId], emote, flag)
+			end
+		end,
+		[5] = function(self, packet, connection, identifiers) -- Emoticon played
+			if stopHandlingPlayers(self) then return end
+
+			local playerId = packet:read32()
+			if self.playerList[playerId] then
+				local emoticon = packet:read8()
+
+				--[[@
+					@name playerEmoticon
+					@desc Triggered when a player plays an emoticon.
+					@param playerData<table> The data of the player.
+					@param emoticon<enum.emoticon> The id of the emoticon played by the player.
+					@struct @playerData {
+						playerName = "", -- The nickname of the player.
+						id = 0, -- The temporary id of the player during the section.
+						isShaman = false, -- Whether the player is shaman or not.
+						isDead = false, -- Whether the player is dead or alive.
+						score = 0, -- The current player's score.
+						hasCheese = false, -- Whether the player has cheese or not.
+						title = 0, -- The player's title id.
+						titleStars = 0, -- The number of stars the player's title has.
+						gender = 0, -- The player's gender. Enum in enum.gender.
+						look = "", -- The current outfit string code of the player.
+						mouseColor = 0, -- The color of the player. It is set to -1 if it's the default color.
+						shamanColor = 0, -- The color of the player as shaman.
+						nameColor = 0, -- The color of the nickname of the player.
+						isSouris = false, -- Whether the player is souris or not.
+						isVampire = false, -- Whether the player is vampire or not.
+						hasWon = false, -- Whether the player has entered the hole in the round or not.
+						winPosition = 0, -- The position where the player entered the hole. It is set to -1 if it has not won yet.
+						winTimeElapsed = 0, -- Time elapsed until the player enters the hole. It is set to -1 if it has not won yet.
+						isFacingRight = false, -- Whether the player is facing right.
+						movingRight = false, -- Whether the player is moving right.
+						movingLeft = false, -- Whether the player is moving left.
+						isBlueShaman = false, -- Whether the player is the blue shaman.
+						isPinkShaman = false, -- Whether the player is the pink shaman.
+						x = 0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
+						vx = 0, -- Player's X speed in the map.
+						vy = 0, -- Player's Y speed in the map.
+						isDucking = false, -- Whether the player is ducking.
+						isJumping = false, -- Whether the player is jumping.
+						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
+					}
+				]]
+				self.event:emit("playerEmoticon", self.playerList[playerId], emoticon)
 			end
 		end,
 		[6] = function(self, packet, connection, identifiers) -- Updates player win state
@@ -805,9 +853,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -982,9 +1030,9 @@ packetListener = {
 					isBlueShaman = false, -- Whether the player is the blue shaman.
 					isPinkShaman = false, -- Whether the player is the pink shaman.
 					x = 0, -- Player's X coordinate in the map.
-					y =  0, -- Player's X coordinate in the map.
+					y = 0, -- Player's X coordinate in the map.
 					vx = 0, -- Player's X speed in the map.
-					vy =  0, -- Player's Y speed in the map.
+					vy = 0, -- Player's Y speed in the map.
 					isDucking = false, -- Whether the player is ducking.
 					isJumping = false, -- Whether the player is jumping.
 					_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1018,7 +1066,6 @@ packetListener = {
 		[3] = function(self, packet, connection, identifiers) -- Correct handshake identifiers
 			local onlinePlayers = packet:read32()
 
-			connection.packetID = packet:read8()
 			local community = packet:readUTF() -- Necessary to get the country and authkeys later
 			local country = packet:readUTF()
 
@@ -1422,9 +1469,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1525,9 +1572,9 @@ packetListener = {
 						isBlueShaman = false, -- Whether the player is the blue shaman.
 						isPinkShaman = false, -- Whether the player is the pink shaman.
 						x = 0, -- Player's X coordinate in the map.
-						y =  0, -- Player's X coordinate in the map.
+						y = 0, -- Player's X coordinate in the map.
 						vx = 0, -- Player's X speed in the map.
-						vy =  0, -- Player's Y speed in the map.
+						vy = 0, -- Player's Y speed in the map.
 						isDucking = false, -- Whether the player is ducking.
 						isJumping = false, -- Whether the player is jumping.
 						_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1567,9 +1614,9 @@ packetListener = {
 					isBlueShaman = false, -- Whether the player is the blue shaman.
 					isPinkShaman = false, -- Whether the player is the pink shaman.
 					x = 0, -- Player's X coordinate in the map.
-					y =  0, -- Player's X coordinate in the map.
+					y = 0, -- Player's X coordinate in the map.
 					vx = 0, -- Player's X speed in the map.
-					vy =  0, -- Player's Y speed in the map.
+					vy = 0, -- Player's Y speed in the map.
 					isDucking = false, -- Whether the player is ducking.
 					isJumping = false, -- Whether the player is jumping.
 					_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1729,13 +1776,13 @@ getKeys = function(self, tfmId, token)
 					self._encode.messageKeys = result.msg_keys
 				end
 			else
-				return error(string_format("↑error↓[API ENDPOINT]↑ An internal error occurred in \z
+				return not self._hasSpecialRole and error(string_format("↑error↓[API ENDPOINT]↑ An internal error occurred in \z
 					the API endpoint.\n\t'%s'%s", result.internal_error_step,
 					(result.internal_error_step == 2 and ": The game may be in maintenance." or '')
 				), enum.errorLevel.high)
 			end
 		else
-			return error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " ..
+			return not self._hasSpecialRole and error("↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: " ..
 				tostring(result.error), enum.errorLevel.high)
 		end
 	end
@@ -1833,9 +1880,9 @@ handlePlayerField = function(self, packet, fieldName, eventName, methodName, fie
 				isBlueShaman = false, -- Whether the player is the blue shaman.
 				isPinkShaman = false, -- Whether the player is the pink shaman.
 				x = 0, -- Player's X coordinate in the map.
-				y =  0, -- Player's X coordinate in the map.
+				y = 0, -- Player's X coordinate in the map.
 				vx = 0, -- Player's X speed in the map.
-				vy =  0, -- Player's Y speed in the map.
+				vy = 0, -- Player's Y speed in the map.
 				isDucking = false, -- Whether the player is ducking.
 				isJumping = false, -- Whether the player is jumping.
 				_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
@@ -1904,11 +1951,11 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			packet:writeUTF(self._gameConnectionKey)
 		end
 		packet:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
-		packet:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
-		packet:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,\z
+			:writeUTF("86bd7a7ce36bec7aad43d51cb47e30594716d972320ef4322b7d88a85904f0ed")
+			:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,\z
 			0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&P\z
 			R64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
-		packet:write32(0):write32(0x6257):writeUTF('')
+			:write32(0):write32(0x6257):writeUTF('')
 
 		self.main:send(enum.identifier.initialize, packet)
 
@@ -2231,6 +2278,16 @@ client.setTribeMemberRole = function(self, memberName, roleId)
 		self.main.packetID))
 end
 --[[@
+	@name setTribeGreetingMessage
+	@desc Changes the greeting message of the tribe.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+	@param message<string> The message.
+]]
+client.setTribeGreetingMessage = function(self, message)
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
+		byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
+end
+--[[@
 	@name loadLua
 	@desc Loads a lua script in the room.
 	@param script<string> The lua script.
@@ -2395,7 +2452,7 @@ client.playEmoticon = function(self, emoticon)
 		string_format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
 	if not emoticon then return end
 
-	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon):write32(0))
+	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon))
 end
 --[[@
 	@name requestRoomList
