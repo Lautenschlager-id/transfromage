@@ -1066,7 +1066,6 @@ packetListener = {
 		[3] = function(self, packet, connection, identifiers) -- Correct handshake identifiers
 			local onlinePlayers = packet:read32()
 
-			connection.packetID = packet:read8()
 			local community = packet:readUTF() -- Necessary to get the country and authkeys later
 			local country = packet:readUTF()
 
