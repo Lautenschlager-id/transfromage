@@ -253,10 +253,17 @@
 | vanilla | 03 |
 | survivor | 08 |
 | racing | 09 |
-| music | 10 |
-| defilante | 11 |
+| defilante | 10 |
+| music | 11 |
+| shaman | 13 |
 | village | 16 |
 | module | 18 |
+| madchess | 20 |
+| celousco | 22 |
+| ranked | 31 |
+| duel | 33 |
+| arena | 34 |
+| domination | 42 |
 
 ---
 ### setting <sub>\<\*></sub>

@@ -133,7 +133,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [roomMessage](Events.md#roommessage--playername-message-playercommunity-playerid-)
 	- [send](Events.md#send--identifiers-packet-)
 	- [staffList](Events.md#stafflist--list-)
-	- [switchBulleConnection](Events.md#sswitchbulleconnection--bulleid-bulleip-)
+	- [switchBulleConnection](Events.md#sswitchbulleconnection--bulleip-serverTimestamp-)
 	- [tribeMemberConnection](Events.md#tribememberconnection--membername-)
 	- [tribeMemberDisconnection](Events.md#tribememberdisconnection--membername-)
 	- [tribeMemberGetRole](Events.md#tribemembergetrole--membername-settername-role-)

@@ -1,6 +1,16 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v6.0.0 - 30/04/2020
+## News
+- New IDs in _enum.roomMode_.
+
+## Changes
+- Switching bulles won't extract the bulle id anymore, but _uid_ and _pid_.
+- Removed parameter _bulleId_ from the event _switchBulleConnection_.
+- Ports are now set in (44, 1), since this information is received there.
+- Switched _enum.roomMode.defilante_ with _enum.roomMode.music_.
+
 ## v5.0.0 - 29/04/2020
 ## News
 - Added method _client.setTribeGreetingMessage_

@@ -977,11 +977,11 @@ end)
 >Triggered when a staff list is loaded (/mod, /mapcrew).
 >
 ---
->### switchBulleConnection ( bulleId, bulleIp )
+>### switchBulleConnection ( bulleIp, serverTimestamp )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
->| bulleId | `int` | The ID of the new bulle. |
 >| bulleIp | `string` | The IP of the new bulle. |
+>| serverTimestamp | `int` | The timestamp of the server. |
 >
 >Triggered when the bulle connection is switched.
 >

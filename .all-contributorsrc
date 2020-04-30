@@ -65,7 +65,8 @@
       "profile": "https://github.com/Athesdrake",
       "contributions": [
         "ideas",
-        "code"
+        "code",
+        "bug"
       ]
     },
     {
@@ -86,6 +87,25 @@
       "contributions": [
         "bug",
         "maintenance"
+      ]
+    },
+    {
+      "login": "entibo",
+      "name": "Thibaut Guénédal",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7407235?v=4",
+      "profile": "https://github.com/entibo",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Seniru",
+      "name": "Seniru Pasan Indira",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/34127015?v=4",
+      "profile": "https://github.com/Seniru",
+      "contributions": [
+        "code",
+        "doc"
       ]
     }
   ],
