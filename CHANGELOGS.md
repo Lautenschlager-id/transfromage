@@ -1,7 +1,7 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
-## v6.0.0
+## v6.0.0 - 30/04/2020
 ## News
 - New IDs in _enum.roomMode_.
 
