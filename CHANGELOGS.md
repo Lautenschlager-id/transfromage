@@ -6,6 +6,7 @@
 - New IDs in _enum.roomMode_.
 
 ## Changes
+- Switching bulles won't extract the bulle id anymore, but _uid_ and _pid_.
 - Removed parameter _bulleId_ from the event _switchBulleConnection_.
 - Ports are now set in (44, 1), since this information is received there.
 - Switched _enum.roomMode.defilante_ with _enum.roomMode.music_.
