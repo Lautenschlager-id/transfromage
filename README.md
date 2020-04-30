@@ -18,7 +18,7 @@ You can also check out **[Fromage API](https://github.com/Lautenschlager-id/From
 
 This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python version of Transfromage API](https://github.com/Tocutoeltuco/transfromage).
 
-![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 3.0 are no longer working due to internal changes of the game.**<br>
+![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 6.0 are no longer working due to internal changes of the game.**<br>
 
 ## Authentication keys Endpoint
 

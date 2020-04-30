@@ -1,8 +1,13 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
-## v5.0.1 -
+## v6.0.0
+## News
+- New IDs in _enum.roomMode_.
+
 ## Changes
+- Removed parameter _bulleId_ from the event _switchBulleConnection_.
+- Ports are now set in (44, 1), since this information is received there.
 - Switched _enum.roomMode.defilante_ with _enum.roomMode.music_.
 
 ## v5.0.0 - 29/04/2020

@@ -352,15 +352,22 @@ enum.role = enum {
 	@type int
 ]]
 enum.roomMode = enum {
-	normal    = 01,
-	bootcamp  = 02,
-	vanilla   = 03,
-	survivor  = 08,
-	racing    = 09,
-	defilante = 10,
-	music     = 11,
-	village   = 16,
-	module    = 18
+	normal     = 01,
+	bootcamp   = 02,
+	vanilla    = 03,
+	survivor   = 08,
+	racing     = 09,
+	defilante  = 10,
+	music      = 11,
+	shaman     = 13,
+	village    = 16,
+	module     = 18,
+	madchess   = 20,
+	celousco   = 22,
+	ranked     = 31,
+	duel       = 33,
+	arena      = 34,
+	domination = 42
 }
 --[[@
 	@name setting

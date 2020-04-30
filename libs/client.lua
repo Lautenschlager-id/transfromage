@@ -1385,8 +1385,10 @@ packetListener = {
 	[44] = {
 		[1] = function(self, packet, connection, identifiers) -- Switch bulle identifiers
 			local serverTimestamp = packet:read32()
-			local bulleId = packet:read32()
+			local uid = packet:read32()
+			local pid = packet:read32()
 			local bulleIp = packet:readUTF()
+			enum.setting.port = string_split(packet:readUTF(), "[^%-]+")
 
 			local oldBulle = self.bulle
 			self.bulle = connection:new("bulle", self.event)
@@ -1398,7 +1400,7 @@ packetListener = {
 				end
 
 				self.bulle:send(enum.identifier.bulleConnection,
-					byteArray:new():write32(serverTimestamp):write32(bulleId))
+					byteArray:new():write32(serverTimestamp):write32(uid):write32(pid))
 				--[[@
 					@name switchBulleConnection
 					@desc Triggered when the bulle connection is switched.
@@ -1767,7 +1769,6 @@ getKeys = function(self, tfmId, token)
 		if result.success then
 			if not result.internal_error then
 				enum.setting.mainIp = result.ip
-				enum.setting.port = result.ports
 				if not self._hasSpecialRole then
 					self._gameVersion = result.version
 					self._gameConnectionKey = result.connection_key
