@@ -16,6 +16,8 @@
   <tr>
     <td align="center"><a href="http://projectsperanza.com"><img src="https://avatars3.githubusercontent.com/u/74515?v=4" width="100px;" alt="Robotex"/><br /><sub><b>Robotex</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Robotex" title="Code">💻</a> <a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Robotex" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Minstfm"><img src="https://avatars3.githubusercontent.com/u/22301175?v=4" width="100px;" alt="Minstfm"/><br /><sub><b>Minstfm</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/issues?q=author%3AMinstfm" title="Bug reports">🐛</a> <a href="#maintenance-Minstfm" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/entibo"><img src="https://avatars0.githubusercontent.com/u/7407235?v=4" width="100px;" alt="Thibaut Guénédal"/><br /><sub><b>Thibaut Guénédal</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/issues?q=author%3Aentibo" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/Seniru"><img src="https://avatars2.githubusercontent.com/u/34127015?v=4" width="100px;" alt="Seniru Pasan Indira"/><br /><sub><b>Seniru Pasan Indira</b></sub></a><br /><a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Seniru" title="Code">💻</a> <a href="https://github.com/Lautenschlager-id/Transfromage/commits?author=Seniru" title="Documentation">📖</a></td>
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
