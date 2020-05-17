@@ -36,9 +36,12 @@ end
 	}
 ]]
 byteArray.new = function(self, stack)
+	local stackLen = (stack and #stack or 0)
 	return setmetatable({
 		stack = (stack or { }), -- Array of bytes
-		stackLen = (stack and #stack or 0)
+		stackLen = stackLen,
+		stackReadPos = 1,
+		stackReadLen = 0
 	}, self)
 end
 --[[@
@@ -146,8 +149,9 @@ end
 byteArray.read8 = function(self, quantity)
 	quantity = quantity or 1
 
-	local byteStack = table_arrayRange(self.stack, 1, quantity)
-	self.stack = table_arrayRange(self.stack, quantity + 1)
+	local stackReadPos = self.stackReadPos + quantity
+	local byteStack = table_arrayRange(self.stack, self.stackReadPos, stackReadPos - 1)
+	self.stackReadPos = stackReadPos
 
 	local sLen = #byteStack
 	self.stackLen = self.stackLen - sLen

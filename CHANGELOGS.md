@@ -1,6 +1,10 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v6.1.0 - Unreleased
+## Changes
+- ByteArray is now read-only or write-only. You cannot mix it. With that, read functions got \~35x faster.
+
 ## v6.0.0 - 30/04/2020
 ## News
 - New IDs in _enum.roomMode_.
