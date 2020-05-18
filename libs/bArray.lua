@@ -28,6 +28,7 @@ end
 --[[@
 	@name new
 	@desc Creates a new instance of a Byte Array. Alias: `byteArray()`.
+	@desc Note that you must not write bytes after reading the packet. Use a new instance instead.
 	@param stack?<table> An array of bytes.
 	@returns byteArray The new Byte Array object.
 	@struct {
@@ -71,7 +72,7 @@ end
 	@returns byteArray Object instance.
 ]]
 byteArray.write16 = function(self, short)
-	-- (long >> 8) & 0xFF, long & 0xFF
+	-- (long >> 8), long
 	return self:write8(bit_rshift(short, 8), short)
 end
 --[[@
@@ -81,7 +82,7 @@ end
 	@returns byteArray Object instance.
 ]]
 byteArray.write24 = function(self, int)
-	-- (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
+	-- (long >> 16), (long >> 8), long
 	return self:write8(bit_rshift(int, 16), bit_rshift(int, 8), int)
 end
 --[[@
@@ -91,7 +92,7 @@ end
 	@returns byteArray Object instance.
 ]]
 byteArray.write32 = function(self, long)
-	-- (long >> 24) & 0xFF, (long >> 16) & 0xFF, (long >> 8) & 0xFF, long & 0xFF
+	-- (long >> 24), (long >> 16), (long >> 8), long
 	return self:write8(bit_rshift(long, 24), bit_rshift(long, 16), bit_rshift(long, 8),	long)
 end
 --[[@

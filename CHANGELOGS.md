@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v6.1.0 - Unreleased
 ## News
+- Added event _serverReboot ( msTime )_.
 - Added method _client.enterRoomAndPassword_.
 
 ## Changes
