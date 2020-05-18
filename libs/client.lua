@@ -1175,6 +1175,9 @@ packetListener = {
 				@param time<int> The current time.
 			]]
 			self.event:emit("ping", os.time())
+		end,
+		[88] = function(self, packet, connection, identifiers) -- Server reboot
+			self.event:emit("serverReboot", packet:read32())
 		end
 	},
 	[29] = {
