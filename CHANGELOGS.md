@@ -2,6 +2,9 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v6.1.0 - Unreleased
+## News
+- Added method _client.enterRoomAndPassword_.
+
 ## Changes
 - ByteArray is now read-only or write-only. You cannot mix it. With that, read functions got \~35x faster.
 

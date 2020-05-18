@@ -2145,6 +2145,12 @@ client.enterRoom = function(self, roomName, isSalonAuto)
 	self.main:send(enum.identifier.room,
 		byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
 end
+
+client.enterRoomAndPassword = function(self, roomName, roomPassword)
+	self.main:send(enum.identifier.roomPassword,
+		byteArray:new():writeUTF(roomPassword):writeUTF(roomName))
+end
+
 --[[@
 	@name sendRoomMessage
 	@desc Sends a message in the room chat.

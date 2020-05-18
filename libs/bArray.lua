@@ -36,10 +36,9 @@ end
 	}
 ]]
 byteArray.new = function(self, stack)
-	local stackLen = (stack and #stack or 0)
 	return setmetatable({
 		stack = (stack or { }), -- Array of bytes
-		stackLen = stackLen,
+		stackLen = (stack and #stack or 0),
 		stackReadPos = 1,
 		stackReadLen = 0
 	}, self)

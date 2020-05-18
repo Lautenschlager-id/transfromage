@@ -295,7 +295,8 @@ enum.identifier = enum {
 	packetOffset    = enum { 44, 22 },
 	room            = enum { 05, 38 },
 	roomList        = enum { 26, 35 },
-	roomMessage     = enum({ 06, 06 }, true)
+	roomMessage     = enum({ 06, 06 }, true),
+	roomPassword    = enum { 05, 39 }
 }
 --[[@
 	@name language
