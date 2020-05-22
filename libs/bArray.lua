@@ -137,8 +137,7 @@ end
 	@param bool<boolean> A boolean.
 ]]
 byteArray.writeBool = function(self, bool)
-	self:write8(bool and 1 or 0)
-	return self
+	return self:write8(bool and 1 or 0)
 end
 --[[@
 	@name read8

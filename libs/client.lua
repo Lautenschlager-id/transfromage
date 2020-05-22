@@ -2,6 +2,7 @@ local timer = require("timer")
 local event = require("core").Emitter
 local http_request = require("coro-http").request
 local json_decode = require("json").decode
+local uv = require("uv")
 local zlibDecompress = require("miniz").inflate
 
 local byteArray = require("bArray")
@@ -128,7 +129,8 @@ client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 		_handlePlayers = false,
 		_encode = encode:new(hasSpecialRole),
 		_hasSpecialRole = hasSpecialRole,
-		_updateSettings = updateSettings
+		_updateSettings = updateSettings,
+		_isListeningSigint = false
 	}, self)
 
 	if tfmId and token then
@@ -868,7 +870,7 @@ packetListener = {
 		[7] = function(self, packet, connection, identifiers) -- Updates player score
 			handlePlayerField(self, packet, "score", nil, "read16")
 		end,
-		[11] = function(self, packet, connection, identifiers) -- Updates blue/ping shaman
+		[11] = function(self, packet, connection, identifiers) -- Updates blue/pink shaman
 			if stopHandlingPlayers(self) then return end
 
 			local shaman = { }
@@ -1985,6 +1987,20 @@ client.start = coroutine_makef(function(self, tfmId, token)
 		]]
 		self.event:emit("receive", connection, packet:read8(2), packet)
 	end)
+
+	-- Triggered when the developer uses CTRL+C to leave the command prompt.
+	if not self._isListeningSigint then
+		self._isListeningSigint = true
+		local sigint = uv.new_signal()
+		local isClosing = false
+		uv.signal_start(sigint, "sigint", function()
+			if isClosing then return end
+			isClosing = true
+
+			closeAll(self)
+			timer_setTimeout(100, os.exit)
+		end)
+	end
 end)
 --[[@
 	@name on
