@@ -2,7 +2,6 @@ local timer = require("timer")
 local event = require("core").Emitter
 local http_request = require("coro-http").request
 local json_decode = require("json").decode
-local uv = require("uv")
 local zlibDecompress = require("miniz").inflate
 
 local byteArray = require("bArray")
@@ -1991,15 +1990,23 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	-- Triggered when the developer uses CTRL+C to leave the command prompt.
 	if not self._isListeningSigint then
 		self._isListeningSigint = true
+
+		local uv = require("uv")
+
 		local sigint = uv.new_signal()
+		local sighup = uv.new_signal()
 		local isClosing = false
-		uv.signal_start(sigint, "sigint", function()
+
+		local endProcess = function()
 			if isClosing then return end
 			isClosing = true
 
 			closeAll(self)
 			timer_setTimeout(100, os.exit)
-		end)
+		end
+
+		uv.signal_start(sigint, "sigint", endProcess)
+		uv.signal_start(sighup, "sighup", endProcess)
 	end
 end)
 --[[@
