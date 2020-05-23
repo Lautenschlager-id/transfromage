@@ -33,7 +33,7 @@ local timer_setTimeout = timer.setTimeout
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
-local handlePlayerField, handleFriendData
+local handlePlayerField, handleFriendData, handleMemberData
 local stopHandlingPlayers
 
 local client = table_setNewClass()
@@ -433,7 +433,26 @@ tribulleListener = {
 		]]
 		self.event:emit("tribeMemberGetRole", string_toNickname(memberName, true),
 			string_toNickname(setterName, true), role)
-	end
+	end,
+	[130] = function(self, packet, connection, tribulleId) -- Tribe interface
+		local tribeId = packet:read32()
+		local tribeName = packet:readUTF()
+		local greetingMessage = packet:readUTF()
+		local tribeHouseMap = packet:read32()
+
+		local tribeMembers = { }
+		for i = 1, packet:read16() do
+			tribeMembers[i] = handleTribeMemberData(packet)
+		end
+
+		local tribeRanks = { }
+		for i = 1, packet:read16() do
+			tribeRanks[packet:readUTF()] = packet:read32()
+		end
+
+		self.event:emit("tribeInterface", tribeName, tribeMembers, tribeRanks, tribeHouseMap,
+			greetingMessage, tribeId)
+	end,
 }
 -- Old packet functions
 oldPacketListener = {
@@ -1040,6 +1059,11 @@ packetListener = {
 				}
 			]]
 			handlePlayerField(self, packet, "isVampire", "playerVampire", nil, nil, true)
+		end
+	},
+	[16] = {
+		[2] = function(self, packet, connection, identifiers) -- Receives tribe /inv
+			self.event:emit("tribeHouseInvitation", packet:readUTF(), packet:readUTF())
 		end
 	},
 	[26] = {
@@ -1926,6 +1950,19 @@ handleFriendData = function(packet)
 	player.lastConnection = packet:read32()
 	return player
 end
+
+handleTribeMemberData = function(packet)
+	local member = { }
+	member.id = packet:read32()
+	member.playerName = string.toNickname(packet:readUTF())
+	member.gender = packet:readByte()
+ 	packet:read32() -- id again
+	member.lastConnection = packet:read32()
+	member.rankPosition = packet:read8()
+	packet:read32() -- game id
+	member.roomName = packet:readUTF()
+	return member
+end
 --[[@
 	@name stopHandlingPlayers
 	@desc Checks whether the player handler should NOT be executed.
@@ -2316,6 +2353,15 @@ end
 client.setTribeGreetingMessage = function(self, message)
 	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
+end
+
+client.openTribeInterface = function(self, includeOfflineMembers)
+	self.main:send(enum.identifier.bulle, encode_xorCipher(
+		byteArray:new():write16(108):write32(3):write8(includeOfflineMembers), self.main.packetID))
+end
+
+client.acceptTribeHouseInvitation = function(self, inviterName)
+	self.main:send(enum.identifier.acceptTribeHouseInvite, byteArray:new():writeUTF(inviterName))
 end
 --[[@
 	@name loadLua

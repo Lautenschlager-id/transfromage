@@ -3,6 +3,10 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v6.1.0 - Unreleased
 ## News
+- Added event _tribeInterface ( tribeName, tribeMembers, tribeRanks, tribeHouseMap, greetingMessage, tribeId)_.
+- Added method _client.openTribeInterface_.
+- Added method _client.acceptTribeHouseInvitation_.
+- Added event _tribeHouseInvitation ( inviterName, inviterTribe )_.
 - Added event _serverReboot ( msTime )_.
 - Added method _client.enterRoomAndPassword_.
 
