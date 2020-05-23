@@ -9,6 +9,9 @@
 ## Changes
 - ByteArray is now read-only or write-only. You cannot mix it. With that, read functions got \~35x faster.
 
+## Fixes
+- Closing the command prompt/terminal or process should close all pending connections correctly now, thus avoiding firewall bans.
+
 ## v6.0.0 - 30/04/2020
 ## News
 - New IDs in _enum.roomMode_.

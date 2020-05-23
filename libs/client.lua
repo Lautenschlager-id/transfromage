@@ -1993,10 +1993,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 
 		local uv = require("uv")
 
-		local sigint = uv.new_signal()
-		local sighup = uv.new_signal()
 		local isClosing = false
-
 		local endProcess = function()
 			if isClosing then return end
 			isClosing = true
@@ -2005,8 +2002,8 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			timer_setTimeout(100, os.exit)
 		end
 
-		uv.signal_start(sigint, "sigint", endProcess)
-		uv.signal_start(sighup, "sighup", endProcess)
+		uv.signal_start(uv.new_signal(), "sigint", endProcess)
+		uv.signal_start(uv.new_signal(), "sighup", endProcess)
 	end
 end)
 --[[@
