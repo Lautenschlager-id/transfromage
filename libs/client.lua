@@ -12,6 +12,9 @@ local enum = require("enum")
 -- Optimization --
 local bit_bxor = bit.bxor
 local coroutine_makef = coroutine.makef
+local coroutine_running = coroutine.running
+local coroutine_resume = coroutine.resume
+local coroutine_yield = coroutine.yield
 local encode_getPasswordHash = encode.getPasswordHash
 local enum_validate = enum._validate
 local math_normalizePoint = math.normalizePoint
@@ -27,6 +30,7 @@ local table_remove = table.remove
 local table_setNewClass = table.setNewClass
 local table_writeBytes = table.writeBytes
 local timer_clearInterval = timer.clearInterval
+local timer_clearTimeout = timer.clearTimeout
 local timer_setInterval = timer.setInterval
 local timer_setTimeout = timer.setTimeout
 ------------------
