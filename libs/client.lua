@@ -2356,8 +2356,8 @@ client.setTribeGreetingMessage = function(self, message)
 end
 
 client.openTribeInterface = function(self, includeOfflineMembers)
-	self.main:send(enum.identifier.bulle, encode_xorCipher(
-		byteArray:new():write16(108):write32(3):write8(includeOfflineMembers), self.main.packetID))
+	self.main:send(enum.identifier.bulle, self._encode:xorCipher(byteArray:new()
+		:write16(108):write32(3):writeBool(includeOfflineMembers), self.main.packetID))
 end
 
 client.acceptTribeHouseInvitation = function(self, inviterName)

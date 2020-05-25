@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v6.1.0 - Unreleased
 ## News
+- New IDs in _enum.identifier_.
 - Added event _tribeInterface ( tribeName, tribeMembers, tribeRanks, tribeHouseMap, greetingMessage, tribeId)_.
 - Added method _client.openTribeInterface_.
 - Added method _client.acceptTribeHouseInvitation_.
