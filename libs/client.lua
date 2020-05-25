@@ -36,6 +36,41 @@ local tribulleListener, oldPacketListener, packetListener
 local handlePlayerField, handleFriendData, handleMemberData
 local stopHandlingPlayers
 
+do
+	--[[@
+		@name Emitter:waitFor
+		@desc Yields the running coroutine and will resume it when the given event is triggered.
+		@desc If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.
+		@desc If a predicate is provided, events that do not pass the predicate will be ignored.
+		@param eventName<string> The name of the event.
+		@param timeout?<int> The time to timeout the yield.
+		@param predicate?<function> The predicate.
+		@returns boolean Whether it has not timed out and triggered successfully.
+		@returns ... The parameters of the event.
+	]]
+	event.waitFor = function(self, eventName, timeout, predicate)
+		local coro = coroutine_running()
+		assert(coro, "Emitter:waitFor must be called inside a coroutine.")
+
+		local waiter
+		waiter = function(...)
+			if not predicate or predicate(...) then
+				if timeout then timer_clearTimeout(timeout) end
+
+				self:removeListener(name, waiter)
+				return coroutine_resume(coro, true, ...)
+			end
+		end
+		self:on(name, waiter)
+
+		timeout = timeout and timer_setTimeout(timeout, function()
+			self:removeListener(name, waiter)
+			return coroutine_resume(coro, false)
+		end)
+
+		return coroutine_yield()
+	end
+end
 local client = table_setNewClass()
 
 local meta = {
@@ -2062,6 +2097,20 @@ end
 ]]
 client.once = function(self, eventName, callback)
 	return self.event:once(eventName, coroutine_makef(callback))
+end
+--[[@
+	@name waitFor
+	@desc Yields the running coroutine and will resume it when the given event is triggered.
+	@desc If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.
+	@desc If a predicate is provided, events that do not pass the predicate will be ignored.
+	@param eventName<string> The name of the event.
+	@param timeout?<int> The time to timeout the yield.
+	@param predicate?<function> The predicate.
+	@returns boolean Whether it has not timed out and triggered successfully.
+	@returns ... The parameters of the event.
+]]
+client.waitFor = function(self, eventName, timeout, predicate)
+	return self.event:waitFor(eventName, timeout, predicate)
 end
 --[[@
 	@name emit
