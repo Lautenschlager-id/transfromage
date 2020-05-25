@@ -62,14 +62,14 @@ do
 				if timeout then timer_clearTimeout(timeout) end
 
 				self:removeListener(name, waiter)
-				return coroutine_resume(coro, true, ...)
+				return assert(coroutine_resume(coro, true, ...))
 			end
 		end
 		self:on(name, waiter)
 
 		timeout = timeout and timer_setTimeout(timeout, function()
 			self:removeListener(name, waiter)
-			return coroutine_resume(coro, false)
+			return assert(coroutine_resume(coro, false))
 		end)
 
 		return coroutine_yield()
