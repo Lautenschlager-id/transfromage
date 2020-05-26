@@ -61,14 +61,14 @@ do
 			if not predicate or predicate(...) then
 				if timeout then timer_clearTimeout(timeout) end
 
-				self:removeListener(name, waiter)
+				self:removeListener(eventName, waiter)
 				return assert(coroutine_resume(coro, true, ...))
 			end
 		end
-		self:on(name, waiter)
+		self:on(eventName, waiter)
 
 		timeout = timeout and timer_setTimeout(timeout, function()
-			self:removeListener(name, waiter)
+			self:removeListener(eventName, waiter)
 			return assert(coroutine_resume(coro, false))
 		end)
 
