@@ -138,7 +138,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [send](Events.md#send--identifiers-packet-)
 	- [serverReboot](Events.md#serverreboot--remainingtime-)
 	- [staffList](Events.md#stafflist--list-)
-	- [switchBulleConnection](Events.md#sswitchbulleconnection--bulleip-servertimestamp-)
+	- [switchBulleConnection](Events.md#switchbulleconnection--bulleip-servertimestamp-)
 	- [tribeHouseInvitation](Events.md#tribehouseinvitation--invitername-invitertribe-)
 	- [tribeInterface](Events.md#tribeinterface--tribename-tribemembers-triberoles-tribehousemap-greetingmessage-tribeid-)
 	- [tribeMemberConnection](Events.md#tribememberconnection--membername-)
