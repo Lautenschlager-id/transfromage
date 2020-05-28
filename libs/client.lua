@@ -41,7 +41,7 @@ local uv_new_signal = uv.new_signal
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
-local handlePlayerField, handleFriendData, handleMemberData
+local handlePlayerField, handleFriendData, handleTribeMemberData
 local stopHandlingPlayers
 do
 	event.waitFor = function(self, eventName, timeout, predicate)
