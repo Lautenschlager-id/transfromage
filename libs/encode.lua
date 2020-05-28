@@ -154,9 +154,9 @@ encode.btea = function(self, packet)
 
 	while stackLen < 8 do
 		stackLen = stackLen + 1
-		packet.stack[stackLen] = 0
+		packet.stack[stackLen] = 0 -- write8 would be slower
 	end
-	packet = byteArray:new(packet.stack) -- Saves resource, instead of using write8
+	packet.stackLen = stackLen
 
 	local chunks, counter = { }, 0
 	while packet.stackLen > 0 do
@@ -166,8 +166,8 @@ encode.btea = function(self, packet)
 
 	chunks = xxtea(self, chunks)
 
-	packet:write16(#chunks)
-	for i = 1, #chunks do
+	packet = byteArray:new():write16(counter)
+	for i = 1, counter do
 		packet:write32(chunks[i])
 	end
 

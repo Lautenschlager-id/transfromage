@@ -64,7 +64,9 @@ end
 ]]
 connection.close = function(self)
 	self.open = false
+	self.port = 1
 	self.socket:destroy()
+	self.packetID = 0
 	--[[@
 		@name disconnection
 		@desc Triggered when a connection dies or fails.

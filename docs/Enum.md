@@ -189,6 +189,7 @@
 | heartbeat | { 26, 26 } |
 | initialize | { 28, 01 } |
 | joinTribeHouse | { 16, 01 } |
+| acceptTribeHouseInvite | { 16, 02 } |
 | login | { 26, 08 } |
 | loadLua | { 29, 01 } |
 | os | { 28, 17 } |

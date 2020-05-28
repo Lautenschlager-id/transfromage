@@ -1,6 +1,39 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v6.1.0 - 28/05/2020
+## News
+- Added method _client.waitFor_ to await an event emission.
+```Lua
+client:on("whisperMessage", function(playerName, message)
+	if message == "cheese" then
+		client:sendCommand("profile " .. playerName)
+
+		local success, playerData = client:waitFor("profileLoaded", 1000, function(playerData)
+			return playerData.playerName == playerName
+		end)
+
+		if success then
+			client:sendWhisper(playerName, "You have " .. playerData.cheese .. " cheese!")
+		end
+	end
+end)
+```
+- New IDs in _enum.identifier_.
+- Added event _tribeInterface ( tribeName, tribeMembers, tribeRanks, tribeHouseMap, greetingMessage, tribeId)_.
+- Added method _client.openTribeInterface_.
+- Added method _client.acceptTribeHouseInvitation_.
+- Added event _tribeHouseInvitation ( inviterName, inviterTribe )_.
+- Added event _serverReboot ( msTime )_.
+- Added method _client.enterPrivateRoom_.
+
+## Changes
+- ByteArray is now read-only or write-only. You cannot mix it. With that, read functions got \~35x faster.
+
+## Fixes
+- Connection wouldn't reset properly if needed. (Fix _connectionFailed_ reconnection)
+- Closing the command prompt/terminal or process should close all pending connections correctly now, thus avoiding firewall bans.
+
 ## v6.0.0 - 30/04/2020
 ## News
 - New IDs in _enum.roomMode_.
