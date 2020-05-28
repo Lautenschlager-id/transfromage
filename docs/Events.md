@@ -798,7 +798,7 @@ end)
 >	}, -- Total saves of the player.
 >	shamanCheese = 0, -- Number of cheese gathered as shaman.
 >	firsts = 0, -- Number of firsts.
->	cheeses = 0, -- Number of cheese gathered.
+>	cheese = 0, -- Number of cheese gathered.
 >	bootcamps = 0, -- Number of bootcamps completed.
 >	titleId = 0, -- The id of the current title.
 >	totalTitles = 0, -- Number of titles unlocked.

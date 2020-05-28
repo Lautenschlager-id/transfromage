@@ -482,6 +482,25 @@
 >Initializes the API connection with the authentication keys. It must be the first method of the API to be called.
 >
 ---
+>### client:waitFor ( eventName, timeout, predicate )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| eventName | `string` | ✔ | The name of the event. |
+>| timeout | `int` | ✕ | The time to timeout the yield. |
+>| predicate | `function` | ✕ | The predicate that checks whether the triggered event refers to the right one. Must return a boolean. |
+>
+>Yields the running coroutine and will resume it when the given event is triggered.<br>
+>If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.<br>
+>If a predicate is provided, events that do not pass the predicate will be ignored.<br>
+>See the available events in [Events](Events.md).
+>
+>**Returns:**
+>
+>| Type | Description |
+>| :-: | - |
+>| `boolean` | Whether it has not timed out and triggered successfully. |
+>| `...` | The parameters of the event. |
+---
 >### client:whitelistPlayer ( playerName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

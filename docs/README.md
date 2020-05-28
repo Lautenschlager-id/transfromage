@@ -77,6 +77,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [setTribeGreetingMessage](Client.md#clientsettribegreetingmessage--message-)
 	- [setTribeMemberRole](Client.md#clientsettribememberrole--membername-roleid-)
 	- [start](Client.md#clientstart--tfmid-token-)
+	- [waitFor](Client.md#clientwaitfor--eventname-timeout-predicate-)
 	- [whitelistPlayer](Client.md#clientwhitelistplayer--playername-)
 - [Enum](Enum.md)
 	- [chatCommunity](Enum.md#chatcommunity-int)

@@ -43,19 +43,7 @@ local parsePacket, receive, sendHeartbeat, getKeys, closeAll
 local tribulleListener, oldPacketListener, packetListener
 local handlePlayerField, handleFriendData, handleMemberData
 local stopHandlingPlayers
-
 do
-	--[[@
-		@name Emitter:waitFor
-		@desc Yields the running coroutine and will resume it when the given event is triggered.
-		@desc If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.
-		@desc If a predicate is provided, events that do not pass the predicate will be ignored.
-		@param eventName<string> The name of the event.
-		@param timeout?<int> The time to timeout the yield.
-		@param predicate?<function> The predicate.
-		@returns boolean Whether it has not timed out and triggered successfully.
-		@returns ... The parameters of the event.
-	]]
 	event.waitFor = function(self, eventName, timeout, predicate)
 		local coro = coroutine_running()
 		assert(coro, "Emitter:waitFor must be called inside a coroutine.")
@@ -79,6 +67,7 @@ do
 		return coroutine_yield()
 	end
 end
+
 local client = table_setNewClass()
 
 local meta = {
@@ -987,7 +976,8 @@ packetListener = {
 			data.saves.normal = packet:read32()
 			data.shamanCheese = packet:read32()
 			data.firsts = packet:read32()
-			data.cheeses = packet:read32()
+			data.cheese = packet:read32()
+			data.cheeses = data.cheese -- alias
 			data.saves.hard = packet:read32()
 			data.bootcamps = packet:read32()
 			data.saves.divine = packet:read32()
@@ -1051,7 +1041,7 @@ packetListener = {
 					}, -- Total saves of the player.
 					shamanCheese = 0, -- Number of cheese gathered as shaman.
 					firsts = 0, -- Number of firsts.
-					cheeses = 0, -- Number of cheese gathered.
+					cheese = 0, -- Number of cheese gathered.
 					bootcamps = 0, -- Number of bootcamps completed.
 					titleId = 0, -- The id of the current title.
 					totalTitles = 0, -- Number of titles unlocked.
@@ -2153,9 +2143,10 @@ end
 	@desc Yields the running coroutine and will resume it when the given event is triggered.
 	@desc If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.
 	@desc If a predicate is provided, events that do not pass the predicate will be ignored.
+	@desc See the available events in @see Events.
 	@param eventName<string> The name of the event.
 	@param timeout?<int> The time to timeout the yield.
-	@param predicate?<function> The predicate.
+	@param predicate?<function> The predicate that checks whether the triggered event refers to the right one. Must return a boolean.
 	@returns boolean Whether it has not timed out and triggered successfully.
 	@returns ... The parameters of the event.
 ]]

@@ -3,6 +3,22 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v6.1.0 - Unreleased
 ## News
+- Added method _client.waitFor_ to await an event emission.
+```Lua
+client:on("whisperMessage", function(playerName, message)
+	if message == "cheese" then
+		client:sendCommand("profile " .. playerName)
+
+		local success, playerData = client:waitFor("profileLoaded", function(playerData)
+			return playerData.playerName == playerName
+		end)
+
+		if success then
+			client:sendWhisper(playerName, "You have " .. playerData.cheese .. " cheese!")
+		end
+	end
+end)
+```
 - New IDs in _enum.identifier_.
 - Added event _tribeInterface ( tribeName, tribeMembers, tribeRanks, tribeHouseMap, greetingMessage, tribeId)_.
 - Added method _client.openTribeInterface_.
