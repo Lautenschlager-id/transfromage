@@ -13,6 +13,9 @@ local enum = require("enum")
 -- Optimization --
 local bit_bxor = bit.bxor
 local coroutine_makef = coroutine.makef
+local coroutine_running = coroutine.running
+local coroutine_resume = coroutine.resume
+local coroutine_yield = coroutine.yield
 local encode_getPasswordHash = encode.getPasswordHash
 local enum_validate = enum._validate
 local math_normalizePoint = math.normalizePoint
@@ -29,6 +32,7 @@ local table_remove = table.remove
 local table_setNewClass = table.setNewClass
 local table_writeBytes = table.writeBytes
 local timer_clearInterval = timer.clearInterval
+local timer_clearTimeout = timer.clearTimeout
 local timer_setInterval = timer.setInterval
 local timer_setTimeout = timer.setTimeout
 local uv_signal_start = uv.signal_start
@@ -40,6 +44,41 @@ local tribulleListener, oldPacketListener, packetListener
 local handlePlayerField, handleFriendData, handleMemberData
 local stopHandlingPlayers
 
+do
+	--[[@
+		@name Emitter:waitFor
+		@desc Yields the running coroutine and will resume it when the given event is triggered.
+		@desc If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.
+		@desc If a predicate is provided, events that do not pass the predicate will be ignored.
+		@param eventName<string> The name of the event.
+		@param timeout?<int> The time to timeout the yield.
+		@param predicate?<function> The predicate.
+		@returns boolean Whether it has not timed out and triggered successfully.
+		@returns ... The parameters of the event.
+	]]
+	event.waitFor = function(self, eventName, timeout, predicate)
+		local coro = coroutine_running()
+		assert(coro, "Emitter:waitFor must be called inside a coroutine.")
+
+		local waiter
+		waiter = function(...)
+			if not predicate or predicate(...) then
+				if timeout then timer_clearTimeout(timeout) end
+
+				self:removeListener(eventName, waiter)
+				return assert(coroutine_resume(coro, true, ...))
+			end
+		end
+		self:on(eventName, waiter)
+
+		timeout = timeout and timer_setTimeout(timeout, function()
+			self:removeListener(eventName, waiter)
+			return assert(coroutine_resume(coro, false))
+		end)
+
+		return coroutine_yield()
+	end
+end
 local client = table_setNewClass()
 
 local meta = {
@@ -2108,6 +2147,20 @@ end
 ]]
 client.once = function(self, eventName, callback)
 	return self.event:once(eventName, coroutine_makef(callback))
+end
+--[[@
+	@name waitFor
+	@desc Yields the running coroutine and will resume it when the given event is triggered.
+	@desc If a timeout (in milliseconds) is provided, the function will return after that timeout expires unless the given event has been triggered before.
+	@desc If a predicate is provided, events that do not pass the predicate will be ignored.
+	@param eventName<string> The name of the event.
+	@param timeout?<int> The time to timeout the yield.
+	@param predicate?<function> The predicate.
+	@returns boolean Whether it has not timed out and triggered successfully.
+	@returns ... The parameters of the event.
+]]
+client.waitFor = function(self, eventName, timeout, predicate)
+	return self.event:waitFor(eventName, timeout, predicate)
 end
 --[[@
 	@name emit
