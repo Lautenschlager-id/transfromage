@@ -3,6 +3,7 @@ local event = require("core").Emitter
 local http_request = require("coro-http").request
 local json_decode = require("json").decode
 local zlibDecompress = require("miniz").inflate
+local uv = require("uv")
 
 local byteArray = require("bArray")
 local connection = require("connection")
@@ -15,6 +16,7 @@ local coroutine_makef = coroutine.makef
 local encode_getPasswordHash = encode.getPasswordHash
 local enum_validate = enum._validate
 local math_normalizePoint = math.normalizePoint
+local os_exit = os.exit
 local string_byte = string.byte
 local string_fixEntity = string.fixEntity
 local string_format = string.format
@@ -29,6 +31,8 @@ local table_writeBytes = table.writeBytes
 local timer_clearInterval = timer.clearInterval
 local timer_setInterval = timer.setInterval
 local timer_setTimeout = timer.setTimeout
+local uv_signal_start = uv.signal_start
+local uv_new_signal = uv.new_signal
 ------------------
 
 local parsePacket, receive, sendHeartbeat, getKeys, closeAll
@@ -445,12 +449,32 @@ tribulleListener = {
 			tribeMembers[i] = handleTribeMemberData(packet)
 		end
 
-		local tribeRanks = { }
+		local tribeRoles = { }
 		for i = 1, packet:read16() do
-			tribeRanks[packet:readUTF()] = packet:read32()
+			tribeRoles[packet:readUTF()] = packet:read32()
 		end
 
-		self.event:emit("tribeInterface", tribeName, tribeMembers, tribeRanks, tribeHouseMap,
+		--[[@
+			@name tribeInterface
+			@desc Triggered when the tribe interface is opened and/or when the data is updated.
+			@param tribeName<string> The name of the tribe.
+			@param tribeMembers<table> The members' data.
+			@param tribeRoles<table> An array with the all roles name (key) and id (value).
+			@param tribeHouseMap<int> The map code of the tribe house.
+			@param greetingMessage<string> The tribe's greeting message.
+			@param tribeId<int> The id of the tribe.
+			@struct @tribeMembers {
+				[i] = {
+					id = 0, -- The id of the member.
+					playerName = "", -- The nickname of the member.
+					gender = 0, -- The member's gender. Enum in enum.gender.
+					lastConnection = 0 -- Timestamp of when the member was last online.
+					rolePosition = 0, -- The position of the member's role.
+					roomName = "" -- The name of the room where the member currently is.
+				}
+			}
+		]]
+		self.event:emit("tribeInterface", tribeName, tribeMembers, tribeRoles, tribeHouseMap,
 			greetingMessage, tribeId)
 	end,
 }
@@ -1063,6 +1087,12 @@ packetListener = {
 	},
 	[16] = {
 		[2] = function(self, packet, connection, identifiers) -- Receives tribe /inv
+			--[[@
+				@name tribeHouseInvitation
+				@desc Triggered when a tribe house invitation is received.
+				@param inviterName<string> The name of the player who invited the bot.
+				@param inviterTribe<string> The name of the tribe that is inviting the bot.
+			]]
 			self.event:emit("tribeHouseInvitation", packet:readUTF(), packet:readUTF())
 		end
 	},
@@ -1202,6 +1232,11 @@ packetListener = {
 			self.event:emit("ping", os.time())
 		end,
 		[88] = function(self, packet, connection, identifiers) -- Server reboot
+			--[[@
+				@name serverReboot
+				@desc Triggered when the server is going to be rebooted.
+				@param remainingTime<int> Remaining time in milliseconds before the reboot.
+			]]
 			self.event:emit("serverReboot", packet:read32())
 		end
 	},
@@ -1950,7 +1985,20 @@ handleFriendData = function(packet)
 	player.lastConnection = packet:read32()
 	return player
 end
-
+--[[@
+	@name handleTribeMemberData
+	@desc Handles the data of a tribe member.
+	@param packet<byteArray> A Byte Array object with the data to be extracted.
+	@returns table The data of the member.
+	@struct {
+		id = 0, -- The id of the member.
+		playerName = "", -- The nickname of the member.
+		gender = 0, -- The member's gender. Enum in enum.gender.
+		lastConnection = 0 -- Timestamp of when the member was last online.
+		rolePosition = 0, -- The position of the member's role.
+		roomName = "" -- The name of the room where the member currently is.
+	}
+]]
 handleTribeMemberData = function(packet)
 	local member = { }
 	member.id = packet:read32()
@@ -1958,7 +2006,7 @@ handleTribeMemberData = function(packet)
 	member.gender = packet:readByte()
  	packet:read32() -- id again
 	member.lastConnection = packet:read32()
-	member.rankPosition = packet:read8()
+	member.rolePosition = packet:read8()
 	packet:read32() -- game id
 	member.roomName = packet:readUTF()
 	return member
@@ -2028,19 +2076,17 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	if not self._isListeningSigint then
 		self._isListeningSigint = true
 
-		local uv = require("uv")
-
 		local isClosing = false
 		local endProcess = function()
 			if isClosing then return end
 			isClosing = true
 
 			closeAll(self)
-			timer_setTimeout(100, os.exit)
+			timer_setTimeout(100, os_exit)
 		end
 
-		uv.signal_start(uv.new_signal(), "sigint", endProcess)
-		uv.signal_start(uv.new_signal(), "sighup", endProcess)
+		uv_signal_start(uv_new_signal(), "sigint", endProcess)
+		uv_signal_start(uv_new_signal(), "sighup", endProcess)
 	end
 end)
 --[[@
@@ -2205,12 +2251,16 @@ client.enterRoom = function(self, roomName, isSalonAuto)
 	self.main:send(enum.identifier.room,
 		byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
 end
-
-client.enterRoomAndPassword = function(self, roomName, roomPassword)
+--[[@
+	@name enterPrivateRoom
+	@desc Enters in a room protected with password.
+	@param roomName<string> The name of the room.
+	@param roomPassword<string> The password of the room.
+]]
+client.enterPrivateRoom = function(self, roomName, roomPassword)
 	self.main:send(enum.identifier.roomPassword,
 		byteArray:new():writeUTF(roomPassword):writeUTF(roomName))
 end
-
 --[[@
 	@name sendRoomMessage
 	@desc Sends a message in the room chat.
@@ -2297,7 +2347,8 @@ end
 -- Tribe
 --[[@
 	@name joinTribeHouse
-	@desc Joins the tribe house (if the account is in a tribe).
+	@desc Joins the tribe house.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 ]]
 client.joinTribeHouse = function(self)
 	self.main:send(enum.identifier.joinTribeHouse, byteArray:new())
@@ -2354,12 +2405,22 @@ client.setTribeGreetingMessage = function(self, message)
 	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
 		byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
 end
-
+--[[@
+	@name openTribeInterface
+	@desc Requests opening the tribe interface to retrieve all informations there.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+	@param includeOfflineMembers?<boolean> Whether data from offline members should be retrieved too. @default false
+]]
 client.openTribeInterface = function(self, includeOfflineMembers)
 	self.main:send(enum.identifier.bulle, self._encode:xorCipher(byteArray:new()
 		:write16(108):write32(3):writeBool(includeOfflineMembers), self.main.packetID))
 end
-
+--[[@
+	@name acceptTribeHouseInvitation
+	@desc Accepts a tribe house invitation and joins the tribe's tribehouse.
+	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+	@param inviterName<string> The name of who has invited the bot.
+]]
 client.acceptTribeHouseInvitation = function(self, inviterName)
 	self.main:send(enum.identifier.acceptTribeHouseInvite, byteArray:new():writeUTF(inviterName))
 end
@@ -2496,7 +2557,7 @@ end
 	@desc /!\ Note that some unlisted commands cannot be triggered by this function.
 	@param command<string> The command. (without /)
 ]]
-client.sendCommand = function(self, command, crypted)
+client.sendCommand = function(self, command)
 	self.main:send(enum.identifier.command, self._encode:xorCipher(
 		byteArray:new():writeUTF(command), self.main.packetID))
 end

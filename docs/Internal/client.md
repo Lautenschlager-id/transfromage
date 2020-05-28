@@ -64,6 +64,32 @@ Private functions were created in the Client class because their use could compr
 >Handles the packets that alters only one player data field.
 >
 ---
+>### handleTribeMemberData ( packet )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| packet | `byteArray` | ✔ | A Byte Array object with the data to be extracted. |
+>
+>Handles the data of a tribe member.
+>
+>**Returns**:
+>
+>| Type | Description |
+>| :-: | - |
+>| `table` | The data of the member. |
+>
+>**Table structure**:
+>```Lua
+>{
+>	id = 0, -- The id of the member.
+>	playerName = "", -- The nickname of the member.
+>	gender = 0, -- The member's gender. Enum in enum.gender.
+>	lastConnection = 0 -- Timestamp of when the member was last online.
+>	rolePosition = 0, -- The position of the member's role.
+>	roomName = "" -- The name of the room where the member currently is.
+>}
+>```
+>
+---
 >### parsePacket ( self, connection, packet )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |

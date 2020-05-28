@@ -9,7 +9,7 @@
 - Added method _client.acceptTribeHouseInvitation_.
 - Added event _tribeHouseInvitation ( inviterName, inviterTribe )_.
 - Added event _serverReboot ( msTime )_.
-- Added method _client.enterRoomAndPassword_.
+- Added method _client.enterPrivateRoom_.
 
 ## Changes
 - ByteArray is now read-only or write-only. You cannot mix it. With that, read functions got \~35x faster.

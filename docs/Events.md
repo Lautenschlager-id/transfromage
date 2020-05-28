@@ -969,6 +969,14 @@ end)
 >Triggered when the client sends packets to the server.
 >
 ---
+>### serverReboot ( remainingTime )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| remainingTime | `int` | Remaining time in milliseconds before the reboot. |
+>
+>Triggered when the server is going to be rebooted.
+>
+---
 >### staffList ( list )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
@@ -1000,6 +1008,42 @@ end)
 >	hour = 0, -- Total hours
 >	minute = 0, -- Total minutes
 >	second = 0 -- Total seconds
+>}
+>```
+>
+---
+>### tribeHouseInvitation ( inviterName, inviterTribe )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| inviterName | `string` | The name of the player who invited the bot. |
+>| inviterTribe | `string` | The name of the tribe that is inviting the bot. |
+>
+>Triggered when a tribe house invitation is received.
+>
+---
+>### tribeInterface ( tribeName, tribeMembers, tribeRoles, tribeHouseMap, greetingMessage, tribeId )
+>| Parameter | Type | Description |
+>| :-: | :-: | - |
+>| tribeName | `string` | The name of the tribe. |
+>| tribeMembers | `table` | The members' data. |
+>| tribeRoles | `table` | An array with the all roles name (key) and id (value). |
+>| tribeHouseMap | `int` | he map code of the tribe house. |
+>| greetingMessage | `string` | The tribe's greeting message. |
+>| tribeId | `int` | The id of the tribe. |
+>
+>Triggered when the tribe interface is opened and/or when the data is updated.
+>
+>**@tribeMembers structure**:
+>```Lua
+>{
+>	[i] = {
+>		id = 0, -- The id of the member.
+>		playerName = "", -- The nickname of the member.
+>		gender = 0, -- The member's gender. Enum in enum.gender.
+>		lastConnection = 0 -- Timestamp of when the member was last online.
+>		rolePosition = 0, -- The position of the member's role.
+>		roomName = "" -- The name of the room where the member currently is.
+>	}
 >}
 >```
 >
@@ -1085,7 +1129,7 @@ end)
 >			timestamp = 0, -- When the topic was created.
 >			author = "", -- The name of the topic author.
 >			content = "", -- The content of the message.
-			canLike = false, -- Whether the account can like/dislike the message.
+>			canLike = false, -- Whether the account can like/dislike the message.
 >			likes = 0 -- The number of likes on the message.
 >		}
 >	}

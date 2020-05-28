@@ -48,6 +48,15 @@
 >}
 >```
 ---
+>### client:acceptTribeHouseInvitation ( inviterName )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| inviterName | `string` | ✔ | The name of who has invited the bot. |
+>
+>Accepts a tribe house invitation and joins the tribe's tribehouse.<br>
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
+>
+---
 >### client:addFriend ( playerName )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -148,6 +157,15 @@
 >Enters a room.
 >
 ---
+>### client:enterPrivateRoom ( roomName, roomPassword )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| roomName | `string` | ✔ | The name of the room. |
+>| roomPassword | `string` | ✔ | The password of the room. |
+>
+>Enters in a room protected with password.
+>
+---
 >### client:handlePlayers ( handle )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
@@ -219,7 +237,8 @@
 ---
 >### client:joinTribeHouse (  )
 >
->Joins the tribe house (if the account is in a tribe).
+>Joins the tribe house.<br>
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:kickTribeMember ( memberName )
@@ -286,6 +305,15 @@
 >
 >Opens a Café topic.<br>
 >You may use this method to reload (or refresh) the topic.
+>
+---
+>### client:openTribeInterface ( includeOfflineMembers )
+>| Parameter | Type | Required | Description |
+>| :-: | :-: | :-: | - |
+>| includeOfflineMembers | `boolean` | ✕ | Whether data from offline members should be retrieved too. <sub>(default = false)</sub> |
+>
+>Requests opening the tribe interface to retrieve all informations there.<br>
+>![/!\\](https://i.imgur.com/HQ188PK.png) Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
 >
 ---
 >### client:playEmote ( emote, flag )
