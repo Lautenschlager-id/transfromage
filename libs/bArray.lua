@@ -13,13 +13,6 @@ local table_setNewClass = table.setNewClass
 local table_writeBytes = table.writeBytes
 ------------------
 
-local modulo256 = function(n)
-	-- It could be n & 0xFF but, in Lua, modulo is slightly more performatic
-	return n % 256
-end
-
-------------------
-
 local byteArray = table.setNewClass()
 byteArray.__tostring = function(this)
 	return table_writeBytes(this.stack)
@@ -51,17 +44,20 @@ end
 	@returns byteArray Object instance.
 ]]
 byteArray.write8 = function(self, ...)
-	local tbl = { ... }
+	local bytes = { ... }
 
-	local tblLen = #tbl
-	if tblLen == 0 then
-		tblLen = 1
+	local bytesLen = #bytes
+	if bytesLen == 0 then
+		bytesLen = 1
 
-		tbl = { 0 }
+		bytes = { 0 }
 	end
-	self.stackLen = self.stackLen + tblLen
+	self.stackLen = self.stackLen + bytesLen
 
-	local bytes = table_mapArray(tbl, modulo256)
+	for i = 1, #bytes do
+		-- It could be n & 0xFF but, in Lua, modulo is slightly more performatic
+		bytes[i] = bytes[i] % 256
+	end
 	table_add(self.stack, bytes)
 	return self
 end
@@ -72,7 +68,7 @@ end
 	@returns byteArray Object instance.
 ]]
 byteArray.write16 = function(self, short)
-	-- (long >> 8), long
+	-- (short >> 8), long
 	return self:write8(bit_rshift(short, 8), short)
 end
 --[[@
@@ -82,7 +78,7 @@ end
 	@returns byteArray Object instance.
 ]]
 byteArray.write24 = function(self, int)
-	-- (long >> 16), (long >> 8), long
+	-- (int >> 16), (int >> 8), int
 	return self:write8(bit_rshift(int, 16), bit_rshift(int, 8), int)
 end
 --[[@

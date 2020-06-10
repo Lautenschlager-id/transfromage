@@ -186,21 +186,6 @@
 >| `table` | The split array. |
 >
 ---
->### table.mapArray ( arr, f )
->| Parameter | Type | Required | Description |
->| :-: | :-: | :-: | - |
->| arr | `table` | ✔ | The array to have its values altered. |
->| f | `function` | ✔ | The function that handles the values of the array. It receives the values of the array as parameter. |
->
->Transforms the values in a given array.
->
->**Returns**:
->
->| Type | Description |
->| :-: | - |
->| `table` | A new array with the altered values. |
->
----
 >### table.setNewClass (  )
 >
 >Creates a new class constructor.<br>

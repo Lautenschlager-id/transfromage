@@ -337,5 +337,8 @@ end
 	@returns string A string from the array of bytes.
 ]]
 table.writeBytes = function(bytes)
-	return table_concat(table.mapArray(bytes, string_char))
+	for i = 1, #bytes do
+		bytes[i] = string_char(bytes[i])
+	end
+	return table_concat(bytes)
 end
