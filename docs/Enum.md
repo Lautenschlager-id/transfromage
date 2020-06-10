@@ -279,7 +279,7 @@
 ###### URLs used in the API.
 | Index | Value |
 | :-: | :-: |
-| authKeys | https://api.tocu.tk/get_transformice_keys.php?tfmid=%s&token=%s |
+| authKeys | https://api.tocuto.tk/get_transformice_keys.php?tfmid=%s&token=%s |
 | translation | http://transformice.com/langues/tfz_%s |
 
 ---

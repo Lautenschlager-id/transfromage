@@ -165,7 +165,6 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [table.copy](Extensions.md#tablecopy--list-)
 	- [table.fuse](Extensions.md#tablefuse--arra-arrb-)
 	- [table.join](Extensions.md#tablejoin--arr-value-)
-	- [table.mapArray](Extensions.md#tablemaparray--arr-f-)
 	- [table.setNewClass](Extensions.md#tablesetnewclass---)
 	- [table.writeBytes](Extensions.md#tablewritebytes--bytes-)
 - [Translation](Translation.md)
