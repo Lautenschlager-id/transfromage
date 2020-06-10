@@ -1,6 +1,12 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v7.0.0 - 10/06/2020
+## Changes
+- Change keys endpoint
+- Remove mapArray because it's not used anymore
+- ByteArray performance slightly improved
+
 ## v6.1.0 - 28/05/2020
 ## News
 - Added method _client.waitFor_ to await an event emission.
