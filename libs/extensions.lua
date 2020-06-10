@@ -340,5 +340,5 @@ table.writeBytes = function(bytes)
 	for i = 1, #bytes do
 		bytes[i] = string_char(bytes[i])
 	end
-	return table_concat(bytes, string_char)
+	return table_concat(bytes, bytes)
 end
