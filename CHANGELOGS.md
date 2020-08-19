@@ -1,6 +1,10 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v7.0.1 - 19/08/2020
+## Fixes
+- _byteArray.write24_'s alias _byteArray.writeInt_ was named _byteArray.writeWrite_. Same for read.
+
 ## v7.0.0 - 10/06/2020
 ## Changes
 - Change keys endpoint

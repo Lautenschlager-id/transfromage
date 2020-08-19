@@ -240,12 +240,12 @@ end
 ----- Compatibility -----
 byteArray.readByte = "read8"
 byteArray.readShort = "read16"
-byteArray.readWrite = "read24"
+byteArray.readInt = "read24"
 byteArray.readLong = "read32"
 
 byteArray.writeByte = "write8"
 byteArray.writeShort = "write16"
-byteArray.writeWrite = "write24"
+byteArray.writeInt = "write24"
 byteArray.writeLong = "write32"
 -------------------------
 
