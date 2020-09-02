@@ -43,14 +43,17 @@ translation.download = coroutine_makef(function(language, f)
 
 	body = zlibDecompress(body, 1) -- Decodes
 
-	body = string_split(body, "\n-\n", true)
+	local body, totalLines = string_split(body, "\n-\n", true)
 
 	local data = { }
 
 	local index, value
-	for content = 1, #body do
-		index, value = string_match(body[content], "^(.-)=(.*)$")
-		data[index] = value
+	for content = 1, totalLines do
+		content = body[content]
+		if content ~= '' then
+			index, value = string_match(content, "^(.-)=(.*)$")
+			data[index] = value
+		end
 	end
 	cache[language] = data
 
