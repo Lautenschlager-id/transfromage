@@ -42,22 +42,16 @@ translation.download = coroutine_makef(function(language, f)
 	end
 
 	body = zlibDecompress(body, 1) -- Decodes
-	body = string_utf8(body) -- Makes it UTF8 (Lua's gmatch can't handle it)
 
-	local data = { } -- Resets
+	body = string_split(body, "\n-\n", true)
 
-	local tmpData, index, value = ''
-	-- data = string_split(body, "[^¤]+")
-	for char = 1, #body do
-		if body[char] == '¤' then
-			index, value = string_match(tmpData, "^(.-)=(.*)$")
-			data[index] = value
-			tmpData = ''
-		else
-			tmpData = tmpData .. body[char]
-		end
+	local data = { }
+
+	local index, value
+	for content = 1, #body do
+		index, value = string_match(body[content], "^(.-)=(.*)$")
+		data[index] = value
 	end
-
 	cache[language] = data
 
 	if f then

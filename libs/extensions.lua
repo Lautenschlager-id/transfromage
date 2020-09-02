@@ -112,19 +112,31 @@ end
 	@name string.split
 	@desc Splits a string into parts based on a pattern.
 	@param str<string> The string to be split.
-	@param pat<string> The pattern to split the string. Note that it doesn't auto-include '[^%s]'
+	@param separator<string> The string that the function is going to use as separator.
+	@param raw?<boolean> Whether @separator is a string or a pattern. @default false
 	@returns table The data of the split string.
 ]]
-string.split = function(str, pat)
+string.split = function(str, separator, raw)
 	local out, counter = { }, 0
 
-	for v in string_gmatch(str, pat) do
+	local strPos = 1
+	local i, j
+	while true do
+		i, j = string_find(str, separator, strPos, raw)
+		if not i then break end
 		counter = counter + 1
-		out[counter] = tonumber(v) or v
-	end
+		out[counter] = string_sub(str, strPos, i - 1)
+		out[counter] = tonumber(out[counter]) or out[counter]
 
-	return out
+		strPos = j + 1
+	end
+	counter = counter + 1
+	out[counter] = string_sub(str, strPos)
+	out[counter] = tonumber(out[counter]) or out[counter]
+
+	return out, counter
 end
+
 --[[@
 	@name string.toNickname
 	@desc Normalizes an inserted nickname.

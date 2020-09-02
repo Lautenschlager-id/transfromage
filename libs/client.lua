@@ -625,7 +625,7 @@ oldPacketListener = {
 packetListener = {
 	[1] = {
 		[1] = function(self, packet, connection, identifiers) -- Old packets format
-			local data = string_split(packet:readUTF(), "[^\x01]+")
+			local data = string_split(packet:readUTF(), '\x01', true)
 			local oldIdentifiers = { string_byte(table_remove(data, 1), 1, 2) }
 
 			if oldPacketListener[oldIdentifiers[1]]
@@ -1480,7 +1480,7 @@ packetListener = {
 			local uid = packet:read32()
 			local pid = packet:read32()
 			local bulleIp = packet:readUTF()
-			enum.setting.port = string_split(packet:readUTF(), "[^%-]+")
+			enum.setting.port = string_split(packet:readUTF(), '-', true)
 
 			local oldBulle = self.bulle
 			self.bulle = connection:new("bulle", self.event)

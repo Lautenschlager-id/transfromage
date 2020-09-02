@@ -73,11 +73,12 @@
 >| `table` | An array of bytes. |
 >
 ---
->### string.split ( str, pat )
+>### string.split ( str, separator, raw )
 >| Parameter | Type | Required | Description |
 >| :-: | :-: | :-: | - |
 >| str | `string` | ✔ | The string to be split. |
->| pat | `string` | ✔ | The pattern to split the string. Note that it doesn't auto-include '[^%s]' |
+>| separator | `string` | ✔ | The string that the function is going to use as separator. |
+>| raw | `boolean` | ✕ | Whether @separator is a string or a pattern. <sub>(default = false)</sub> |
 >
 >Splits a string into parts based on a pattern.
 >

@@ -1,6 +1,15 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v7.1.0 - 01/09/2020
+## Changes
+- Change how translations were getting split due to internal changes of the game.
+- _string.split_ has a new implementation. Now it receives a separator instead of a negation pattern. Example: '%S+ is now '%s'.
+
+## v7.0.1 - 19/08/2020
+## Fixes
+- _byteArray.write24_'s alias _byteArray.writeInt_ was named _byteArray.writeWrite_. Same for read.
+
 ## v7.0.0 - 10/06/2020
 ## Changes
 - Change keys endpoint
