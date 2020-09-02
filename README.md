@@ -20,6 +20,7 @@ This API had many indirect contributors, including [@Tocutoeltuco](https://githu
 
 ![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 6.0 are no longer working due to internal changes of the game.**<br>
 ![/!\\](https://i.imgur.com/HQ188PK.png) **If you are not using an official Bot account, versions under 7.0 are no longer working due to internal changes of the API endpoint.**<br>
+![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 7.1 no longer support downloading game translations due to internal changes of the game.**<br>
 
 ## Authentication keys Endpoint
 

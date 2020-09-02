@@ -157,7 +157,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [os.log](Extensions.md#oslog--str-returnvalue-)
 	- [string.fixEntity](Extensions.md#stringfixentity--str-)
 	- [string.getBytes](Extensions.md#stringgetbytes--str-)
-	- [string.split](Extensions.md#stringsplit--str-pat-)
+	- [string.split](Extensions.md#stringsplit--str-separator-raw-)
 	- [string.toNickname](Extensions.md#stringtonickname--str-checkdiscriminator-)
 	- [string.utf8](Extensions.md#stringutf8--str-)
 	- [table.add](Extensions.md#tableadd--src-add-)

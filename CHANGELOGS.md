@@ -1,6 +1,31 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v7.1.0 - 01/09/2020
+## Changes
+- Change how translations were getting split due to internal changes of the game.
+- _string.split_ has a new implementation. Now it receives a separator instead of a negation pattern. Example: '%S+ is now '%s'.<br>
+You still can use the old version with _string.split2_ by using the following chunk:
+```Lua
+--[[@
+	@name string.split2
+	@desc Splits a string into parts based on a pattern.
+	@param str<string> The string to be split.
+	@param pat<string> The pattern to split the string. Note that it doesn't auto-include '[^%s]'
+	@returns table The data of the split string.
+]]
+string.split2 = function(str, pat)
+	local out, counter = { }, 0
+
+	for v in string_gmatch(str, pat) do
+		counter = counter + 1
+		out[counter] = tonumber(v) or v
+	end
+
+	return out
+end
+```
+
 ## v7.0.1 - 19/08/2020
 ## Fixes
 - _byteArray.write24_'s alias _byteArray.writeInt_ was named _byteArray.writeWrite_. Same for read.
