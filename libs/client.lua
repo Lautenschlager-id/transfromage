@@ -1731,7 +1731,7 @@ packetListener = {
 	@desc Inserts a new function to the packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
-	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (packet, connection, identifiers).
+	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (self, packet, connection, identifiers).
 	@param append?<boolean> 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
 ]]
 client.insertPacketListener = function(self, C, CC, f, append)
@@ -1754,7 +1754,7 @@ end
 	@name insertTribulleListener
 	@desc Inserts a new function to the tribulle (60, 3) packet parser.
 	@param tribulleId<int> The tribulle id.
-	@param f<function> The function to be triggered when this tribulle packet is received. The parameters are (packet, connection, tribulleId).
+	@param f<function> The function to be triggered when this tribulle packet is received. The parameters are (self, packet, connection, tribulleId).
 	@param append?<boolean> 'true' if the function should be appended to the (C, CC, tribulle) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
 ]]
 client.insertTribulleListener = function(self, tribulleId, f, append)
@@ -1774,7 +1774,7 @@ end
 	@desc Inserts a new function to the old packet parser.
 	@param C<int> The C packet.
 	@param CC<int> The CC packet.
-	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (data, connection, oldIdentifiers).
+	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (self, data, connection, oldIdentifiers).
 	@param append?<boolean> 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
 ]]
 client.insertOldPacketListener = function(self, C, CC, f, append)

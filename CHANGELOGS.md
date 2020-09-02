@@ -17,7 +17,7 @@ You still can use the old version with _string.split2_ by using the following ch
 string.split2 = function(str, pat)
 	local out, counter = { }, 0
 
-	for v in string_gmatch(str, pat) do
+	for v in string.gmatch(str, pat) do
 		counter = counter + 1
 		out[counter] = tonumber(v) or v
 	end

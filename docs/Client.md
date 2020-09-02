@@ -203,7 +203,7 @@
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
 >| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
->Inserts a new function to the packet parser. The parameters are (packet, connection, identifiers).
+>Inserts a new function to the packet parser. The parameters are (self, packet, connection, identifiers).
 >
 ---
 >### client:insertOldPacketListener ( C, CC, f, append )
@@ -214,7 +214,7 @@
 >| f | `function` | ✔ | The function to be triggered when the @C-@CC packets are received. |
 >| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
->Inserts a new function to the old packet parser. The parameters are (data, connection, oldIdentifiers).
+>Inserts a new function to the old packet parser. The parameters are (self, data, connection, oldIdentifiers).
 >
 ---
 >### client:insertTribulleListener ( tribulleId, f, append )
@@ -224,7 +224,7 @@
 >| f | `function` | ✔ | The function to be triggered when this tribulle packet is received. |
 >| append | `boolean` | ✕ | 'true' if the function should be appended to the (C, CC, tribulle) listener, 'false' if the function should overwrite the (C, CC) listener. <sub>(default = false)</sub> |
 >
->Inserts a new function to the tribulle (60, 3) packet parser. The parameters are (packet, connection, tribulleId).
+>Inserts a new function to the tribulle (60, 3) packet parser. The parameters are (self, packet, connection, tribulleId).
 >
 ---
 >### client:joinChat ( chatName )
