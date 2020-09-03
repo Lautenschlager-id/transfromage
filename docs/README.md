@@ -102,7 +102,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [cafeTopicMessage](Events.md#cafetopicmessage--message-topic-)
 	- [chatMessage](Events.md#chatmessage--channelname-playername-message-playercommunity-)
 	- [chatWho](Events.md#chatwho--chatname-data-)
-	- [connection](Events.md#connection--playername-community-playerid-playedtime-)
+	- [connection](Events.md#connection--playerid-playername-playedtime-community-)
 	- [connectionFailed](Events.md#connectionfailed---)
 	- [connectionInfo](Events.md#connectioninfo--playerdata-friendlist-soulmate-blacklist-tribedata-)
 	- [disconnection](Events.md#disconnection--connection-)

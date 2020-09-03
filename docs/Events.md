@@ -155,7 +155,7 @@ end)
 >Triggered when the /who command is loaded in a chat.
 >
 ---
->### connection ( playerName, community, playerId, playedTime )
+>### connection ( playerId, playerName, playedTime, community )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| playerId | `int` | The temporary id of the player during the section. |
