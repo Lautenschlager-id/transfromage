@@ -1170,9 +1170,9 @@ packetListener = {
 				@name ready
 				@desc Triggered when the connection is alive and ready to login.
 				@param onlinePlayers<int> The number of players connected in the game.
-				@param community<string> The community that the account has been logged into.
-				@param country<string> The country related to the community connected.
-				@param language<string> The language in which the account's client is set to use.
+				@param community<string> The community based on the country.
+				@param country<string> The client's country.
+				@param language<string> The language based on the account's community and country.
 			]]
 			self.event:emit("ready", onlinePlayers, community, country, language)
 		end,
