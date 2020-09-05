@@ -829,12 +829,13 @@ end)
 >```
 >
 ---
->### ready ( onlinePlayers, community, country )
+>### ready ( onlinePlayers, community, country, language )
 >| Parameter | Type | Description |
 >| :-: | :-: | - |
 >| onlinePlayers | `int` | The number of players connected in the game. |
 >| community | `string` | The community that the account has been logged into. |
 >| country | `string` | The country related to the community connected. |
+>| language | `string` | The language in which the account's client is set to use. |
 >
 >Triggered when the connection is alive and ready to login.
 >

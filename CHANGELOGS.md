@@ -1,9 +1,16 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v8.0.0 - 05/09/2020
+## News
+- The _ready_ event now receives a new parameter _language_ which in the future may vary.
+
+## Changes
+- Handle language receive/send due to internal changes of the game.
+
 ## v7.1.0 - 01/09/2020
 ## Changes
-- Change how translations were getting split due to internal changes of the game.
+- Changed how translations were getting split due to internal changes of the game.
 - _string.split_ has a new implementation. Now it receives a separator instead of a negation pattern. Example: '%S+ is now '%s'.<br>
 You still can use the old version with _string.split2_ by using the following chunk:
 ```Lua
