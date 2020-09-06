@@ -128,7 +128,7 @@ Note that no methods will handle invalid parameters (except for enumerations) or
 	- [playerVampire](Events.md#playervampire--playerdata-isvampire-)
 	- [playerWon](Events.md#playerwon--playerdata-position-timeelapsed-)
 	- [profileLoaded](Events.md#profileloaded--data-)
-	- [ready](Events.md#ready--onlineplayers-community-country-)
+	- [ready](Events.md#ready--onlineplayers-community-country-language-)
 	- [receive](Events.md#receive--connection-identifiers-packet-)
 	- [refreshPlayerList](Events.md#refreshplayerlist--playerlist-)
 	- [removeFriend](Events.md#removefriend--friendid-)
