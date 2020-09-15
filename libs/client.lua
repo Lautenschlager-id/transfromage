@@ -396,7 +396,8 @@ tribulleListener = {
 	end,
 	[66] = function(self, packet, connection, tribulleId) -- Whisper message
 		local playerName, community = packet:readUTF(), packet:read32()
-		local _, message = packet:readUTF(), packet:readUTF()
+		packet:readUTF()
+		local message = packet:readUTF()
 		--[[@
 			@name whisperMessage
 			@desc Triggered when the player receives a whisper.
