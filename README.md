@@ -24,7 +24,7 @@ This API had many indirect contributors, including [@Tocutoeltuco](https://githu
 
 ## Authentication keys Endpoint
 
-This API relies on an [endpoint](https://api.tocu.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
+This API relies on an [endpoint](https://api.tocuto.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
 
 To use it you will need a token which you can get by [applying through this form](https://forms.gle/N6Et1hLGQ9hmg95F6). See below to know the names of Transfromage managers who handle the token system.
 - **[Tocutoeltuco](https://github.com/Tocutoeltuco)** @discord=> `Tocutoeltuco#0018` <sub>`212634414021214209`</sub>;
