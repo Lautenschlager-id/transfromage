@@ -1179,7 +1179,7 @@ packetListener = {
 			local rooms, counter = { }, 0
 			local roomMode = packet:read8()
 			local pinned, pinnedCounter = { }, 0
-			
+
 			local isPinned, language, country, name, count, max, onFcMode
 			while packet.stackLen > 0 do
 				isPinned = packet:readBool()
@@ -1195,7 +1195,7 @@ packetListener = {
 						pinnedCounter = pinnedCounter + 1
 						pinned[pinnedCounter] = {
 							name = roomName,
-							totalPlayers = roomCount,
+							totalPlayers = roomCount * 1,
 							language = language,
 							country = country
 						}
