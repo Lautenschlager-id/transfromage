@@ -98,6 +98,44 @@ end
 
 -- Enums
 --[[@
+	@name chatCommunity
+	@desc The ID of each chat community.
+	@type int
+]]
+enum.chatCommunity = enum {
+	en = 01,
+	fr = 02,
+	ru = 03,
+	br = 04,
+	es = 05,
+	cn = 06,
+	tr = 07,
+	vk = 08,
+	pl = 09,
+	hu = 10,
+	nl = 11,
+	ro = 12,
+	id = 13,
+	de = 14,
+	e2 = 15,
+	ar = 16,
+	ph = 17,
+	lt = 18,
+	jp = 19,
+	ch = 20,
+	fi = 21,
+	cz = 22,
+	hr = 23,
+	sk = 24,
+	bg = 25,
+	lv = 26,
+	he = 27,
+	it = 28,
+	et = 29,
+	az = 30,
+	pt = 31
+}
+--[[@
 	@name emote
 	@desc The available emote IDs.
 	@type int
