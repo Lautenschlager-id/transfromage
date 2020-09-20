@@ -1,6 +1,10 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v9.0.0 - ?
+## Changes
+- byteArray has been renamed to ByteArray.
+
 ## v8.0.0 - 05/09/2020
 ## News
 - The _ready_ event now receives a new parameter _language_ which in the future may vary.
