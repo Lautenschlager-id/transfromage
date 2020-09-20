@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## Changes
+- _buffer_ has been renamed to _Buffer_.
 - _bitwise_ has been renamed to _bit64_.
 - _byteArray_ has been renamed to _ByteArray_.
 

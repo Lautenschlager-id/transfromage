@@ -2,44 +2,45 @@
 local string_getBytes = string.getBytes
 local table_add = table.add
 local table_remove = table.remove
-local table_setNewClass = table.setNewClass
+local type = type
 ------------------
 
-local buffer = table_setNewClass()
+local Buffer = table.setNewClass()
 
 --[[@
 	@name new
-	@desc Creates a new instance of Buffer. Alias: `buffer()`.
-	@returns buffer The new Buffer object.
+	@desc Creates a new instance of Buffer. Alias: `Buffer()`.
+	@returns Buffer The new Buffer object.
 	@struct {
 		queue = { }, -- The bytes queue
 		_count = 0 -- The number of bytes in the queue
 	}
 ]]
-buffer.new = function(self)
+Buffer.new = function(self)
 	return setmetatable({
 		queue = { },
 		_count = 0
 	}, self)
 end
+
 --[[
 	@desc Checks whether the queue is empty or not.
 	@returns boolean Whether the queue is empty or not.
 ]]
-buffer.isEmpty = function(self)
+Buffer.isEmpty = function(self)
 	return self._count == 0
 end
+
 --[[@
 	@name receive
 	@desc Retrieves bytes from the queue.
 	@param length<int> The quantity of bytes to be extracted.
 	@returns table An array of bytes.
 ]]
-buffer.receive = function(self, length)
-	local bufferSize = #self.queue
-	if bufferSize == 0 then return end
+Buffer.receive = function(self, length)
+	if self._count == 0 then return end
 
-	if length >= bufferSize then
+	if length >= self._count then
 		local ret = self.queue
 		self.queue = { }
 		self._count = 0
@@ -54,13 +55,14 @@ buffer.receive = function(self, length)
 
 	return ret
 end
+
 --[[@
 	@name push
 	@desc Inserts bytes to the queue.
 	@param bytes<table,string> A string/table of bytes.
-	@returns buffer Object instance.
+	@returns Buffer Object instance.
 ]]
-buffer.push = function(self, bytes)
+Buffer.push = function(self, bytes)
 	if type(bytes) == "string" then
 		bytes = string_getBytes(bytes)
 	end
@@ -71,4 +73,4 @@ buffer.push = function(self, bytes)
 	return self
 end
 
-return buffer
+return Buffer
