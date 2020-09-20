@@ -8,7 +8,7 @@ local table_writeBytes = table.writeBytes
 local type = type
 ------------------
 
-local ByteArray = require("init")
+local ByteArray = require("ByteArray/init")
 
 --[[@
 	@name read8

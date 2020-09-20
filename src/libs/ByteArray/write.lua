@@ -5,7 +5,7 @@ local table_add = table.add
 local type = type
 ------------------
 
-local ByteArray = require("init")
+local ByteArray = require("ByteArray/init")
 
 --[[@
 	@name write8
