@@ -1,9 +1,10 @@
+-- Thanks to @Turkitutu's samples at https://pastebin.com/raw/Nw3y1A42
+
 -- Optimization --
 local math_floor = math.floor
 ------------------
--- Thanks to @Turkitutu @ https://pastebin.com/raw/Nw3y1A42
 
-local bitwise = { }
+local bit64 = { }
 
 --[[@
 	@name lshift
@@ -12,9 +13,10 @@ local bitwise = { }
 	@param disp<int> Quantity of bits to be left-shifted in @x.
 	@returns int The integer @x shifted @disp bits to the left.
 ]]
-bitwise.lshift = function(x, disp)
+bit64.lshift = function(x, disp)
 	return x * 2 ^ disp
 end
+
 --[[@
 	@name rshift
 	@desc Shifts an integer number to the right.
@@ -22,17 +24,18 @@ end
 	@param disp<int> Quantity of bits to be right-shifted in @x.
 	@returns int The integer @x shifted @disp bits to the right.
 ]]
-bitwise.rshift = function(x, disp)
+bit64.rshift = function(x, disp)
 	return math_floor(x / 2 ^ disp)
 end
+
 --[[@
 	@name band
-	@desc Returns the bitwise _& (and)_ between two integers.
+	@desc Performs the bitwise _& (and)_ operation between two integers.
 	@param x<int> The first integer.
 	@param y<int> The second integer.
 	@returns int The result of the & operation.
 ]]
-bitwise.band = function(x, y)
+bit64.band = function(x, y)
 	-- x > y; \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n (\lfloor \dfrac{x}{2^n} \rfloor mod 2)(\lfloor \dfrac{y}{2^n} \rfloor mod 2)
 	local aux = 1
 	local out = 0
@@ -53,14 +56,15 @@ bitwise.band = function(x, y)
 
 	return out
 end
+
 --[[@
 	@name bxor
-	@desc Returns the bitwise _^ (xor)_ between two integers.
+	@desc Performs the bitwise _^ (xor)_ operation between two integers.
 	@param x<int> The first integer.
 	@param y<int> The second integer.
 	@returns int The result of the ^ operation.
 ]]
-bitwise.bxor = function(x, y)
+bit64.bxor = function(x, y)
 	-- x > y; \sum_{n=0}^{\lfloor \log_{2}(x) \rfloor} 2^n [(\lfloor \dfrac{x}{2^n} \rfloor + \lfloor \dfrac{y}{2^n} \rfloor) mod 2)]
 	local out = 0
 
@@ -78,4 +82,4 @@ bitwise.bxor = function(x, y)
 	return out
 end
 
-return bitwise
+return bit64
