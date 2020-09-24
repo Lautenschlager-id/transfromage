@@ -3,6 +3,10 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## Changes
+- _Translation.download_ is not the class' constructor.
+- _Translation_ is now a class.
+- _translation_ has been renamed to _Translation_.
+- _encode_ is not a class anymore.
 - _buffer_ has been renamed to _Buffer_.
 - _bitwise_ has been renamed to _bit64_.
 - _byteArray_ has been renamed to _ByteArray_.

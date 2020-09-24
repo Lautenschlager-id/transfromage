@@ -15,26 +15,9 @@ local string_utf8 = string.utf8
 local table_copy = table.copy
 ------------------
 
-local cache = {
-	--[language] = { data }
-	_format = { }, -- Formated line ( %1 → %s )
-	_gender = { }, -- Gender line ( "a(b|c)" → { "ab", "ac" } )
-	_verified = { } -- Lines without nested default verified, ( != "@language" )
-}
+local downloadedTranslations = { }
 
-local translation = { }
---[[@
-	@name translation.download
-	@desc Downloads a Transformice language file.
-	@param language<enum.language> An enum from @see language. (index or value) @default en
-	@param f?<function> A function to be executed when the language is downloaded.
-	@returns boolean,nil Whether the language has been downloaded.
-]]
-translation.download = coroutine_makef(function(language, f)
-	language = enum_validate(enum.language, enum.language.en, language,
-		string_format(enum.error.invalidEnum, "download", "language", "language"))
-	if not language then return end
-
+local getOfficialTranslationsData = coroutine_makef(function(language)
 	local head, body = http_request("GET", string_format(enum.url.translation, language))
 	if head.code ~= 200 then -- The enum must prevent it, but we never know
 		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ could not \z
@@ -43,7 +26,25 @@ translation.download = coroutine_makef(function(language, f)
 
 	body = zlibDecompress(body, 1) -- Decodes
 
-	local body, totalLines = string_split(body, "\n-\n", true)
+	return string_split(body, "\n-\n", true)
+end)
+
+local Translation = table.setNewClass()
+
+--[[@
+	@name translation.download
+	@desc Downloads a Transformice language file.
+	@param language<enum.language> An enum from @see language. (index or value) @default en
+	@param f?<function> A function to be executed when the language is downloaded.
+	@returns boolean,nil Whether the language has been downloaded.
+]]
+Translation.new = function(self, language, onDownload)
+	language = enum_validate(enum.language, enum.language.en, language,
+		string_format(enum.error.invalidEnum, "download", "language", "language"))
+	if not language then return end
+
+	-- Caches all translation lines
+	local body, totalLines = getOfficialTranslationsData(language)
 
 	local data = { }
 
@@ -55,14 +56,24 @@ translation.download = coroutine_makef(function(language, f)
 			data[index] = value
 		end
 	end
-	cache[language] = data
 
-	if f then
-		f()
+	local translation = setmetatable({
+		language = language,
+		data = data,
+		_dataWithLuaFormatting = { }, -- Formatted line ( %1 → %s )
+		_dataWithGendersHandled = { }, -- Gender line ( "a(b|c)" → { "ab", "ac" } )
+		_indexWithDependentLangChecked = { } -- Lines without nested default verified, ( != "@language" )
+	}, self)
+
+	downloadedTranslations[language] = translation
+
+	if onDownload then
+		onDownload(translation)
 	end
 
-	return true
-end)
+	return translation
+end
+
 --[[@
 	@name translation.free
 	@desc Deletes translation lines that are not going to be used. (Saves process)
@@ -72,36 +83,89 @@ end)
 	@param whitelistPattern?<string> A pattern to match various indexes at once, these indexes won't be deleted.
 	@returns boolean,nil Whether the given data got deleted successfully.
 ]]
-translation.free = function(language, whitelist, whitelistPattern)
-	language = string_lower(language)
-	if not cache[language] then
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not down\z
-			loaded yet.", enum.errorLevel.low)
-	end
-
+Translation.free = function(self, whitelist, whitelistPattern)
 	if not whitelist and not whitelistPattern then
-		cache[language] = nil
-		cache._format[language] = nil
-		cache._gender[language] = nil
+		downloadedTranslations[self.language] = nil
 		return true
 	end
 
-	for code in next, cache[language] do
-		repeat
-			if whitelist and whitelist[code] then break end
-			if whitelistPattern and string_find(code, whitelistPattern) then break end
+	local data = self.data
+	local dataWithLuaFormatting = self._dataWithLuaFormatting
+	local dataWithGendersHandled = self._dataWithGendersHandled
+	local indexWithDependentLangChecked = self._indexWithDependentLangChecked
 
-			cache[language][code] = nil
-			if cache._format[language] then
-				cache._format[language][code] = nil
-			elseif cache._gender[language] then
-				cache._gender[language][code] = nil
-			end
-		until true
+	for code in next, data do
+		if not (whitelist and whitelist[code])
+			and not (whitelistPattern and string_find(code, whitelistPattern)) then
+			data[code] = nil
+			dataWithLuaFormatting[code] = nil
+			dataWithGendersHandled[code] = nil
+			indexWithDependentLangChecked[code] = nil
+		end
 	end
 
-	return true
+	return self
 end
+
+local checkDependentLanguageForIndex = function(translation, index)
+	-- Default values from other communities (@en, @fr) are handled if the translation table was downloaded
+	local indexWithDependentLangChecked = translation._indexWithDependentLangChecked
+
+	local rawValue = translation.data[index]
+
+	if not indexWithDependentLangChecked[index] then
+		local dependentLanguage = string_match(rawValue, "^@(%w%w)$")
+
+		if dependentLanguage then
+			local downloadedTranslation = downloadedTranslations[dependentLanguage]
+
+			if downloadedTranslation and downloadedTranslation[index] then
+				return downloadedTranslation[index]
+			end
+		else
+			if not indexWithDependentLangChecked[index] then
+				indexWithDependentLangChecked[index] = true
+			end
+		end
+	end
+
+	return rawValue
+end
+
+local formatDataAsLua = function(self, rawValue)
+	-- Changes %%%d to %d, so it can be constructed with string_format
+	local dataWithLuaFormatting = self._dataWithLuaFormatting
+
+	if not dataWithLuaFormatting[index] then
+		rawValue = string_gsub(rawValue, "%%%d", "%s")
+		dataWithLuaFormatting[index] = rawValue
+	end
+
+	return rawValue
+end
+
+local handleGenders = function(self)
+	-- Handles the gender system (male|female)
+	local dataWithGendersHandled = self._dataWithGendersHandled
+
+	if dataWithGendersHandled[index] == false
+		or not string_find(dataWithGendersHandled[index], '|', nil, true) then return end
+
+	if not dataWithGendersHandled[index] then
+		local dataWithLuaFormatting = self._dataWithLuaFormatting[index]
+
+		local male, changes = string_gsub(dataWithLuaFormatting, "%((.-)|.-%)", "%1")
+		local female = string_gsub(dataWithLuaFormatting, "%(.-|(.-)%)", "%1")
+
+		-- Cache possible non-translated lines with |
+		dataWithGendersHandled[index] = (changes > 0 and { male, female } or false)
+	end
+
+	if dataWithGendersHandled[index] then
+		return table_copy(dataWithGendersHandled[index]), true
+	end
+end
+
 --[[@
 	@name translation.get
 	@desc Gets a translation line.
@@ -111,72 +175,28 @@ end
 	@returns string,table The translation line. If @index is nil, then it's the translation table (index = value). If @index exists, it may be the string, or @raw string, or a table if it has gender differences ({ male, female }). It may not exist.
 	@returns boolean,nil If not @raw, the value is a boolean true if return #1 is table.
 ]]
-translation.get = function(language, index, raw)
-	language = string_lower(language)
-	if not cache[language] then
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not down\z
-			loaded yet.", enum.errorLevel.low)
-	end
+Translation.get = function(self, index, raw)
+	local data = self.data
 
 	if not index then
-		return table_copy(cache[language])
+		return table_copy(data)
 	end
-	if cache[language][index] then
+
+	if data[index] then
 		if raw then
-			return cache[language][index]
+			return data[index]
 		end
 
-		-- Default values from other communities (@en, @fr) are handled if the translation table was downloaded
-		local formatValue = cache[language][index]
-		if not (cache._verified[language] and cache._verified[language][index]) then
-			local depLang = string_match(formatValue, "^@(..)$")
-			if depLang then
-				if cache[depLang] and cache[depLang][index] then
-					formatValue = cache[depLang][index]
-				end
-			else
-				if not cache._verified[language] then
-					cache._verified[language] = { }
-				end
-				if not cache._verified[language][index] then
-					cache._verified[language][index] = true
-				end
-			end
-		end
+		local rawValue = checkDependentLanguageForIndex(self, index)
 
-		-- Changes %%%d to %d, so it can be constructed with string_format
-		if not cache._format[language] then
-			cache._format[language] = { }
-		end
-		if not cache._format[language][index] then
-			cache._format[language][index] = string_gsub(formatValue, "%%%d", "%s")
-		end
+		rawValue = formatDataAsLua(self, rawValue)
 
-		-- Handles the gender system (male|female)
-		if not (
-			cache._gender[language] and cache._gender[language][index] == false)
-			and string_find(cache._format[language][index], '|', nil, true
-		) then
-			if not cache._gender[language] then
-				cache._gender[language] = { }
-			end
+		local formattedValue, hasGender = handleGenders(self, rawValue)
 
-			if not cache._gender[language][index] then
-				local male, changes = string_gsub(cache._format[language][index], "%((.-)|.-%)",
-					"%1")
-				local female = string_gsub(cache._format[language][index], "%(.-|(.-)%)", "%1")
-				-- Cache possible non-translated lines with |
-				cache._gender[language][index] = (changes > 0 and ({ male, female }) or false)
-			end
-
-			if cache._gender[language][index] then
-				return table_copy(cache._gender[language][index]), true
-			end
-		end
-
-		return cache._format[language][index], false
+		return formattedValue or rawValue, hasGender
 	end
 end
+
 --[[@
 	@name translation.set
 	@desc Sets the value of translation codes.
@@ -186,30 +206,23 @@ end
 	@oaram isPlain?<boolean> Whether the pattern is plain (no pattern) or not. @default false
 	@returns boolean,nil Whether the given daata was set successfully.
 ]]
-translation.set = function(language, setPattern, f, isPlain)
-	language = string_lower(language)
-	if not cache[language] then
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ was not down\z
-			loaded yet.", enum.errorLevel.low)
-	end
+Translation.set = function(self, setPattern, f, isPlain)
+	local data = self.data
+	local dataWithLuaFormatting = self._dataWithLuaFormatting
+	local dataWithGendersHandled = self._dataWithGendersHandled
+	local indexWithDependentLangChecked = self._indexWithDependentLangChecked
 
-	for code, value in next, cache[language] do
+	for code, value in next, data do
 		if string_find(code, setPattern, nil, isPlain) then
-			cache[language][code] = f(value, code)
+			data[code] = f(value, code)
 
-			if cache._format[language] then
-				cache._format[language][code] = nil
-			end
-			if cache._gender[language] then
-				cache._gender[language][code] = nil
-			end
-			if cache._verified[language] then
-				cache._verified[language][code] = nil
-			end
+			dataWithLuaFormatting[code] = nil
+			dataWithGendersHandled[code] = nil
+			indexWithDependentLangChecked[code] = nil
 		end
 	end
 
-	return true
+	return self
 end
 
-return translation
+return Translation

@@ -1,5 +1,5 @@
 local openssl = require("openssl")
-local base64_encode = require("base64")
+local base64_encode = require("base64").encode
 
 -- Optimization --
 local math_floor = math.floor
@@ -11,7 +11,6 @@ local tonumber = tonumber
 ------------------
 
 local sha256 = openssl.digest.get("sha256")
-base64_encode = base64_encode.encode
 
 local cryptToSha256 = function(str)
 	local hash = openssl.digest.new(sha256)
