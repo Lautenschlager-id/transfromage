@@ -1,8 +1,8 @@
 local net_createConnection = require("net").createConnection
 local timer_setTimeout = require("timer").setTimeout
 
-local byteArray = require("bArray")
-local buffer = require("buffer")
+local byteArray = require("ByteArray")
+local buffer = require("Buffer")
 local enum = require("enum")
 
 -- Optimization --
@@ -10,6 +10,7 @@ local bit_band = bit.band
 local bit_bor = bit.bor
 local bit_lshift = bit.lshift
 local bit_rshift = bit.rshift
+local error = error
 local string_format = string.format
 local string_getBytes = string.getBytes
 local table_add = table.add
@@ -21,7 +22,7 @@ local table_unpack = table.unpack
 local table_writeBytes = table.writeBytes
 ------------------
 
-local connection = table_setNewClass()
+local Connection = table.setNewClass()
 
 --[[@
 	@name new
@@ -43,30 +44,32 @@ local connection = table_setNewClass()
 		_lengthBytes = 0 -- Number of bytes read (real value needs a divison by 7).
 	}
 ]]
-connection.new = function(self, name, event)
+Connection.new = function(self, name, event)
 	return setmetatable({
 		event = event,
 		socket = nil,
-		buffer = buffer:new(),
+		buffer = Buffer:new(),
 		ip = "",
 		packetID = 0,
-		port = 1,
+		portIndex = 1,
 		name = name,
 		open = false,
 		_isReadingStackLength = true,
 		_readStackLength = 0,
 		_lengthBytes = 0
-	}, connection)
+	}, self)
 end
+
 --[[@
 	@name close
 	@desc Ends the socket connection.
 ]]
-connection.close = function(self)
+Connection.close = function(self)
 	self.open = false
 	self.port = 1
 	self.socket:destroy()
 	self.packetID = 0
+
 	--[[@
 		@name disconnection
 		@desc Triggered when a connection dies or fails.
@@ -75,16 +78,28 @@ connection.close = function(self)
 	self.event:emit("disconnection", self)
 end
 
+local tryPortConnection = function(self, hasPort, ip)
+	if not self.open then
+		if not hasPort then
+			self.portIndex = self.portIndex + 1
+			if self.portIndex <= #enum.setting.port then
+				return self:connect(ip)
+			end
+		end
+		return error("↑error↓[SOCKET]↑ Timed out.", enum.errorLevel.high)
+	end
+end
+
 --[[@
 	@name connect
 	@desc Creates a socket to connect to the server of the game.
 	@param ip<string> The server IP.
 	@param port?<int> The server port. If nil, all the available ports are going to be used until one gets connected.
 ]]
-connection.connect = function(self, ip, port)
+Connection.connect = function(self, ip, port)
 	local hasPort = not not port
 	if not hasPort then
-		port = enum.setting.port[self.port]
+		port = enum.setting.port[self.portIndex]
 	end
 
 	local socket
@@ -107,24 +122,15 @@ connection.connect = function(self, ip, port)
 		self.event:emit("_socketConnection", self, port)
 	end)
 
-	timer_setTimeout(3500, function()
-		if not self.open then
-			if not hasPort then
-				self.port = self.port + 1
-				if self.port <= #enum.setting.port then
-					return self:connect(ip)
-				end
-			end
-			return error("↑error↓[SOCKET]↑ Timed out.", enum.errorLevel.high)
-		end
-	end)
+	timer_setTimeout(3500, tryPortConnection, self, hasPort, ip)
 end
+
 --[[@
 	@name receive
 	@desc Retrieves the data received from the server.
 	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty or if a packet is only partially received.
 ]]
-connection.receive = function(self)
+Connection.receive = function(self)
 	local byte
 	while self._isReadingStackLength and not self.buffer:isEmpty() do
 		byte = self.buffer:receive(1)[1]
@@ -147,41 +153,20 @@ connection.receive = function(self)
 		return byteArr
 	end
 end
+
 --[[@
 	@name send
 	@desc Sends a packet to the server.
 	@param identifiers<table> The packet identifiers in the format (C, CC).
-	@param alphaPacket<byteArray,string,number> The packet ByteArray, ByteString or byte to be sent to the server.
+	@param alphaPacket<byteArray> The packet ByteArray to be sent to the server.
 ]]
-connection.send = function(self, identifiers, alphaPacket)
-	local betaPacket
-	if type(alphaPacket) == "table" then
-		if alphaPacket.stack then
-			betaPacket = byteArray:new(table_fuse(identifiers, alphaPacket.stack))
-		else
-			local bytes = {
-				[1] = string_format("0x%02x%02x", identifiers[1], identifiers[2]),
-				[2] = 0x1,
-				[3] = table_join(alphaPacket, 0x1)
-			}
-			betaPacket = byteArray:new():write8(1, 1):writeUTF(bytes)
-		end
-	elseif type(alphaPacket) == "string" then
-		betaPacket = byteArray:new(table_fuse(identifiers, string_getBytes(alphaPacket)))
-	elseif type(alphaPacket) == "number" then
-		local arg = { table_unpack(identifiers) }
-		arg[#arg + 1] = alphaPacket
-
-		betaPacket = byteArray:new():write8(table_unpack(arg))
-	else
-		return error("↑failure↓[SEND]↑ Unknown packet type.\n\tIdentifiers: " ..
-			table_concat(identifiers, ','), enum.errorLevel.low)
-	end
-
-	local gammaPacket = byteArray:new()
+Connection.send = function(self, identifiers, alphaPacket)
+	local betaPacket = byteArray:new(table_fuse(identifiers, alphaPacket.stack))
 
 	local stackLen = betaPacket.stackLen
 	local stackType = bit_rshift(stackLen, 7)
+
+	local gammaPacket = byteArray:new()
 	while stackType ~= 0 do
 		gammaPacket:write8(bit_bor(bit_band(stackLen, 0x7F), 0x80)) -- s&0x7F | 0x80
 		stackLen = stackType
@@ -212,4 +197,4 @@ connection.send = function(self, identifiers, alphaPacket)
 	self.event:emit("send", identifiers, alphaPacket)
 end
 
-return connection
+return Connection
