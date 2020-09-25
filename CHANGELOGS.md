@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## Changes
+- _connection_ has been renamed to _Connection_.
 - _Translation.download_ is not the class' constructor.
 - _Translation_ is now a class.
 - _translation_ has been renamed to _Translation_.

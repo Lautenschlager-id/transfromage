@@ -11,6 +11,7 @@ local bit_bor = bit.bor
 local bit_lshift = bit.lshift
 local bit_rshift = bit.rshift
 local error = error
+local setmetatable = setmetatable
 local string_format = string.format
 local string_getBytes = string.getBytes
 local table_add = table.add
