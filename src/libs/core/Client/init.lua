@@ -1,4 +1,5 @@
-local PlayerList = require("classes/PlayerList")
+local PlayerList = require("Entities/player/PlayerList")
+local Cafe = require("Entities/cafe/Cafe")
 
 -- Optimization --
 local bit_bxor = bit.bxor
@@ -78,7 +79,7 @@ Client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 		main = connection:new("main", eventEmitter),
 		bulle = nil,
 		event = eventEmitter,
-		cafe = { },
+		cafe = Cafe:new(),
 		playerList = PlayerList:new(),
 		-- Private
 		_mainLoop = nil,
@@ -95,7 +96,6 @@ Client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 		_whoFingerprint = 0,
 		_whoList = { },
 		_processXml = false,
-		_cafeCachedMessages = { },
 		_handlePlayers = false,
 		_encode = encode:new(hasSpecialRole),
 		_hasSpecialRole = hasSpecialRole,

@@ -91,6 +91,8 @@ Player.update = function(self, packet)
 
 	self.isDucking = false
 	self.isJumping = false
+
+	return self
 end
 
 Player.copy = function(self)
