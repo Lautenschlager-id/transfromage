@@ -8,6 +8,4 @@ local onTribeHouseInvitation = function(self, packet, connection, identifiers)
 	self.event:emit("tribeHouseInvitation", packet:readUTF(), packet:readUTF())
 end
 
-return {
-	{ 16, 2, onTribeHouseInvitation }
-}
+return { 16, 2, onTribeHouseInvitation }

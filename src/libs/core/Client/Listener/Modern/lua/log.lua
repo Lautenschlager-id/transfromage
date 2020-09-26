@@ -7,6 +7,4 @@ local onLua = function(self, packet, connection, identifiers)
 	self.event:emit("lua", packet:readUTF())
 end
 
-return {
-	{ 29, 6, onLua }
-}
+return { 29, 6, onLua }

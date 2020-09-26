@@ -15,6 +15,4 @@ local onRoomMessage = function(self, packet, connection, identifiers)
 	self.event:emit("roomMessage", string_toNickname(playerName, true), string_fixEntity(message))
 end
 
-return {
-	{ 6, 6, onRoomMessage }
-}
+return { 6, 6, onRoomMessage }

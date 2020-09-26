@@ -1,3 +1,5 @@
+local PlayerList = require("classes/PlayerList")
+
 -- Optimization --
 local bit_bxor = bit.bxor
 local coroutine_makef = coroutine.makef
@@ -28,27 +30,6 @@ local uv_new_signal = uv.new_signal
 ------------------
 
 local Client = table.setNewClass()
-
-local playerListMeta = {
-	__len = function(this)
-		return this.count or -1
-	end,
-	__pairs = function(this)
-		local indexes = { }
-		for i = 1, #this do
-			indexes[i] = this[i].playerName
-		end
-
-		local i, tmp = 0
-		return function()
-			i = i + 1
-			tmp = this[indexes[i]]
-			if tmp then
-				return tmp.playerName, tmp
-			end
-		end
-	end
-}
 
 --[[@
 	@name new
@@ -98,7 +79,7 @@ Client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 		bulle = nil,
 		event = eventEmitter,
 		cafe = { },
-		playerList = setmetatable({ }, playerListMeta),
+		playerList = PlayerList:new(),
 		-- Private
 		_mainLoop = nil,
 		_bulleLoop = nil,

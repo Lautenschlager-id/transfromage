@@ -23,3 +23,9 @@ enum.role = enum {
 	mapcrew       = 11,
 	funcorp       = 13
 }
+
+enum.updatePlayer = enum {
+	general      = 1,
+	shamanColor  = 2,
+	score        = 3
+}

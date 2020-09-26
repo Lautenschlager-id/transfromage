@@ -27,6 +27,4 @@ local onOldPacket = function(self, packet, connection, identifiers)
 	self.event:emit("missedOldPacket", oldIdentifiers, data, connection)
 end
 
-return {
-	{ 1, 1, onOldPacket }
-}
+return { 1, 1, onOldPacket }

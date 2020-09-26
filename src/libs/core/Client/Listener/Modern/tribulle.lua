@@ -16,6 +16,4 @@ local onTribullePacket = function(self, packet, connection, identifiers)
 	self.event:emit("missedTribulle", tribulleId, packet, connection)
 end
 
-return {
-	{ 60, 3, onTribullePacket }
-}
+return { 60, 3, onTribullePacket }
