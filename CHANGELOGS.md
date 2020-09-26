@@ -11,7 +11,7 @@
 - _connection_ has been renamed to _Connection_.
 - _Translation.download_ is not the class' constructor.
 - _Translation_ is now a class.
-- _translation_ has beend to renamed to _Translation_.
+- _translation_ has been renamed to _Translation_.
 - _encode_ is not a class anymore.
 - _buffer_ has been renamed to _Buffer_.
 - _bitwise_ has been renamed to _bit64_.

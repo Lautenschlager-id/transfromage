@@ -521,68 +521,6 @@ oldPacketListener = {
 }
 -- Normal functions
 packetListener = {
-	[5] = {
-		[2] = function(self, packet, connection, identifiers) -- New game
-			if not self._isConnected then return end
-
-			local map = { }
-			map.code = packet:read32()
-
-			packet:read16() -- ?
-			packet:read8() -- ?
-			packet:read16() -- ?
-
-			local xml = packet:read8(packet:read16())
-			if self._processXml then
-				xml = table_writeBytes(xml)
-				if xml ~= '' then
-					map.xml = zlibDecompress(xml, 1)
-				end
-			end
-			map.author = packet:readUTF()
-			map.perm = packet:read8()
-			map.isMirrored = packet:readBool()
-
-			--[[@
-				@name newGame
-				@desc Triggered when a map is loaded.
-				@desc /!\ This event may increase the memory consumption significantly due to the XML processes. Set the variable `_processXml` as false to avoid processing it.
-				@param map<table> The new map data.
-				@struct @map {
-					code = 0, -- The map code.
-					xml = "", -- The map XML. May be nil if the map is Vanilla.
-					author = "", -- The map author
-					perm = 0, -- The perm code of the map.
-					isMirrored = false -- Whether the map is mirrored or not.
-				}
-			]]
-			self.event:emit("newGame", map)
-		end,
-		[21] = function(self, packet, connection, identifiers) -- Room changed
-			self.playerList = setmetatable({ }, meta.playerList) -- Refreshes it
-
-			local isPrivate, roomName, roomLanguage = packet:readBool(), packet:readUTF(), packet:readUTF()
-
-			if string_byte(roomName, 2) == 3 then
-				--[[@
-					@name joinTribeHouse
-					@desc Triggered when the account joins a tribe house.
-					@param tribeName<string> The name of the tribe.
-					@param roomLanguage<string> The language of the tribe.
-				]]
-				self.event:emit("joinTribeHouse", string_sub(roomName, 3), roomLanguage)
-			else
-				--[[@
-					@name roomChanged
-					@desc Triggered when the player changes the room.
-					@param roomName<string> The name of the room.
-					@param roomLanguage<string> The language of the room.
-					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
-				]]
-				self.event:emit("roomChanged", string_fixEntity(roomName), isPrivate, roomLanguage)
-			end
-		end
-	},
 	[26] = {
 		[2] = function(self, packet, connection, identifiers) -- Login
 			self._isConnected = true
@@ -876,16 +814,6 @@ packetListener = {
 		[22] = function(self, packet, connection, identifiers) -- PacketID offset identifiers
 			connection.packetID = packet:read8() -- Sets the pkt of the connection
 		end
-	},
-	[144] = {
-		[1] = function(self, packet, connection, identifiers) -- Set player list
-			if not self._handlePlayers then return end
-
-		end,
-		[2] = function(self, packet, connection, identifiers, _pos) -- Updates player data
-			if not self._handlePlayers or (not _pos and self.playerList.count == 0) then return end
-
-		end,
 	},
 	[176] = {
 		[5] = function(self, packet, connection, identifiers)
