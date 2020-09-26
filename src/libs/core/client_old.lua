@@ -521,40 +521,6 @@ oldPacketListener = {
 }
 -- Normal functions
 packetListener = {
-	[4] = {
-		[4] = function(self, packet, connection, identifiers) -- Update player movement
-			if stopHandlingPlayers(self) then return end
-
-			local playerId = packet:read32()
-			if self.playerList[playerId] then
-				packet:read32() -- round code
-
-				local oldPlayerData = table_copy(self.playerList[playerId])
-
-				-- It's intended that, based on Lua behavior, all the hashes get updated automatically.
-				self.playerList[playerId].movingRight = packet:readBool()
-				self.playerList[playerId].movingLeft = packet:readBool()
-
-				self.playerList[playerId].x = math_normalizePoint(packet:read32())
-				self.playerList[playerId].y = math_normalizePoint(packet:read32())
-				self.playerList[playerId].vx = packet:read16()
-				self.playerList[playerId].vy = packet:read16()
-
-				self.playerList[playerId].isJumping = packet:readBool()
-
-				self.event:emit("updatePlayer", self.playerList[playerId], oldPlayerData)
-			end
-		end,
-		[6] = function(self, packet, connection, identifiers) -- Updates player direction
-			handlePlayerField(self, packet, "isFacingRight")
-		end,
-		[9] = function(self, packet, connection, identifiers) -- Updates ducking
-			handlePlayerField(self, packet, "isDucking")
-		end,
-		[10] = function(self, packet, connection, identifiers) -- Updates player direction
-			handlePlayerField(self, packet, "isFacingRight")
-		end
-	},
 	[5] = {
 		[2] = function(self, packet, connection, identifiers) -- New game
 			if not self._isConnected then return end

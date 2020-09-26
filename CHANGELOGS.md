@@ -2,12 +2,16 @@
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
+## News
+- _updatePlayer_ now receives a third argument related to the field that has been updated.
+- New event _shaman_.
+
 ## Changes
 - When a player becomes shaman, the event _shaman_ will be triggered instead of _updatePlayer_.
 - _connection_ has been renamed to _Connection_.
 - _Translation.download_ is not the class' constructor.
 - _Translation_ is now a class.
-- _translation_ has been renamed to _Translation_.
+- _translation_ has beend to renamed to _Translation_.
 - _encode_ is not a class anymore.
 - _buffer_ has been renamed to _Buffer_.
 - _bitwise_ has been renamed to _bit64_.

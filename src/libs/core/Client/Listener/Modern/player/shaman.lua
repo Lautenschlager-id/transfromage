@@ -1,21 +1,13 @@
-local onShaman = function(self, packet, isShaman)
+local onShaman = function(self, packet, connection, identifiers)
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 
-	player.isShaman = isShaman
+	player.isShaman = packet:readBool()
 
-	self.event:emit("shaman", player, isShaman)
-end
-
-local onPlayerShaman = function(self, packet, connection, identifiers)
-	onShaman(self, packet, true)
-end
-
-local onPlayerNoShaman = function(self, packet, connection, identifiers)
-	onShaman(self, packet, false)
+	self.event:emit("shaman", player, player.isShaman)
 end
 
 return {
-	{ 8, 12, onPlayerShaman },
-	{ 144, 7, onPlayerNoShaman }
+	{ 8, 12, onShaman },
+	{ 144, 7, onShaman }
 }

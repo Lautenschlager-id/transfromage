@@ -25,7 +25,10 @@ enum.role = enum {
 }
 
 enum.updatePlayer = enum {
-	general      = 1,
-	shamanColor  = 2,
-	score        = 3
+	general         = 1,
+	shamanColor     = 2,
+	score           = 3,
+	movement        = 4,
+	facingDirection = 5,
+	ducking         = 6
 }
