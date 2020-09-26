@@ -16,15 +16,16 @@ end
 Cafe.loadTopics = function(self, packet)
 	local topics = self.topics
 
-	local tmpTopic
+	local topicId, tmpTopic
 	while packet.stackLen > 0 do
-		tmpTopic = Topic:new(packet)
+		topicId = packet:read32()
 
-		if topics[tmpTopic.id] then
-			data.messages = topics[tmpTopic.id].messages
-			data.author = topics[tmpTopic.id].author
+		tmpTopic = topics[topicId]
+		if tmpTopic then
+			tmpTopic:update(packet)
+		else
+			topics[topicId] = Topic:new(packet, topicId)
 		end
-		topics[tmpTopic.id] = tmpTopic
 	end
 
 	return self
