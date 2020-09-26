@@ -88,7 +88,7 @@ local onCafeTopicLoad = function(self, packet, connection, identifiers)
 					}
 				}
 			]]
-			self.event:emit("cafeTopicMessage", tmpMessage[i], topic)
+			self.event:emit("cafeTopicMessage", tmpMessage, topic)
 		end
 	end
 end
