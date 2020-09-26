@@ -68,109 +68,6 @@ do
 	end
 end
 
-local client = table_setNewClass()
-
-local meta = {
-	playerList = {
-		__len = function(this)
-			return this.count or -1
-		end,
-		__pairs = function(this)
-			local indexes = { }
-			for i = 1, #this do
-				indexes[i] = this[i].playerName
-			end
-
-			local i = 0
-			return function()
-				i = i + 1
-				if this[indexes[i]] then
-					return this[indexes[i]].playerName, this[indexes[i]]
-				end
-			end
-		end
-	}
-}
-
---[[@
-	@name new
-	@desc Creates a new instance of Client. Alias: `client()`.
-	@desc The function @see start is automatically called if you pass its arguments.
-	@param tfmId?<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
-	@param token?<string> The API Endpoint token to get access to the authentication keys.
-	@param hasSpecialRole?<boolean> Whether the bot has the game's special role bot or not.
-	@param updateSettings?<boolean> Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
-	@returns client The new Client object.
-	@struct {
-		playerName = "", -- The nickname of the account that is attached to this instance, if there's any.
-		language = 0, -- The language enum where the object is set to perform the login. Default value is EN.
-		main = { }, -- The main connection object, handles the game server.
-		bulle = { }, -- The bulle connection object, handles the room server.
-		event = { }, -- The event emitter object, used to trigger events.
-		cafe = { }, -- The cached Café structure. (topics and messages)
-		playerList = { }, -- The room players data.
-		-- The fields below must not be edited, since they are used internally in the api.
-		_mainLoop = { }, -- (userdata) A timer that retrieves the packets received from the game server.
-		_bulleLoop = { }, -- (userdata) A timer that retrieves the packets received from the room server.
-		_receivedAuthkey = 0, -- Authorization key, used to connect the account.
-		_gameVersion = 0, -- The game version, used to connect the account.
-		_gameConnectionKey = "", -- The game connection key, used to connect the account.
-		_gameIdentificationKeys = { }, -- The game identification keys, used to connect the account.
-		_gameMsgKeys = { }, -- The game message keys, used to connect the account.
-		_connectionTime = 0, -- The timestamp of when the player logged in. It will be 0 if the account is not connected.
-		_isConnected = false, -- Whether the player is connected or not.
-		_hbTimer = { }, -- (userdata) A timer that sends heartbeats to the server.
-		_whoFingerprint = 0, -- A fingerprint to identify the chat where the command /who was used.
-		_whoList = { }, -- A list of chat names associated to their own fingerprints.
-		_processXml = false, -- Whether the event "newGame" should decode the XML packet or not. (Set as false to save process)
-		_cafeCachedMessages = { }, -- A set of message IDs to cache the read messages at the Café.
-		_handlePlayers = false, -- Whether the player-related events should be handled or not. (Set as false to save process)
-		_encode = { }, -- The encode object, used to encryption.
-		_hasSpecialRole = false, -- Whether the bot has the game's special role bot or not.
-		_updateSettings = false -- Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
-	}
-]]
-client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
-	local eventEmitter = event:new()
-
-	local obj = setmetatable({
-		playerName = nil,
-		language = enum.language.en,
-		main = connection:new("main", eventEmitter),
-		bulle = nil,
-		event = eventEmitter,
-		cafe = { },
-		playerList = setmetatable({ }, meta.playerList),
-		-- Private
-		_mainLoop = nil,
-		_bulleLoop = nil,
-		_receivedAuthkey = 0,
-		_gameVersion = 666,
-		_gameConnectionKey = "",
-		_gameAuthkey = 0,
-		_gameIdentificationKeys = { },
-		_gameMsgKeys = { },
-		_connectionTime = 0,
-		_isConnected = false,
-		_hbTimer = nil,
-		_whoFingerprint = 0,
-		_whoList = { },
-		_processXml = false,
-		_cafeCachedMessages = { },
-		_handlePlayers = false,
-		_encode = encode:new(hasSpecialRole),
-		_hasSpecialRole = hasSpecialRole,
-		_updateSettings = updateSettings,
-		_isListeningSigint = false
-	}, self)
-
-	if tfmId and token then
-		obj:start(tfmId, token)
-	end
-
-	return obj
-end
-
 -- Receive
 -- Tribulle functions
 tribulleListener = {
@@ -624,28 +521,6 @@ oldPacketListener = {
 }
 -- Normal functions
 packetListener = {
-	[1] = {
-		[1] = function(self, packet, connection, identifiers) -- Old packets format
-			local data = string_split(packet:readUTF(), '\x01', true)
-			local oldIdentifiers = { string_byte(table_remove(data, 1), 1, 2) }
-
-			if oldPacketListener[oldIdentifiers[1]]
-				and oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]]
-			then
-				return oldPacketListener[oldIdentifiers[1]][oldIdentifiers[2]](self, data,
-					connection, oldIdentifiers)
-			end
-
-			--[[@
-				@name missedOldPacket
-				@desc Triggered when an old packet is not handled by the old packet parser.
-				@param oldIdentifiers<table> The oldC, oldCC identifiers that were not handled.
-				@param data<table> The data that was not handled.
-				@param connection<connection> The connection object.
-			]]
-			self.event:emit("missedOldPacket", oldIdentifiers, data, connection)
-		end
-	},
 	[4] = {
 		[4] = function(self, packet, connection, identifiers) -- Update player movement
 			if stopHandlingPlayers(self) then return end
@@ -740,43 +615,6 @@ packetListener = {
 				]]
 				self.event:emit("roomChanged", string_fixEntity(roomName), isPrivate, roomLanguage)
 			end
-		end
-	},
-	[6] = {
-		[6] = function(self, packet, connection, identifiers) -- Room message
-			local playerName, message = packet:readUTF(), string_fixEntity(packet:readUTF())
-			--[[@
-				@name roomMessage
-				@desc Triggered when the room receives a new user message.
-				@param playerName<string> The player who sent the message.
-				@param message<string> The message.
-			]]
-			self.event:emit("roomMessage", string_toNickname(playerName, true),
-				string_fixEntity(message))
-		end,
-		[20] = function(self, packet, connection, identifiers) -- /time
-			packet:read8() -- ?
-			packet:readUTF() -- $TempsDeJeu
-			packet:read8() -- Total parameters (useless?)
-
-			local time = { }
-			time.day = tonumber(packet:readUTF())
-			time.hour = tonumber(packet:readUTF())
-			time.minute = tonumber(packet:readUTF())
-			time.second = tonumber(packet:readUTF())
-
-			--[[@
-				@name time
-				@desc Triggered when the command /time is requested.
-				@param time<table> The account's time data.
-				@struct @param {
-					day = 0, -- Total days
-					hour = 0, -- Total hours
-					minute = 0, -- Total minutes
-					second = 0 -- Total seconds
-				}
-			]]
-			self.event:emit("time", time)
 		end
 	},
 	[8] = {
@@ -1114,17 +952,6 @@ packetListener = {
 			handlePlayerField(self, packet, "isVampire", "playerVampire", nil, nil, true)
 		end
 	},
-	[16] = {
-		[2] = function(self, packet, connection, identifiers) -- Receives tribe /inv
-			--[[@
-				@name tribeHouseInvitation
-				@desc Triggered when a tribe house invitation is received.
-				@param inviterName<string> The name of the player who invited the bot.
-				@param inviterTribe<string> The name of the tribe that is inviting the bot.
-			]]
-			self.event:emit("tribeHouseInvitation", packet:readUTF(), packet:readUTF())
-		end
-	},
 	[26] = {
 		[2] = function(self, packet, connection, identifiers) -- Login
 			self._isConnected = true
@@ -1171,90 +998,9 @@ packetListener = {
 				@param language<string> The language based on the account's country.
 			]]
 			self.event:emit("ready", onlinePlayers, country, language)
-		end,
-		[35] = function(self, packet, connection, identifiers) -- Room list
-			 -- Room types
-			packet:read8(packet:read8())
-
-			local rooms, counter = { }, 0
-			local roomMode = packet:read8()
-			local pinned, pinnedCounter = { }, 0
-
-			local isPinned, language, country, name, count, max, onFcMode
-			while packet.stackLen > 0 do
-				isPinned = packet:readBool()
-				language = packet:readUTF()
-				country = packet:readUTF()
-				name = packet:readUTF()
-
-				if isPinned then
-					count = tonumber(packet:readUTF())
-					local command = packet:readUTF()
-					local args = packet:readUTF()
-					for roomName, roomCount in args:gmatch('&~(.-),(%d+)') do
-						pinnedCounter = pinnedCounter + 1
-						pinned[pinnedCounter] = {
-							name = roomName,
-							totalPlayers = roomCount * 1,
-							language = language,
-							country = country
-						}
-					end
-				else
-					count = packet:read16()
-					max = packet:read8()
-					onFcMode = packet:readBool()
-
-					counter = counter + 1
-					rooms[counter] = {
-						name = name,
-						totalPlayers = count,
-						maxPlayers = max,
-						onFuncorpMode = onFcMode,
-						language = language,
-						country = country
-					}
-				end
-			end
-
-			--[[@
-				@name roomList
-				@desc Triggered when the room list of a mode is loaded.
-				@param roomMode<int> The id of the room mode.
-				@param rooms<table> The data of the rooms in the list.
-				@param pinned<tablet> The data of the pinned objects in the list.
-				@struct @rooms {
-					[i] = {
-						name = "", -- The name of the room.
-						totalPlayers = 0, -- Number of players in the room.
-						maxPlayers = 0, -- Maximum Number of players the room can get.
-						onFuncorpMode = false, -- Whether the room is having a funcorp event (orange name) or not.
-						language = int, -- Language of room
-						country = int, -- Country of room
-					}
-				}
-				@struct @pinned {
-					[i] = {
-						name = "", -- The name of the room.
-						totalPlayers = 0, -- Number of players in the room.
-						language = int, -- Language of room
-						country = int, -- Country of room
-					}
-				}
-			]]
-			self.event:emit("roomList", roomMode, rooms, pinned)
-		end,
+		end
 	},
 	[28] = {
-		[5] = function(self, packet, connection, identifiers) -- /mod, /mapcrew
-			packet:read16() -- ?
-			--[[@
-				@name staffList
-				@desc Triggered when a staff list is loaded (/mod, /mapcrew).
-				@param list<string> The staff list content.
-			]]
-			self.event:emit("staffList", packet:readUTF())
-		end,
 		[6] = function(self, packet, connection, identifiers) -- Ping
 			--[[@
 				@name ping
@@ -1270,16 +1016,6 @@ packetListener = {
 				@param remainingTime<int> Remaining time in milliseconds before the reboot.
 			]]
 			self.event:emit("serverReboot", packet:read32())
-		end
-	},
-	[29] = {
-		[6] = function(self, packet, connection, identifiers) -- Lua logs
-			--[[@
-				@name lua
-				@desc Triggered when the #lua chat receives a log message.
-				@param log<string> The log message.
-			]]
-			self.event:emit("lua", packet:readUTF())
 		end
 	},
 	[30] = {
@@ -1508,22 +1244,6 @@ packetListener = {
 		end,
 		[22] = function(self, packet, connection, identifiers) -- PacketID offset identifiers
 			connection.packetID = packet:read8() -- Sets the pkt of the connection
-		end
-	},
-	[60] = {
-		[3] = function(self, packet, connection, identifiers) -- Community Platform
-			local tribulleId = packet:read16()
-			if tribulleListener[tribulleId] then
-				return tribulleListener[tribulleId](self, packet, connection, tribulleId)
-			end
-			--[[@
-				@name missedTribulle
-				@desc Triggered when a tribulle packet is not handled by the tribulle packet parser.
-				@param tribulleId<int> The tribulle id.
-				@param packet<byteArray> The Byte Array object with the packet that was not handled.
-				@param connection<connection> The connection object.
-			]]
-			self.event:emit("missedTribulle", tribulleId, packet, connection)
 		end
 	},
 	[144] = {
@@ -2682,4 +2402,3 @@ client.insertTribulleFunction = "insertTribulleListener"
 client.closeAll = "disconnect"
 -------------------------
 
-return client
