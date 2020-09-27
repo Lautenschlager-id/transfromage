@@ -7,6 +7,8 @@
 - New event _shaman_.
 
 ## Changes
+- _client.main_, _client.bulle_, _client.hbTimer_, _client._receivedAuthkey_, _client.connectionTime_ have been renamed to _client.mainConnection_, _client.bulleConnection_, _client._heartbeatTimer_, _client._authenticationKey_, _client._loginTime_, respectively.
+- _connection.open_, _connection.port_ has been renamed to _connection.isOpen_, _connection.portIndex_, respectively.
 - When a player becomes shaman, the event _shaman_ will be triggered instead of _updatePlayer_.
 - _connection_ has been renamed to _Connection_.
 - _Translation.download_ is not the class' constructor.

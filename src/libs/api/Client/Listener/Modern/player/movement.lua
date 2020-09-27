@@ -1,4 +1,4 @@
-local updateFlag = require("core/enum").updatePlayer.movement
+local updateFlag = require("api/enum").updatePlayer.movement
 
 -- Optimization --
 local math_normalizePoint = math.normalizePoint

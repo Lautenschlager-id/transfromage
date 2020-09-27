@@ -1,4 +1,4 @@
-local updateFlag = require("core/enum").updatePlayer.ducking
+local updateFlag = require("api/enum").updatePlayer.ducking
 
 local onDuck = function()
 	local player = self.playerList[packet:read32()]

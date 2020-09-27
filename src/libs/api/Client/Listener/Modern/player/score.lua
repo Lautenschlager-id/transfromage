@@ -1,4 +1,4 @@
-local updateFlag = require("core/enum").updatePlayer.score
+local updateFlag = require("api/enum").updatePlayer.score
 
 local onScore = function()
 	local player = self.playerList[packet:read32()]

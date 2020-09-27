@@ -1,4 +1,4 @@
-local updateFlag = require("core/enum").updatePlayer.facingDirection
+local updateFlag = require("api/enum").updatePlayer.facingDirection
 
 local onFacingDirection = function()
 	local player = self.playerList[packet:read32()]

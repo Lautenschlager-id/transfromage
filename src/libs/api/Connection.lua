@@ -54,7 +54,7 @@ Connection.new = function(self, name, event)
 		packetID = 0,
 		portIndex = 1,
 		name = name,
-		open = false,
+		isOpen = false,
 		_isReadingStackLength = true,
 		_readStackLength = 0,
 		_lengthBytes = 0
@@ -66,7 +66,7 @@ end
 	@desc Ends the socket connection.
 ]]
 Connection.close = function(self)
-	self.open = false
+	self.isOpen = false
 	self.port = 1
 	self.socket:destroy()
 	self.packetID = 0
@@ -80,7 +80,7 @@ Connection.close = function(self)
 end
 
 local tryPortConnection = function(self, hasPort, ip)
-	if not self.open then
+	if not self.isOpen then
 		if not hasPort then
 			self.portIndex = self.portIndex + 1
 			if self.portIndex <= #enum.setting.port then
@@ -108,7 +108,7 @@ Connection.connect = function(self, ip, port)
 		self.socket = socket
 
 		self.ip = ip
-		self.open = true
+		self.isOpen = true
 
 		socket:on("data", function(data)
 			self.buffer:push(data)
@@ -182,7 +182,7 @@ Connection.send = function(self, identifiers, alphaPacket)
 
 	local written = self.socket and self.socket:write(table_writeBytes(gammaPacket.stack))
 	if not written then
-		self.open = false
+		self.isOpen = false
 		if self.ip ~= enum.setting.mainIp then -- Avoids that 'disconnection' gets triggered twice when it is the main instance.
 			self.event:emit("disconnection", self)
 			return

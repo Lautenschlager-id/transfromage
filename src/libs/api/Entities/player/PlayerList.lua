@@ -1,5 +1,5 @@
 local Player = require("Player")
-local updateFlag = require("core/enum").updatePlayer.general
+local updateFlag = require("api/enum").updatePlayer.general
 
 -- Optimization --
 local setmetatable = setmetatable

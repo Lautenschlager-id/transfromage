@@ -1,4 +1,4 @@
-local enum = require("core/enum")
+local enum = require("api/enum")
 
 local onPlayerEmote = function(self, packet, connection, identifiers)
 	local player = self.playerList[packet:read32()]

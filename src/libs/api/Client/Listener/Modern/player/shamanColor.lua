@@ -1,4 +1,4 @@
-local updateFlag = require("core/enum").updatePlayer.shamanColor
+local updateFlag = require("api/enum").updatePlayer.shamanColor
 
 local onShamanColor = function(self, packet, connection, identifiers)
 	local shaman = { }

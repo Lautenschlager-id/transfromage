@@ -1,33 +1,12 @@
+local EventEmitter = require("core").Emitter
+
+local Connection = require("api/Connection")
+
 local PlayerList = require("Entities/player/PlayerList")
 local Cafe = require("Entities/cafe/Cafe")
 
 -- Optimization --
-local bit_bxor = bit.bxor
-local coroutine_makef = coroutine.makef
-local coroutine_running = coroutine.running
-local coroutine_resume = coroutine.resume
-local coroutine_yield = coroutine.yield
-local encode_getPasswordHash = encode.getPasswordHash
-local enum_validate = enum._validate
-local math_normalizePoint = math.normalizePoint
-local os_exit = os.exit
-local string_byte = string.byte
-local string_fixEntity = string.fixEntity
-local string_format = string.format
-local string_gsub = string.gsub
-local string_split = string.split
-local string_sub = string.sub
-local string_toNickname = string.toNickname
-local table_copy = table.copy
-local table_remove = table.remove
-local table_setNewClass = table.setNewClass
-local table_writeBytes = table.writeBytes
-local timer_clearInterval = timer.clearInterval
-local timer_clearTimeout = timer.clearTimeout
-local timer_setInterval = timer.setInterval
-local timer_setTimeout = timer.setTimeout
-local uv_signal_start = uv.signal_start
-local uv_new_signal = uv.new_signal
+
 ------------------
 
 local Client = table.setNewClass()
@@ -71,16 +50,40 @@ local Client = table.setNewClass()
 	}
 ]]
 Client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
-	local eventEmitter = event:new()
+	local eventEmitter = EventEmitter:new()
 
 	local obj = setmetatable({
 		playerName = nil,
-		language = enum.language.en,
-		main = connection:new("main", eventEmitter),
-		bulle = nil,
+		_isConnected = false,
+
+		mainConnection = Connection:new("main", eventEmitter),
+		bulleConnection = nil,
+		_heartbeatTimer = nil,
+
 		event = eventEmitter,
+
 		cafe = Cafe:new(),
 		playerList = PlayerList:new(),
+
+		_loginTime = 0,
+
+		_authenticationKey = nil,
+
+	}, self)
+
+	if tfmId and token then
+		obj:start(tfmId, token)
+	end
+
+	return obj
+end
+
+return Client
+
+--[[
+
+		playerName = nil,
+		language = enum.language.en,
 		-- Private
 		_mainLoop = nil,
 		_bulleLoop = nil,
@@ -101,13 +104,5 @@ Client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 		_hasSpecialRole = hasSpecialRole,
 		_updateSettings = updateSettings,
 		_isListeningSigint = false
-	}, self)
 
-	if tfmId and token then
-		obj:start(tfmId, token)
-	end
-
-	return obj
-end
-
-return Client
+]]
