@@ -8,6 +8,7 @@
 - New event _shaman_.
 
 ## Changes
+- Event _connectionInfo_ has been renamed to _accountDataLoaded_.
 - Event _playerDied_ has been renamed to _playerDeath_.
 - Event _missedOldPacket_ has been renamed to _missedLegacyPacket_.
 - _client.main_, _client.bulle_, _client.hbTimer_, _client._receivedAuthkey_, _client.connectionTime_ have been renamed to _client.mainConnection_, _client.bulleConnection_, _client._heartbeatTimer_, _client._authenticationKey_, _client._loginTime_, respectively.
