@@ -3,17 +3,18 @@ local updateFlag = require("api/enum").updatePlayer.general
 
 -- Optimization --
 local setmetatable = setmetatable
+local table_remove = table.remove
 ------------------
 
 local PlayerList = table.setNewClass()
 
 PlayerList.__len = function(self)
-	return self.count or -1
+	return self._count
 end
 
 PlayerList.__pairs = function(self)
 	local indexes = { }
-	for i = 1, #self do
+	for i = 1, self._count do
 		indexes[i] = self[i].playerName
 	end
 
@@ -130,6 +131,26 @@ PlayerList.updatePlayer = function(self, packet, eventEmitter)
 		]]
 		eventEmitter:emit("newPlayer", playerData)
 	end
+end
+
+PlayerList.deletePlayer = function(self, player)
+	-- Removes the numeric reference and decreases 1 for all the next players in the queue.
+	local playerIndex = player._index
+	table_remove(self, playerIndex)
+
+	self._count = self._count - 1
+
+	local tmpPlayer
+	for i = playerIndex, self._count do
+		tmpPlayer = self[i]
+		if tmpPlayer then
+			tmpPlayer._index = tmpPlayer._index - 1
+		end
+	end
+
+	-- Removes other references
+	self[player.playerName] = nil
+	self[player.id] = nil
 end
 
 return PlayerList
