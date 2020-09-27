@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## News
+- New event _languageSet_.
 - _updatePlayer_ now receives a third argument related to the field that has been updated.
 - New event _shaman_.
 
