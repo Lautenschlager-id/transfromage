@@ -558,171 +558,20 @@ Client.disconnect = function(self)
 	end
 	return false
 end
--- Room
---[[@
-	@name sendRoomMessage
-	@desc Sends a message in the room chat.
-	@desc /!\ Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
-	@param message<string> The message.
-]]
-Client.sendRoomMessage = function(self, message)
-	self.bulleConnection:send(enum.identifier.roomMessage,
-		self._encode:xorCipher(ByteArray:new():writeUTF(message), self.bulle.packetID))
-end
--- Whisper
---[[@
-	@name sendWhisper
-	@desc Sends a whisper to a user.
-	@desc /!\ Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
-	@param message<string> The message.
-	@param targetUser<string> The user who will receive the whisper.
-]]
-Client.sendWhisper = function(self, targetUser, message)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message),
-		self.main.packetID))
-end
---[[@
-	@name changeWhisperState
-	@desc Sets the account's whisper state.
-	@param message?<string> The /silence message. @default ''
-	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
-]]
-Client.changeWhisperState = function(self, message, state)
-	state = enum_validate(enum.whisperState, enum.whisperState.enabled, state,
-		string_format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
-	if not state then return end
-
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''),
-		self.main.packetID))
-end
--- Chat
---[[@
-	@name joinChat
-	@desc Joins a #chat.
-	@param chatName<string> The name of the chat.
-]]
-Client.joinChat = function(self, chatName)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
-end
---[[@
-	@name sendChatMessage
-	@desc Sends a message to a #chat.
-	@desc /!\ Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
-	@param chatName<string> The name of the chat.
-	@param message<string> The message.
-]]
-Client.sendChatMessage = function(self, chatName, message)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message),
-		self.main.packetID))
-end
---[[@
-	@name closeChat
-	@desc Leaves a #chat.
-	@param chatName<string> The name of the chat.
-]]
-Client.closeChat = function(self, chatName)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(56):write32(1):writeUTF(chatName),
-		self.main.packetID))
-end
---[[@
-	@name chatWho
-	@desc Gets the names of players in a specific chat. (/who)
-	@param chatName<string> The name of the chat.
-]]
-Client.chatWho = function(self, chatName)
-	self._whoFingerprint = (self._whoFingerprint + 1) % 500
-	self._whoList[self._whoFingerprint] = chatName
-
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(58):write32(self._whoFingerprint):writeUTF(chatName),
-		self.main.packetID))
-end
--- Café
---[[@
-	@name reloadCafe
-	@desc Reloads the Café data.
-]]
-Client.reloadCafe = function(self)
-	self.mainConnection:send(enum.identifier.cafeData, ByteArray:new())
-end
---[[@
-	@name openCafe
-	@desc Toggles the current Café state (open / close).
-	@desc It will send @see Client.reloadCafe automatically if close is false.
-	@param close?<boolean> If the Café should be closed. @default false
-]]
-Client.openCafe = function(self, close)
-	close = not close
-	self.mainConnection:send(enum.identifier.cafeState, ByteArray:new():writeBool(close))
-	if close then -- open = reload
-		self:reloadCafe()
-	end
-end
---[[@
-	@name createCafeTopic
-	@desc Creates a Café topic.
-	@desc /!\ The method does not handle the Café's cooldown system.
-	@param title<string> The title of the topic.
-	@param message<string> The content of the topic.
-]]
-Client.createCafeTopic = function(self, title, message)
-	message = string_gsub(message, "\r\n", "\r")
-	self.mainConnection:send(enum.identifier.cafeNewTopic, ByteArray:new():writeUTF(title):writeUTF(message))
-end
---[[@
-	@name openCafeTopic
-	@desc Opens a Café topic.
-	@desc You may use this method to reload (or refresh) the topic.
-	@param topicId<int> The id of the topic to be opened.
-]]
-Client.openCafeTopic = function(self, topicId)
-	self.mainConnection:send(enum.identifier.cafeLoadData, ByteArray:new():write32(topicId))
-end
---[[@
-	@name sendCafeMessage
-	@desc Sends a message in a Café topic.
-	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds if the last post is from the same account, otherwise 10 seconds.
-	@param topicId<int> The id of the topic where the message will be posted.
-	@param message<string> The message to be posted.
-]]
-Client.sendCafeMessage = function(self, topicId, message)
-	message = string_gsub(message, "\r\n", "\r")
-	self.mainConnection:send(enum.identifier.cafeSendMessage,
-		ByteArray:new():write32(topicId):writeUTF(message))
-end
---[[@
-	@name likeCafeMessage
-	@desc Likes/Dislikes a message in a Café topic.
-	@desc /!\ The method does not handle the Café's cooldown system: 300 seconds to react in a message.
-	@param topicId<int> The id of the topic where the message is located.
-	@param messageId<int> The id of the message that will receive the reaction.
-	@param dislike?<boolean> Whether the reaction must be a dislike or not. @default false
-]]
-Client.likeCafeMessage = function(self, topicId, messageId, dislike)
-	self.mainConnection:send(enum.identifier.cafeLike,
-		ByteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
-end
 -- Friends
 --[[@
 	@name requestFriendList
 	@desc Requests the friend list.
 ]]
 Client.requestFriendList = function(self)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(28):write32(3), self.main.packetID))
+	self:sendTribulle(ByteArray:new():write16(28):write32(3), self.main.packetID))
 end
 --[[@
 	@name requestBlackList
 	@desc Requests the black list.
 ]]
 Client.requestBlackList = function(self)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(46):write32(3), self.main.packetID))
+	self:sendTribulle(ByteArray:new():write16(46):write32(3), self.main.packetID))
 end
 --[[@
 	@name addFriend
@@ -730,8 +579,7 @@ end
 	@param playerName<string> The player name to be added.
 ]]
 Client.addFriend = function(self, playerName)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
+	self:sendTribulle(ByteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name removeFriend
@@ -739,8 +587,7 @@ end
 	@param playerName<string> The player name to be removed from the friend list.
 ]]
 Client.removeFriend = function(self, playerName)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
+	self:sendTribulle(ByteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name blacklistPlayer
@@ -748,8 +595,7 @@ end
 	@param playerName<string> The player name to be added.
 ]]
 Client.blacklistPlayer = function(self, playerName)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
+	self:sendTribulle(ByteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name whitelistPlayer
@@ -757,8 +603,7 @@ end
 	@param playerName<string> The player name to be removed from the black list.
 ]]
 Client.whitelistPlayer = function(self, playerName)
-	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
-		ByteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
+	self:sendTribulle(ByteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
 end
 -- Miscellaneous
 --[[@
