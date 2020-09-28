@@ -1,4 +1,4 @@
-local Tribe = require("Entities/tribe/tribe")
+local Tribe = require("Entities/tribe/Tribe")
 
 local triggerFriendList = require("Tribulle/friend/list")[2]
 local triggerBlackList = require("Tribulle/friend/blacklist")[2]

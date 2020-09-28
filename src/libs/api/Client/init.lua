@@ -69,6 +69,8 @@ Client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 
 		_authenticationKey = nil,
 
+		_whoList = { },
+		_whoFingerprint = 0
 	}, self)
 
 	if tfmId and token then

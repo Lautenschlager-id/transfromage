@@ -8,6 +8,7 @@
 - New event _shaman_.
 
 ## Changes
+- Event _tribeInterface_ now receives only one object parameter _Tribe_.
 - Event _connectionInfo_ has been renamed to _accountDataLoaded_.
 - Event _playerDied_ has been renamed to _playerDeath_.
 - Event _missedOldPacket_ has been renamed to _missedLegacyPacket_.
