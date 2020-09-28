@@ -68,9 +68,6 @@ do
 	end
 end
 
--- Receive
--- Tribulle functions
-
 -- System
 -- Packet listeners and parsers
 --[[@
@@ -81,7 +78,7 @@ end
 	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (self, packet, connection, identifiers).
 	@param append?<boolean> 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
 ]]
-client.insertPacketListener = function(self, C, CC, f, append)
+Client.insertPacketListener = function(self, C, CC, f, append)
 	if not packetListener[C] then
 		packetListener[C] = { }
 	end
@@ -104,7 +101,7 @@ end
 	@param f<function> The function to be triggered when this tribulle packet is received. The parameters are (self, packet, connection, tribulleId).
 	@param append?<boolean> 'true' if the function should be appended to the (C, CC, tribulle) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
 ]]
-client.insertTribulleListener = function(self, tribulleId, f, append)
+Client.insertTribulleListener = function(self, tribulleId, f, append)
 	f = coroutine_makef(f)
 	if append and tribulleListener[tribulleId] then
 		local old = tribulleListener[tribulleId]
@@ -124,7 +121,7 @@ end
 	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (self, data, connection, oldIdentifiers).
 	@param append?<boolean> 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
 ]]
-client.insertOldPacketListener = function(self, C, CC, f, append)
+Client.insertOldPacketListener = function(self, C, CC, f, append)
 	if not oldPacketListener[C] then
 		oldPacketListener[C] = { }
 	end
@@ -238,10 +235,10 @@ closeAll = function(self)
 	if self.main then
 		if self.bulle then
 			timer_clearInterval(self._bulleLoop)
-			self.bulle:close()
+			self.bulleConnection:close()
 		end
 		timer_clearInterval(self._mainLoop)
-		self.main:close()
+		self.mainConnection:close()
 	end
 end
 --[[@
@@ -331,16 +328,16 @@ end
 	@param tfmId<string,int> The Transformice ID of your account. If you don't know how to obtain it, go to the room **#bolodefchoco0id** and check your chat.
 	@param token<string> The API Endpoint token to get access to the authentication keys.
 ]]
-client.start = coroutine_makef(function(self, tfmId, token)
+Client.start = coroutine_makef(function(self, tfmId, token)
 	self:disconnect()
 	self.isConnected = false
 
 	getKeys(self, tfmId, token)
 
-	self.main:connect(enum.setting.mainIp)
+	self.mainConnection:connect(enum.setting.mainIp)
 
 	self.main.event:once("_socketConnection", function()
-		local packet = byteArray:new():write16(self._gameVersion)
+		local packet = ByteArray:new():write16(self._gameVersion)
 		if not self._hasSpecialRole then
 			packet
 				:writeUTF("en")
@@ -353,7 +350,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 			R64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
 			:write32(0):write32(0x6257):writeUTF('')
 
-		self.main:send(enum.identifier.initialize, packet)
+		self.mainConnection:send(enum.identifier.initialize, packet)
 
 		receive(self, "main")
 		receive(self, "bulle")
@@ -402,7 +399,7 @@ end)
 	@param eventName<string> The name of the event.
 	@param callback<function> The function that must be called when the event is triggered.
 ]]
-client.on = function(self, eventName, callback)
+Client.on = function(self, eventName, callback)
 	return self.event:on(eventName, coroutine_makef(callback))
 end
 --[[@
@@ -412,7 +409,7 @@ end
 	@param eventName<string> The name of the event.
 	@param callback<function> The function that must be called only once when the event is triggered.
 ]]
-client.once = function(self, eventName, callback)
+Client.once = function(self, eventName, callback)
 	return self.event:once(eventName, coroutine_makef(callback))
 end
 --[[@
@@ -427,7 +424,7 @@ end
 	@returns boolean Whether it has not timed out and triggered successfully.
 	@returns ... The parameters of the event.
 ]]
-client.waitFor = function(self, eventName, timeout, predicate)
+Client.waitFor = function(self, eventName, timeout, predicate)
 	return self.event:waitFor(eventName, timeout, predicate)
 end
 --[[@
@@ -437,7 +434,7 @@ end
 	@param eventName<string> The name of the event.
 	@param ...?<*> The parameters to be passed during the emitter call.
 ]]
-client.emit = function(self, eventName, ...)
+Client.emit = function(self, eventName, ...)
 	return self.event:emit(eventName, ...)
 end
 --[[@
@@ -445,7 +442,7 @@ end
 	@desc Gets the total time since the account was connected.
 	@returns int The total time since account was logged in.
 ]]
-client.connectionTime = function(self)
+Client.connectionTime = function(self)
 	return os.time() - self._connectionTime
 end
 
@@ -457,7 +454,7 @@ end
 	@desc /!\ This method must be called before the @see start.
 	@param language?<enum.language> An enum from @see language. (index or value) @default EN
 ]]
-client.setLanguage = function(self, language)
+Client.setLanguage = function(self, language)
 	language = enum_validate(enum.language, enum.language.en, language,
 		string_format(enum.error.invalidEnum, "setCommunity", "language", "language"))
 	if not language then return end
@@ -471,7 +468,7 @@ end
 	@param handle?<boolean> Whether the bot should handle the player events. The default value is the inverse of the current value. The instance starts the field as 'false'.
 	@returns boolean Whether the bot will handle the player events.
 ]]
-client.handlePlayers = function(self, handle)
+Client.handlePlayers = function(self, handle)
 	if handle == nil then
 		self._handlePlayers = not self._handlePlayers
 	else
@@ -486,7 +483,7 @@ end
 	@param process?<boolean> Whether map XMLs should be processed.
 	@returns boolean Whether map XMLs will be processed.
 ]]
-client.processXml = function(self, process)
+Client.processXml = function(self, process)
 	if process == nil then
 		self._processXml = not self._processXml
 	else
@@ -526,10 +523,10 @@ do
 		@param startRoom?<string> The name of the initial room. @default "*#bolodefchoco"
 		@param timeout<int> The time in ms to throw a timeout error if the connection takes too long to succeed. @default 20000
 	]]
-	client.connect = function(self, userName, userPassword, startRoom, timeout)
+	Client.connect = function(self, userName, userPassword, startRoom, timeout)
 		userName = string_toNickname(userName, true)
 
-		local packet = byteArray:new()
+		local packet = ByteArray:new()
 			:writeUTF(userName)
 			:writeUTF(encode_getPasswordHash(userPassword))
 			:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4")
@@ -544,7 +541,7 @@ do
 		packet:write8(0)
 
 		self.playerName = userName
-		self.main:send(enum.identifier.loginSend, packet)
+		self.mainConnection:send(enum.identifier.loginSend, packet)
 
 		timer_setTimeout((timeout or (20 * 1000)), checkConnection, self)
 	end
@@ -554,7 +551,7 @@ end
 	@desc Forces the private function @see closeAll to be called. (Ends the connections)
 	@returns boolean Whether the Connection objects can be destroyed or not.
 ]]
-client.disconnect = function(self)
+Client.disconnect = function(self)
 	if self.main then
 		self.main.open = false
 		return true
@@ -563,34 +560,14 @@ client.disconnect = function(self)
 end
 -- Room
 --[[@
-	@name enterRoom
-	@desc Enters in a room.
-	@param roomName<string> The name of the room.
-	@param isSalonAuto?<boolean> Whether the change room must be /salonauto or not. @default false
-]]
-client.enterRoom = function(self, roomName, isSalonAuto)
-	self.main:send(enum.identifier.room,
-		byteArray:new():writeUTF(''):writeUTF(roomName):writeBool(isSalonAuto))
-end
---[[@
-	@name enterPrivateRoom
-	@desc Enters in a room protected with password.
-	@param roomName<string> The name of the room.
-	@param roomPassword<string> The password of the room.
-]]
-client.enterPrivateRoom = function(self, roomName, roomPassword)
-	self.main:send(enum.identifier.roomPassword,
-		byteArray:new():writeUTF(roomPassword):writeUTF(roomName))
-end
---[[@
 	@name sendRoomMessage
 	@desc Sends a message in the room chat.
 	@desc /!\ Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
 	@param message<string> The message.
 ]]
-client.sendRoomMessage = function(self, message)
-	self.bulle:send(enum.identifier.roomMessage,
-		self._encode:xorCipher(byteArray:new():writeUTF(message), self.bulle.packetID))
+Client.sendRoomMessage = function(self, message)
+	self.bulleConnection:send(enum.identifier.roomMessage,
+		self._encode:xorCipher(ByteArray:new():writeUTF(message), self.bulle.packetID))
 end
 -- Whisper
 --[[@
@@ -600,9 +577,9 @@ end
 	@param message<string> The message.
 	@param targetUser<string> The user who will receive the whisper.
 ]]
-client.sendWhisper = function(self, targetUser, message)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message),
+Client.sendWhisper = function(self, targetUser, message)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(52):write32(3):writeUTF(targetUser):writeUTF(message),
 		self.main.packetID))
 end
 --[[@
@@ -611,13 +588,13 @@ end
 	@param message?<string> The /silence message. @default ''
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
 ]]
-client.changeWhisperState = function(self, message, state)
+Client.changeWhisperState = function(self, message, state)
 	state = enum_validate(enum.whisperState, enum.whisperState.enabled, state,
 		string_format(enum.error.invalidEnum, "changeWhisperState", "state", "whisperState"))
 	if not state then return end
 
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''),
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(60):write32(1):write8(state):writeUTF(message or ''),
 		self.main.packetID))
 end
 -- Chat
@@ -626,9 +603,9 @@ end
 	@desc Joins a #chat.
 	@param chatName<string> The name of the chat.
 ]]
-client.joinChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
+Client.joinChat = function(self, chatName)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1), self.main.packetID))
 end
 --[[@
 	@name sendChatMessage
@@ -637,9 +614,9 @@ end
 	@param chatName<string> The name of the chat.
 	@param message<string> The message.
 ]]
-client.sendChatMessage = function(self, chatName, message)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message),
+Client.sendChatMessage = function(self, chatName, message)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message),
 		self.main.packetID))
 end
 --[[@
@@ -647,9 +624,9 @@ end
 	@desc Leaves a #chat.
 	@param chatName<string> The name of the chat.
 ]]
-client.closeChat = function(self, chatName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(56):write32(1):writeUTF(chatName),
+Client.closeChat = function(self, chatName)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(56):write32(1):writeUTF(chatName),
 		self.main.packetID))
 end
 --[[@
@@ -657,119 +634,31 @@ end
 	@desc Gets the names of players in a specific chat. (/who)
 	@param chatName<string> The name of the chat.
 ]]
-client.chatWho = function(self, chatName)
+Client.chatWho = function(self, chatName)
 	self._whoFingerprint = (self._whoFingerprint + 1) % 500
 	self._whoList[self._whoFingerprint] = chatName
 
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(58):write32(self._whoFingerprint):writeUTF(chatName),
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(58):write32(self._whoFingerprint):writeUTF(chatName),
 		self.main.packetID))
-end
--- Tribe
---[[@
-	@name joinTribeHouse
-	@desc Joins the tribe house.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-]]
-client.joinTribeHouse = function(self)
-	self.main:send(enum.identifier.joinTribeHouse, byteArray:new())
-end
---[[@
-	@name sendTribeMessage
-	@desc Sends a message to the tribe chat.
-	@desc /!\ Note that a message has a limit of 80 characters in the first 24 hours after the account creation, and 255 characters later. You must handle the limit yourself or the bot may get disconnected.
-	@param message<string> The message.
-]]
-client.sendTribeMessage = function(self, message)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(50):write32(3):writeUTF(message), self.main.packetID))
-end
---[[@
-	@name recruitPlayer
-	@desc Sends a tribe invite to a player.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-	@param playerName<string> The name of player to be recruited.
-]]
-client.recruitPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(78):write32(1):writeUTF(playerName), self.main.packetID))
-end
---[[@
-	@name kickTribeMember
-	@desc Kicks a member from the tribe.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-	@param memberName<string> The name of the member to be kicked.
-]]
-client.kickTribeMember = function(self, memberName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(104):write32(1):writeUTF(memberName), self.main.packetID))
-end
---[[@
-	@name setTribeMemberRole
-	@desc Sets the role of a member in the tribe.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-	@param memberName<string> The name of the member to get the role.
-	@param roleId<int> The role id. (starts from 0, the initial role, and goes until the Chief role)
-]]
-client.setTribeMemberRole = function(self, memberName, roleId)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(112):write32(1):writeUTF(memberName):write8(roleId),
-		self.main.packetID))
-end
---[[@
-	@name setTribeGreetingMessage
-	@desc Changes the greeting message of the tribe.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-	@param message<string> The message.
-]]
-client.setTribeGreetingMessage = function(self, message)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(98):write32(1):writeUTF(message), self.main.packetID))
-end
---[[@
-	@name openTribeInterface
-	@desc Requests opening the tribe interface to retrieve all informations there.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-	@param includeOfflineMembers?<boolean> Whether data from offline members should be retrieved too. @default false
-]]
-client.openTribeInterface = function(self, includeOfflineMembers)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(byteArray:new()
-		:write16(108):write32(3):writeBool(includeOfflineMembers), self.main.packetID))
-end
---[[@
-	@name acceptTribeHouseInvitation
-	@desc Accepts a tribe house invitation and joins the tribe's tribehouse.
-	@desc /!\ Note that this method will not cover errors if the account is not in a tribe or does not have permissions.
-	@param inviterName<string> The name of who has invited the bot.
-]]
-client.acceptTribeHouseInvitation = function(self, inviterName)
-	self.main:send(enum.identifier.acceptTribeHouseInvite, byteArray:new():writeUTF(inviterName))
-end
---[[@
-	@name loadLua
-	@desc Loads a lua script in the room.
-	@param script<string> The lua script.
-]]
-client.loadLua = function(self, script)
-	self.bulle:send(enum.identifier.loadLua, byteArray:new():writeBigUTF(script))
 end
 -- Café
 --[[@
 	@name reloadCafe
 	@desc Reloads the Café data.
 ]]
-client.reloadCafe = function(self)
-	self.main:send(enum.identifier.cafeData, byteArray:new())
+Client.reloadCafe = function(self)
+	self.mainConnection:send(enum.identifier.cafeData, ByteArray:new())
 end
 --[[@
 	@name openCafe
 	@desc Toggles the current Café state (open / close).
-	@desc It will send @see client.reloadCafe automatically if close is false.
+	@desc It will send @see Client.reloadCafe automatically if close is false.
 	@param close?<boolean> If the Café should be closed. @default false
 ]]
-client.openCafe = function(self, close)
+Client.openCafe = function(self, close)
 	close = not close
-	self.main:send(enum.identifier.cafeState, byteArray:new():writeBool(close))
+	self.mainConnection:send(enum.identifier.cafeState, ByteArray:new():writeBool(close))
 	if close then -- open = reload
 		self:reloadCafe()
 	end
@@ -781,9 +670,9 @@ end
 	@param title<string> The title of the topic.
 	@param message<string> The content of the topic.
 ]]
-client.createCafeTopic = function(self, title, message)
+Client.createCafeTopic = function(self, title, message)
 	message = string_gsub(message, "\r\n", "\r")
-	self.main:send(enum.identifier.cafeNewTopic, byteArray:new():writeUTF(title):writeUTF(message))
+	self.mainConnection:send(enum.identifier.cafeNewTopic, ByteArray:new():writeUTF(title):writeUTF(message))
 end
 --[[@
 	@name openCafeTopic
@@ -791,8 +680,8 @@ end
 	@desc You may use this method to reload (or refresh) the topic.
 	@param topicId<int> The id of the topic to be opened.
 ]]
-client.openCafeTopic = function(self, topicId)
-	self.main:send(enum.identifier.cafeLoadData, byteArray:new():write32(topicId))
+Client.openCafeTopic = function(self, topicId)
+	self.mainConnection:send(enum.identifier.cafeLoadData, ByteArray:new():write32(topicId))
 end
 --[[@
 	@name sendCafeMessage
@@ -801,10 +690,10 @@ end
 	@param topicId<int> The id of the topic where the message will be posted.
 	@param message<string> The message to be posted.
 ]]
-client.sendCafeMessage = function(self, topicId, message)
+Client.sendCafeMessage = function(self, topicId, message)
 	message = string_gsub(message, "\r\n", "\r")
-	self.main:send(enum.identifier.cafeSendMessage,
-		byteArray:new():write32(topicId):writeUTF(message))
+	self.mainConnection:send(enum.identifier.cafeSendMessage,
+		ByteArray:new():write32(topicId):writeUTF(message))
 end
 --[[@
 	@name likeCafeMessage
@@ -814,62 +703,62 @@ end
 	@param messageId<int> The id of the message that will receive the reaction.
 	@param dislike?<boolean> Whether the reaction must be a dislike or not. @default false
 ]]
-client.likeCafeMessage = function(self, topicId, messageId, dislike)
-	self.main:send(enum.identifier.cafeLike,
-		byteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
+Client.likeCafeMessage = function(self, topicId, messageId, dislike)
+	self.mainConnection:send(enum.identifier.cafeLike,
+		ByteArray:new():write32(topicId):write32(messageId):writeBool(not dislike))
 end
 -- Friends
 --[[@
 	@name requestFriendList
 	@desc Requests the friend list.
 ]]
-client.requestFriendList = function(self)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(28):write32(3), self.main.packetID))
+Client.requestFriendList = function(self)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(28):write32(3), self.main.packetID))
 end
 --[[@
 	@name requestBlackList
 	@desc Requests the black list.
 ]]
-client.requestBlackList = function(self)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(46):write32(3), self.main.packetID))
+Client.requestBlackList = function(self)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(46):write32(3), self.main.packetID))
 end
 --[[@
 	@name addFriend
 	@desc Adds a player to the friend list.
 	@param playerName<string> The player name to be added.
 ]]
-client.addFriend = function(self, playerName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
+Client.addFriend = function(self, playerName)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name removeFriend
 	@desc Removes a player from the friend list.
 	@param playerName<string> The player name to be removed from the friend list.
 ]]
-client.removeFriend = function(self, playerName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
+Client.removeFriend = function(self, playerName)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name blacklistPlayer
 	@desc Adds a player to the black list.
 	@param playerName<string> The player name to be added.
 ]]
-client.blacklistPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
+Client.blacklistPlayer = function(self, playerName)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
 end
 --[[@
 	@name whitelistPlayer
 	@desc Removes a player from the black list.
 	@param playerName<string> The player name to be removed from the black list.
 ]]
-client.whitelistPlayer = function(self, playerName)
-	self.main:send(enum.identifier.bulle, self._encode:xorCipher(
-		byteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
+Client.whitelistPlayer = function(self, playerName)
+	self.mainConnection:send(enum.identifier.bulle, self._encode:xorCipher(
+		ByteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
 end
 -- Miscellaneous
 --[[@
@@ -878,9 +767,9 @@ end
 	@desc /!\ Note that some unlisted commands cannot be triggered by this function.
 	@param command<string> The command. (without /)
 ]]
-client.sendCommand = function(self, command)
-	self.main:send(enum.identifier.command, self._encode:xorCipher(
-		byteArray:new():writeUTF(command), self.main.packetID))
+Client.sendCommand = function(self, command)
+	self.mainConnection:send(enum.identifier.command, self._encode:xorCipher(
+		ByteArray:new():writeUTF(command), self.main.packetID))
 end
 --[[@
 	@name playEmote
@@ -888,52 +777,52 @@ end
 	@param emote?<enum.emote> An enum from @see emote. (index or value) @default dance
 	@param flag?<string> The country code of the flag when @emote is flag.
 ]]
-client.playEmote = function(self, emote, flag)
+Client.playEmote = function(self, emote, flag)
 	emote = enum_validate(enum.emote, enum.emote.dance, emote,
 		string_format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
 	if not emote then return end
 
-	local packet = byteArray:new():write8(emote):write32(0)
+	local packet = ByteArray:new():write8(emote):write32(0)
 	if emote == enum.emote.flag then
 		packet = packet:writeUTF(flag)
 	end
 
-	self.bulle:send(enum.identifier.emote, packet)
+	self.bulleConnection:send(enum.identifier.emote, packet)
 end
 --[[@
 	@name playEmoticon
 	@desc Plays an emoticon.
 	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
 ]]
-client.playEmoticon = function(self, emoticon)
+Client.playEmoticon = function(self, emoticon)
 	emoticon = enum_validate(enum.emoticon, enum.emoticon.smiley, emoticon,
 		string_format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
 	if not emoticon then return end
 
-	self.bulle:send(enum.identifier.emoticon, byteArray:new():write8(emoticon))
+	self.bulleConnection:send(enum.identifier.emoticon, ByteArray:new():write8(emoticon))
 end
 --[[@
 	@name requestRoomList
 	@desc Requests the data of a room mode list.
 	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
 ]]
-client.requestRoomList = function(self, roomMode)
+Client.requestRoomList = function(self, roomMode)
 	roomMode = enum_validate(enum.roomMode, enum.roomMode.normal, roomMode,
 		string_format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
 	if not roomMode then return end
 
-	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
+	self.mainConnection:send(enum.identifier.roomList, ByteArray:new():write8(roomMode))
 end
 --[[@
 	@name requestLanguage
 	@desc Requests the list of available languages.
 ]]
-client.requestLanguage = function(self)
-	self.main:send(enum.identifier.getLanguage, byteArray:new())
+Client.requestLanguage = function(self)
+	self.mainConnection:send(enum.identifier.getLanguage, ByteArray:new())
 end
 ----- Compatibility -----
-client.insertReceiveFunction = "insertPacketListener"
-client.insertTribulleFunction = "insertTribulleListener"
-client.closeAll = "disconnect"
+Client.insertReceiveFunction = "insertPacketListener"
+Client.insertTribulleFunction = "insertTribulleListener"
+Client.closeAll = "disconnect"
 -------------------------
 
