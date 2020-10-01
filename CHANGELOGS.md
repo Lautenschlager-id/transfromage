@@ -9,6 +9,7 @@
 - New event _shaman_.
 
 ## Changes
+- _Client.parsePacket_ is now _Client.triggerPacketCallback_.
 - _Client.closeAll_ is now _Client.killConnections_.
 - Event _\_receive_ no longer exists, it's all handled by _receive_ now.
 - _enum.setting.mainIp_ is now _enum.setting.mainIP_.

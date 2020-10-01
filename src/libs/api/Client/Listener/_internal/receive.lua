@@ -1,4 +1,31 @@
+local modernListener = require("api/Client/Modern/init")
+
 local ByteArray = require("classes/ByteArray")
+
+--[[@
+	@name parsePacket
+	@desc Handles the received packets by triggering their listeners.
+	@param self<client> A Client object.
+	@param connection<connection> A Connection object attached to @self.
+	@param packet<byteArray> THe packet to be parsed.
+]]
+local triggerPacketCallback = function(client, connection, identifiers, packet)
+	local callback = modernListener[identifiers[1]]
+	callback = callback and callback[identifiers[2]]
+
+	if callback then
+		return callback(client, packet, connection, identifiers)
+	end
+
+	--[[@
+		@name missedPacket
+		@desc Triggered when an identifier is not handled by the system.
+		@param identifiers<table> The C, CC identifiers that were not handled.
+		@param packet<byteArray> The Byte Array object with the packet that was not handled.
+		@param connection<connection> The connection object.
+	]]
+	client.event:emit("missedPacket", identifiers, packet, connection)
+end
 
 local onReceive = function(client, connection)
 	if not connection.isOpen then return end
@@ -16,7 +43,7 @@ local onReceive = function(client, connection)
 		]]
 		client.event:emit("receive", connection, identifiers, ByteArray:new(packet))
 	end
-	parsePacket(client, connection, identifiers, packet)
+	triggerPacketCallback(client, connection, identifiers, packet)
 end
 
 return onReceive

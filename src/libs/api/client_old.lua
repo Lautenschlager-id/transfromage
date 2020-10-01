@@ -3,7 +3,6 @@ local event = require("core").Emitter
 local http_request = require("coro-http").request
 local json_decode = require("json").decode
 local zlibDecompress = require("miniz").inflate
-local uv = require("uv")
 
 local byteArray = require("bArray")
 local connection = require("connection")
@@ -137,47 +136,7 @@ Client.insertOldPacketListener = function(self, C, CC, f, append)
 	end
 end
 
---[[@
-	@name parsePacket
-	@desc Handles the received packets by triggering their listeners.
-	@param self<client> A Client object.
-	@param connection<connection> A Connection object attached to @self.
-	@param packet<byteArray> THe packet to be parsed.
-]]
-parsePacket = function(self, connection, packet)
-	local identifiers = packet:read8(2)
-	local C, CC = identifiers[1], identifiers[2]
 
-	if packetListener[C] and packetListener[C][CC] then
-		return packetListener[C][CC](self, packet, connection, identifiers)
-	end
-	--[[@
-		@name missedPacket
-		@desc Triggered when an identifier is not handled by the system.
-		@param identifiers<table> The C, CC identifiers that were not handled.
-		@param packet<byteArray> The Byte Array object with the packet that was not handled.
-		@param connection<connection> The connection object.
-	]]
-	self.event:emit("missedPacket", identifiers, packet, connection)
-end
-
-
---[[@
-	@name closeAll
-	@desc Closes all the Connection objects.
-	@desc Note that a new Client instance should be created instead of closing and re-opening an existent one.
-	@param self<client> A Client object.
-]]
-closeAll = function(self)
-	if self.main then
-		if self.bulle then
-			timer_clearInterval(self._bulleLoop)
-			self.bulleConnection:close()
-		end
-		timer_clearInterval(self._mainLoop)
-		self.mainConnection:close()
-	end
-end
 --[[@
 	@name handlePlayerField
 	@desc Handles the packets that alters only one player data field.
