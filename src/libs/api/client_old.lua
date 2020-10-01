@@ -558,112 +558,17 @@ Client.disconnect = function(self)
 	end
 	return false
 end
--- Friends
---[[@
-	@name requestFriendList
-	@desc Requests the friend list.
-]]
-Client.requestFriendList = function(self)
-	self:sendTribulle(ByteArray:new():write16(28):write32(3), self.main.packetID))
-end
---[[@
-	@name requestBlackList
-	@desc Requests the black list.
-]]
-Client.requestBlackList = function(self)
-	self:sendTribulle(ByteArray:new():write16(46):write32(3), self.main.packetID))
-end
---[[@
-	@name addFriend
-	@desc Adds a player to the friend list.
-	@param playerName<string> The player name to be added.
-]]
-Client.addFriend = function(self, playerName)
-	self:sendTribulle(ByteArray:new():write16(18):write32(1):writeUTF(playerName), self.main.packetID))
-end
---[[@
-	@name removeFriend
-	@desc Removes a player from the friend list.
-	@param playerName<string> The player name to be removed from the friend list.
-]]
-Client.removeFriend = function(self, playerName)
-	self:sendTribulle(ByteArray:new():write16(20):write32(1):writeUTF(playerName), self.main.packetID))
-end
---[[@
-	@name blacklistPlayer
-	@desc Adds a player to the black list.
-	@param playerName<string> The player name to be added.
-]]
-Client.blacklistPlayer = function(self, playerName)
-	self:sendTribulle(ByteArray:new():write16(42):write32(1):writeUTF(playerName), self.main.packetID))
-end
---[[@
-	@name whitelistPlayer
-	@desc Removes a player from the black list.
-	@param playerName<string> The player name to be removed from the black list.
-]]
-Client.whitelistPlayer = function(self, playerName)
-	self:sendTribulle(ByteArray:new():write16(44):write32(1):writeUTF(playerName), self.main.packetID))
-end
 -- Miscellaneous
---[[@
-	@name sendCommand
-	@desc Sends a (/)command.
-	@desc /!\ Note that some unlisted commands cannot be triggered by this function.
-	@param command<string> The command. (without /)
-]]
-Client.sendCommand = function(self, command)
-	self.mainConnection:send(enum.identifier.command, self._encode:xorCipher(
-		ByteArray:new():writeUTF(command), self.main.packetID))
-end
---[[@
-	@name playEmote
-	@desc Plays an emote.
-	@param emote?<enum.emote> An enum from @see emote. (index or value) @default dance
-	@param flag?<string> The country code of the flag when @emote is flag.
-]]
-Client.playEmote = function(self, emote, flag)
-	emote = enum_validate(enum.emote, enum.emote.dance, emote,
-		string_format(enum.error.invalidEnum, "playEmote", "emote", "emote"))
-	if not emote then return end
 
-	local packet = ByteArray:new():write8(emote):write32(0)
-	if emote == enum.emote.flag then
-		packet = packet:writeUTF(flag)
-	end
 
-	self.bulleConnection:send(enum.identifier.emote, packet)
-end
---[[@
-	@name playEmoticon
-	@desc Plays an emoticon.
-	@param emoticon?<enum.emoticon> An enum from @see emoticon. (index or value) @default smiley
-]]
-Client.playEmoticon = function(self, emoticon)
-	emoticon = enum_validate(enum.emoticon, enum.emoticon.smiley, emoticon,
-		string_format(enum.error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
-	if not emoticon then return end
 
-	self.bulleConnection:send(enum.identifier.emoticon, ByteArray:new():write8(emoticon))
-end
---[[@
-	@name requestRoomList
-	@desc Requests the data of a room mode list.
-	@param roomMode?<enum.roomMode> An enum from @see roomMode. (index or value) @default normal
-]]
-Client.requestRoomList = function(self, roomMode)
-	roomMode = enum_validate(enum.roomMode, enum.roomMode.normal, roomMode,
-		string_format(enum.error.invalidEnum, "requestRoomList", "roomMode", "roomMode"))
-	if not roomMode then return end
 
-	self.mainConnection:send(enum.identifier.roomList, ByteArray:new():write8(roomMode))
-end
 --[[@
 	@name requestLanguage
 	@desc Requests the list of available languages.
 ]]
 Client.requestLanguage = function(self)
-	self.mainConnection:send(enum.identifier.getLanguage, ByteArray:new())
+	self.mainConnection:send({ 176, 02 }, ByteArray:new())
 end
 ----- Compatibility -----
 Client.insertReceiveFunction = "insertPacketListener"

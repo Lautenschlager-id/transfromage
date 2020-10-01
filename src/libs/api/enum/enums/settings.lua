@@ -23,7 +23,6 @@ enum.identifier = enum {
 	joinTribeHouse         = enum { 16, 01 },
 	acceptTribeHouseInvite = enum { 16, 02 },
 	language               = enum { 176, 01 },
-	getLanguages           = enum { 176, 02 },
 	loadLua                = enum { 29, 01 },
 	loginSend              = enum { 26, 08 },
 	modList                = enum { 26, 05 },
