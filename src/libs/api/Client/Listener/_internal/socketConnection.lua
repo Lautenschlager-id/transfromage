@@ -1,0 +1,51 @@
+local ByteArray = require("classes/ByteArray")
+
+local timer = require("timer")
+
+local enum = require("api/enum")
+
+local packetListener = require("api/Client/utils/packetListener")
+local killConnections = require("api/Client/utils/killConnections")
+
+-- Optimization --
+local timer_clearInterval = timer.clearInterval
+local timer_setInterval = timer.setInterval
+------------------
+
+local disconnectionLoop = function(self, client)
+	if not client.mainConnection.isOpen then
+		timer_clearInterval(client._heartbeatTimer)
+		timer_clearInterval(self[1])
+		killConnections(client)
+	end
+end
+
+local onSocketConnection = function(connection)
+	local self = connection._client
+
+	local startPacket = ByteArray:new():write16(enum.setting.gameVersion)
+	if not self._isOfficialBot then
+		startPacket
+			:writeUTF("en")
+			:writeUTF(self._gameConnectionKey)
+	end
+	startPacket:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
+		:writeUTF(
+			-- ;)
+			"4c756120697320616c7761797320626574746572207468616e20507974686f6e2c2069736e27742069743f"
+		)
+		:writeUTF("A=t&SA=t&SV=t&EV=t&MP3=t&AE=t&VE=t&ACC=t&PR=t&SP=f&SB=f&DEB=f&V=LNX 29,0,\z
+		0,140&M=Adobe Linux&R=1920x1080&COL=color&AR=1.0&OS=Linux&ARCH=x86&L=en&IME=t&PR32=t&P\z
+		R64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
+		:write32(0):write32(0x6257):writeUTF('')
+
+	self.mainConnection:send(enum.identifier.initialize, startPacket)
+
+	packetListener(self, self.mainConnection)
+	packetListener(self, self.bulleConnection)
+
+	local loop = { } -- Has to be a table to be passed as reference...
+	loop[1] = timer_setInterval(10, disconnectionLoop, loop, self)
+end
+
+return onSocketConnection

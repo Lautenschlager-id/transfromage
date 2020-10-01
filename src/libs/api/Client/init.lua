@@ -5,6 +5,8 @@ local Connection = require("api/Connection")
 local PlayerList = require("Entities/player/PlayerList")
 local Cafe = require("Entities/cafe/Cafe")
 
+local enum = require("api/enum")
+
 -- Optimization --
 
 ------------------
@@ -49,30 +51,38 @@ local Client = table.setNewClass()
 		_updateSettings = false -- Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
 	}
 ]]
-Client.new = function(self, tfmId, token, isOfficialBot, updateSettings)
+Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 	local eventEmitter = EventEmitter:new()
 
 	local obj = setmetatable({
 		playerName = nil,
+		language = enum.language.en,
 		_isConnected = false,
 
 		_isOfficialBot = isOfficialBot,
+		_endpointUpdate = endpointUpdate,
 
 		mainConnection = Connection:new("main", eventEmitter),
 		bulleConnection = nil,
 		_heartbeatTimer = nil,
+
+		_loginTime = 0,
 
 		event = eventEmitter,
 
 		cafe = Cafe:new(),
 		playerList = PlayerList:new(),
 
-		_loginTime = 0,
-
-		_authenticationKey = nil,
+		_decryptXML = false,
+		_handlePlayers = false,
 
 		_whoList = { },
-		_whoFingerprint = 0
+		_whoFingerprint = 0,
+
+		_authenticationKey = nil,
+		_gameConnectionKey = nil,
+		_identificationKeys = { },
+		_messageKeys = { }
 	}, self)
 
 	if tfmId and token then

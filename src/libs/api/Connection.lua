@@ -1,9 +1,11 @@
-local net_createConnection = require("net").createConnection
-local timer_setTimeout = require("timer").setTimeout
+local timer = require("timer")
 
-local byteArray = require("ByteArray")
-local buffer = require("Buffer")
+local ByteArray = require("ByteArray")
+local Buffer = require("Buffer")
+
 local enum = require("enum")
+
+local net_createConnection = require("net").createConnection
 
 -- Optimization --
 local bit_band = bit.band
@@ -12,15 +14,12 @@ local bit_lshift = bit.lshift
 local bit_rshift = bit.rshift
 local error = error
 local setmetatable = setmetatable
-local string_format = string.format
-local string_getBytes = string.getBytes
 local table_add = table.add
-local table_concat = table.concat
 local table_fuse = table.fuse
-local table_join = table.join
-local table_setNewClass = table.setNewClass
 local table_unpack = table.unpack
 local table_writeBytes = table.writeBytes
+local timer_setTimeout = timer.setTimeout
+local timer_clearInterval = timer.clearInterval
 ------------------
 
 local Connection = table.setNewClass()
@@ -57,7 +56,9 @@ Connection.new = function(self, name, event)
 		isOpen = false,
 		_isReadingStackLength = true,
 		_readStackLength = 0,
-		_lengthBytes = 0
+		_lengthBytes = 0,
+		_client = nil,
+		_listenLoop = nil
 	}, self)
 end
 
@@ -66,6 +67,10 @@ end
 	@desc Ends the socket connection.
 ]]
 Connection.close = function(self)
+	if not self.socket then return end
+
+	timer_clearInterval(self._listenLoop)
+
 	self.isOpen = false
 	self.port = 1
 	self.socket:destroy()
@@ -159,15 +164,15 @@ end
 	@name send
 	@desc Sends a packet to the server.
 	@param identifiers<table> The packet identifiers in the format (C, CC).
-	@param alphaPacket<byteArray> The packet ByteArray to be sent to the server.
+	@param alphaPacket<ByteArray> The packet ByteArray to be sent to the server.
 ]]
 Connection.send = function(self, identifiers, alphaPacket)
-	local betaPacket = byteArray:new(table_fuse(identifiers, alphaPacket.stack))
+	local betaPacket = ByteArray:new(table_fuse(identifiers, alphaPacket.stack))
 
 	local stackLen = betaPacket.stackLen
 	local stackType = bit_rshift(stackLen, 7)
 
-	local gammaPacket = byteArray:new()
+	local gammaPacket = ByteArray:new()
 	while stackType ~= 0 do
 		gammaPacket:write8(bit_bor(bit_band(stackLen, 0x7F), 0x80)) -- s&0x7F | 0x80
 		stackLen = stackType
@@ -193,7 +198,7 @@ Connection.send = function(self, identifiers, alphaPacket)
 		@name send
 		@desc Triggered when the client sends packets to the server.
 		@param identifiers<table> The C, CC identifiers sent in the request.
-		@param packet<byteArray> The Byte Array object that was sent.
+		@param packet<ByteArray> The Byte Array object that was sent.
 	]]
 	self.event:emit("send", identifiers, alphaPacket)
 end

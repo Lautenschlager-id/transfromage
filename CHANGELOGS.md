@@ -3,11 +3,19 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## News
+- sigterm is handled correctly for all clients now.
 - New event _languageSet_.
 - _updatePlayer_ now receives a third argument related to the field that has been updated.
 - New event _shaman_.
 
 ## Changes
+- _Client.closeAll_ is now _Client.killConnections_.
+- Event _\_receive_ no longer exists, it's all handled by _receive_ now.
+- _enum.setting.mainIp_ is now _enum.setting.mainIP_.
+- _Encode._identificationKeys_ and _Encode._messageKeys_ are now in _Client_.
+- _Client._gameVersion_ is now _enum.setting.gameVersion_
+- _Client._processXml_, _Client.processXml_ has been renamed to _Client._decryptXML_, _Client.decryptXML_, respectively.
+- _Client.community_, _Client.setCommunity_, _enum.community_ have been renamed to _Client.language_, _Client.setLanguage_, _enum.language_, respectively.
 - Event _tribeInterface_ now receives only one object parameter _Tribe_.
 - Event _connectionInfo_ has been renamed to _accountDataLoaded_.
 - Event _playerDied_ has been renamed to _playerDeath_.
