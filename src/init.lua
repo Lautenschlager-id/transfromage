@@ -1,4 +1,4 @@
-require("extensions")
+require("libs/utils/extensions")
 
 -- Optimization --
 local coroutine_wrap = coroutine.wrap
