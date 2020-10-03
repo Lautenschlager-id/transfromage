@@ -1,4 +1,4 @@
-# Changelogs
+w# Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
@@ -9,6 +9,7 @@
 - New event _shaman_.
 
 ## Changes
+- _Client.insertPacketListener_, _Client.insertOldListener_ are now _Client.insertModernListener_, _Client.insertLegacyListener_, respectively.
 - _Client.parsePacket_ is now _Client.triggerPacketCallback_.
 - _Client.closeAll_ is now _Client.killConnections_.
 - Event _\_receive_ no longer exists, it's all handled by _receive_ now.

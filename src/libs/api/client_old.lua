@@ -69,30 +69,7 @@ end
 
 -- System
 -- Packet listeners and parsers
---[[@
-	@name insertPacketListener
-	@desc Inserts a new function to the packet parser.
-	@param C<int> The C packet.
-	@param CC<int> The CC packet.
-	@param f<function> The function to be triggered when the @C-@CC packets are received. The parameters are (self, packet, connection, identifiers).
-	@param append?<boolean> 'true' if the function should be appended to the (C, CC) listener, 'false' if the function should overwrite the (C, CC) listener. @default false
-]]
-Client.insertPacketListener = function(self, C, CC, f, append)
-	if not packetListener[C] then
-		packetListener[C] = { }
-	end
 
-	f = coroutine_makef(f)
-	if append and packetListener[C][CC] then
-		local old = packetListener[C][CC]
-		packetListener[C][CC] = function(packet, ...)
-			old(byteArray:new(packet.stack), ...)
-			f(packet, ...)
-		end
-	else
-		packetListener[C][CC] = f
-	end
-end
 --[[@
 	@name insertTribulleListener
 	@desc Inserts a new function to the tribulle (60, 3) packet parser.
