@@ -1,6 +1,10 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local updateFlag = require("api/enum").updatePlayer.shamanColor
 
 local onShamanColor = function(self, packet, connection, identifiers)
+	if not handlePlayers(self) then return end
+
 	local shaman = { }
 
 	shaman[1] = packet:read32() -- Blue

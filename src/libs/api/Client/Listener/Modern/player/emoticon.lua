@@ -1,4 +1,8 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local onPlayerEmoticon = function(self, packet, connection, identifiers)
+	if not handlePlayers(self) then return end
+
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 

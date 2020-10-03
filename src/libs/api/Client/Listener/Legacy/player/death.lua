@@ -1,4 +1,8 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local onPlayerDeath = function(self, data, connection, legacyIdentifiers)
+	if not handlePlayers(self) then return end
+
 	local playerId = data[1]
 	local player = self.playerList[playerId]
 	if not player then return end

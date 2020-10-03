@@ -1,6 +1,10 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local updateFlag = require("api/enum").updatePlayer.ducking
 
 local onDuck = function()
+	if not handlePlayers(self) then return end
+
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 

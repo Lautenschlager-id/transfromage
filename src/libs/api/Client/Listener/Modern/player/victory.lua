@@ -1,4 +1,8 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local onPlayerWon = function(self, packet, connection, identifiers)
+	if not handlePlayers(self) then return end
+
 	packet:readBool() -- ?
 
 	local player = self.playerList[packet:read32()]

@@ -1,6 +1,10 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local enum = require("api/enum")
 
 local onPlayerEmote = function(self, packet, connection, identifiers)
+	if not handlePlayers(self) then return end
+
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 

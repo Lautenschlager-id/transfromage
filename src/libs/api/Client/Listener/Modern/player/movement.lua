@@ -1,3 +1,5 @@
+local handlePlayers = require("Client/utils/handlePlayers")
+
 local updateFlag = require("api/enum").updatePlayer.movement
 
 -- Optimization --
@@ -5,6 +7,8 @@ local math_normalizePoint = math.normalizePoint
 ------------------
 
 local onPlayerMove = function(self, packet, connection, identifiers)
+	if not handlePlayers(self) then return end
+
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 

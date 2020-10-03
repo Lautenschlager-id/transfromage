@@ -1,4 +1,6 @@
 local onRefreshPlayerList =  function(self, packet, connection, identifiers)
+	if not self._handlePlayers then return end
+
 	for p = 1, packet:read16() do -- Total mice in the room
 		self.playerList:updatePlayer(packet, self.event)
 	end

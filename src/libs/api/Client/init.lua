@@ -54,7 +54,7 @@ local Client = table.setNewClass()
 Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 	local eventEmitter = EventEmitter:new()
 
-	local obj = setmetatable({
+	local data = setmetatable({
 		playerName = nil,
 		language = enum.language.en,
 		_isConnected = false,
@@ -86,37 +86,10 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 	}, self)
 
 	if tfmId and token then
-		obj:start(tfmId, token)
+		data:start(tfmId, token)
 	end
 
-	return obj
+	return data
 end
 
 return Client
-
---[[
-
-		playerName = nil,
-		language = enum.language.en,
-		-- Private
-		_mainLoop = nil,
-		_bulleLoop = nil,
-		_receivedAuthkey = 0,
-		_gameVersion = 666,
-		_gameConnectionKey = "",
-		_gameAuthkey = 0,
-		_gameIdentificationKeys = { },
-		_gameMsgKeys = { },
-		_connectionTime = 0,
-		_isConnected = false,
-		_hbTimer = nil,
-		_whoFingerprint = 0,
-		_whoList = { },
-		_processXml = false,
-		_handlePlayers = false,
-		_encode = encode:new(hasSpecialRole),
-		_hasSpecialRole = hasSpecialRole,
-		_updateSettings = updateSettings,
-		_isListeningSigint = false
-
-]]
