@@ -11,4 +11,4 @@ local onFriendConnection = function(self, packet, connection, tribulleId)
 	self.event:emit("friendConnection", string_toNickname(packet:readUTF(), true))
 end
 
-return { 32, onFriendConnection }
+return { onFriendConnection, 32 }

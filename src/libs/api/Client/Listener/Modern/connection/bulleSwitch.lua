@@ -38,4 +38,4 @@ local onBulleSwitch = function(self, packet, connection, identifiers)
 	end)
 end
 
-return { 44, 1, onBulleSwitch }
+return { onBulleSwitch, 44, 1 }

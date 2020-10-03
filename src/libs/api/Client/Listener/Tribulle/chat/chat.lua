@@ -19,4 +19,4 @@ local onChatMessage = function(self, packet, connection, tribulleId)
 		string_fixEntity(message), community)
 end
 
-return { 64, onChatMessage }
+return { onChatMessage, 64 }

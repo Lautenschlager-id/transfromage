@@ -7,4 +7,4 @@ local onFriendRemove = function(self, packet, connection, tribulleId)
 	self.event:emit("removeFriend", packet:read32())
 end
 
-return { 37, onFriendRemove }
+return { onFriendRemove, 37 }

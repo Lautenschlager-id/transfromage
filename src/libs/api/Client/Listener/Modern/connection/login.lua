@@ -22,4 +22,4 @@ local onLogin = function(self, packet, connection, identifiers)
 	timer_setTimeout(3500, self.event.emit, self.event, playerId, self.playerName, playedTime)
 end
 
-return { 26, 2, onLogin }
+return { onLogin, 26, 2 }

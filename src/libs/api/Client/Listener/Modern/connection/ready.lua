@@ -53,4 +53,4 @@ local onReady = function(self, packet, connection, identifiers)
 	self.event:emit("ready", onlinePlayers, country, language)
 end
 
-return { 26, 3, onReady }
+return { onReady, 26, 3 }

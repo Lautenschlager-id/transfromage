@@ -18,4 +18,4 @@ local onFriendAdd = function(self, packet, connection, tribulleId)
 	self.event:emit("newFriend", Friend:new(packet))
 end
 
-return { 36, onFriendAdd }
+return { onFriendAdd, 36 }

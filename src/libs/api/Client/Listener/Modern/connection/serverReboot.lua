@@ -7,4 +7,4 @@ local onServerReboot = function(self, packet, connection, identifiers)
 	self.event:emit("serverReboot", packet:read32())
 end
 
-return { 28, 88, onServerReboot }
+return { onServerReboot, 28, 88 }

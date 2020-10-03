@@ -19,4 +19,4 @@ local onWhisperMessage = function(self, packet, connection, tribulleId)
 		string_fixEntity(message), community)
 end,
 
-return { 66, onWhisperMessage }
+return { onWhisperMessage, 66 }

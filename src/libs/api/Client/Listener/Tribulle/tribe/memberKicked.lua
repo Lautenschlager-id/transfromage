@@ -15,4 +15,4 @@ local onTribeMemberKick = function(self, packet, connection, tribulleId)
 		string_toNickname(kickerName, true))
 end
 
-return { 93, onTribeMemberKick }
+return { onTribeMemberKick, 93 }

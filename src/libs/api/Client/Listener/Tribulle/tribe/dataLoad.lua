@@ -30,4 +30,4 @@ local onTribeDataLoaded = function(self, packet, connection, tribulleId)
 	self.event:emit("tribeInterface", tribe)
 end
 
-return { 130, onTribeDataLoaded }
+return { onTribeDataLoaded, 130 }

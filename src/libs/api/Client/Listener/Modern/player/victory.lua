@@ -55,4 +55,4 @@ local onPlayerWon = function(self, packet, connection, identifiers)
 	self.event:emit("playerWon", player, player.winPosition, player.winTimeElapsed)
 end
 
-return { 8, 6, onPlayerWon }
+return { onPlayerWon, 8, 6 }

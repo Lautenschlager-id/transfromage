@@ -1,6 +1,5 @@
 local ByteArray = require("ByteArray/init")
 
-require("ByteArray/write")
-require("ByteArray/read")
+require("utils/folderLoader")("classes/ByteArray")
 
 return ByteArray

@@ -11,4 +11,4 @@ local onServerPing = function(self, packet, connection, identifiers)
 	self.event:emit("serverPing", os_time())
 end
 
-return { 28, 6, onServerPing }
+return { onServerPing, 28, 6 }

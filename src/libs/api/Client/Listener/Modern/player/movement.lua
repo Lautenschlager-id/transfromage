@@ -27,4 +27,4 @@ local onPlayerMove = function(self, packet, connection, identifiers)
 	self.event:emit("updatePlayer", player, oldPlayerData, updateFlag)
 end
 
-return { 4, 4, onPlayerMove }
+return { onPlayerMove, 4, 4 }

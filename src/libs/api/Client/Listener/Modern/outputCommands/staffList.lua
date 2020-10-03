@@ -9,4 +9,4 @@ local onStaffList = function(self, packet, connection, identifiers) -- /mod, /ma
 	self.event:emit("staffList", packet:readUTF())
 end
 
-return { 28, 5, onStaffList }
+return { onStaffList, 28, 5 }

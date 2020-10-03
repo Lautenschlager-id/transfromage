@@ -49,4 +49,4 @@ local onPlayerGetCheese = function(self, packet, connection, identifiers)
 	self.event:emit("playerGetCheese", player, player.hasCheese)
 end
 
-return { 144, 6, onPlayerGetCheese }
+return { onPlayerGetCheese, 144, 6 }

@@ -15,4 +15,4 @@ local onTribeMessage = function(self, packet, connection, tribulleId)
 	self.event:emit("tribeMessage", string_toNickname(memberName, true), string_fixEntity(message))
 end
 
-return { 65, onTribeMessage }
+return { onTribeMessage, 65 }

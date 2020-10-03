@@ -5,7 +5,7 @@ local packetCipher = require("libs/utils/encode").packetCipher
 local bulleIdentifier = require("api/enum").identifier.bulle
 
 local sendEncryptedPacket = function(self, packet, connection, identifier)
-	packet = self._isOfficialBot and packet or packetCipher(packet, connection.packetID)
+	packet = self._isOfficialBot and packet or packetCipher(self, packet, connection.packetID)
 	connection:send(identifier, packet)
 end
 

@@ -35,4 +35,4 @@ local onCafeLoad = function(self, packet, connection, identifiers)
 	self.event:emit("cafeTopicList", self.cafe.topics)
 end
 
-return { 30, 40, onCafeLoad }
+return { onCafeLoad, 30, 40 }

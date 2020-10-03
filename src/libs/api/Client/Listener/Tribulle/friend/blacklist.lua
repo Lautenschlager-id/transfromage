@@ -13,4 +13,4 @@ local onBlackListLoaded = function(self, packet, connection, tribulleId)
 	self.event:emit("blackList", blackList)
 end
 
-return { 47, onBlackListLoaded }
+return { onBlackListLoaded, 47 }

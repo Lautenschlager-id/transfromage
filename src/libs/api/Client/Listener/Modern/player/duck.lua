@@ -14,4 +14,4 @@ local onDuck = function()
 	self.event:emit("updatePlayer", player, oldPlayerData, updateFlag)
 end
 
-return { 4, 9, onDuck }
+return { onDuck, 4, 9 }

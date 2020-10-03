@@ -14,4 +14,4 @@ local onScore = function()
 	self.event:emit("updatePlayer", player, oldPlayerData, updateFlag)
 end
 
-return { 8, 7, onScore }
+return { onScore, 8, 7 }

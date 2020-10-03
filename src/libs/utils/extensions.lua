@@ -1,1 +1,1 @@
-require("utils/fileLoader")("utils/extensions")
+require("./folderLoader")("utils/extensions")

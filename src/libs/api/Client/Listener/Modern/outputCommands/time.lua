@@ -23,4 +23,4 @@ local onTime = function(self, packet, connection, identifiers)
 	self.event:emit("time", time)
 end
 
-return { 6, 20, onTime }
+return { onTime, 6, 20 }

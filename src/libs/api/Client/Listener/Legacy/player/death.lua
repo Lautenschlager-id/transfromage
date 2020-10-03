@@ -50,4 +50,4 @@ local onPlayerDeath = function(self, data, connection, legacyIdentifiers)
 	self.event:emit("playerDeath", player)
 end
 
-return { 8, 5, onPlayerDeath }
+return { onPlayerDeath, 8, 5 }

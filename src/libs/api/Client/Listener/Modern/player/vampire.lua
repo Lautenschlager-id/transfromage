@@ -50,4 +50,4 @@ local onPlayerVampire = function(self, packet, connection, identifiers)
 	self.event:emit("playerVampire", player, player.isVampire)
 end
 
-return { 8, 66, onPlayerVampire }
+return { onPlayerVampire, 8, 66 }

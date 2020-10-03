@@ -13,4 +13,4 @@ local onTribeMemberConnection = function(self, packet, connection, tribulleId)
 	self.event:emit("tribeMemberConnection", string_toNickname(memberName, true))
 end
 
-return { 88, onTribeMemberConnection }
+return { onTribeMemberConnection, 88 }

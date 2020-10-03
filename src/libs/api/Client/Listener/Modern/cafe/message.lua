@@ -35,4 +35,4 @@ local onCafeUnreadMessage = function(self, packet, connection, identifiers)
 	self.event:emit("unreadCafeMessage", topicId, self.cafe.topics[topicId])
 end
 
-return { 30, 44, onCafeUnreadMessage }
+return { onCafeUnreadMessage, 30, 44 }

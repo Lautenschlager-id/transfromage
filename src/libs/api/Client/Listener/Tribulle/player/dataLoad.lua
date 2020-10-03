@@ -21,4 +21,4 @@ local onAccountDataLoaded = function(self, packet, connection, tribulleId)
 	self.event:emit("accountDataLoaded", player, tribeMember)
 end
 
-return { 3, onAccountDataLoaded }
+return { onAccountDataLoaded, 3 }

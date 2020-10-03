@@ -13,4 +13,4 @@ local onTribeMemberDisconnection = function(self, packet, connection, tribulleId
 	self.event:emit("tribeMemberDisconnection", string_toNickname(memberName, true))
 end
 
-return { 90, onTribeMemberDisconnection }
+return { onTribeMemberDisconnection, 90 }

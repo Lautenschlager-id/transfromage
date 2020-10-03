@@ -11,4 +11,4 @@ local onFriendDisconnection = function(self, packet, connection, tribulleId)
 	self.event:emit("friendDisconnection", string_toNickname(packet:readUTF(), true))
 end
 
-return { 33, onFriendDisconnection }
+return { onFriendDisconnection, 33 }

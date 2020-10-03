@@ -93,4 +93,4 @@ local onCafeTopicLoad = function(self, packet, connection, identifiers)
 	end
 end
 
-return { 30, 41, onCafeTopicLoad }
+return { onCafeTopicLoad, 30, 41 }

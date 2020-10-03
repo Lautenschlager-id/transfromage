@@ -49,4 +49,4 @@ local onPlayerEmoticon = function(self, packet, connection, identifiers)
 	self.event:emit("playerEmoticon", player, emoticon)
 end
 
-return { 8, 5, onPlayerEmoticon }
+return { onPlayerEmoticon, 8, 5 }

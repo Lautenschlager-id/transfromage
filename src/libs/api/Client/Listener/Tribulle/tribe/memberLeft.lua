@@ -13,4 +13,4 @@ local onTribeMemberLeave = function(self, packet, connection, tribulleId)
 	self.event:emit("tribeMemberLeave", string_toNickname(memberName, true))
 end
 
-return { 92, onTribeMemberLeave }
+return { onTribeMemberLeave, 92 }

@@ -116,4 +116,4 @@ local onProfileLoaded = function(self, packet, connection, identifiers)
 	self.event:emit("profileLoaded", data)
 end
 
-return { 8, 16, onProfileLoaded }
+return { onProfileLoaded, 8, 16 }

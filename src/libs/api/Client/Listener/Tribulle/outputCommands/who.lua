@@ -22,4 +22,4 @@ local onWho = function(self, packet, connection, tribulleId)
 	self._whoList[fingerprint] = nil
 end,
 
-return { 59, onWho }
+return { onWho, 59 }

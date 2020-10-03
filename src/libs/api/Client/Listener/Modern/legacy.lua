@@ -27,4 +27,4 @@ local onLegacyPacket = function(self, packet, connection, identifiers)
 	self.event:emit("missedLegacyPacket", legacyIdentifiers, data, connection)
 end
 
-return { 1, 1, onLegacyPacket }
+return { onLegacyPacket, 1, 1 }

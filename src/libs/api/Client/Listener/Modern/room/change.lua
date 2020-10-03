@@ -31,4 +31,4 @@ local onRoomChange = function(self, packet, connection, identifiers)
 	end
 end
 
-return { 5, 21, onRoomChange }
+return { onRoomChange, 5, 21 }

@@ -12,4 +12,4 @@ local onLanguageSet = function(self, packet, connection, identifiers)
 		packet:readBool(), connection)
 end
 
-return { 176, 5, onLanguageSet }
+return { onLanguageSet, 176, 5 }

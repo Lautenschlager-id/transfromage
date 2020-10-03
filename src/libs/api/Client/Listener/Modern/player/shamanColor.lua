@@ -23,4 +23,4 @@ local onShamanColor = function(self, packet, connection, identifiers)
 	end
 end
 
-return { 8, 11, onShamanColor }
+return { onShamanColor, 8, 11 }

@@ -1,39 +1,35 @@
+local fs_readdirSync = require("fs").readdirSync
+
 -- Optimization --
-local io_popen = io.popen
 local require = require
-local string_format = string.format
-local string_gmatch = string.gmatch
+local string_sub = string.sub
 ------------------
 
-local isRunningOnWindows = string.sub(package.config, 1, 1) == '\\'
+local folderLoader = function(path, asArray)
+	local data = fs_readdirSync(path)
 
-local osCommand
-if isRunningOnWindows then
-	-- for %a in ("path/*") do @echo %~na
-	osCommand = "for %%a in (\"%s/*\") do @echo %%~na"
-else
-	-- ls 'path/' -1 | sed -e 's/\..*$//'
-	osCommand = "ls '%s/' -1 | sed -e 's/\\..*$//'"
-end
+	local totalFiles, totalFolders = 0, 0
+	local files, folders = { }, { }
 
-local requireFolder = function(pathToFolder)
-	-- Assuming the path is valid
-	local command = string_format(osCommand, "src/libs/" .. pathToFolder)
+	for name = 1, #data do
+		name = data[name]
 
-	-- Executes the os command and retrieves the output
-	local fileExecute = io_popen(command)
-	local allFiles = fileExecute:read("*a")
-	fileExecute:close()
+		if string_sub(name, -4) == ".lua" then -- is file
+			name = string_sub(name, 1, -5)
 
-	local fileData = { }
-
-	pathToFolder = pathToFolder .. "/"
-	for file in string_gmatch(allFiles, "%S+") do
-		file = pathToFolder .. file
-		fileData[file] = require(file)
+			if name ~= "init" then
+				totalFiles = totalFiles + 1
+				files[(asArray and totalFiles or name)] = require(path .. name)
+			end
+		else
+			if name ~= "_internal" then
+				totalFolders = totalFolders + 1
+				folders[totalFolders] = path .. name
+			end
+		end
 	end
 
-	return fileData
+	return files, folders
 end
 
-return requireFolder
+return folderLoader

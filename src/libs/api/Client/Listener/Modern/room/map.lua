@@ -39,4 +39,4 @@ local onNewGame = function(self, packet, connection, identifiers)
 	self.event:emit("newGame", map)
 end
 
-return { 5, 2, onNewGame }
+return { onNewGame, 5, 2 }

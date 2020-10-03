@@ -39,4 +39,4 @@ local onFriendListLoaded = function(self, packet, connection, tribulleId)
 	self.event:emit("friendList", friendList, soulmate)
 end
 
-return { 34, onFriendListLoaded }
+return { onFriendListLoaded, 34 }
