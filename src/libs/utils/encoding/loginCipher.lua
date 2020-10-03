@@ -29,7 +29,7 @@ end
 	@param data<table> A table with data to be encoded.
 	@returns table The encoded data.
 ]]
-local xxtea = function(self, data)
+local xxtea = function(data, identificationKeys)
 	local decode = #data
 
 	local y = data[1]
@@ -49,7 +49,7 @@ local xxtea = function(self, data)
 		while p < (decode - 1) do
 			y = data[p + 2]
 
-			z = bit64_band((data[p + 1] + MX(self.identificationKeys, z, y, sum, p, e)), LIM)
+			z = bit64_band((data[p + 1] + MX(identificationKeys, z, y, sum, p, e)), LIM)
 			data[p + 1] = z
 
 			p = p + 1
@@ -57,7 +57,7 @@ local xxtea = function(self, data)
 
 		y = data[1]
 
-		z = bit64_band((data[decode] + MX(self.identificationKeys, z, y, sum, p, e)), LIM)
+		z = bit64_band((data[decode] + MX(identificationKeys, z, y, sum, p, e)), LIM)
 		data[decode] = z
 	end
 
@@ -70,7 +70,7 @@ end
 	@param packet<ByteArray> A Byte Array object to be encoded.
 	@returns ByteArray The encoded Byte Array object.
 ]]
-local btea = function(self, packet)
+local btea = function(packet, identificationKeys)
 	local stackLen = packet.stackLen
 
 	while stackLen < 8 do
@@ -85,7 +85,7 @@ local btea = function(self, packet)
 		chunks[counter] = packet:read32()
 	end
 
-	chunks = xxtea(self, chunks)
+	chunks = xxtea(chunks, identificationKeys)
 
 	packet = ByteArray:new():write16(counter)
 	for i = 1, counter do
