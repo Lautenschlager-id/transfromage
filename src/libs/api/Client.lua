@@ -1,10 +1,11 @@
-local Client = require("Client/init")
+local Client = require("api/Client/init")
 
 local folderLoader = require("utils/folderLoader")
 
 local createListener = require("api/Client/utils/createListener")
 
 -- Optimization --
+local require = require
 local table_add = table.add
 ------------------
 
