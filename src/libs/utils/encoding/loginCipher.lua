@@ -1,5 +1,5 @@
-local ByteArray = require("classes/ByteArray")
 local bit64 = require("bit64")
+local ByteArray = require("classes/ByteArray")
 
 ------------------------------------------- Optimization -------------------------------------------
 local bit64_band   = bit64.band

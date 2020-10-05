@@ -2,7 +2,7 @@
 local require = require
 ----------------------------------------------------------------------------------------------------
 
-local ByteArray = require("ByteArray/init")
+local ByteArray = require("classes/ByteArray/init")
 
 require("utils/folderLoader")("classes/ByteArray")
 

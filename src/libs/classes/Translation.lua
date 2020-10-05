@@ -1,4 +1,4 @@
-local enum = require("enum")
+local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
 local enum_error      = enum.error
