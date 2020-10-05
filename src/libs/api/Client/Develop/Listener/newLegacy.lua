@@ -5,10 +5,10 @@ local ByteArray = require("classes/ByteArray")
 
 local createListener = require("Client/utils/createListener")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local coroutine_makef = coroutine.makef
 local table_copy = table.copy
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name insertOldPacketListener

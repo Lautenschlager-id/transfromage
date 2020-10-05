@@ -1,6 +1,6 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onWho = function(self, packet, connection, tribulleId)
 	local fingerprint = packet:read32()

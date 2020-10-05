@@ -1,8 +1,8 @@
 local enum = require("api/enum")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_split = string.split
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onBulleSwitch = function(self, packet, connection, identifiers)
 	local serverTimestamp = packet:read32()

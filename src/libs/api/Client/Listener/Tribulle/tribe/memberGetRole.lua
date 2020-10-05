@@ -1,6 +1,6 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onTribeMemberKick = function(self, packet, connection, tribulleId)
 	local setterName, memberName, role = packet:readUTF(), packet:readUTF(), packet:readUTF()

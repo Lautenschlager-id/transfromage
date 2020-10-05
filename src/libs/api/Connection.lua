@@ -7,7 +7,7 @@ local enum = require("enum")
 
 local net_createConnection = require("net").createConnection
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local bit_band = bit.band
 local bit_bor = bit.bor
 local bit_lshift = bit.lshift
@@ -20,7 +20,7 @@ local table_unpack = table.unpack
 local table_writeBytes = table.writeBytes
 local timer_setTimeout = timer.setTimeout
 local timer_clearInterval = timer.clearInterval
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Connection = table.setNewClass()
 

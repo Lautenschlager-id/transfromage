@@ -7,10 +7,10 @@ local enum = require("api/enum")
 local packetListener = require("api/Client/utils/packetListener")
 local killConnections = require("api/Client/utils/killConnections")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local timer_clearInterval = timer.clearInterval
 local timer_setInterval = timer.setInterval
-------------------
+----------------------------------------------------------------------------------------------------
 
 local disconnectionLoop = function(self, client)
 	if not client.mainConnection.isOpen then

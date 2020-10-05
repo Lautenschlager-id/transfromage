@@ -1,14 +1,14 @@
 local openssl = require("openssl")
 local base64_encode = require("base64").encode
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local math_floor = math.floor
 local string_char = string.char
 local string_sub = string.sub
 local table_concat = table.concat
 local table_writeBytes = table.writeBytes
 local tonumber = tonumber
-------------------
+----------------------------------------------------------------------------------------------------
 
 local sha256 = openssl.digest.get("sha256")
 

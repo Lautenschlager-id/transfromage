@@ -1,8 +1,8 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local rawset = rawset
 local setmetatable = setmetatable
 local type = type
-------------------
+----------------------------------------------------------------------------------------------------
 
 local classMeta = { }
 classMeta.__index = classMeta

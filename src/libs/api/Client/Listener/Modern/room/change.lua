@@ -1,10 +1,10 @@
 local PlayerList = require("classes/PlayerList")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_byte = string.byte
 local string_fixEntity = string.fixEntity
 local string_sub = string.sub
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onRoomChange = function(self, packet, connection, identifiers)
 	self.playerList = PlayerList:new()

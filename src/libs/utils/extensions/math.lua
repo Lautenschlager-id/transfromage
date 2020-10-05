@@ -1,7 +1,7 @@
--- Optimization --
-local math_ceil = math.ceil
+------------------------------------------- Optimization -------------------------------------------
+local math_ceil  = math.ceil
 local math_floor = math.floor
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name math.normalizePoint

@@ -3,10 +3,10 @@ local enum = require("api/enum")
 local http_request = require("coro-http").request
 local json_decode = require("json").decode
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_format = string.format
 local error = error
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name getKeys

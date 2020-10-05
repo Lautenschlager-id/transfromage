@@ -1,12 +1,11 @@
+------------------------------------------- Optimization -------------------------------------------
 local fs_readdirSync = require("fs").readdirSync
-
--- Optimization --
-local require = require
-local string_sub = string.sub
-------------------
+local require        = require
+local string_sub     = string.sub
+----------------------------------------------------------------------------------------------------
 
 local folderLoader = function(path, asArray)
-	local data = fs_readdirSync(path)
+	local data = fs_readdirSync(path) -- scandir is slower
 
 	local totalFiles, totalFolders = 0, 0
 	local files, folders = { }, { }

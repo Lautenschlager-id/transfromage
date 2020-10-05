@@ -1,9 +1,9 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local error = error
 local next = next
 local setmetatable = setmetatable
 local tostring = tostring
-------------------
+----------------------------------------------------------------------------------------------------
 
 local enum = setmetatable({ }, {
 	--[[@

@@ -1,7 +1,7 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Member = table.setNewClass()
 

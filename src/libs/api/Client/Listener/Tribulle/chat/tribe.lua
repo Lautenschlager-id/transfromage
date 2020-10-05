@@ -1,7 +1,7 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_fixEntity = string.fixEntity
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onTribeMessage = function(self, packet, connection, tribulleId)
 	local memberName, message = packet:readUTF(), packet:readUTF()

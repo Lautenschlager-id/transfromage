@@ -7,14 +7,14 @@ local enum = require("api/enum")
 
 local timer_setTimeout = require("timer").setTimeout
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local bit_bxor = bit.bxor
 local encode_loginCipher = encode.loginCipher
 local encode_password = encode.password
 local error = error
 local string_toNickname = string.toNickname
 local tostring = tostring
-------------------
+----------------------------------------------------------------------------------------------------
 
 local triggerConnectionFailed = function(self)
 	if not self.event.handlers.connectionFailed then

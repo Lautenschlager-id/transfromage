@@ -1,13 +1,13 @@
--- Optimization --
-local string_byte = string.byte
-local string_find = string.find
-local string_gsub = string.gsub
+------------------------------------------- Optimization -------------------------------------------
+local string_byte  = string.byte
+local string_find  = string.find
+local string_gsub  = string.gsub
 local string_lower = string.lower
-local string_sub = string.sub
+local string_sub   = string.sub
 local string_upper = string.upper
-local tonumber = tonumber
-local tostring = tostring
-------------------
+local tonumber     = tonumber
+local tostring     = tostring
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name string.fixEntity

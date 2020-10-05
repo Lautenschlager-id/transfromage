@@ -1,9 +1,9 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local bit_rshift = bit.rshift
 local string_getBytes = string.getBytes
 local table_add = table.add
 local type = type
-------------------
+----------------------------------------------------------------------------------------------------
 
 local ByteArray = require("ByteArray/init")
 

@@ -4,10 +4,10 @@ local folderLoader = require("utils/folderLoader")
 
 local createListener = require("api/Client/utils/createListener")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local require = require
 local table_add = table.add
-------------------
+----------------------------------------------------------------------------------------------------
 
 -- Tools
 folderLoader("api/Client/utils")

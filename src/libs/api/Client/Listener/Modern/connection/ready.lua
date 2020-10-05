@@ -3,9 +3,9 @@ local timer_setInterval = require("timer").setInterval
 local ByteArray = require("classes/ByteArray")
 local identifier = require("api/enum").identifier
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local os_time = os.time
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name sendHeartbeat

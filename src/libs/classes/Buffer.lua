@@ -1,9 +1,9 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_getBytes = string.getBytes
 local table_add = table.add
 local table_remove = table.remove
 local type = type
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Buffer = table.setNewClass()
 

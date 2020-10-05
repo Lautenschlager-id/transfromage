@@ -2,7 +2,7 @@ local Client = require("Client/init")
 
 local timer = require("timer")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local assert = assert
 local coroutine_makef = coroutine.makef
 local coroutine_resume = coroutine.resume
@@ -10,7 +10,7 @@ local coroutine_running = coroutine.running
 local coroutine_yield = coroutine.yield
 local timer_clearTimeout = timer.clearTimeout
 local timer_setTimeout = timer.setTimeout
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name on

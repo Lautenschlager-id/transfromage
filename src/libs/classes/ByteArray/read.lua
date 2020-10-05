@@ -1,4 +1,4 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local bit_bor = bit.bor
 local bit_bxor = bit.bxor
 local bit_lshift = bit.lshift
@@ -6,7 +6,7 @@ local string_char = string.char
 local table_arrayRange = table.arrayRange
 local table_writeBytes = table.writeBytes
 local type = type
-------------------
+----------------------------------------------------------------------------------------------------
 
 local ByteArray = require("ByteArray/init")
 

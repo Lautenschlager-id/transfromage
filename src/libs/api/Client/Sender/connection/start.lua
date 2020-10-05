@@ -6,9 +6,9 @@ local getAuthenticationKeys = require("api/Client/utils/getAuthenticationKeys")
 local onSocketConnection = require("api/Client/Listener/_internal/socketConnection")
 local killOnSigterm = require("api/Client/utils/sigterm")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local coroutine_makef = coroutine.makef
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name start

@@ -1,10 +1,10 @@
 local legacyListener = require("Client/Listener/Legacy/init")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_byte = string.byte
 local string_split = string.split
 local table_remove = table.remove
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onLegacyPacket = function(self, packet, connection, identifiers)
 	local data = string_split(packet:readUTF(), '\x01', true)

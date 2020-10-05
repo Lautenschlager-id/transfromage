@@ -1,6 +1,6 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onFriendDisconnection = function(self, packet, connection, tribulleId)
 	--[[@

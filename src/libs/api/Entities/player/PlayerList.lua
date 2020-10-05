@@ -1,10 +1,10 @@
 local Player = require("Player")
 local updateFlag = require("api/enum").updatePlayer.general
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
 local table_remove = table.remove
-------------------
+----------------------------------------------------------------------------------------------------
 
 local PlayerList = table.setNewClass()
 

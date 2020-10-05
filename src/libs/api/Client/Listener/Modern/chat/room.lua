@@ -1,7 +1,7 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_fixEntity = string.fixEntity
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onRoomMessage = function(self, packet, connection, identifiers)
 	local playerName, message = packet:readUTF(), string_fixEntity(packet:readUTF())

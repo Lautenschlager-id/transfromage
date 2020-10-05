@@ -2,7 +2,7 @@ local http_request = require("coro-http").request
 local zlibDecompress = require("miniz").inflate
 local enum = require("enum")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local coroutine_makef = coroutine.makef
 local enum_validate = enum._validate
 local string_find = string.find
@@ -13,7 +13,7 @@ local string_match = string.match
 local string_split = string.split
 local string_utf8 = string.utf8
 local table_copy = table.copy
-------------------
+----------------------------------------------------------------------------------------------------
 
 local downloadedTranslations = { }
 

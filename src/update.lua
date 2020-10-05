@@ -1,10 +1,10 @@
 local fs = require("fs")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local coroutine_wrap = coroutine.wrap
-local io_read = io.read
 local fs_scandirSync = fs.scandirSync
 local fs_rmdirSync = fs.rmdirSync
+local io_read = io.read
 local os_execute = os.execute
 local os_exit = os.exit
 local os_remove = os.remove
@@ -12,7 +12,7 @@ local require = require
 local string_lower = string.lower
 local string_match = string.match
 local table_concat = table.concat
-------------------
+----------------------------------------------------------------------------------------------------
 
 local APISettings = require("./settings")
 local APIPackage = require("./package")

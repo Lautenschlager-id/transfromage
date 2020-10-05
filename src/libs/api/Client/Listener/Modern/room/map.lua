@@ -1,8 +1,8 @@
 local zlibDecompress = require("miniz").inflate
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local table_writeBytes = table.writeBytes
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onNewGame = function(self, packet, connection, identifiers)
 	local map = { }

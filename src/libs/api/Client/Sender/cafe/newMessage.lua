@@ -1,9 +1,9 @@
 local Client = require("Client/init")
 local ByteArray = require("classes/ByteArray")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_gsub = string.gsub
-------------------
+----------------------------------------------------------------------------------------------------
 
 local identifier = require("api/enum").identifier.cafeSendMessage
 

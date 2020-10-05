@@ -1,6 +1,6 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local tonumber = tonumber
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onRoomList = function(self, packet, connection, identifiers)
 	 -- Room types

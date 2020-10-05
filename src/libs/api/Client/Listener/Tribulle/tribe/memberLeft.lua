@@ -1,6 +1,6 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onTribeMemberLeave = function(self, packet, connection, tribulleId)
 	local memberName = packet:readUTF()

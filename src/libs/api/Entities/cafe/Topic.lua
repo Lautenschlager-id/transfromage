@@ -1,9 +1,9 @@
 local Message = require("Message")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local os_time = os.time
 local setmetatable = setmetatable
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Topic = table.setNewClass()
 

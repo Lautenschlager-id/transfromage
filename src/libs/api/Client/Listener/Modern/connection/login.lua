@@ -1,8 +1,8 @@
 local timer_setTimeout = require("timer").setTimeout
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local os_time = os.time
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onLogin = function(self, packet, connection, identifiers)
 	self._isConnected = true

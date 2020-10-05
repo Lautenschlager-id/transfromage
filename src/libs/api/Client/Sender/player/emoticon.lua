@@ -3,10 +3,10 @@ local ByteArray = require("classes/ByteArray")
 
 local enum = require("api/enum")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_format = string.format
 local enum_validate = enum._validate
-------------------
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name playEmoticon

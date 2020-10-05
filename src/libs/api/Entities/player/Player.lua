@@ -1,8 +1,8 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
 local string_sub = string.sub
 local table_copy = table.copy
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Player = table.setNewClass()
 

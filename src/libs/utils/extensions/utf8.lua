@@ -1,10 +1,10 @@
 -- Based on Luvit's ustring
 
--- Optimization --
-local bit_rshift = bit.rshift
+------------------------------------------- Optimization -------------------------------------------
+local bit_rshift  = bit.rshift
 local string_byte = string.byte
-local string_sub = string.sub
-------------------
+local string_sub  = string.sub
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name charLength

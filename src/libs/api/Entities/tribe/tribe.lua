@@ -1,8 +1,8 @@
 local Member = require("Entities/tribe/Member")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Tribe = table.setNewClass()
 

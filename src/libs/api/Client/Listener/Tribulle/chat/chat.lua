@@ -1,7 +1,7 @@
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 local string_fixEntity = string.fixEntity
 local string_toNickname = string.toNickname
-------------------
+----------------------------------------------------------------------------------------------------
 
 local onChatMessage = function(self, packet, connection, tribulleId)
 	local playerName, community = packet:readUTF(), packet:read32()

@@ -7,9 +7,9 @@ local Cafe = require("Entities/cafe/Cafe")
 
 local enum = require("api/enum")
 
--- Optimization --
+------------------------------------------- Optimization -------------------------------------------
 
-------------------
+----------------------------------------------------------------------------------------------------
 
 local Client = table.setNewClass()
 

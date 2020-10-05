@@ -1,9 +1,9 @@
--- Optimization --
-local next = next
-local string_char = string.char
+------------------------------------------- Optimization -------------------------------------------
+local next         = next
+local string_char  = string.char
 local table_concat = table.concat
-local type = type
-------------------
+local type         = type
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name table.add
