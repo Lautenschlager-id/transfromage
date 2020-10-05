@@ -1,5 +1,5 @@
 ------------------------------------------- Optimization -------------------------------------------
-local setmetatable = setmetatable
+local setmetatable      = setmetatable
 local string_toNickname = string.toNickname
 ----------------------------------------------------------------------------------------------------
 

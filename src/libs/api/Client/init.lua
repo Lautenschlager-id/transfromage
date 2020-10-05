@@ -2,8 +2,8 @@ local EventEmitter = require("core").Emitter
 
 local Connection = require("api/Connection")
 
-local PlayerList = require("Entities/player/PlayerList")
-local Cafe = require("Entities/cafe/Cafe")
+local PlayerList = require("api/Entities/player/PlayerList")
+local Cafe = require("api/Entities/cafe/Cafe")
 
 local enum = require("api/enum")
 

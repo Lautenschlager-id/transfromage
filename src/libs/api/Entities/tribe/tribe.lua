@@ -1,4 +1,4 @@
-local Member = require("Entities/tribe/Member")
+local Member = require("./Member")
 
 ------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable

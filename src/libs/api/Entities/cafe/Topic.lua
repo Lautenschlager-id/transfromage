@@ -1,7 +1,7 @@
-local Message = require("Message")
+local Message = require("./Message")
 
 ------------------------------------------- Optimization -------------------------------------------
-local os_time = os.time
+local os_time      = os.time
 local setmetatable = setmetatable
 ----------------------------------------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-local Friend = require("Entities/friend/Friend")
+local Friend = require("api/Entities/friend/Friend")
 
 local onFriendListLoaded = function(self, packet, connection, tribulleId)
 	local soulmate = Friend:new(packet)

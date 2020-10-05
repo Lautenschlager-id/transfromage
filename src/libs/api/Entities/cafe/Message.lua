@@ -1,7 +1,7 @@
 ------------------------------------------- Optimization -------------------------------------------
-local os_time = os.time
+local os_time      = os.time
 local setmetatable = setmetatable
-local string_gsub = string.gsub
+local string_gsub  = string.gsub
 ----------------------------------------------------------------------------------------------------
 
 local Message = table.setNewClass()

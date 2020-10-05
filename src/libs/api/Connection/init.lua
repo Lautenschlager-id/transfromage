@@ -28,19 +28,26 @@ local Connection = table.setNewClass()
 ]]
 Connection.new = function(self, name, event)
 	return setmetatable({
-		event = event,
+		name = name,
+
+		isOpen = false,
 		socket = nil,
 		buffer = Buffer:new(),
+
+		event = event,
+
 		ip = "",
-		packetID = 0,
 		portIndex = 1,
-		name = name,
-		isOpen = false,
+
+		packetID = 0,
+
+		_listenLoop = nil,
+
 		_isReadingStackLength = true,
-		_readStackLength = 0,
 		_lengthBytes = 0,
-		_client = nil,
-		_listenLoop = nil
+		_readStackLength = 0,
+
+		_client = nil
 	}, self)
 end
 

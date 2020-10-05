@@ -1,4 +1,4 @@
-local Topic = require("Entities/cafe/Topic")
+local Topic = require("api/Entities/cafe/Topic")
 
 local onCafeTopicLoad = function(self, packet, connection, identifiers)
 	packet:read8() -- ?

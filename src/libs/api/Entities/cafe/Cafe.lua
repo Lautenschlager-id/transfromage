@@ -1,4 +1,4 @@
-local Topic = require("Topic")
+local Topic = require("./Topic")
 
 ------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
