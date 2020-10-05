@@ -1,8 +1,9 @@
-local Client = require("Client/init")
+local Client = require("api/Client/init")
 
-local packetCipher = require("libs/utils/encode").packetCipher
-
+------------------------------------------- Optimization -------------------------------------------
 local bulleIdentifier = require("api/enum").identifier.bulle
+local packetCipher = require("libs/utils/encode").packetCipher
+----------------------------------------------------------------------------------------------------
 
 local sendEncryptedPacket = function(self, packet, connection, identifier)
 	packet = self._isOfficialBot and packet or packetCipher(self, packet, connection.packetID)

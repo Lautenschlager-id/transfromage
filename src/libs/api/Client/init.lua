@@ -1,14 +1,11 @@
-local EventEmitter = require("core").Emitter
-
-local Connection = require("api/Connection")
-
-local PlayerList = require("api/Entities/player/PlayerList")
 local Cafe = require("api/Entities/cafe/Cafe")
-
-local enum = require("api/enum")
+local Connection = require("api/Connection")
+local PlayerList = require("api/Entities/player/PlayerList")
 
 ------------------------------------------- Optimization -------------------------------------------
-
+local enum_language = require("api/enum").language
+local eventEmitter  = require("core").Emitter
+local setmetatable  = setmetatable
 ----------------------------------------------------------------------------------------------------
 
 local Client = table.setNewClass()
@@ -52,11 +49,11 @@ local Client = table.setNewClass()
 	}
 ]]
 Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
-	local eventEmitter = EventEmitter:new()
+	local eventEmitter = eventEmitter:new()
 
-	local data = setmetatable({
+	local client = setmetatable({
 		playerName = nil,
-		language = enum.language.en,
+		language = enum_language.en,
 		_isConnected = false,
 
 		_isOfficialBot = isOfficialBot,
@@ -86,10 +83,10 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 	}, self)
 
 	if tfmId and token then
-		data:start(tfmId, token)
+		client:start(tfmId, token)
 	end
 
-	return data
+	return client
 end
 
 return Client

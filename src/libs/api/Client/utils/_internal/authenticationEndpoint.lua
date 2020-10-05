@@ -1,11 +1,15 @@
 local enum = require("api/enum")
 
-local http_request = require("coro-http").request
-local json_decode = require("json").decode
-
 ------------------------------------------- Optimization -------------------------------------------
-local string_format = string.format
-local error = error
+local enum_error      = enum.error
+local enum_errorLevel = enum.errorLevel
+local enum_setting    = enum.setting
+local enum_url        = enum.url
+local http_request    = require("coro-http").request
+local json_decode     = require("json").decode
+local error           = error
+local string_format   = string.format
+local tostring        = tostring
 ----------------------------------------------------------------------------------------------------
 
 --[[@
@@ -17,32 +21,31 @@ local error = error
 	@param token<string> The developer's token.
 ]]
 local getAuthenticationKeys = function(self, tfmID, token)
-	local _, result = http_request("GET", string_format(enum.url.authKeys, tfmID, token))
+	local _, result = http_request("GET", string_format(enum_url.authKeys, tfmID, token))
 
 	local rawresult = result
 	result = json_decode(result)
 
 	if not result then
-		return error("↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is \z
-			invalid.\n\t" .. tostring(rawresult), enum.errorLevel.high)
+		return error(enum_error.invalidToken, enum_errorLevel.high, tostring(rawresult))
 	end
 
 	if not result.success then
-		return not self._isOfficialBot and error("↑error↓[API ENDPOINT]↑ Impossible to get the \z
-			keys.\n\tError: " .. tostring(result.error), enum.errorLevel.high)
+		return not self._isOfficialBot and error(enum_error.authEndpointFailure,
+			enum_errorLevel.high, tostring(result.error))
 	end
 
 	if result.internal_error then
-		return not self._isOfficialBot and error(string_format("↑error↓[API ENDPOINT]↑ An \z
-			internal error occurred in the API endpoint.\n\t'%s'%s", result.internal_error_step,
-			(result.internal_error_step == 2 and ": The game may be in maintenance." or '')
-		), enum.errorLevel.high)
+		return not self._isOfficialBot and error(enum_error.authEndpointInternal,
+			enum_errorLevel.high, result.internal_error_step,
+			(result.internal_error_step == 2 and enum_error.gameMaintenace or '')
+		)
 	end
 
-	enum.setting.mainIP = result.ip
+	enum_setting.mainIP = result.ip
 
 	if not self._isOfficialBot then
-		enum.setting.gameVersion = result.version
+		enum_setting.gameVersion = result.version
 
 		self._authenticationKey = result.auth_key
 		self._gameConnectionKey = result.connection_key
@@ -50,7 +53,7 @@ local getAuthenticationKeys = function(self, tfmID, token)
 		self._messageKeys = result.msg_keys
 	end
 
-	enum.setting = enum(enum.setting)
+	enum.setting = enum(enum_setting)
 end
 
 return getAuthenticationKeys

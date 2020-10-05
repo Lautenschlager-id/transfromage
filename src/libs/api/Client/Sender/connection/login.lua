@@ -1,4 +1,4 @@
-local Client = require("Client/init")
+local Client = require("api/Client/init")
 local ByteArray = require("classes/ByteArray")
 
 local encode = require("src/utils/encoding")

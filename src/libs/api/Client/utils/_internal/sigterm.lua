@@ -1,13 +1,12 @@
 local uv = require("uv")
 
-local timer_setTimeout = require("timer").setTimeout
-
 local killConnections = require("api/Client/utils/killConnections")
 
 ------------------------------------------- Optimization -------------------------------------------
-local os_exit = os.exit
-local uv_signal_start = uv.signal_start
-local uv_new_signal = uv.new_signal
+local os_exit          = os.exit
+local timer_setTimeout = require("timer").setTimeout
+local uv_signal_start  = uv.signal_start
+local uv_new_signal    = uv.new_signal
 ----------------------------------------------------------------------------------------------------
 
 local clients, totalClients = { }, 0

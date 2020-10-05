@@ -1,4 +1,4 @@
-local Client = require("Client/init")
+local Client = require("api/Client/init")
 
 --[[@
 	@name handlePlayers

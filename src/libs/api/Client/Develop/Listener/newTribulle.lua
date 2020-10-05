@@ -1,6 +1,6 @@
 local tribulleListener = require("Client/Listener/Tribulle/init")
 
-local Client = require("Client/init")
+local Client = require("api/Client/init")
 local ByteArray = require("classes/ByteArray")
 
 local createListener = require("Client/utils/createListener")
