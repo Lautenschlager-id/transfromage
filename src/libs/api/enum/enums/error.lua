@@ -7,6 +7,8 @@ local enum = require("enum/init")
 ]]
 enum.error = enum {
 	invalidEnum = "↑failure↓[%s]↑ ↑highlight↓%s↑ must be a valid ↑highlight↓%s↑ enumeration.",
+	translationFailure = "↑failure↓[TRANSLATION]↑ Language ↑highlight↓%s↑ could not be \z
+		downloaded. File not found in Transformice's archives."
 }
 
 --[[@

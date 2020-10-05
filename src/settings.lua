@@ -1,6 +1,6 @@
 return {
 	-- The API update mode
-	-- Can be nil, "ask" (to ask for permission before updating) and "auto" (to update automatically)
+	-- Can be nil, "permission" (to ask for permission before updating) and "auto" (to update automatically)
 	update = "auto",
 
 	-- Whether logs should have color or not

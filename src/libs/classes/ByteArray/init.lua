@@ -1,6 +1,6 @@
 ------------------------------------------- Optimization -------------------------------------------
 local table_writeBytes = table.writeBytes
-local setmetatable = setmetatable
+local setmetatable     = setmetatable
 ----------------------------------------------------------------------------------------------------
 
 local ByteArray = table.setNewClass()

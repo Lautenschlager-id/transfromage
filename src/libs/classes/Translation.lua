@@ -1,27 +1,29 @@
-local http_request = require("coro-http").request
-local zlibDecompress = require("miniz").inflate
 local enum = require("enum")
 
 ------------------------------------------- Optimization -------------------------------------------
-local coroutine_makef = coroutine.makef
-local enum_validate = enum._validate
-local string_find = string.find
-local string_format = string.format
-local string_gsub = string.gsub
-local string_lower = string.lower
-local string_match = string.match
-local string_split = string.split
-local string_utf8 = string.utf8
-local table_copy = table.copy
+local enum_error      = enum.error
+local enum_errorLevel = enum.errorLevel
+local enum_language   = enum.language
+local enum_url        = enum.url
+local enum_validate   = enum._validate
+local http_request    = require("coro-http").request
+local next            = next
+local setmetatable    = setmetatable
+local string_find     = string.find
+local string_format   = string.format
+local string_gsub     = string.gsub
+local string_match    = string.match
+local string_split    = string.split
+local table_copy      = table.copy
+local zlibDecompress  = require("miniz").inflate
 ----------------------------------------------------------------------------------------------------
 
 local downloadedTranslations = { }
 
-local getOfficialTranslationsData = coroutine_makef(function(language)
-	local head, body = http_request("GET", string_format(enum.url.translation, language))
+local getOfficialTranslationsData = coroutine.makef(function(language)
+	local head, body = http_request("GET", string_format(enum_url.translation, language))
 	if head.code ~= 200 then -- The enum must prevent it, but we never know
-		return error("↑failure↓[TRANSLATION]↑ Language ↑highlight↓" .. language .. "↑ could not \z
-			be downloaded. File not found in Transformice archives.", enum.errorLevel.low)
+		return error(enum_error.translationFailure, enum_errorLevel.low, language)
 	end
 
 	body = zlibDecompress(body, 1) -- Decodes
@@ -39,8 +41,8 @@ local Translation = table.setNewClass()
 	@returns boolean,nil Whether the language has been downloaded.
 ]]
 Translation.new = function(self, language, onDownload)
-	language = enum_validate(enum.language, enum.language.en, language,
-		string_format(enum.error.invalidEnum, "download", "language", "language"))
+	language = enum_validate(enum_language, enum_language.en, language,
+		string_format(enum_error.invalidEnum, "download", "language", "language"))
 	if not language then return end
 
 	-- Caches all translation lines

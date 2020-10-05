@@ -1,24 +1,20 @@
-local openssl = require("openssl")
-local base64_encode = require("base64").encode
-
 ------------------------------------------- Optimization -------------------------------------------
-local math_floor = math.floor
-local string_char = string.char
-local string_sub = string.sub
-local table_concat = table.concat
-local table_writeBytes = table.writeBytes
-local tonumber = tonumber
+local base64_encode    = require("base64").encode
+local openssl_digest   = require("openssl").digest
+local string_char      = string.char
+local string_sub       = string.sub
+local table_concat     = table.concat
+local tonumber         = tonumber
 ----------------------------------------------------------------------------------------------------
 
-local sha256 = openssl.digest.get("sha256")
-
+local sha256 = openssl_digest.get("sha256")
 local cryptToSha256 = function(str)
-	local hash = openssl.digest.new(sha256)
+	local hash = openssl_digest.new(sha256)
 	hash:update(str)
 	return hash:final()
 end
 
-local saltBytes = table_writeBytes({
+local saltBytes = table.writeBytes({
 	0xF7, 0x1A, 0xA6, 0xDE,
 	0x8F, 0x17, 0x76, 0xA8,
 	0x03, 0x9D, 0x32, 0xB8,

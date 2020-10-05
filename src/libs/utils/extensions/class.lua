@@ -1,7 +1,9 @@
 ------------------------------------------- Optimization -------------------------------------------
-local rawset = rawset
+local logMessages  = require("enum/init").logMessages
+local os_log       = os.log
+local rawset       = rawset
 local setmetatable = setmetatable
-local type = type
+local type         = type
 ----------------------------------------------------------------------------------------------------
 
 local classMeta = { }
@@ -14,8 +16,7 @@ end
 classMeta.__newindex = function(self, index, value)
 	if type(value) == "string" then -- Aliases / Compatibility
 		rawset(self, index, function(this, ...)
-			os.log("↑failure↓[/!\\]↑ ↑highlight↓" .. index .. "↑ is deprecated, use \z
-				↑highlight↓" .. value .. "↑ instead.")
+			os_log(logMessages.deprecatedMethod, index, value)
 			return self[value](this, ...)
 		end)
 	else

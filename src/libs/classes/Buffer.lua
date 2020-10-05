@@ -1,8 +1,9 @@
 ------------------------------------------- Optimization -------------------------------------------
+local setmetatable    = setmetatable
 local string_getBytes = string.getBytes
-local table_add = table.add
-local table_remove = table.remove
-local type = type
+local table_add       = table.add
+local table_remove    = table.remove
+local type            = type
 ----------------------------------------------------------------------------------------------------
 
 local Buffer = table.setNewClass()
@@ -21,14 +22,6 @@ Buffer.new = function(self)
 		queue = { },
 		_count = 0
 	}, self)
-end
-
---[[
-	@desc Checks whether the queue is empty or not.
-	@returns boolean Whether the queue is empty or not.
-]]
-Buffer.isEmpty = function(self)
-	return self._count == 0
 end
 
 --[[@

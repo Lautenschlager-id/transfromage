@@ -1,4 +1,4 @@
-local ByteArray = require("ByteArray")
+local ByteArray = require("classes/ByteArray")
 
 ------------------------------------------- Optimization -------------------------------------------
 local bit_bxor = bit.bxor
@@ -19,9 +19,12 @@ local xorCipher = function(self, packet, fingerprint)
 
 	local stack = { }
 
+	local packetStack = packet.stack
+	local messageKeys = self.messageKeys
+
 	for i = 1, packet.stackLen do
 		fingerprint = fingerprint + 1
-		stack[i] = bit_bxor(packet.stack[i], self.messageKeys[(fingerprint % 20) + 1]) % 256
+		stack[i] = bit_bxor(packetStack[i], messageKeys[(fingerprint % 20) + 1]) % 256
 	end
 
 	return ByteArray:new(stack)

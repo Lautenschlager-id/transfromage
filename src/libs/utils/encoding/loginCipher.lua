@@ -1,12 +1,12 @@
-local ByteArray = require("ByteArray")
+local ByteArray = require("classes/ByteArray")
 local bit64 = require("bit64")
 
 ------------------------------------------- Optimization -------------------------------------------
-local bit64_band = bit64.band
-local bit64_bxor = bit64.bxor
+local bit64_band   = bit64.band
+local bit64_bxor   = bit64.bxor
 local bit64_lshift = bit64.lshift
 local bit64_rshift = bit64.rshift
-local math_floor = math.floor
+local math_floor   = math.floor
 ----------------------------------------------------------------------------------------------------
 
 local DELTA, LIM = 0x9E3779B9, 0xFFFFFFFF

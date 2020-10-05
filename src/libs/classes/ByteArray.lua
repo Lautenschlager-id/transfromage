@@ -1,3 +1,7 @@
+------------------------------------------- Optimization -------------------------------------------
+local require = require
+----------------------------------------------------------------------------------------------------
+
 local ByteArray = require("ByteArray/init")
 
 require("utils/folderLoader")("classes/ByteArray")

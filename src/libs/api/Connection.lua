@@ -1,6 +1,6 @@
 local timer = require("timer")
 
-local ByteArray = require("ByteArray")
+local ByteArray = require("classes/ByteArray")
 local Buffer = require("Buffer")
 
 local enum = require("enum")
@@ -138,7 +138,7 @@ end
 ]]
 Connection.receive = function(self)
 	local byte
-	while self._isReadingStackLength and not self.buffer:isEmpty() do
+	while self._isReadingStackLength and not self.buffer._count == 0 do
 		byte = self.buffer:receive(1)[1]
 		-- r | (b&0x7F << l)
 		self._readStackLength = bit_bor(self._readStackLength, bit_lshift(bit_band(byte, 0x7F),

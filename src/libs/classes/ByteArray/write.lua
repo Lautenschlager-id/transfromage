@@ -1,11 +1,11 @@
-------------------------------------------- Optimization -------------------------------------------
-local bit_rshift = bit.rshift
-local string_getBytes = string.getBytes
-local table_add = table.add
-local type = type
-----------------------------------------------------------------------------------------------------
+local ByteArray = require("./init")
 
-local ByteArray = require("ByteArray/init")
+------------------------------------------- Optimization -------------------------------------------
+local bit_rshift      = bit.rshift
+local string_getBytes = string.getBytes
+local table_add       = table.add
+local type            = type
+----------------------------------------------------------------------------------------------------
 
 --[[@
 	@name write8
@@ -113,9 +113,9 @@ ByteArray.writeBool = function(self, bool)
 	return self:write8(bool and 1 or 0)
 end
 
------ Aliases -----
+--------------------------------------- Deprecated / Aliases ---------------------------------------
 ByteArray.writeByte  = "write8"
 ByteArray.writeShort = "write16"
 ByteArray.writeInt   = "write24"
 ByteArray.writeLong  = "write32"
--------------------
+----------------------------------------------------------------------------------------------------

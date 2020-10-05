@@ -50,14 +50,10 @@ end
 	@param returnValue?<boolean> Whether the formated message has to be returned. If not, it'll be sent to the prompt automatically. @default false
 	@returns nil,string The formated message, depending on @returnValue.
 ]]
-os.log = function(log, returnValue)
-	log = tostring(log)
+os.log = function(log, ...)
+	log = string_format(tostring(log), ...)
 
 	coloredLog = string_gsub(log, "(↑(.-)↓(.-)↑)", formatColor)
-
-	if returnValue then
-		return coloredLog
-	end
 
 	print(coloredLog)
 
@@ -67,7 +63,7 @@ os.log = function(log, returnValue)
 	end
 end
 
-_G.error = function(message, level)
-	os.log(message) -- Colored message
+_G.error = function(message, level, ...)
+	os.log(message, ...) -- Colored message
 	return error('^', level)
 end

@@ -1,44 +1,44 @@
 local fs = require("fs")
 
+local enum = require("enum/init")
+local apiPackage = require("./package")
+local apiSettings = require("./settings")
+
 ------------------------------------------- Optimization -------------------------------------------
-local coroutine_wrap = coroutine.wrap
 local fs_scandirSync = fs.scandirSync
-local fs_rmdirSync = fs.rmdirSync
-local io_read = io.read
-local os_execute = os.execute
-local os_exit = os.exit
-local os_remove = os.remove
-local require = require
-local string_lower = string.lower
-local string_match = string.match
-local table_concat = table.concat
+local fs_rmdirSync   = fs.rmdirSync
+local http_request   = require("coro-http").request
+local io_read        = io.read
+local logMessages    = enum.logMessages
+local enum_url       = enum.url
+local os_execute     = os.execute
+local os_exit        = os.exit
+local os_log         = os.log
+local os_remove      = os.remove
+local string_lower   = string.lower
+local string_match   = string.match
+local table_concat   = table.concat
 ----------------------------------------------------------------------------------------------------
 
-local APISettings = require("./settings")
-local APIPackage = require("./package")
-
 repeat
-	local update = APISettings.update
+	local update = apiSettings.update
 	if not update then break end
 	update = string_lower(update)
 
-	local http_request = require("coro-http").request
-	local isLatestVersion = coroutine_wrap(function()
-		local _, githubAPIPackage = http_request("GET", "https://raw.githubusercontent.com/\z
-			Lautenschlager-id/Transfromage/master/package.lua")
+	local isLatestVersion = coroutine.wrap(function()
+		local _, githubAPIPackage = http_request("GET", enum_url.apiPackage)
 
-		local lastReleasedVersion = string_match(githubAPIPackage, "version = \"(.-)\"")
-		return APIPackage.version == lastReleasedVersion
+		local latestReleasedVersion = string_match(githubAPIPackage, "version = \"(.-)\"")
+		return apiPackage.version == latestReleasedVersion
 	end)
 
 	if isLatestVersion() then break end
 
 	local performUpdate = (update == "auto")
-	if update == "ask" then
+	if update == "permission" then
 		repeat
-			os_log("↑info↓[UPDATE]↑ New version ↑highlight↓Transfromage@" .. lastVersion .. "↑ \z
-				available.")
-			os_log("↑info↓[UPDATE]↑ Update it now? ( ↑success↓Y↑ / ↑error↓N↑ )")
+			os_log(logMessages.newVersion, latestVersion)
+			os_log(logMessages.confirmUpdate)
 			performUpdate = string_lower(io_read())
 		until performUpdate == 'n' or performUpdate == 'y'
 
@@ -82,4 +82,4 @@ repeat
 	installLatestVersion()
 until true
 
-return APIPackage.version
+return apiPackage.version
