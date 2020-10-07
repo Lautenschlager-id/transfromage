@@ -1,5 +1,5 @@
 local enum = require("api/enum")
-local onReceive = require("api/Client/Listener/_internal/receive")
+local onReceive = require("./receive")
 
 ------------------------------------------- Optimization -------------------------------------------
 local enum_timers       = enum.timers

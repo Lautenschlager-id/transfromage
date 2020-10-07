@@ -1,24 +1,27 @@
 local Client = require("api/Client/init")
+
 local ByteArray = require("classes/ByteArray")
-
 local encode = require("src/utils/encoding")
-
 local enum = require("api/enum")
 
-local timer_setTimeout = require("timer").setTimeout
-
 ------------------------------------------- Optimization -------------------------------------------
-local bit_bxor = bit.bxor
+local bit_bxor           = bit.bxor
 local encode_loginCipher = encode.loginCipher
-local encode_password = encode.password
-local error = error
-local string_toNickname = string.toNickname
-local tostring = tostring
+local encode_password    = encode.password
+local enum_error         = enum.error
+local enum_errorLevel    = enum.errorLevel
+local enum_timers        = enum.timers
+local error              = error
+local string_toNickname  = string.toNickname
+local timer_setTimeout   = require("timer").setTimeout
+local tostring           = tostring
 ----------------------------------------------------------------------------------------------------
+
+local identifier = enum.identifier.loginSend
 
 local triggerConnectionFailed = function(self)
 	if not self.event.handlers.connectionFailed then
-		return error("↑error↓[LOGIN]↑ Impossible to log in. Try again later.", enum.errorLevel.low)
+		return error(enum_error.failLogin, enum_errorLevel.low)
 	end
 
 	--[[@
@@ -32,7 +35,7 @@ local checkConnection = function(self)
 	if not self._isConnected then
 		self:disconnect()
 		-- This timer prevents the time out issue, since it gives time to closeAll work.
-		timer_setTimeout(2000, triggerConnectionFailed, self)
+		timer_setTimeout(enum_timers.triggerFailLogin, triggerConnectionFailed, self)
 	end
 end
 
@@ -63,7 +66,7 @@ Client.connect = function(self, userName, userPassword, startRoom, timeout)
 	packet:write8(0)
 
 	self.playerName = userName
-	self.mainConnection:send(enum.identifier.loginSend, packet)
+	self.mainConnection:send(identifier, packet)
 
 	timer_setTimeout((timeout or (20 * 1000)), checkConnection, self)
 end

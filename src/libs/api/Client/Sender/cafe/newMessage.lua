@@ -1,4 +1,5 @@
 local Client = require("api/Client/init")
+
 local ByteArray = require("classes/ByteArray")
 
 ------------------------------------------- Optimization -------------------------------------------

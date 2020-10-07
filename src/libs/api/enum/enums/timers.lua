@@ -1,6 +1,7 @@
 local enum = require("enum/init")
 
 enum.timers = enum {
-	socketTimeout = 3500,
-	listenerLoop  = 10
+	socketTimeout    = 3500,
+	listenerLoop     = 10,
+	triggerFailLogin = 2000
 }

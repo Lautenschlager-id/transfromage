@@ -9,7 +9,7 @@ local coroutine_resume   = coroutine.resume
 local coroutine_running  = coroutine.running
 local coroutine_yield    = coroutine.yield
 local timer_clearTimeout = timer.clearTimeout
-local timer_setTimeout    = timer.setTimeout
+local timer_setTimeout   = timer.setTimeout
 ----------------------------------------------------------------------------------------------------
 
 --[[@

@@ -1,5 +1,8 @@
 local Client = require("api/Client/init")
+
 local ByteArray = require("classes/ByteArray")
+
+local identifier = require("api/enum").identifier.acceptTribeHouseInvite
 
 --[[@
 	@name acceptTribeHouseInvitation
@@ -8,6 +11,5 @@ local ByteArray = require("classes/ByteArray")
 	@param inviterName<string> The name of who has invited the bot.
 ]]
 Client.acceptTribeHouseInvitation = function(self, inviterName)
-	self.mainConnection:send(enum.identifier.acceptTribeHouseInvite,
-		ByteArray:new():writeUTF(inviterName))
+	self.mainConnection:send(identifier, ByteArray:new():writeUTF(inviterName))
 end

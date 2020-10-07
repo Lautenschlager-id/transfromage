@@ -15,7 +15,8 @@ enum.error = enum {
 	authEndpointFailure = "↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: %s",
 	authEndpointInternal = "↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\z
 		\n\t'%s'%s",
-	gameMaintenace = ": The game may be under maintenance."
+	gameMaintenace = ": The game may be under maintenance.",
+	failLogin = "↑error↓[LOGIN]↑ Impossible to log in. Try again later."
 }
 
 --[[@

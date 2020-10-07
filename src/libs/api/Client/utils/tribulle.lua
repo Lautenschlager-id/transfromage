@@ -2,7 +2,7 @@ local Client = require("api/Client/init")
 
 ------------------------------------------- Optimization -------------------------------------------
 local bulleIdentifier = require("api/enum").identifier.bulle
-local packetCipher = require("libs/utils/encode").packetCipher
+local packetCipher    = require("libs/utils/encode").packetCipher
 ----------------------------------------------------------------------------------------------------
 
 local sendEncryptedPacket = function(self, packet, connection, identifier)

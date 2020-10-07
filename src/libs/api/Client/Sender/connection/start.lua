@@ -1,13 +1,12 @@
 local Client = require("api/Client/init")
 
-local enum = require("api/enum")
-
-local getAuthenticationKeys = require("api/Client/utils/getAuthenticationKeys")
+local getAuthenticationKeys = require("api/Client/utils/_internal/getAuthenticationKeys")
+local killOnSigterm = require("api/Client/utils/_internal/sigterm")
 local onSocketConnection = require("api/Client/Listener/_internal/socketConnection")
-local killOnSigterm = require("api/Client/utils/sigterm")
 
 ------------------------------------------- Optimization -------------------------------------------
 local coroutine_makef = coroutine.makef
+local enum_setting    = require("api/enum").setting
 ----------------------------------------------------------------------------------------------------
 
 --[[@
@@ -26,7 +25,7 @@ Client.start = coroutine_makef(function(self, tfmID, token)
 		getAuthenticationKeys(self, tfmID, token)
 	end
 
-	self.mainConnection:connect(enum.setting.mainIP)
+	self.mainConnection:connect(enum_setting.mainIP)
 
 	self.mainConnection._client = self
 	self.mainConnection.event:once("_socketConnection", onSocketConnection)
