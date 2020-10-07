@@ -1,4 +1,4 @@
-local tribulleListener = require("../Tribulle/init")
+local tribulleListener = require("api/Client/Listener/Tribulle/init")
 
 local onTribullePacket = function(self, packet, connection, identifiers)
 	local tribulleId = packet:read16()

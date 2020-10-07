@@ -1,4 +1,4 @@
-local handlePlayers = require("Client/utils/handlePlayers")
+local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 
 local onPlayerDeath = function(self, data, connection, legacyIdentifiers)
 	if not handlePlayers(self) then return end

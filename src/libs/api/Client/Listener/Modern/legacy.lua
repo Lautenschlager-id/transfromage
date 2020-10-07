@@ -1,7 +1,7 @@
-local legacyListener = require("Client/Listener/Legacy/init")
+local legacyListener = require("api/Client/Listener/Legacy/init")
 
 ------------------------------------------- Optimization -------------------------------------------
-local string_byte = string.byte
+local string_byte  = string.byte
 local string_split = string.split
 local table_remove = table.remove
 ----------------------------------------------------------------------------------------------------

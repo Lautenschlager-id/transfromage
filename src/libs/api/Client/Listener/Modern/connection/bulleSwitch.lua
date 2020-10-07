@@ -1,8 +1,11 @@
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
+local enum_setting = enun.setting
 local string_split = string.split
 ----------------------------------------------------------------------------------------------------
+
+local identifier = enum.identifier.bulleConnection
 
 local onBulleSwitch = function(self, packet, connection, identifiers)
 	local serverTimestamp = packet:read32()
@@ -12,19 +15,19 @@ local onBulleSwitch = function(self, packet, connection, identifiers)
 
 	local bulleIp = packet:readUTF()
 
-	enum.setting.port = string_split(packet:readUTF(), '-', true)
+	enum_setting.port = string_split(packet:readUTF(), '-', true)
 
 	local oldBulle = self.bulleConnection
 
 	self.bulleConnection = connection:new("bulle", self.event)
-	self.bulleConnection:connect(bulleIp, enum.setting.port[self.mainConnection.portIndex])
+	self.bulleConnection:connect(bulleIp, enum_setting.port[self.mainConnection.portIndex])
 
 	self.bulle.event:once("_socketConnection", function()
 		if oldBulle then
 			oldBulle:close()
 		end
 
-		self.bulleConnection:send(enum.identifier.bulleConnection,
+		self.bulleConnection:send(identifier,
 			byteArray:new():write32(serverTimestamp):write32(uid):write32(pid))
 
 		--[[@

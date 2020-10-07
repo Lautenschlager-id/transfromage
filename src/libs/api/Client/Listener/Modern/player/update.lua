@@ -1,4 +1,4 @@
-local handlePlayers = require("Client/utils/handlePlayers")
+local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 
 local onUpdatePlayer = function(self, packet, connection, identifiers)
 	if not handlePlayers(self) then return end

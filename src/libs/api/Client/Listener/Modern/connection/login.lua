@@ -1,7 +1,8 @@
 local timer_setTimeout = require("timer").setTimeout
 
 ------------------------------------------- Optimization -------------------------------------------
-local os_time = os.time
+local enum_timers = require("api/enum").timers
+local os_time     = os.time
 ----------------------------------------------------------------------------------------------------
 
 local onLogin = function(self, packet, connection, identifiers)
@@ -19,7 +20,8 @@ local onLogin = function(self, packet, connection, identifiers)
 		@param playerName<string> The name of the player that has connected.
 		@param playedTime<int> The time played by the player.
 	]]
-	timer_setTimeout(3500, self.event.emit, self.event, playerId, self.playerName, playedTime)
+	timer_setTimeout(enum_timers.login, self.event.emit, self.event, playerId, self.playerName,
+		playedTime)
 end
 
 return { onLogin, 26, 2 }

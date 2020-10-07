@@ -1,10 +1,10 @@
 local timer_setInterval = require("timer").setInterval
 
 local ByteArray = require("classes/ByteArray")
-local identifier = require("api/enum").identifier
 
 ------------------------------------------- Optimization -------------------------------------------
-local os_time = os.time
+local enum_identifier = require("api/enum").identifier
+local os_time         = os.time
 ----------------------------------------------------------------------------------------------------
 
 --[[@
@@ -13,9 +13,9 @@ local os_time = os.time
 	@param self<client> A Client object.
 ]]
 sendHeartbeat = function(self)
-	self.mainConnection:send(identifier.heartbeat, ByteArray:new())
+	self.mainConnection:send(enum_identifier.heartbeat, ByteArray:new())
 	if self.bulleConnection and self.bulleConnection.isOpen then
-		self.bulleConnection:send(identifier.heartbeat, ByteArray:new())
+		self.bulleConnection:send(enum_identifier.heartbeat, ByteArray:new())
 	end
 
 	--[[@
@@ -37,9 +37,9 @@ local onReady = function(self, packet, connection, identifiers)
 
 	self._heartbeatTimer = timer_setInterval(10 * 1000, sendHeartbeat, self)
 
-	self.mainConnection:send(identifier.language, ByteArray:new():writeUTF(self.language))
+	self.mainConnection:send(enum_identifier.language, ByteArray:new():writeUTF(self.language))
 
-	self.mainConnection:send(identifier.os, ByteArray:new()
+	self.mainConnection:send(enum_identifier.os, ByteArray:new()
 		:writeUTF("en"):writeUTF("Linux")
 		:writeUTF("LNX 29,0,0,140"):write8(0))
 

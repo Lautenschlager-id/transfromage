@@ -1,9 +1,8 @@
-local tribulleListener = require("Client/Listener/Tribulle/init")
-
 local Client = require("api/Client/init")
-local ByteArray = require("classes/ByteArray")
 
-local createListener = require("Client/utils/createListener")
+local ByteArray = require("classes/ByteArray")
+local createListener = require("api/Client/utils/_internal/createListener")
+local tribulleListener = require("api/Client/Listener/Tribulle/init")
 
 ------------------------------------------- Optimization -------------------------------------------
 local coroutine_makef = coroutine.makef

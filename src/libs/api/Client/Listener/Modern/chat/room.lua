@@ -1,5 +1,5 @@
 ------------------------------------------- Optimization -------------------------------------------
-local string_fixEntity = string.fixEntity
+local string_fixEntity  = string.fixEntity
 local string_toNickname = string.toNickname
 ----------------------------------------------------------------------------------------------------
 

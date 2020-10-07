@@ -1,4 +1,4 @@
-local handlePlayers = require("Client/utils/handlePlayers")
+local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 
 local updateFlag = require("api/enum").updatePlayer.score
 

@@ -1,16 +1,17 @@
-local ByteArray = require("classes/ByteArray")
-
 local timer = require("timer")
 
+local ByteArray = require("classes/ByteArray")
 local enum = require("api/enum")
-
-local packetListener = require("api/Client/utils/packetListener")
-local killConnections = require("api/Client/utils/killConnections")
+local killConnections = require("api/Client/utils/_internal/killConnections")
+local packetListener = require("api/Client/utils/_internal/packetListener")
 
 ------------------------------------------- Optimization -------------------------------------------
+local enum_setting        = enum.setting
 local timer_clearInterval = timer.clearInterval
-local timer_setInterval = timer.setInterval
+local timer_setInterval   = timer.setInterval
 ----------------------------------------------------------------------------------------------------
+
+local identifier = enum.identifier.initialize
 
 local disconnectionLoop = function(self, client)
 	if not client.mainConnection.isOpen then
@@ -23,7 +24,7 @@ end
 local onSocketConnection = function(connection)
 	local self = connection._client
 
-	local startPacket = ByteArray:new():write16(enum.setting.gameVersion)
+	local startPacket = ByteArray:new():write16(enum_setting.gameVersion)
 	if not self._isOfficialBot then
 		startPacket
 			:writeUTF("en")
@@ -39,7 +40,7 @@ local onSocketConnection = function(connection)
 		R64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
 		:write32(0):write32(0x6257):writeUTF('')
 
-	self.mainConnection:send(enum.identifier.initialize, startPacket)
+	self.mainConnection:send(identifier, startPacket)
 
 	packetListener(self, self.mainConnection)
 	packetListener(self, self.bulleConnection)

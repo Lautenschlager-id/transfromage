@@ -1,6 +1,8 @@
-local handlePlayers = require("Client/utils/handlePlayers")
+local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 
-local enum = require("api/enum")
+------------------------------------------- Optimization -------------------------------------------
+local enum_emote = require("api/enum").emote
+----------------------------------------------------------------------------------------------------
 
 local onPlayerEmote = function(self, packet, connection, identifiers)
 	if not handlePlayers(self) then return end
@@ -11,7 +13,7 @@ local onPlayerEmote = function(self, packet, connection, identifiers)
 	local emote = packet:read8()
 
 	local flag
-	if emote == enum.emote.flag then
+	if emote == enum_emote.flag then
 		flag = packet:readUTF()
 	end
 

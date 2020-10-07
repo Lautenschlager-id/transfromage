@@ -1,7 +1,6 @@
 local Tribe = require("api/Entities/tribe/Tribe")
-
-local triggerFriendList = require("Tribulle/friend/list")[2]
-local triggerBlackList = require("Tribulle/friend/blacklist")[2]
+local triggerFriendList = require("api/Client/Listener/Tribulle/friend/list")[2]
+local triggerBlackList = require("api/Client/Listener/Tribulle/friend/blacklist")[2]
 
 local onAccountDataLoaded = function(self, packet, connection, tribulleId)
 	local player = { }

@@ -1,4 +1,4 @@
-local handlePlayers = require("Client/utils/handlePlayers")
+local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 
 local updateFlag = require("api/enum").updatePlayer.shamanColor
 
@@ -11,12 +11,12 @@ local onShamanColor = function(self, packet, connection, identifiers)
 	shaman[2] = packet:read32() -- Pink
 
 	local player, oldPlayerData
-	for c = 1, 2 do
-		player = self.playerList[shaman[c]]
+	for s = 1, 2 do
+		player = self.playerList[shaman[s]]
 		if player then
 			oldPlayerData = player:copy()
 
-			player[(i == 1 and "isBlueShaman" or "isPinkShaman")] = true
+			player[(s == 1 and "isBlueShaman" or "isPinkShaman")] = true
 
 			self.event:emit("updatePlayer", player, oldPlayerData, updateFlag)
 		end

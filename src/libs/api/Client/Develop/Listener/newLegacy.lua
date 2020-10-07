@@ -1,13 +1,12 @@
-local legacyListener = require("Client/Listener/Legacy/init")
-
 local Client = require("api/Client/init")
-local ByteArray = require("classes/ByteArray")
 
-local createListener = require("Client/utils/createListener")
+local ByteArray = require("classes/ByteArray")
+local createListener = require("api/Client/utils/createListener")
+local legacyListener = require("api/Client/Listener/Legacy/init")
 
 ------------------------------------------- Optimization -------------------------------------------
 local coroutine_makef = coroutine.makef
-local table_copy = table.copy
+local table_copy      = table.copy
 ----------------------------------------------------------------------------------------------------
 
 --[[@
