@@ -2,11 +2,11 @@
 local require = require
 ----------------------------------------------------------------------------------------------------
 
--- Checks for API updates
-local APIVersion = require("./update")
-
 -- Initializes all extensions
 require("utils/extensions")
+
+-- Checks for API updates
+local APIVersion = require("./update")
 
 return {
 	version = APIVersion,

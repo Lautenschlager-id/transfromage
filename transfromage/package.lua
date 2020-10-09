@@ -9,8 +9,8 @@ return {
 
 	files = { "*.lua" },
 	dependencies = {
-		--"creationix/base64",
-		--"creationix/coro-http",
+		"creationix/base64",
+		"creationix/coro-http",
 		--"luvit/secure-socket",
 		--"luvit/net"
 	},

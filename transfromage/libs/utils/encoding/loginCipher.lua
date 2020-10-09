@@ -1,4 +1,4 @@
-local bit64 = require("bit64")
+local bit64 = require("utils/bit64")
 local ByteArray = require("classes/ByteArray")
 
 ------------------------------------------- Optimization -------------------------------------------

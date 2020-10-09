@@ -1,6 +1,6 @@
-local Client = require("api/Client/init")
+local Client = require("./Client/init")
 
-local createListener = require("api/Client/utils/createListener")
+local createListener = require("./Client/utils/_internal/createListener")
 local folderLoader = require("utils/folderLoader")
 
 ------------------------------------------- Optimization -------------------------------------------

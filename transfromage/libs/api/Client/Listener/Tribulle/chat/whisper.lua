@@ -17,6 +17,6 @@ local onWhisperMessage = function(self, packet, connection, tribulleId)
 	]]
 	self.event:emit("whisperMessage", string_toNickname(playerName, true),
 		string_fixEntity(message), community)
-end,
+end
 
 return { onWhisperMessage, 66 }

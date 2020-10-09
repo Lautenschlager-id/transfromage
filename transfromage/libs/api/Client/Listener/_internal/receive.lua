@@ -1,4 +1,4 @@
-local modernListener = require("api/Client/Modern/init")
+local modernListener = require("api/Client/Listener/Modern/init")
 
 local ByteArray = require("classes/ByteArray")
 

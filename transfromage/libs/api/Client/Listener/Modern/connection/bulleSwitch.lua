@@ -1,7 +1,7 @@
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
-local enum_setting = enun.setting
+local enum_setting = enum.setting
 local string_split = string.split
 ----------------------------------------------------------------------------------------------------
 

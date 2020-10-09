@@ -2,7 +2,7 @@
 local require = require
 ----------------------------------------------------------------------------------------------------
 
-local Connection = require("api/Connnection/init")
+local Connection = require("./Connection/init")
 
 require("utils/folderLoader")("api/Connection")
 

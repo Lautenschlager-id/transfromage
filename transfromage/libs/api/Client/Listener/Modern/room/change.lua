@@ -1,4 +1,4 @@
-local PlayerList = require("classes/PlayerList")
+local PlayerList = require("api/Entities/player/PlayerList")
 
 ------------------------------------------- Optimization -------------------------------------------
 local string_byte = string.byte

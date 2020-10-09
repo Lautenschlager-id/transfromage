@@ -73,6 +73,6 @@ local onRoomList = function(self, packet, connection, identifiers)
 		}
 	]]
 	self.event:emit("roomList", roomMode, rooms, pinned)
-end,
+end
 
 return { onRoomList, 26, 35 }

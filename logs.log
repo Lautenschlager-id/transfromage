@@ -1,0 +1,229 @@
+[ENUM] Enumeration conflict in login and socketTimeoutNo such module 'api/Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module 'api/Connnection/init' not found:
+	no field package.preload['api/Connnection/init']
+	no file '.\api/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Connnection/init\init.lua'
+	no file '.\api/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\api/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'bit64' in 'T:/Desktop/Transfromage/transfromage/libs/utils/encoding/loginCipher.lua'
+module 'bit64' not found:
+	no field package.preload['bit64']
+	no file '.\bit64.lua'
+	no file 'T:\Desktop\Transfromage\lua\bit64.lua'
+	no file 'T:\Desktop\Transfromage\lua\bit64\init.lua'
+	no file '.\bit64.dll'
+	no file 'T:\Desktop\Transfromage\bit64.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'bit64' in 'T:/Desktop/Transfromage/transfromage/libs/utils/encoding/loginCipher.lua'
+module 'bit64' not found:
+	no field package.preload['bit64']
+	no file '.\bit64.lua'
+	no file 'T:\Desktop\Transfromage\lua\bit64.lua'
+	no file 'T:\Desktop\Transfromage\lua\bit64\init.lua'
+	no file '.\bit64.dll'
+	no file 'T:\Desktop\Transfromage\bit64.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'api/Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module 'api/Connnection/init' not found:
+	no field package.preload['api/Connnection/init']
+	no file '.\api/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Connnection/init\init.lua'
+	no file '.\api/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\api/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnectiond/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnectiond/init' not found:
+	no field package.preload['./Connnectiond/init']
+	no file '.\\/Connnectiond/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnectiond/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnectiond/init\init.lua'
+	no file '.\\/Connnectiond/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnectiond/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'api/Client/utils/createListener' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client.lua'
+module 'api/Client/utils/createListener' not found:
+	no field package.preload['api/Client/utils/createListener']
+	no file '.\api/Client/utils/createListener.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Client/utils/createListener.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Client/utils/createListener\init.lua'
+	no file '.\api/Client/utils/createListener.dll'
+	no file 'T:\Desktop\Transfromage\api/Client/utils/createListener.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Connnection/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Connection.lua'
+module './Connnection/init' not found:
+	no field package.preload['./Connnection/init']
+	no file '.\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Connnection/init\init.lua'
+	no file '.\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\\/Connnection/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './Client/utils/createListener' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client.lua'
+module './Client/utils/createListener' not found:
+	no field package.preload['./Client/utils/createListener']
+	no file '.\\/Client/utils/createListener.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Client/utils/createListener.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/Client/utils/createListener\init.lua'
+	no file '.\\/Client/utils/createListener.dll'
+	no file 'T:\Desktop\Transfromage\\/Client/utils/createListener.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'libs/utils/encode' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/utils/tribulle.lua'
+module 'libs/utils/encode' not found:
+	no field package.preload['libs/utils/encode']
+	no file '.\libs/utils/encode.lua'
+	no file 'T:\Desktop\Transfromage\lua\libs/utils/encode.lua'
+	no file 'T:\Desktop\Transfromage\lua\libs/utils/encode\init.lua'
+	no file '.\libs/utils/encode.dll'
+	no file 'T:\Desktop\Transfromage\libs/utils/encode.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'transfromage/utils/encoding' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/Sender/connection/login.lua'
+module 'transfromage/utils/encoding' not found:
+	no field package.preload['transfromage/utils/encoding']
+	no file '.\transfromage/utils/encoding.lua'
+	no file 'T:\Desktop\Transfromage\lua\transfromage/utils/encoding.lua'
+	no file 'T:\Desktop\Transfromage\lua\transfromage/utils/encoding\init.lua'
+	no file '.\transfromage/utils/encoding.dll'
+	no file 'T:\Desktop\Transfromage\transfromage/utils/encoding.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'classes/PlayerList' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/Listener/Modern/room/change.lua'
+module 'classes/PlayerList' not found:
+	no field package.preload['classes/PlayerList']
+	no file '.\classes/PlayerList.lua'
+	no file 'T:\Desktop\Transfromage\lua\classes/PlayerList.lua'
+	no file 'T:\Desktop\Transfromage\lua\classes/PlayerList\init.lua'
+	no file '.\classes/PlayerList.dll'
+	no file 'T:\Desktop\Transfromage\classes/PlayerList.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'transfromage/utils/encoding' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/Sender/connection/login.lua'
+module 'transfromage/utils/encoding' not found:
+	no field package.preload['transfromage/utils/encoding']
+	no file '.\transfromage/utils/encoding.lua'
+	no file 'T:\Desktop\Transfromage\lua\transfromage/utils/encoding.lua'
+	no file 'T:\Desktop\Transfromage\lua\transfromage/utils/encoding\init.lua'
+	no file '.\transfromage/utils/encoding.dll'
+	no file 'T:\Desktop\Transfromage\transfromage/utils/encoding.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'utils/encoding' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/Sender/connection/login.lua'
+module 'utils/encoding' not found:
+	no field package.preload['utils/encoding']
+	no file '.\utils/encoding.lua'
+	no file 'T:\Desktop\Transfromage\lua\utils/encoding.lua'
+	no file 'T:\Desktop\Transfromage\lua\utils/encoding\init.lua'
+	no file '.\utils/encoding.dll'
+	no file 'T:\Desktop\Transfromage\utils/encoding.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'api/Client/utils/_internal/getAuthenticationKeys' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/Sender/connection/start.lua'
+module 'api/Client/utils/_internal/getAuthenticationKeys' not found:
+	no field package.preload['api/Client/utils/_internal/getAuthenticationKeys']
+	no file '.\api/Client/utils/_internal/getAuthenticationKeys.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Client/utils/_internal/getAuthenticationKeys.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Client/utils/_internal/getAuthenticationKeys\init.lua'
+	no file '.\api/Client/utils/_internal/getAuthenticationKeys.dll'
+	no file 'T:\Desktop\Transfromage\api/Client/utils/_internal/getAuthenticationKeys.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module './receive' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/utils/_internal/packetListener.lua'
+module './receive' not found:
+	no field package.preload['./receive']
+	no file '.\\/receive.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/receive.lua'
+	no file 'T:\Desktop\Transfromage\lua\\/receive\init.lua'
+	no file '.\\/receive.dll'
+	no file 'T:\Desktop\Transfromage\\/receive.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'
+	no file '.\.dll'
+	no file 'T:\Desktop\Transfromage\.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'No such module 'api/Client/Modern/init' in 'T:/Desktop/Transfromage/transfromage/libs/api/Client/Listener/_internal/receive.lua'
+module 'api/Client/Modern/init' not found:
+	no field package.preload['api/Client/Modern/init']
+	no file '.\api/Client/Modern/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Client/Modern/init.lua'
+	no file 'T:\Desktop\Transfromage\lua\api/Client/Modern/init\init.lua'
+	no file '.\api/Client/Modern/init.dll'
+	no file 'T:\Desktop\Transfromage\api/Client/Modern/init.dll'
+	no file 'T:\Desktop\Transfromage\loadall.dll'

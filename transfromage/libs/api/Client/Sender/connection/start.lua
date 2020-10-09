@@ -1,6 +1,6 @@
 local Client = require("api/Client/init")
 
-local getAuthenticationKeys = require("api/Client/utils/_internal/getAuthenticationKeys")
+local getAuthenticationKeys = require("api/Client/utils/_internal/authenticationEndpoint")
 local killOnSigterm = require("api/Client/utils/_internal/sigterm")
 local onSocketConnection = require("api/Client/Listener/_internal/socketConnection")
 

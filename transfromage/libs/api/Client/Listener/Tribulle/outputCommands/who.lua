@@ -20,6 +20,6 @@ local onWho = function(self, packet, connection, tribulleId)
 	]]
 	self.event:emit("chatWho", self._whoList[fingerprint], data)
 	self._whoList[fingerprint] = nil
-end,
+end
 
 return { onWho, 59 }
