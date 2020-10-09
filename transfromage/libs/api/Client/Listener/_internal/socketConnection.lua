@@ -42,8 +42,8 @@ local onSocketConnection = function(connection)
 
 	self.mainConnection:send(identifier, startPacket)
 
-	packetListener(self, self.mainConnection)
-	packetListener(self, self.bulleConnection)
+	packetListener(self, "mainConnection")
+	packetListener(self, "bulleConnection")
 
 	local loop = { } -- Has to be a table to be passed as reference...
 	loop[1] = timer_setInterval(10, disconnectionLoop, loop, self)
