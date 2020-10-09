@@ -1,4 +1,4 @@
-local enum = require("enum/init")
+local enum = require("api/enum/init")
 
 enum.logMessages = enum {
 	deprecatedMethod = "↑failure↓[/!\\]↑ ↑highlight↓%s↑ is deprecated, use ↑highlight↓%s↑ instead.",

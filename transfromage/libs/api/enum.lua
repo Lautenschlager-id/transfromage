@@ -2,9 +2,9 @@
 local require = require
 ----------------------------------------------------------------------------------------------------
 
-local enum = require("enum/init")
+local enum = require("./enum/init")
 
-require("enum/validators")
+require("./enum/validators")
 
 require("utils/folderLoader")("api/enum/enums")
 

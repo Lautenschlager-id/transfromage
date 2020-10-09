@@ -1,13 +1,13 @@
 ------------------------------------------- Optimization -------------------------------------------
 local debug_traceback = debug.traceback
-local error = error
-local getmetatable = getmetatable
-local tonumber = tonumber
-local tostring = tostring
-local type = type
+local error           = error
+local getmetatable    = getmetatable
+local tonumber        = tonumber
+local tostring        = tostring
+local type            = type
 ----------------------------------------------------------------------------------------------------
 
-local enum = require("enum/init")
+local enum = require("./init")
 
 --[[@
 	@name _exists

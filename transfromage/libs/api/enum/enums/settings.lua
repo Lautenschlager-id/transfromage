@@ -1,4 +1,4 @@
-local enum = require("enum/init")
+local enum = require("api/enum/init")
 
 --[[@
 	@name identifier

@@ -1,8 +1,8 @@
 ------------------------------------------- Optimization -------------------------------------------
-local error = error
-local next = next
+local error        = error
+local next         = next
 local setmetatable = setmetatable
-local tostring = tostring
+local tostring     = tostring
 ----------------------------------------------------------------------------------------------------
 
 local enum = setmetatable({ }, {
