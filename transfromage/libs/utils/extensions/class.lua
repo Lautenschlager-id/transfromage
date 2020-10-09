@@ -3,11 +3,11 @@ local logMessages  = require("api/enum").logMessages
 local os_log       = os.log
 local rawset       = rawset
 local setmetatable = setmetatable
+local table_copy   = table.copy
 local type         = type
 ----------------------------------------------------------------------------------------------------
 
 local classMeta = { }
-classMeta.__index = classMeta
 
 classMeta.__call = function(self, ...)
 	return self:new(...)
@@ -31,5 +31,8 @@ end
 	@returns table A metatable with constructor and alias handlers.
 ]]
 table.setNewClass = function()
-	return setmetatable({ }, classMeta)
+	local class = setmetatable({ }, classMeta)
+	class.__index = class
+
+	return class
 end
