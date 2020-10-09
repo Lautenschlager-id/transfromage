@@ -2,7 +2,7 @@ local fs = require("fs")
 
 local apiPackage = require("./package")
 local apiSettings = require("./settings")
-local enum = require("enum/init")
+local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
 local fs_scandirSync = fs.scandirSync

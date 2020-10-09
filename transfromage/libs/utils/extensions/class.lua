@@ -1,5 +1,5 @@
 ------------------------------------------- Optimization -------------------------------------------
-local logMessages  = require("enum/init").logMessages
+local logMessages  = require("api/enum").logMessages
 local os_log       = os.log
 local rawset       = rawset
 local setmetatable = setmetatable
