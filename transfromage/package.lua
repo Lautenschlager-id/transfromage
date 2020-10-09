@@ -11,7 +11,7 @@ return {
 	dependencies = {
 		"creationix/base64",
 		"creationix/coro-http",
-		--"luvit/secure-socket",
+		"luvit/secure-socket",
 		--"luvit/net"
 	},
 	tags = {
