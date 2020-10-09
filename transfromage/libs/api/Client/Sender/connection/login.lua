@@ -1,7 +1,7 @@
 local Client = require("api/Client/init")
 
 local ByteArray = require("classes/ByteArray")
-local encode = require("src/utils/encoding")
+local encode = require("transfromage/utils/encoding")
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
