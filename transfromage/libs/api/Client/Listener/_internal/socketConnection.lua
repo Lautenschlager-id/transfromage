@@ -28,7 +28,7 @@ local onSocketConnection = function(connection)
 	if not self._isOfficialBot then
 		startPacket
 			:writeUTF("en")
-			:writeUTF(self._gameConnectionKey)
+			:writeUTF(self._connectionKey)
 	end
 	startPacket:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
 		:writeUTF(

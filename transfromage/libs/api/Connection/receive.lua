@@ -1,5 +1,7 @@
 local Connection = require("./init")
 
+local ByteArray = require("classes/ByteArray")
+
 ------------------------------------------- Optimization -------------------------------------------
 local bit_band             = bit.band
 local bit_bor              = bit.bor
@@ -13,7 +15,7 @@ local bit_lshift           = bit.lshift
 ]]
 Connection.receive = function(self)
 	local byte
-	while self._isReadingStackLength and not self.buffer._count == 0 do
+	while self._isReadingStackLength and self.buffer._count ~= 0 do
 		byte = self.buffer:receive(1)[1]
 		-- r | (b&0x7F << l)
 		self._readStackLength = bit_bor(self._readStackLength, bit_lshift(bit_band(byte, 0x7F),
@@ -31,6 +33,6 @@ Connection.receive = function(self)
 		self._readStackLength = 0
 		self._lengthBytes = 0
 
-		return byteArr
+		return ByteArray:new(byteArr)
 	end
 end

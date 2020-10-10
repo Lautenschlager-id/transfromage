@@ -41,7 +41,7 @@ local onReceive = function(client, connection)
 			@param self<client> A Client object.
 			@param connectionName<string> The name of the Connection object to get the timer attached to.
 		]]
-		client.event:emit("receive", connection, identifiers, ByteArray:new(packet.stack))
+		client.event:emit("receive", connection, identifiers, packet:duplicate())
 	end
 	triggerPacketCallback(client, connection, identifiers, packet)
 end

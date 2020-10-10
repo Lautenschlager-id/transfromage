@@ -1,4 +1,5 @@
 ------------------------------------------- Optimization -------------------------------------------
+local table_copy       = table.copy
 local table_writeBytes = table.writeBytes
 local setmetatable     = setmetatable
 ----------------------------------------------------------------------------------------------------
@@ -27,6 +28,10 @@ ByteArray.new = function(self, stack)
 		stackReadPos = 1,
 		stackReadLen = 0
 	}, self)
+end
+
+ByteArray.duplicate = function(self)
+	return ByteArray:new(table_copy(self.stack))
 end
 
 return ByteArray

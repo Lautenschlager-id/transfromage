@@ -7,7 +7,7 @@ local string_sub     = string.sub
 local folderLoader = function(path, asArray)
 	path = path .. "/"
 
-	local data = fs_readdirSync("transfromage/libs/" .. path) -- scandir is slower
+	local data = fs_readdirSync("deps/transfromage/libs/" .. path) -- scandir is slower
 
 	local totalFiles, totalFolders = 0, 0
 	local files, folders = { }, { }

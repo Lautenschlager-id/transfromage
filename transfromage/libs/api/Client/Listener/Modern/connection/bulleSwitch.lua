@@ -1,3 +1,5 @@
+local ByteArray = require("classes/ByteArray")
+local Connection = require("api/Connection")
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
@@ -19,16 +21,16 @@ local onBulleSwitch = function(self, packet, connection, identifiers)
 
 	local oldBulle = self.bulleConnection
 
-	self.bulleConnection = connection:new("bulle", self.event)
+	self.bulleConnection = Connection:new("bulle", self.event)
 	self.bulleConnection:connect(bulleIp, enum_setting.port[self.mainConnection.portIndex])
 
-	self.bulle.event:once("_socketConnection", function()
+	self.bulleConnection.event:once("_socketConnection", function()
 		if oldBulle then
 			oldBulle:close()
 		end
 
 		self.bulleConnection:send(identifier,
-			byteArray:new():write32(serverTimestamp):write32(uid):write32(pid))
+			ByteArray:new():write32(serverTimestamp):write32(uid):write32(pid))
 
 		--[[@
 			@name switchBulleConnection

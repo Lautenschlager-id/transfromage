@@ -47,8 +47,8 @@ local getAuthenticationKeys = function(self, tfmID, token)
 	if not self._isOfficialBot then
 		enum_setting.gameVersion = result.version
 
-		self._authenticationKey = result.auth_key
-		self._gameConnectionKey = result.connection_key
+		self._connectionAuthenticationKey = result.auth_key
+		self._connectionKey = result.connection_key
 		self._identificationKeys = result.identification_keys
 		self._messageKeys = result.msg_keys
 	end

@@ -57,7 +57,7 @@ Client.connect = function(self, userName, userPassword, startRoom, timeout)
 		:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4")
 		:writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
 	if not self._isOfficialBot then
-		packet:write32(bit_bxor(self._authenticationKey, self._gameConnectionKey))
+		packet:write32(bit_bxor(self._authenticationKey, self._connectionAuthenticationKey))
 	end
 	packet:write8(0):writeUTF('')
 	if not self._isOfficialBot then

@@ -76,8 +76,9 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 		_whoList = { },
 		_whoFingerprint = 0,
 
+		_connectionAuthenticationKey = nil,
 		_authenticationKey = nil,
-		_gameConnectionKey = nil,
+		_connectionKey = nil,
 		_identificationKeys = { },
 		_messageKeys = { }
 	}, self)
