@@ -4,7 +4,7 @@ local string_sub   = string.sub
 local table_copy   = table.copy
 ----------------------------------------------------------------------------------------------------
 
-local Player = table.setNewClass()
+local Player = table.setNewClass("Player")
 
 Player.new = function(self, playerName)
 	return setmetatable({

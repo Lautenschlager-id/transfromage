@@ -4,7 +4,7 @@ local table_writeBytes = table.writeBytes
 local setmetatable     = setmetatable
 ----------------------------------------------------------------------------------------------------
 
-local ByteArray = table.setNewClass()
+local ByteArray = table.setNewClass("ByteArray")
 
 ByteArray.__tostring = function(this)
 	return table_writeBytes(this.stack)

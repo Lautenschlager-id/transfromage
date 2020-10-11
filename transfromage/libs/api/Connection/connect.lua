@@ -6,7 +6,7 @@ local enum = require("api/enum")
 local enum_error           = enum.error
 local enum_errorLevel      = enum.errorLevel
 local enum_ports           = enum.setting.port
-local enum_timers          = enum.timers
+local enum_timer           = enum.timer
 local error                = error
 local net_createConnection = require("net").createConnection
 local timer_setTimeout     = require("timer").setTimeout
@@ -44,7 +44,7 @@ Connection.connect = function(self, ip, port)
 		self.isOpen = true
 
 		socket:on("data", function(data)
-			self.buffer:push(data)
+			self.Buffer:push(data)
 		end)
 
 		--[[@
@@ -56,5 +56,5 @@ Connection.connect = function(self, ip, port)
 		self.event:emit("_socketConnection", self, port)
 	end)
 
-	timer_setTimeout(enum_timers.socketTimeout, tryPortConnection, self, hasPort, ip)
+	timer_setTimeout(enum_timer.socketTimeout, tryPortConnection, self, hasPort, ip)
 end

@@ -15,8 +15,8 @@ local bit_lshift           = bit.lshift
 ]]
 Connection.receive = function(self)
 	local byte
-	while self._isReadingStackLength and self.buffer._count ~= 0 do
-		byte = self.buffer:receive(1)[1]
+	while self._isReadingStackLength and self.Buffer._count ~= 0 do
+		byte = self.Buffer:receive(1)[1]
 		-- r | (b&0x7F << l)
 		self._readStackLength = bit_bor(self._readStackLength, bit_lshift(bit_band(byte, 0x7F),
 			self._lengthBytes))
@@ -26,8 +26,8 @@ Connection.receive = function(self)
 		self._isReadingStackLength = (self._lengthBytes < 35 and bit_band(byte, 0x80) == 0x80)
 	end
 
-	if not self._isReadingStackLength and self.buffer._count >= self._lengthBytes then
-		local byteArr = self.buffer:receive(self._readStackLength)
+	if not self._isReadingStackLength and self.Buffer._count >= self._lengthBytes then
+		local byteArr = self.Buffer:receive(self._readStackLength)
 
 		self._isReadingStackLength = true
 		self._readStackLength = 0

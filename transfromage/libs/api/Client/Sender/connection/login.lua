@@ -10,7 +10,7 @@ local encode_loginCipher = encode.loginCipher
 local encode_password    = encode.password
 local enum_error         = enum.error
 local enum_errorLevel    = enum.errorLevel
-local enum_timers        = enum.timers
+local enum_timer         = enum.timer
 local error              = error
 local string_toNickname  = string.toNickname
 local timer_setTimeout   = require("timer").setTimeout
@@ -35,7 +35,7 @@ local checkConnection = function(self)
 	if not self._isConnected then
 		self:disconnect()
 		-- This timer prevents the time out issue, since it gives time to closeAll work.
-		timer_setTimeout(enum_timers.triggerFailLogin, triggerConnectionFailed, self)
+		timer_setTimeout(enum_timer.triggerFailLogin, triggerConnectionFailed, self)
 	end
 end
 

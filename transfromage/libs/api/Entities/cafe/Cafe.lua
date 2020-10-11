@@ -4,7 +4,7 @@ local Topic = require("./Topic")
 local setmetatable = setmetatable
 ----------------------------------------------------------------------------------------------------
 
-local Cafe = table.setNewClass()
+local Cafe = table.setNewClass("Cafe")
 
 Cafe.new = function(self)
 	return setmetatable({

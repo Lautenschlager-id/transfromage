@@ -6,7 +6,7 @@ local table_remove    = table.remove
 local type            = type
 ----------------------------------------------------------------------------------------------------
 
-local Buffer = table.setNewClass()
+local Buffer = table.setNewClass("Buffer")
 
 --[[@
 	@name new

@@ -6,7 +6,7 @@ local table_remove = table.remove
 local updateFlag   = require("api/enum").updatePlayer.general
 ----------------------------------------------------------------------------------------------------
 
-local PlayerList = table.setNewClass()
+local PlayerList = table.setNewClass("PlayerList")
 
 PlayerList.__len = function(self)
 	return self._count

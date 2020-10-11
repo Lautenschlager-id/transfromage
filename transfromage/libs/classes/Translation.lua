@@ -31,7 +31,7 @@ local getOfficialTranslationsData = coroutine.makef(function(language)
 	return string_split(body, "\n-\n", true)
 end)
 
-local Translation = table.setNewClass()
+local Translation = table.setNewClass("Translation")
 
 --[[@
 	@name translation.download

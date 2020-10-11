@@ -4,7 +4,7 @@ local Member = require("./Member")
 local setmetatable = setmetatable
 ----------------------------------------------------------------------------------------------------
 
-local Tribe = table.setNewClass()
+local Tribe = table.setNewClass("Tribe")
 
 Tribe.new = function(self, packet, id)
 	local data = {

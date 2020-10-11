@@ -1,11 +1,9 @@
-local enum = require("api/enum/init")
-
 --[[@
 	@name error
 	@desc The API error messages.
 	@type string
 ]]
-enum.error = enum {
+local error = {
 	invalidEnum = "↑failure↓[%s]↑ ↑highlight↓%s↑ must be a valid ↑highlight↓%s↑ enumeration.",
 	translationFailure = "↑failure↓[TRANSLATION]↑ Language ↑highlight↓%s↑ could not be \z
 		downloaded. File not found in Transformice's archives.",
@@ -16,7 +14,9 @@ enum.error = enum {
 	authEndpointInternal = "↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\z
 		\n\t'%s'%s",
 	gameMaintenace = ": The game may be under maintenance.",
-	failLogin = "↑error↓[LOGIN]↑ Impossible to log in. Try again later."
+	failLogin = "↑error↓[LOGIN]↑ Impossible to log in. Try again later.",
+	enumConflict = "↑failure↓[ENUM]↑ Enumeration conflict in ↑highlight↓%s↑ and ↑highlight↓%s↑",
+	enumOverwrite = "↑failure↓[ENUM]↑ Can not overwrite enumerations."
 }
 
 --[[@
@@ -24,7 +24,9 @@ enum.error = enum {
 	@desc The API error levels.
 	@type int
 ]]
-enum.errorLevel = enum {
+local errorLevel = {
 	low  = -2,
 	high = -1
 }
+
+return error, errorLevel

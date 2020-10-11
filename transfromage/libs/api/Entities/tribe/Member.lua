@@ -3,7 +3,7 @@ local setmetatable      = setmetatable
 local string_toNickname = string.toNickname
 ----------------------------------------------------------------------------------------------------
 
-local Member = table.setNewClass()
+local Member = table.setNewClass("TribeMember")
 
 Member.new = function(self, packet)
 	local data = { }

@@ -5,7 +5,7 @@ local os_time      = os.time
 local setmetatable = setmetatable
 ----------------------------------------------------------------------------------------------------
 
-local Topic = table.setNewClass()
+local Topic = table.setNewClass("CafeTopic")
 
 Topic.new = function(self, packet, id)
 	local data = { }

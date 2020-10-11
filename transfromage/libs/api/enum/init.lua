@@ -1,3 +1,5 @@
+local enum_error, enum_errorLevel = require("./enums/error")
+
 ------------------------------------------- Optimization -------------------------------------------
 local error        = error
 local next         = next
@@ -19,8 +21,8 @@ local enum = setmetatable({ }, {
 
 		for k, v in next, list do
 			if not ignoreConflit and reversed[v] then
-				return error("↑failure↓[ENUM]↑ Enumeration conflict in ↑highlight↓" .. tostring(k)
-					.. "↑ and ↑highlight↓" .. tostring(reversed[v]) .. "↑", -2)
+				return error(enum_error.enumConflict, enum_errorLevel.low, tostring(k),
+					tostring(reversed[v]))
 			end
 			reversed[v] = k
 		end
@@ -42,11 +44,14 @@ local enum = setmetatable({ }, {
 				return #list
 			end,
 			__newindex = function()
-				return error("↑failure↓[ENUM]↑ Can not overwrite enumerations.", -2)
+				return error(enum_error.enumOverwrite, enum_errorLevel.low)
 			end,
 			__metatable = "enumeration"
 		})
 	end
 })
+
+enum.error = enum(enum_error)
+enum.errorLevel = enum(enum_errorLevel)
 
 return enum

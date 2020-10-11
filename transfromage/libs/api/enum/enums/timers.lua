@@ -1,8 +1,8 @@
 local enum = require("api/enum/init")
 
-enum.timers = enum {
-	socketTimeout    = 3800,
-	listenerLoop     = 10,
+enum.timer = enum({
+	listenerLoop     = 0010,
+	login            = 3500,
+	socketTimeout    = 3500,
 	triggerFailLogin = 2000,
-	login            = 3500
-}
+}, true)

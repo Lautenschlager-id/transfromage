@@ -4,7 +4,7 @@ local enum = require("api/enum")
 local onReceive = require("api/Client/Listener/_internal/receive")
 
 ------------------------------------------- Optimization -------------------------------------------
-local enum_timers         = enum.timers
+local enum_timer          = enum.timer
 local timer_clearInterval = timer.clearInterval
 local timer_setInterval   = timer.setInterval
 ----------------------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ local tryListeningSetup = function(self, client, connectionFieldName)
 	local connection = client[connectionFieldName]
 	if not (connection and connection.isOpen and not connection._listenLoop) then return end
 
-	connection._listenLoop = timer_setInterval(enum_timers.listenerLoop, onReceive, client,
+	connection._listenLoop = timer_setInterval(enum_timer.listenerLoop, onReceive, client,
 		connection)
 
 	timer_clearInterval(self[1])

@@ -8,7 +8,7 @@ local eventEmitter  = require("core").Emitter
 local setmetatable  = setmetatable
 ----------------------------------------------------------------------------------------------------
 
-local Client = table.setNewClass()
+local Client = table.setNewClass("Client")
 
 --[[@
 	@name new

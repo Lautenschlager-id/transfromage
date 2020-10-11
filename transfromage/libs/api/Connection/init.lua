@@ -4,7 +4,7 @@ local Buffer = require("classes/Buffer")
 local setmetatable = setmetatable
 ----------------------------------------------------------------------------------------------------
 
-local Connection = table.setNewClass()
+local Connection = table.setNewClass("Connection")
 
 --[[@
 	@name new
@@ -32,7 +32,7 @@ Connection.new = function(self, name, event)
 
 		isOpen = false,
 		socket = nil,
-		buffer = Buffer:new(),
+		Buffer = Buffer:new(),
 
 		event = event,
 

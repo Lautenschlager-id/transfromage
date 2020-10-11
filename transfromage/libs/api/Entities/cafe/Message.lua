@@ -4,7 +4,7 @@ local setmetatable = setmetatable
 local string_gsub  = string.gsub
 ----------------------------------------------------------------------------------------------------
 
-local Message = table.setNewClass()
+local Message = table.setNewClass("CafeMessage")
 
 Message.new = function(self, topicId, packet)
 	local data = { }
