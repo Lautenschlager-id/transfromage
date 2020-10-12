@@ -38,7 +38,7 @@ Topic.retrieveMessages = function(self, packet)
 
 	while packet.stackLen > 0 do
 		totalMessages = totalMessages + 1
-		messages[totalMessages] = Message:new(self.id, packet, client)
+		messages[totalMessages] = Message:new(client, self.id, packet)
 	end
 
 	self.messages = messages

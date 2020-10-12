@@ -26,7 +26,7 @@ local Connection = table.setNewClass("Connection")
 		_lengthBytes = 0 -- Number of bytes read (real value needs a divison by 7).
 	}
 ]]
-Connection.new = function(self, name, client)
+Connection.new = function(self, client, name)
 	return setmetatable({
 		name = name,
 

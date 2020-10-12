@@ -15,7 +15,7 @@ local onFriendAdd = function(self, packet, connection, tribulleId)
 			lastConnection = 0 -- Timestamp of when the player was last online.
 		}
 	]]
-	self.event:emit("newFriend", Friend:new(packet))
+	self.event:emit("newFriend", Friend:new(self, packet))
 end
 
 return { onFriendAdd, 36 }

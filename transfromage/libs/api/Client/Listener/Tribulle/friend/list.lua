@@ -1,11 +1,11 @@
 local Friend = require("api/Entities/friend/Friend")
 
 local onFriendListLoaded = function(self, packet, connection, tribulleId)
-	local soulmate = Friend:new(packet)
+	local soulmate = Friend:new(self, packet)
 
 	local friendList = { }
 	for f = 1, packet:read16() do
-		friendList[f] = Friend:new(packet)
+		friendList[f] = Friend:new(self, packet)
 	end
 
 	--[[@

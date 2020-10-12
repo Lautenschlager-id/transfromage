@@ -7,7 +7,7 @@ local string_sub = string.sub
 ----------------------------------------------------------------------------------------------------
 
 local onRoomChange = function(self, packet, connection, identifiers)
-	self.playerList = PlayerList:new()
+	self.playerList = PlayerList:new(self)
 
 	local isPrivate, roomName, roomLanguage = packet:readBool(), packet:readUTF(), packet:readUTF()
 

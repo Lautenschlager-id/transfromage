@@ -5,8 +5,10 @@ local string_toNickname = string.toNickname
 
 local Member = table.setNewClass("TribeMember")
 
-Member.new = function(self, packet)
-	local data = { }
+Member.new = function(self, client, packet)
+	local data = {
+		_client = client
+	}
 
 	data.id = packet:read32()
 	data.playerName = string_toNickname(packet:readUTF())
@@ -24,6 +26,14 @@ Member.new = function(self, packet)
 	data.roomName = packet:readUTF()
 
 	return setmetatable(data, self)
+end
+
+Member.kick = function(self)
+	return self._client:kickTribeMember(self.playerName)
+end
+
+Member.setRole = function(self, roleId)
+	return self._client:setTribeMemberRole(self.playerName, roleId)
 end
 
 return Member

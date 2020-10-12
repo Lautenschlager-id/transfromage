@@ -6,7 +6,7 @@ local string_gsub  = string.gsub
 
 local Message = table.setNewClass("CafeMessage")
 
-Message.new = function(self, topicId, packet, client)
+Message.new = function(self, client, topicId, packet)
 	local data = {
 		topicId = topicId,
 

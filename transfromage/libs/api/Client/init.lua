@@ -68,7 +68,7 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 		event = eventEmitter,
 
 		cafe = nil,
-		playerList = PlayerList:new(),
+		playerList = nil,
 
 		_decryptXML = false,
 		_handlePlayers = false,
@@ -83,8 +83,9 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 		_messageKeys = { }
 	}, self)
 
-	client.mainConnection = Connection:new("main", client)
+	client.mainConnection = Connection:new(client, "main")
 	client.cafe = Cafe:new(client)
+	client.playerList = PlayerList:new(client)
 
 	if tfmId and token then
 		client:start(tfmId, token)

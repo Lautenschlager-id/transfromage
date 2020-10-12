@@ -21,7 +21,7 @@ local onBulleSwitch = function(self, packet, connection, identifiers)
 
 	local oldBulle = self.bulleConnection
 
-	self.bulleConnection = Connection:new("bulle", self.event)
+	self.bulleConnection = Connection:new(self, "bulle")
 	self.bulleConnection:connect(bulleIp, enum_setting.port[self.mainConnection.portIndex])
 
 	self.bulleConnection.event:once("_socketConnection", function()

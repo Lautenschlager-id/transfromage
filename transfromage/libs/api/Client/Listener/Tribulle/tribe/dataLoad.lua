@@ -1,7 +1,7 @@
 local Tribe = require("api/Entities/tribe/Tribe")
 
 local onTribeDataLoaded = function(self, packet, connection, tribulleId)
-	local tribe = Tribe:new(packet, packet:read32())
+	local tribe = Tribe:new(self, packet, packet:read32())
 
 	tribe:retrieveMembers(packet)
 

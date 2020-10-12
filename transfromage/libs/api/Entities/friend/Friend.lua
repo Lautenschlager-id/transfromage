@@ -5,8 +5,10 @@ local string_toNickname = string.toNickname
 
 local Friend = table.setNewClass("Friend")
 
-Friend.new = function(self, packet)
-	local data = { }
+Friend.new = function(self, client, packet)
+	local data = {
+		_client = client
+	}
 
 	data.id = packet:read32()
 
@@ -26,6 +28,14 @@ Friend.new = function(self, packet)
 	data.lastConnection = packet:read32()
 
 	return setmetatable(data, self)
+end
+
+Friend.blacklist = function(self)
+	return self._client:blacklistPlayer(self.playerName)
+end
+
+Friend.remove = function(self)
+	return self._client:removeFriend(self.playerName)
 end
 
 return Friend

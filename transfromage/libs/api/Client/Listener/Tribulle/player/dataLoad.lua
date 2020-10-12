@@ -11,7 +11,7 @@ local onAccountDataLoaded = function(self, packet, connection, tribulleId)
 
 	triggerBlackList(self, packet, connection, tribulleId)
 
-	local tribe = Tribe:new(packet) -- ?
+	local tribe = Tribe:new(self, packet)
 
 	local tribeMember = { }
 	tribeMember.rank = packet:readUTF()

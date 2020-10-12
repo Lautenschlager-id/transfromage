@@ -29,13 +29,15 @@ PlayerList.__pairs = function(self)
 	end
 end
 
-PlayerList.new = function(self)
+PlayerList.new = function(self, client)
 	return setmetatable({
-		_count = 0
+		_count = 0,
+
+		_client = client
 	}, self)
 end
 
-PlayerList.updatePlayer = function(self, packet, eventEmitter)
+PlayerList.updatePlayer = function(self, packet)
 	local playerName = packet:readUTF()
 
 	local playerData = self[playerName]
@@ -81,7 +83,7 @@ PlayerList.updatePlayer = function(self, packet, eventEmitter)
 				_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
 			}
 		]]
-		eventEmitter:emit("updatePlayer", playerData, oldPlayerData, updateFlag)
+		self._client.event:emit("updatePlayer", playerData, oldPlayerData, updateFlag)
 	else
 		playerData = Player:new(playerName)
 
@@ -129,7 +131,7 @@ PlayerList.updatePlayer = function(self, packet, eventEmitter)
 				_pos = 0 -- The position of the player in the array list. This value should never be changed manually.
 			}
 		]]
-		eventEmitter:emit("newPlayer", playerData)
+		self._client.event:emit("newPlayer", playerData)
 	end
 end
 
