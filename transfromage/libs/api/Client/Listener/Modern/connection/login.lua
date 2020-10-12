@@ -20,8 +20,8 @@ local onLogin = function(self, packet, connection, identifiers)
 		@param playerName<string> The name of the player that has connected.
 		@param playedTime<int> The time played by the player.
 	]]
-	timer_setTimeout(enum_timer.login, self.event.emit, self.event, playerId, self.playerName,
-		playedTime)
+	timer_setTimeout(enum_timer.login, self.event.emit, "connection", self.event, playerId,
+		self.playerName, playedTime)
 end
 
 return { onLogin, 26, 2 }

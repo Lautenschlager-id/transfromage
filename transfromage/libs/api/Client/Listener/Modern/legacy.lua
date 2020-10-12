@@ -10,7 +10,7 @@ local onLegacyPacket = function(self, packet, connection, identifiers)
 	local data = string_split(packet:readUTF(), '\x01', true)
 	local legacyIdentifiers = { string_byte(table_remove(data, 1), 1, 2) }
 
-	local legacyPacketCallback = legacyReceiver[legacyIdentifiers[1]]
+	local legacyPacketCallback = legacyListener[legacyIdentifiers[1]]
 	legacyPacketCallback = legacyPacketCallback and legacyPacketCallback[legacyIdentifiers[2]]
 
 	if legacyPacketCallback then

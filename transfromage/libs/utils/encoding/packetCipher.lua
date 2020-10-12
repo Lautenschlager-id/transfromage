@@ -12,15 +12,15 @@ local bit_bxor = bit.bxor
 	@param fingerprint<int> The fingerprint of the encode.
 	@returns ByteArray The encoded Byte Array object.
 ]]
-local xorCipher = function(self, packet, fingerprint)
-	if self.hasSpecialRole then
+local xorCipher = function(client, packet, fingerprint)
+	if client.hasSpecialRole then
 		return packet
 	end
 
 	local stack = { }
 
 	local packetStack = packet.stack
-	local messageKeys = self.messageKeys
+	local messageKeys = client._messageKeys
 
 	for i = 1, packet.stackLen do
 		fingerprint = fingerprint + 1

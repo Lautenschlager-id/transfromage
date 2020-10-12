@@ -22,13 +22,13 @@ local disconnectionLoop = function(self, client)
 end
 
 local onSocketConnection = function(connection)
-	local self = connection._client
+	local client = connection._client
 
 	local startPacket = ByteArray:new():write16(enum_setting.gameVersion)
-	if not self._isOfficialBot then
+	if not client._isOfficialBot then
 		startPacket
 			:writeUTF("en")
-			:writeUTF(self._connectionKey)
+			:writeUTF(client._connectionKey)
 	end
 	startPacket:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
 		:writeUTF(
@@ -40,13 +40,13 @@ local onSocketConnection = function(connection)
 		R64=t&LS=en-US&PT=Desktop&AVD=f&LFD=f&WD=f&TLS=t&ML=5.1&DP=72")
 		:write32(0):write32(0x6257):writeUTF('')
 
-	self.mainConnection:send(identifier, startPacket)
+	client.mainConnection:send(identifier, startPacket)
 
-	packetListener(self, "mainConnection")
-	packetListener(self, "bulleConnection")
+	packetListener(client, "mainConnection")
+	packetListener(client, "bulleConnection")
 
 	local loop = { } -- Has to be a table to be passed as reference...
-	loop[1] = timer_setInterval(10, disconnectionLoop, loop, self)
+	loop[1] = timer_setInterval(10, disconnectionLoop, loop, client)
 end
 
 return onSocketConnection

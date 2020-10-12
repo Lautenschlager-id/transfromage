@@ -1,14 +1,16 @@
 local Topic = require("api/Entities/cafe/Topic")
 
 local onCafeTopicLoad = function(self, packet, connection, identifiers)
+	local cafe = self.cafe
+
 	packet:read8() -- ?
 
 	local topicId = packet:read32()
-	if not self.cafe.topics[topicId] then
-		self.cafe.topics[topicId] = Topic:new(nil, topicId)
+	if not cafe.topics[topicId] then
+		cafe.topics[topicId] = Topic:new(self, nil, topicId)
 	end
 
-	local topic = self.cafe.topics[topicId]
+	local topic = cafe.topics[topicId]
 	topic:retrieveMessages(packet)
 
 	--[[@
@@ -41,7 +43,7 @@ local onCafeTopicLoad = function(self, packet, connection, identifiers)
 	self.event:emit("cafeTopicLoad", topic)
 
 	local messages, tmpMessage = topic.messages
-	local cachedMessages = self.cafe.cachedMessages
+	local cachedMessages = cafe.cachedMessages
 
 	for i = 1, #messages do -- Unfortunately I couldn't make it decrescent, otherwise it would trigger the events in the wrong order
 		tmpMessage = messages[i]

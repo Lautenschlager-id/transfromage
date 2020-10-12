@@ -6,14 +6,17 @@ local setmetatable = setmetatable
 
 local Cafe = table.setNewClass("Cafe")
 
-Cafe.new = function(self)
+Cafe.new = function(self, client)
 	return setmetatable({
 		topics = { },
-		cachedMessages = { }
+		cachedMessages = { },
+
+		_client = client
 	}, self)
 end
 
 Cafe.loadTopics = function(self, packet)
+	local client  = self._client
 	local topics = self.topics
 
 	local topicId, tmpTopic
@@ -24,11 +27,23 @@ Cafe.loadTopics = function(self, packet)
 		if tmpTopic then
 			tmpTopic:update(packet)
 		else
-			topics[topicId] = Topic:new(packet, topicId)
+			topics[topicId] = Topic:new(client, packet, topicId, client)
 		end
 	end
 
 	return self
+end
+
+Cafe.open = function(self, close)
+	return self._client:openCafe(close)
+end
+
+Cafe.reload = function(self)
+	return self._client:reloadCafe()
+end
+
+Cafe.openTopic = function(self, topicId)
+	return self._client:openCafeTopic(topicId)
 end
 
 return Cafe

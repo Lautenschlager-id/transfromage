@@ -32,9 +32,15 @@ enum.roomMode = enum {
 	village    = 16,
 	module     = 18,
 	madchess   = 20,
+	surble     = 21,
 	celousco   = 22,
+	bouboum    = 30,
 	ranked     = 31,
 	duel       = 33,
 	arena      = 34,
-	domination = 42
+	fortoresse = 40,
+	domination = 42,
+	nekodancer = 50,
+	deadmaze   = 60,
+	karmaloop  = 70
 }

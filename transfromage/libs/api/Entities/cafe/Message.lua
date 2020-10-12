@@ -6,10 +6,13 @@ local string_gsub  = string.gsub
 
 local Message = table.setNewClass("CafeMessage")
 
-Message.new = function(self, topicId, packet)
-	local data = { }
+Message.new = function(self, topicId, packet, client)
+	local data = {
+		topicId = topicId,
 
-	data.topicId = topicId
+		_client = client
+	}
+
 	data.id = packet:read32()
 	data.authorId = packet:read32()
 	data.timestamp = os_time() - packet:read32()
@@ -19,6 +22,14 @@ Message.new = function(self, topicId, packet)
 	data.likes = packet:readSigned16()
 
 	return setmetatable(data, self)
+end
+
+Message.reply = function(self, message)
+	return self._client:sendCafeMessage(self.topicId, message)
+end
+
+Message.like = function(self, dislike)
+	return self._client:likeCafeMessage(self.topicId, self.id, dislike)
 end
 
 return Message

@@ -23,5 +23,5 @@ Connection.close = function(self)
 		@desc Triggered when a connection dies or fails.
 		@param connection<connection> The connection object.
 	]]
-	self.event:emit("disconnection", self)
+	self._client.event:emit("disconnection", self)
 end

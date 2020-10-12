@@ -41,7 +41,7 @@ Connection.send = function(self, identifiers, alphaPacket)
 	if not written then
 		self.isOpen = false
 		if self.ip ~= enum_setting.mainIp then -- Avoids that 'disconnection' gets triggered twice when it is the main instance.
-			self.event:emit("disconnection", self)
+			self._client.event:emit("disconnection", self)
 			return
 		end
 	end
@@ -52,5 +52,5 @@ Connection.send = function(self, identifiers, alphaPacket)
 		@param identifiers<table> The C, CC identifiers sent in the request.
 		@param packet<ByteArray> The Byte Array object that was sent.
 	]]
-	self.event:emit("send", identifiers, alphaPacket)
+	self._client.event:emit("send", identifiers, alphaPacket)
 end

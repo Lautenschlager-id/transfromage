@@ -26,15 +26,13 @@ local Connection = table.setNewClass("Connection")
 		_lengthBytes = 0 -- Number of bytes read (real value needs a divison by 7).
 	}
 ]]
-Connection.new = function(self, name, event)
+Connection.new = function(self, name, client)
 	return setmetatable({
 		name = name,
 
 		isOpen = false,
 		socket = nil,
 		Buffer = Buffer:new(),
-
-		event = event,
 
 		ip = "",
 		portIndex = 1,
@@ -47,7 +45,7 @@ Connection.new = function(self, name, event)
 		_lengthBytes = 0,
 		_readStackLength = 0,
 
-		_client = nil
+		_client = client
 	}, self)
 end
 

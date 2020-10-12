@@ -53,7 +53,7 @@ Connection.connect = function(self, ip, port)
 			@param connection<connection> The connection.
 			@param port<int> The port where the socket got connected.
 		]]
-		self.event:emit("_socketConnection", self, port)
+		self._client.event:emit("_socketConnection", self, port)
 	end)
 
 	timer_setTimeout(enum_timer.socketTimeout, tryPortConnection, self, hasPort, ip)

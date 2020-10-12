@@ -7,8 +7,10 @@ local setmetatable = setmetatable
 
 local Topic = table.setNewClass("CafeTopic")
 
-Topic.new = function(self, packet, id)
-	local data = { }
+Topic.new = function(self, client, packet, id)
+	local data = {
+		_client = client
+	}
 
 	if packet then
 		data.id = packet:read32()
@@ -31,17 +33,22 @@ Topic.update = function(self, packet)
 end
 
 Topic.retrieveMessages = function(self, packet)
+	local client = self._client
 	local messages, totalMessages = { }, 0
 
 	while packet.stackLen > 0 do
 		totalMessages = totalMessages + 1
-		messages[totalMessages] = Message:new(self.id, packet)
+		messages[totalMessages] = Message:new(self.id, packet, client)
 	end
 
 	self.messages = messages
 	self.author = messages[1].author
 
 	return self
+end
+
+Topic.newMessage = function(self, message)
+	return self._client:sendCafeMessage(self.id, message)
 end
 
 return Topic
