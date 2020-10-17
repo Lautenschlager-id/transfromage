@@ -17,7 +17,7 @@ local onAccountDataLoaded = function(self, packet, connection, tribulleId)
 	tribeMember.rank = packet:readUTF()
 	tribeMember.rankPermissions = packet:read32()
 
-	self.event:emit("accountDataLoaded", player, tribeMember)
+	self.event:emit("accountDataLoaded", player, tribe, tribeMember)
 end
 
 return { onAccountDataLoaded, 3 }

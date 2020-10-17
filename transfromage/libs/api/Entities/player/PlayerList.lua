@@ -15,14 +15,14 @@ end
 PlayerList.__pairs = function(self)
 	local indexes = { }
 	for i = 1, self._count do
-		indexes[i] = self[i].playerName
+		indexes[i] = self[i]
 	end
 
 	local i, player = 0
 	return function()
 		i = i + 1
 
-		player = self[indexes[i]]
+		player = indexes[i]
 		if player then
 			return player.playerName, player
 		end

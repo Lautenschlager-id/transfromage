@@ -69,7 +69,7 @@ Tribe.setGreetingMessage = function(self, message)
 	return self._client:setTribeGreetingMessage(message)
 end
 
-Tribe.setMemberRole = function(memberName, roleId)
+Tribe.setMemberRole = function(self, memberName, roleId)
 	return self._client:setTribeMemberRole(memberName, roleId)
 end
 

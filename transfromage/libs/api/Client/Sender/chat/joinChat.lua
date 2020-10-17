@@ -8,5 +8,6 @@ local ByteArray = require("classes/ByteArray")
 	@param chatName<string> The name of the chat.
 ]]
 Client.joinChat = function(self, chatName)
+	self.chatList:get(chatName).isOpen = true
 	self:sendTribulle(ByteArray:new():write16(54):write32(1):writeUTF(chatName):write8(1))
 end

@@ -4,7 +4,7 @@ local string_toNickname = string.toNickname
 ----------------------------------------------------------------------------------------------------
 
 local onRoomMessage = function(self, packet, connection, identifiers)
-	local playerName, message = packet:readUTF(), string_fixEntity(packet:readUTF())
+	local playerName, message = packet:readUTF(), packet:readUTF()
 
 	--[[@
 		@name roomMessage

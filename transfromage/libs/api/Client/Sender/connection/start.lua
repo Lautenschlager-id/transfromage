@@ -27,7 +27,7 @@ Client.start = coroutine_makef(function(self, tfmID, token)
 
 	self.mainConnection:connect(enum_setting.mainIP)
 
-	self.mainConnection.event:once("_socketConnection", onSocketConnection)
+	self.mainConnection._client.event:once("_socketConnection", onSocketConnection)
 
 	-- Triggered when the developer uses CTRL+C to leave the command prompt.
 	killOnSigterm(self)

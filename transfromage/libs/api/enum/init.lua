@@ -1,10 +1,13 @@
-local enum_error, enum_errorLevel = require("./enums/error")
+local enum_errors = require("./enums/error")
 
 ------------------------------------------- Optimization -------------------------------------------
-local error        = error
-local next         = next
-local setmetatable = setmetatable
-local tostring     = tostring
+local error           = error
+local next            = next
+local setmetatable    = setmetatable
+local tostring        = tostring
+local enum_error      = enum_errors.error
+local enum_errorLevel = enum_errors.errorLevel
+
 ----------------------------------------------------------------------------------------------------
 
 local enum = setmetatable({ }, {

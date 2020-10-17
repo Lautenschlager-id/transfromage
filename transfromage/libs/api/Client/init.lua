@@ -1,4 +1,5 @@
 local Cafe = require("api/Entities/cafe/Cafe")
+local ChatList = require("api/Entities/chat/ChatList")
 local Connection = require("api/Connection")
 local PlayerList = require("api/Entities/player/PlayerList")
 
@@ -56,6 +57,8 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 		language = enum_language.en,
 		_isConnected = false,
 
+		tribe = nil,
+
 		_isOfficialBot = isOfficialBot,
 		_endpointUpdate = endpointUpdate,
 
@@ -65,16 +68,16 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 
 		_loginTime = 0,
 
-		event = eventEmitter,
+		chatList = nil,
 
 		cafe = nil,
-		playerList = nil,
 
-		_decryptXML = false,
+		playerList = nil,
 		_handlePlayers = false,
 
-		_whoList = { },
-		_whoFingerprint = 0,
+		event = eventEmitter,
+
+		_decryptXML = false,
 
 		_connectionAuthenticationKey = nil,
 		_authenticationKey = nil,
@@ -84,7 +87,11 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 	}, self)
 
 	client.mainConnection = Connection:new(client, "main")
+
+	client.chatList = ChatList:new(client)
+
 	client.cafe = Cafe:new(client)
+
 	client.playerList = PlayerList:new(client)
 
 	if tfmId and token then

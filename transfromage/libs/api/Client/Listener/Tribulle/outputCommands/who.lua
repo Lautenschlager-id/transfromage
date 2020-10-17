@@ -4,6 +4,7 @@ local string_toNickname = string.toNickname
 
 local onWho = function(self, packet, connection, tribulleId)
 	local fingerprint = packet:read32()
+	local chat = self.chatList[fingerprint]
 
 	packet:read8() -- ?
 
@@ -18,8 +19,7 @@ local onWho = function(self, packet, connection, tribulleId)
 		@param chatName<string> The name of the chat.
 		@param data<table> An array with the nicknames of the current users in the chat.
 	]]
-	self.event:emit("chatWho", self._whoList[fingerprint], data)
-	self._whoList[fingerprint] = nil
+	self.event:emit("chatWho", chat.name, data)
 end
 
 return { onWho, 59 }

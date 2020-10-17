@@ -10,5 +10,9 @@ local ByteArray = require("classes/ByteArray")
 	@param message<string> The message.
 ]]
 Client.sendChatMessage = function(self, chatName, message)
+	if not self.chatList[chatName] then
+		self:joinChat(chatName)
+	end
+
 	self:sendTribulle(ByteArray:new():write16(48):write32(1):writeUTF(chatName):writeUTF(message))
 end

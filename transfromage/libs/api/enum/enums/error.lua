@@ -29,4 +29,7 @@ local errorLevel = {
 	high = -1
 }
 
-return error, errorLevel
+return {
+	error = error,
+	errorLevel = errorLevel
+}

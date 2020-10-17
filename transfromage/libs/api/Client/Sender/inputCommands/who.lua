@@ -7,9 +7,7 @@ local ByteArray = require("classes/ByteArray")
 	@desc Gets the names of players in a specific chat. (/who)
 	@param chatName<string> The name of the chat.
 ]]
-Client.chatWho = function(self, chatName)
-	self._whoFingerprint = (self._whoFingerprint + 1) % 0xFFFFFFFF
-	self._whoList[self._whoFingerprint] = chatName
-
-	self:sendTribulle(ByteArray:new():write16(58):write32(self._whoFingerprint):writeUTF(chatName))
+Client.chatWho = function(self, chatName, _chatFingerprint)
+	_chatFingerprint = _chatFingerprint or self.chatList:get(chatName).fingerprint
+	self:sendTribulle(ByteArray:new():write16(58):write32(_chatFingerprint):writeUTF(chatName))
 end

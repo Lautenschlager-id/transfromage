@@ -7,6 +7,8 @@ local onTribeDataLoaded = function(self, packet, connection, tribulleId)
 
 	tribe:retrieveRoles(packet)
 
+	self.tribe = tribe
+
 	--[[@
 		@name tribeInterface
 		@desc Triggered when the tribe interface is opened and/or when the data is updated.

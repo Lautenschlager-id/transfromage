@@ -2,4 +2,5 @@
 MyFirstBot/
 deps/
 logs.log
-test/
+test/test.lua
+deps/transfromage
