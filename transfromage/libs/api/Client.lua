@@ -6,6 +6,7 @@ local folderLoader = require("utils/folderLoader")
 ------------------------------------------- Optimization -------------------------------------------
 local require   = require
 local table_add = table.add
+local type      = type
 ----------------------------------------------------------------------------------------------------
 
 -- Tools
@@ -38,7 +39,14 @@ for t = 1, #listenerTypes do
 	t = listenerObjects[t]
 	for l = 1, #listeners do
 		l = listeners[l]
-		createListener(t, l[1], l[2], l[3]) -- l[3] may be nil when tribulle
+		if type(l[1]) == "table" then
+			for sl = 1, #l do
+				sl = l[sl]
+				createListener(t, sl[1], sl[2], sl[3])
+			end
+		else
+			createListener(t, l[1], l[2], l[3]) -- l[3] may be nil when tribulle
+		end
 	end
 end
 

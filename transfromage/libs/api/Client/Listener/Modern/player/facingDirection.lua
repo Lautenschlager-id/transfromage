@@ -15,6 +15,6 @@ local onFacingDirection = function()
 end
 
 return {
-	{ 4, 6, onFacingDirection },
-	{ 4, 10, onFacingDirection }
+	{ onFacingDirection, 4, 6 },
+	{ onFacingDirection, 4, 10 }
 }

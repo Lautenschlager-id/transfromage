@@ -49,4 +49,4 @@ local onRefreshPlayerList =  function(self, packet, connection, identifiers)
 	self.event:emit("refreshPlayerList", self.playerList)
 end
 
-return { 144, 1, onRefreshPlayerList}
+return { onRefreshPlayerList, 144, 1 }

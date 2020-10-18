@@ -12,6 +12,6 @@ local onShaman = function(self, packet, connection, identifiers)
 end
 
 return {
-	{ 8, 12, onShaman },
-	{ 144, 7, onShaman }
+	{ onShaman, 8, 12 },
+	{ onShaman, 144, 7 }
 }
