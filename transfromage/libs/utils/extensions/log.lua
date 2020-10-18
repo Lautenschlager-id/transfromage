@@ -1,4 +1,4 @@
-local APISettings = require("transfromage/settings")
+local APISettings = require("../../../settings")
 
 ------------------------------------------- Optimization -------------------------------------------
 local colorThemes   = require("utils").theme
