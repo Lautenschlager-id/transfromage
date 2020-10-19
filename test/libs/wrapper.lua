@@ -15,6 +15,7 @@ local run = coroutine.wrap(function()
 
 	for t = 1, #tests do
 		local test = tests[t]
+		local time
 
 		print("\t# Starting test: " .. colorize("highlight", test.name))
 		local pass, err = xpcall(function()
@@ -29,7 +30,7 @@ local run = coroutine.wrap(function()
 					if success then
 						expected = expected - 1
 						if expected <= 0 then
-							coroutine.resume(coro)
+							assert(coroutine.resume(coro))
 						end
 					else
 						err = ret
@@ -39,11 +40,11 @@ local run = coroutine.wrap(function()
 				end
 			end
 
-			timer.setTimeout(30000, coroutine.resume, coro)
+			timer.setTimeout(30000, assert, coroutine.resume, coro)
 
-			local time = os.clock()
+			time = os.clock()
 			coroutine.yield(test.fn(expect))
-			time = time - os.clock()
+			time = os.clock() - time
 			collectgarbage()
 
 			if err then
@@ -72,7 +73,10 @@ local run = coroutine.wrap(function()
 	else
 		print("\t#" .. failed .. " failed test(s)")
 	end
-	os.exit(-failed)
+
+	client:disconnect()
+
+	timer.setTimeout(1000, os.exit, -failed)
 end)
 
 local test = function(name, fn)

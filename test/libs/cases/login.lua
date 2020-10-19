@@ -3,6 +3,8 @@ require("wrapper")(function(test, transfromage, client)
 		args[2] = string.toNickname(args[2], true)
 
 		client:once("ready", expect(function(onlinePlayers, country, language)
+			p("Received event Ready")
+
 			assert(onlinePlayers)
 
 			assert(country)
@@ -17,6 +19,8 @@ require("wrapper")(function(test, transfromage, client)
 		end))
 
 		client:once("connection", expect(function(playerId, playerName, playedTime)
+			p("Received event Connection")
+
 			assert(playerId)
 
 			assert(playerName)
@@ -29,6 +33,7 @@ require("wrapper")(function(test, transfromage, client)
 			return true
 		end))
 
+		p("Starting client")
 		client:start(args[4], args[5])
 	end)
 end)
