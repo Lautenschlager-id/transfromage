@@ -60,10 +60,10 @@ local run = coroutine.wrap(function()
 
 		if pass then
 			passed = passed + 1
-			print("\t# Test finished with success (" .. time .. "ms): " .. colorize("highlight", test.name))
+			print("\t# Test finished with success (" .. time .. "s): " .. colorize("highlight", test.name))
 		else
 			print(colorize("err", err))
-			print("\t# Test finished with errors: (" .. time .. "ms): " .. colorize("failure", test.name))
+			print("\t# Test finished with errors: (" .. time .. "s): " .. colorize("failure", test.name))
 		end
 	end
 
