@@ -1,4 +1,4 @@
-require("./test/wrapper")(function(test, transfromage, client)
+require("wrapper")(function(test, transfromage, client)
 	test("room message", function(expect)
 		client:on("roomMessage", expect(function(playerName, message)
 			if playerName == client.playerName then

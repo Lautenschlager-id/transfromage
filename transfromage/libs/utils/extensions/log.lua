@@ -68,4 +68,8 @@ if APISettings.coloredErrors then
 		os.log(message, ...) -- Colored message
 		return error('^', level)
 	end
+else
+	_G.error = function(message, level, ...)
+		return error(string_format(message, ...), level)
+	end
 end

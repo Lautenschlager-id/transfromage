@@ -1,4 +1,4 @@
-require("./test/wrapper")(function(test, transfromage, client)
+require("wrapper")(function(test, transfromage, client)
 	test("login", function(expect)
 		args[2] = string.toNickname(args[2], true)
 

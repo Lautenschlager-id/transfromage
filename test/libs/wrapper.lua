@@ -1,15 +1,16 @@
 -- Based on luvit/tap
-
-local colorize = function(_, n) return n end--require("pretty-print").colorize
+local timer = require("timer")
+local colorize = require("pretty-print").colorize
 local transfromage, client
 local filePrefix
 local tests = { }
 
-local run = function()
+local run = coroutine.wrap(function()
 	if #tests == 0 then
 		error("No tests specified!")
 	end
 
+	local coro = coroutine.running()
 	local passed = 0
 
 	for t = 1, #tests do
@@ -17,6 +18,7 @@ local run = function()
 
 		print("\t# Starting test: " .. colorize("highlight", test.name))
 		local pass, err = xpcall(function()
+
 			local expected = 0
 
 			local err
@@ -26,6 +28,9 @@ local run = function()
 					local success, ret = pcall(fn, ...)
 					if success then
 						expected = expected - 1
+						if expected <= 0 then
+							coroutine.resume(coro)
+						end
 					else
 						err = ret
 					end
@@ -34,7 +39,11 @@ local run = function()
 				end
 			end
 
-			test.fn(expect)
+			timer.setTimeout(30000, coroutine.resume, coro)
+
+			local time = os.clock()
+			coroutine.yield(test.fn(expect))
+			time = time - os.clock()
 			collectgarbage()
 
 			if err then
@@ -50,10 +59,10 @@ local run = function()
 
 		if pass then
 			passed = passed + 1
-			print("\t# Test finished with success: " .. colorize("highlight", test.name))
+			print("\t# Test finished with success (" .. time .. "ms): " .. colorize("highlight", test.name))
 		else
 			print(colorize("err", err))
-			print("\t# Test finished with errors: " .. colorize("failure", test.name))
+			print("\t# Test finished with errors: (" .. time .. "ms): " .. colorize("failure", test.name))
 		end
 	end
 
@@ -64,7 +73,7 @@ local run = function()
 		print("\t#" .. failed .. " failed test(s)")
 	end
 	os.exit(-failed)
-end
+end)
 
 local test = function(name, fn)
 	tests[#tests + 1] = {
