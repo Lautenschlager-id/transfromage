@@ -27,7 +27,7 @@ end
 local loadTests = function()
 	testWrapper(transfromage, client)
 
-	local req = fs.scandirSync("test/libs/cases/")
+	local req = fs.scandirSync("test/libs/cases/") -- Change to a list so that a specific order can be choosen
 
 	local name = "login.lua"
 	while true do
