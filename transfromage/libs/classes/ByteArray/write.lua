@@ -58,12 +58,12 @@ end
 --[[@
 	@name write32
 	@desc Inserts a long integer in the byte array.
-	@param long<int> An integer number in the range [0, 4294967295|0xFFFFFFFF].
+	@param long<int> An integer number in the range [0, 2147483647|0x7FFFFFFF].
 	@returns ByteArray Object instance.
 ]]
 ByteArray.write32 = function(self, long)
 	-- (long >> 24), (long >> 16), (long >> 8), long
-	return self:write8(bit_rshift(long, 24), bit_rshift(long, 16), bit_rshift(long, 8),	long)
+	return self:write8(bit_rshift(long, 24), bit_rshift(long, 16), bit_rshift(long, 8), long)
 end
 
 --[[@
