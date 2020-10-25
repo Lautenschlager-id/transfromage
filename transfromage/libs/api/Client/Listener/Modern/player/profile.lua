@@ -50,7 +50,7 @@ local onProfileLoaded = function(self, packet, connection, identifiers)
 
 		mode.progress = packet:read32()
 		mode.progressLimit = packet:read32()
-		mode.imageId = packet:read8()
+		mode.imageId = packet:read16()
 	end
 
 	data.orbId = packet:read8()
@@ -61,7 +61,7 @@ local onProfileLoaded = function(self, packet, connection, identifiers)
 	end
 	data.orbs = orbs
 
-	packet:read8() -- ?
+	packet:readBool()
 
 	data.adventurePoints = packet:read32()
 
