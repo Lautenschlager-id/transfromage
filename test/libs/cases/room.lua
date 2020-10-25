@@ -1,24 +1,28 @@
+-- APPARENTLY only works when there's no bulleswitch, needs further investigation.
+
 local timer = require("timer")
 
 require("wrapper")(function(test, transfromage, client)
 	test("join room", function(expect)
-		client:once("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
+		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
 			p("Received event roomChanged")
 
-			assert(roomName == "#bolodefchoco666")
+			assert(roomName == client.language .. "-#bolodefchoco666")
 
 			assert(isPrivate ~= nil)
-			assert(roomLanguage)
+			assert(roomLanguage == client.language)
 
 			return true
 		end))
 
 		p("Joining room")
-		client:enterRoom("#bolodefchoco666")
+		timer.setTimeout(5000, client.enterRoom, client, "#bolodefchoco666")
+
+		return -5000
 	end)
 
 	test("join tribe house", function(expect)
-		client:once("joinTribeHouse", expect(function(roomName, roomLanguage)
+		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
 			p("Received event joinTribeHouse")
 
 			assert(roomName)
@@ -30,6 +34,8 @@ require("wrapper")(function(test, transfromage, client)
 		end))
 
 		p("Joining tribe house")
-		timer.setTimeout(3000, client.enterRoom, client, "#bolodefchoco666")
+		timer.setTimeout(3500, client.joinTribeHouse, client)
+
+		return -3500
 	end)
 end)

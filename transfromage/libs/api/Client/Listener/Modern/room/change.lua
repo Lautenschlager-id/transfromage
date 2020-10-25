@@ -1,9 +1,9 @@
 local PlayerList = require("api/Entities/player/PlayerList")
 
 ------------------------------------------- Optimization -------------------------------------------
-local string_byte = string.byte
+local string_byte      = string.byte
 local string_fixEntity = string.fixEntity
-local string_sub = string.sub
+local string_sub       = string.sub
 ----------------------------------------------------------------------------------------------------
 
 local onRoomChange = function(self, packet, connection, identifiers)

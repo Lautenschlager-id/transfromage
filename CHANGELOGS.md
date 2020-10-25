@@ -9,6 +9,9 @@
 - New event _shaman_.
 
 ## Changes
+- Event _connection_ is now triggered when the first bulle connection is set (zero arguments)
+- New event _mainConnection_ that is triggered when the main connection is set (takes all arguments from connection)
+- Event _ping_ is now _serverPing_.
 - _Client.insertPacketListener_, _Client.insertOldListener_ are now _Client.insertModernListener_, _Client.insertLegacyListener_, respectively.
 - _Client.parsePacket_ is now _Client.triggerPacketCallback_.
 - _Client.closeAll_ is now _Client.killConnections_.

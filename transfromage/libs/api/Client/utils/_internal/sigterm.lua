@@ -28,7 +28,7 @@ local killOnSigterm = function(client)
 	if isListeningSigint then
 		-- Adds new client to the list
 		totalClients = totalClients + 1
-		client[totalClients] = client
+		clients[totalClients] = client
 		return
 	end
 	isListeningSigint = true

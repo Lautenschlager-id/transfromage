@@ -5,6 +5,15 @@ local transfromage, client
 local filePrefix
 local tests = { }
 
+local timerResumeCoro = { }
+
+local resumeCoro = function(coro)
+	if timerResumeCoro[1] then
+		timer.clearTimeout(timerResumeCoro[1])
+	end
+	assert(coroutine.resume(coro))
+end
+
 local run = coroutine.wrap(function()
 	if #tests == 0 then
 		error("No tests specified!")
@@ -30,7 +39,7 @@ local run = coroutine.wrap(function()
 					if success then
 						expected = expected - 1
 						if expected <= 0 then
-							assert(coroutine.resume(coro))
+							resumeCoro(coro)
 						end
 					else
 						err = ret
@@ -40,11 +49,16 @@ local run = coroutine.wrap(function()
 				end
 			end
 
-			timer.setTimeout(30000, assert, coroutine.resume, coro)
+			timerResumeCoro[1] = timer.setTimeout(30000, resumeCoro, coro)
 
 			time = os.clock()
-			coroutine.yield(test.fn(expect))
-			time = os.clock() - time
+			local ignoreTime = coroutine.yield(test.fn(expect))
+			if ignoreTime == 0 then
+				time = '?'
+			else
+				time = os.clock() - time
+				time = time + ((ignoreTime or 0) / 1000)
+			end
 			collectgarbage()
 
 			if err then
@@ -71,9 +85,10 @@ local run = coroutine.wrap(function()
 	if failed == 0 then
 		print("\t# All tests passed!")
 	else
-		print("\t#" .. failed .. " failed test(s)")
+		print("\t# " .. failed .. " failed test(s)")
 	end
 
+	p("Disconnecting")
 	client:disconnect()
 
 	timer.setTimeout(1000, os.exit, -failed)

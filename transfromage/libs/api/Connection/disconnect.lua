@@ -11,7 +11,9 @@ local timer_clearInterval  = require("timer").clearInterval
 Connection.close = function(self)
 	if not self.socket then return end
 
-	timer_clearInterval(self._listenLoop)
+	if self._listenLoop then
+		timer_clearInterval(self._listenLoop)
+	end
 
 	self.isOpen = false
 	self.port = 1

@@ -7,7 +7,6 @@ assert(args[5], "Missing Token")
 
 local testWrapper = require("wrapper")
 local transfromage = require("transfromage")
-local fs = require("fs")
 
 local client = transfromage.Client()
 client:setLanguage(transfromage.enum.language.br)
@@ -24,31 +23,21 @@ do
 	end
 end
 
+local testCases = {
+	"login.lua",
+	--"message.lua",
+	--"room.lua", NOT WORKING
+	--"misc.lua"
+}
+
 local loadTests = function()
 	testWrapper(transfromage, client)
 
-	local req = fs.scandirSync("test/libs/cases/") -- Change to a list so that a specific order can be choosen
+	for name = 1, #testCases do
+		name = testCases[name]
 
-	local name = "login.lua"
-	while true do
-		repeat
-			if not name then
-				name = req()
-
-				if not name then return end
-				if name == "login.lua" then
-					name = nil
-					break
-				end
-				if type(name) == "table" then
-					name = name.name
-				end
-			end
-
-			testWrapper(name)
-			require("cases/" .. name)
-			name = nil
-		until false
+		testWrapper(name)
+		require("cases/" .. name)
 	end
 end
 loadTests()

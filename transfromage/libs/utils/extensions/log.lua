@@ -70,6 +70,6 @@ if APISettings.coloredErrors then
 	end
 else
 	_G.error = function(message, level, ...)
-		return error(string_format(message, ...), level)
+		return error(string_format(string_gsub(tostring(message), "↑.-↓(.-)↑", "%1"), ...), level)
 	end
 end

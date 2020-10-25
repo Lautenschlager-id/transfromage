@@ -27,6 +27,9 @@ local onBulleSwitch = function(self, packet, connection, identifiers)
 	self.event:once("_socketConnection", function()
 		if oldBulle then
 			oldBulle:close()
+		else
+			-- Triggered on the first bulle connection, i.e., when the account is ready to be used.
+			self.event:emit("connection")
 		end
 
 		self.bulleConnection:send(identifier,

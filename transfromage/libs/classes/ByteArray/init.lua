@@ -7,7 +7,7 @@ local setmetatable     = setmetatable
 local ByteArray = table.setNewClass("ByteArray")
 
 ByteArray.__tostring = function(this)
-	return table_writeBytes(this.stack)
+	return table_writeBytes(table_copy(this.stack))
 end
 
 --[[@
