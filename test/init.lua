@@ -24,18 +24,15 @@ do
 end
 
 local testCases = {
-	--[[ Make sure all utils are working ]]--
-	-- "utils/extensions.lua",
-	-- "utils/bit64.lua",
-	-- "utils/encoding.lua",
+	{ "IGNORE+TODO", "utils/extensions.lua" },
+	{ "IGNORE+TODO", "utils/bit64.lua" },
+	{ "IGNORE+TODO", "utils/encoding.lua" },
 
-	--[[ Important parts of the system ]]--
-	--"login.lua",
-	--"message.lua",
-	--[BROKEN] "room.lua",
+	{ "IGNORE", "important/login.lua" },
+	{ "IGNORE", "important/message.lua" },
+	{ "BROKEN", "important/room.lua" },
 
-
-	--"misc.lua"
+	{ "IGNORE", "misc.lua" },
 }
 
 local loadTests = function()
@@ -44,8 +41,10 @@ local loadTests = function()
 	for name = 1, #testCases do
 		name = testCases[name]
 
-		testWrapper(name)
-		require("cases/" .. name)
+		if string.find(name[1], "CHECK") then
+			testWrapper(name[2])
+			require("cases/" .. name[2])
+		end
 	end
 end
 loadTests()
