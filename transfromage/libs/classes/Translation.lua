@@ -20,7 +20,8 @@ local zlibDecompress  = require("miniz").inflate
 
 local downloadedTranslations = { }
 
-local getOfficialTranslationsData = coroutine.makef(function(language)
+local getAndProcessOfficialTranslationsData = coroutine.makef(function(translation, language,
+	onDownload)
 	local head, body = http_request("GET", string_format(enum_url.translation, language))
 	if head.code ~= 200 then -- The enum must prevent it, but we never know
 		return error(enum_error.translationFailure, enum_errorLevel.low, language)
@@ -28,7 +29,28 @@ local getOfficialTranslationsData = coroutine.makef(function(language)
 
 	body = zlibDecompress(body, 1) -- Decodes
 
-	return string_split(body, "\n-\n", true)
+	local totalLines
+	body, totalLines = string_split(body, "\n-\n", true)
+
+	local data = { }
+
+	local index, value
+	for content = 1, totalLines do
+		content = body[content]
+		if content ~= '' then
+			index, value = string_match(content, "^(.-)=(.*)$")
+			data[index] = value
+		end
+	end
+
+	translation.data = data
+	downloadedTranslations[language] = translation
+
+	if onDownload then
+		onDownload(translation)
+	end
+
+	return body
 end)
 
 local Translation = table.setNewClass("Translation")
@@ -45,33 +67,16 @@ Translation.new = function(self, language, onDownload)
 		string_format(enum_error.invalidEnum, "download", "language", "language"))
 	if not language then return end
 
-	-- Caches all translation lines
-	local body, totalLines = getOfficialTranslationsData(language)
-
-	local data = { }
-
-	local index, value
-	for content = 1, totalLines do
-		content = body[content]
-		if content ~= '' then
-			index, value = string_match(content, "^(.-)=(.*)$")
-			data[index] = value
-		end
-	end
-
 	local translation = setmetatable({
 		language = language,
-		data = data,
+		data = nil,
 		_dataWithLuaFormatting = { }, -- Formatted line ( %1 → %s )
 		_dataWithGendersHandled = { }, -- Gender line ( "a(b|c)" → { "ab", "ac" } )
 		_indexWithDependentLangChecked = { } -- Lines without nested default verified, ( != "@language" )
 	}, self)
 
-	downloadedTranslations[language] = translation
-
-	if onDownload then
-		onDownload(translation)
-	end
+	-- Caches all translation lines
+	getAndProcessOfficialTranslationsData(translation, language, onDownload)
 
 	return translation
 end
@@ -134,30 +139,27 @@ local checkDependentLanguageForIndex = function(translation, index)
 	return rawValue
 end
 
-local formatDataAsLua = function(self, rawValue)
+local formatDataAsLua = function(translation, index, rawValue)
 	-- Changes %%%d to %d, so it can be constructed with string_format
-	local dataWithLuaFormatting = self._dataWithLuaFormatting
+	local dataWithLuaFormatting = translation._dataWithLuaFormatting
 
 	if not dataWithLuaFormatting[index] then
-		rawValue = string_gsub(rawValue, "%%%d", "%s")
-		dataWithLuaFormatting[index] = rawValue
+		dataWithLuaFormatting[index] = string_gsub(rawValue, "%%%d", "%s")
 	end
 
-	return rawValue
+	return dataWithLuaFormatting[index]
 end
 
-local handleGenders = function(self)
+local handleGenders = function(translation, index, rawValue)
 	-- Handles the gender system (male|female)
-	local dataWithGendersHandled = self._dataWithGendersHandled
+	local dataWithGendersHandled = translation._dataWithGendersHandled
 
-	if dataWithGendersHandled[index] == false
-		or not string_find(dataWithGendersHandled[index], '|', nil, true) then return end
+	if not dataWithGendersHandled[index] and
+		not string_find(rawValue, '|', nil, true) then return end
 
 	if not dataWithGendersHandled[index] then
-		local dataWithLuaFormatting = self._dataWithLuaFormatting[index]
-
-		local male, changes = string_gsub(dataWithLuaFormatting, "%((.-)|.-%)", "%1")
-		local female = string_gsub(dataWithLuaFormatting, "%(.-|(.-)%)", "%1")
+		local male, changes = string_gsub(rawValue, "%((.-)|.-%)", "%1")
+		local female = string_gsub(rawValue, "%(.-|(.-)%)", "%1")
 
 		-- Cache possible non-translated lines with |
 		dataWithGendersHandled[index] = (changes > 0 and { male, female } or false)
@@ -191,9 +193,9 @@ Translation.get = function(self, index, raw)
 
 		local rawValue = checkDependentLanguageForIndex(self, index)
 
-		rawValue = formatDataAsLua(self, rawValue)
+		rawValue = formatDataAsLua(self, index, rawValue)
 
-		local formattedValue, hasGender = handleGenders(self, rawValue)
+		local formattedValue, hasGender = handleGenders(self, index, rawValue)
 
 		return formattedValue or rawValue, hasGender
 	end

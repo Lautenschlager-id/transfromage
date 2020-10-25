@@ -28,6 +28,8 @@ local testCases = {
 	{ "IGNORE+TODO", "utils/bit64.lua" },
 	{ "IGNORE+TODO", "utils/encoding.lua" },
 
+	{ "CHECK", "translation.lua" },
+
 	{ "IGNORE", "important/login.lua" },
 	{ "IGNORE", "important/message.lua" },
 	{ "BROKEN", "important/room.lua" },
