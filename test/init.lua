@@ -24,9 +24,17 @@ do
 end
 
 local testCases = {
-	"login.lua",
+	--[[ Make sure all utils are working ]]--
+	-- "utils/extensions.lua",
+	-- "utils/bit64.lua",
+	-- "utils/encoding.lua",
+
+	--[[ Important parts of the system ]]--
+	--"login.lua",
 	--"message.lua",
-	--"room.lua", NOT WORKING
+	--[BROKEN] "room.lua",
+
+
 	--"misc.lua"
 }
 

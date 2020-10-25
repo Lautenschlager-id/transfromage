@@ -52,13 +52,19 @@ local run = coroutine.wrap(function()
 			timerResumeCoro[1] = timer.setTimeout(30000, resumeCoro, coro)
 
 			time = os.clock()
-			local ignoreTime = coroutine.yield(test.fn(expect))
+
+			local ignoreTime = test.fn(expect)
+			if expected ~= 0 then
+				coroutine.yield()
+			end
+
 			if ignoreTime == 0 then
 				time = '?'
 			else
 				time = os.clock() - time
 				time = time + ((ignoreTime or 0) / 1000)
 			end
+
 			collectgarbage()
 
 			if err then
@@ -95,6 +101,7 @@ local run = coroutine.wrap(function()
 end)
 
 local test = function(name, fn)
+	if not fn then return end
 	tests[#tests + 1] = {
 		name = name,
 		fn = fn
@@ -102,12 +109,14 @@ local test = function(name, fn)
 end
 
 return function(suite, _client)
-	if type(suite) == "function" then
+	local type = type(suite)
+
+	if type == "function" then
 		suite(test, transfromage, client)
-	elseif type(suite) == "table" then
+	elseif type == "table" then
 		-- Receives from test.lua
 		transfromage, client = suite, _client
-	elseif type(suite) == "string" then
+	elseif type == "string" then
 		-- File name from test.lua
 		filePrefix = suite
 	else
