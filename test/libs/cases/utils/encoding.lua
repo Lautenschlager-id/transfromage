@@ -7,6 +7,7 @@ require("wrapper")(function(test, transfromage, client)
 		-- TO_DO: packetCipher
 
 		p("Validating password")
-		assert(getPasswordHash("test1234") == "vW295cfeF44KIiDEWnsKAWNzrFm9Py/O3Dq+ZLfLh9c=")
+		assert_eq(getPasswordHash("test1234"), "vW295cfeF44KIiDEWnsKAWNzrFm9Py/O3Dq+ZLfLh9c=",
+			"f(test1234)")
 	end)
 end)

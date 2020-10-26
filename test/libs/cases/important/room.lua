@@ -7,10 +7,10 @@ require("wrapper")(function(test, transfromage, client)
 		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
 			p("Received event roomChanged")
 
-			assert(roomName == client.language .. "-#bolodefchoco666")
+			assert(roomName, client.language .. "-#bolodefchoco666", "roomName")
 
-			assert(isPrivate ~= nil)
-			assert(roomLanguage == client.language)
+			assert_eq(type(isPrivate), "boolean", "type(isPrivate)")
+			assert_eq(roomLanguage, client.language, "roomLanguage")
 
 			return true
 		end))
@@ -26,7 +26,7 @@ require("wrapper")(function(test, transfromage, client)
 			p("Received event joinTribeHouse")
 
 			assert(roomName)
-			assert(string.sub(roomName, 1, 2) == "*\3")
+			assert_eq(string.sub(roomName, 1, 2), "*\3", "roomName[1,2]")
 
 			assert(roomLanguage)
 

@@ -3,7 +3,7 @@ require("wrapper")(function(test, transfromage, client)
 		client:on("roomMessage", expect(function(playerName, message)
 			p("Received event roomMessage")
 			if playerName == client.playerName then
-				assert(message == "666")
+				assert_eq(message, "666", "message")
 
 				return true
 			end
@@ -17,9 +17,9 @@ require("wrapper")(function(test, transfromage, client)
 		client:on("chatMessage", expect(function(chatName, playerName, message, playerCommunity)
 			p("Received event chatMessage")
 			if playerName == client.playerName then
-				assert(chatName == testChat.name)
-				assert(message == "69")
-				assert(playerCommunity == transfromage.enum.chatCommunity.br)
+				assert_eq(chatName, testChat.name, "chatName")
+				assert_eq(message, "69", "message")
+				assert_eq(playerCommunity, transfromage.enum.chatCommunity.br, "playerCommunity")
 
 				return true
 			end
@@ -37,9 +37,9 @@ require("wrapper")(function(test, transfromage, client)
 		client:on("chatMessage", expect(function(chatName, playerName, message, playerCommunity)
 			p("Received event chatMessage")
 			if playerName == client.playerName then
-				assert(chatName == testChat)
-				assert(message == "69")
-				assert(playerCommunity == transfromage.enum.chatCommunity.br)
+				assert_eq(chatName, testChat, "chatName")
+				assert_eq(message, "69", "message")
+				assert_eq(playerCommunity, transfromage.enum.chatCommunity.br, "playerCommunity")
 
 				return true
 			end
@@ -55,8 +55,8 @@ require("wrapper")(function(test, transfromage, client)
 		client:on("whisperMessage", expect(function(playerName, message, playerCommunity)
 			p("Received event whisperMessage")
 			if playerName == client.playerName then
-				assert(message == "911")
-				assert(playerCommunity == transfromage.enum.chatCommunity.br)
+				assert_eq(message, "911", "message")
+				assert_eq(playerCommunity, transfromage.enum.chatCommunity.br, "playerCommunity")
 
 				return true
 			end

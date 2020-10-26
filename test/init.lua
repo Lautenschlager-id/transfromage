@@ -23,12 +23,28 @@ do
 	end
 end
 
+local _assert = function(condition, message, x, y, varname)
+	local tX, tY = type(x), type(y)
+	x, y = tostring(x), tostring(y)
+	x, y = string.sub(x, 1, 10), string.sub(y, 1, 10)
+
+	assert(condition, string.format(message, varname, x, tX, y, tY))
+end
+
+_G.assert_eq = function(x, y, varname)
+	_assert(x == y, "(%s)'%s'<%s> is not equals to '%s'<%s>", x, y, varname)
+end
+
+_G.assert_neq = function(x, y, varname)
+	_assert(x ~= y, "(%s)'%s'<%s> is equals to '%s'<%s>", x, y, varname)
+end
+
 local testCases = {
 	{ "IGNORE+TODO", "utils/extensions.lua" },
 	{ "IGNORE+TODO", "utils/bit64.lua" },
 	{ "IGNORE+TODO", "utils/encoding.lua" },
 
-	{ "CHECK", "packetControl.lua" },
+	{ "IGNORE+TODO", "packetControl.lua" },
 
 	{ "IGNORE", "translation.lua" },
 

@@ -8,10 +8,10 @@ require("wrapper")(function(test, transfromage, client)
 			assert(onlinePlayers)
 
 			assert(country)
-			assert(country ~= '')
+			assert_neq(country, '', "country")
 
 			assert(language)
-			assert(language ~= '')
+			assert_neq(language, '', "language")
 
 			client:connect(args[2], args[3])
 
@@ -24,11 +24,11 @@ require("wrapper")(function(test, transfromage, client)
 			assert(playerId)
 
 			assert(playerName)
-			assert(playerName ~= '')
+			assert_neq(playerName, '', "playerName")
 
 			assert(playedTime)
 
-			assert(playerName == args[2])
+			assert_eq(playerName, args[2], "playerName")
 
 			return true
 		end))

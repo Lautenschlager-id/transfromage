@@ -5,6 +5,8 @@ local transfromage, client
 local filePrefix
 local tests = { }
 
+local totalTime = 0
+
 local timerResumeCoro = { }
 
 local resumeCoro = function(coro)
@@ -80,6 +82,7 @@ local run = coroutine.wrap(function()
 
 		if pass then
 			passed = passed + 1
+			totalTime = totalTime + time
 			print("\t# Test finished with success (" .. time .. "s): " .. colorize("highlight", test.name))
 		else
 			print(colorize("err", err))
@@ -89,7 +92,7 @@ local run = coroutine.wrap(function()
 
 	local failed = #tests - passed
 	if failed == 0 then
-		print("\t# All tests passed!")
+		print("\t# All tests passed! (" .. totalTime .. "s)")
 	else
 		print("\t# " .. failed .. " failed test(s)")
 	end

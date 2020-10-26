@@ -5,23 +5,23 @@ require("wrapper")(function(test, transfromage, client)
 	test("buffer", function(expect)
 		local buffer = Buffer()
 
-		assert(buffer:receive(1) == nil)
+		assert_eq(buffer:receive(1), nil, "f(1)")
 
 		buffer:push({ 65, 66, 67 })
 
-		assert(buffer._count == 3)
-		assert(buffer.queue[1] == 65)
-		assert(buffer.queue[2] == 66)
-		assert(buffer.queue[3] == 67)
+		assert_eq(buffer._count, 3, "count")
+		assert_eq(buffer.queue[1], 65, "t[1]")
+		assert_eq(buffer.queue[2], 66, "t[2]")
+		assert_eq(buffer.queue[3], 67, "t[3]")
 
-		assert(type(buffer:receive(0)) == "table")
-		assert(buffer:receive(1)[1] == 65)
-		assert(buffer:receive(1)[1] == 66)
+		assert_eq(type(buffer:receive(0)), "table", "type(t)")
+		assert_eq(buffer:receive(1)[1], 65, "f(1)[1]")
+		assert_eq(buffer:receive(1)[1], 66, "f(1)[1]")
 
 		buffer:push("D")
 
-		assert(buffer:receive(1)[1] == 67)
-		assert(buffer:receive(1)[1] == 68)
+		assert_eq(buffer:receive(1)[1], 67, "f(1)[1]")
+		assert_eq(buffer:receive(1)[1], 68, "f(1)[1]")
 	end)
 
 	test("byte array", function(expect)
@@ -30,18 +30,18 @@ require("wrapper")(function(test, transfromage, client)
 		p("Validating duplicate")
 		local copy = byteArray:duplicate()
 
-		assert(byteArray.stack[1] == 65)
-		assert(byteArray.stack[2] == 66)
-		assert(byteArray.stack[3] == 67)
+		assert_eq(byteArray.stack[1], 65, "t[1]")
+		assert_eq(byteArray.stack[2], 66, "t[2]")
+		assert_eq(byteArray.stack[3], 67, "t[3]")
 
-		assert(copy.stack[1] == 65)
-		assert(copy.stack[2] == 66)
-		assert(copy.stack[3] == 67)
+		assert_eq(copy.stack[1], 65, "t[1]")
+		assert_eq(copy.stack[2], 66, "t[2]")
+		assert_eq(copy.stack[3], 67, "t[3]")
 
 		copy.stack[1] = 666
 
-		assert(copy.stack[1] == 666)
-		assert(byteArray.stack[1] == 65)
+		assert_eq(copy.stack[1], 666, "t[1]")
+		assert_eq(byteArray.stack[1], 65, "t[1]")
 
 
 		p("Validating write")
@@ -60,37 +60,37 @@ require("wrapper")(function(test, transfromage, client)
 
 		local len = (3 + 2 + 3 + 4 + (0xFFFF + 2) + (0xFFFFFF + 3) + 1 + 1)
 
-		assert(byteArray.stackLen == len)
-		assert(byteArray.stack[1] == 1)
-		assert(byteArray.stack[byteArray.stackLen] == 0)
+		assert_eq(byteArray.stackLen, len, "stackLen")
+		assert_eq(byteArray.stack[1], 1, "t[1]")
+		assert_eq(byteArray.stack[byteArray.stackLen], 0, "t[-1]")
 
 		p("Validating read")
 		local firstTwo = byteArray:read8(2)
-		assert(firstTwo[1] == 1)
-		assert(firstTwo[2] == 2)
-		assert(byteArray:read8() == 0xFF)
+		assert_eq(firstTwo[1], 1, "t[1]")
+		assert_eq(firstTwo[2], 2, "t[1]")
+		assert_eq(byteArray:read8(), 0xFF, "r8()")
 
 		len = len - 3
-		assert(byteArray.stackLen == len)
+		assert_eq(byteArray.stackLen, len, "stackLen")
 
-		assert(byteArray:read16() == 0xFFFF)
-		assert(byteArray:read24() == 0xFFFFFF)
-		assert(byteArray:read32() == 0x7FFFFFFF)
+		assert_eq(byteArray:read16(), 0xFFFF, "r16()")
+		assert_eq(byteArray:read24(), 0xFFFFFF, "r24()")
+		assert_eq(byteArray:read32(), 0x7FFFFFFF, "r32()")
 
 		len = len - 2 - 3 - 4
-		assert(byteArray.stackLen == len)
+		assert_eq(byteArray.stackLen, len, "stackLen")
 
-		assert(byteArray:readUTF() == utf)
-		assert(byteArray:readBigUTF() == bigUtf)
+		assert_eq(byteArray:readUTF(), utf, "rUTF()")
+		assert_eq(byteArray:readBigUTF(), bigUtf, "rBUTF()")
 
 		len = len - (0xFFFF + 2) - (0xFFFFFF + 3)
-		assert(byteArray.stackLen == len)
+		assert_eq(byteArray.stackLen, len, "stackLen")
 
-		assert(byteArray:readBool() == true)
-		assert(byteArray:readBool() == false)
+		assert_eq(byteArray:readBool(), true, "rBool()")
+		assert_eq(byteArray:readBool(), false, "rBool()")
 
 		len = len - 1 - 1
-		assert(byteArray.stackLen == len)
+		assert_eq(byteArray.stackLen, len, "stackLen")
 
 		-- TO_DO: ByteArray.readSigned16
 	end)
