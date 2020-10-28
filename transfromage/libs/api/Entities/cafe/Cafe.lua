@@ -34,8 +34,12 @@ Cafe.loadTopics = function(self, packet)
 	return self
 end
 
-Cafe.open = function(self, close)
-	return self._client:openCafe(close)
+Cafe.open = function(self)
+	return self._client:openCafe(true)
+end
+
+Cafe.close = function(self)
+	return self._client:openCafe(false)
 end
 
 Cafe.reload = function(self)

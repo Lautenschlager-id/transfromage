@@ -41,18 +41,24 @@ end
 
 local testCases = {
 	{ "IGNORE+TODO", "utils/extensions.lua" },
-	{ "IGNORE+TODO", "utils/bit64.lua" },
+	{ "TODO", "utils/bit64.lua" },
 	{ "IGNORE+TODO", "utils/encoding.lua" },
 
 	{ "IGNORE+TODO", "packetControl.lua" },
 
 	{ "IGNORE", "translation.lua" },
 
-	{ "IGNORE", "important/login.lua" },
+	{ "TODO", "eventEmitters.lua" },
+
+	{ "TODO", "important/connection.lua" },
+
+	{ "CHECK", "important/login.lua" },
 	{ "IGNORE", "important/message.lua" },
 	{ "BROKEN", "important/room.lua" },
 
 	{ "IGNORE", "misc.lua" },
+
+	{ "CHECK+BROKEN", "cafe.lua" }, -- topics title is fucked up
 }
 
 local loadTests = function()
