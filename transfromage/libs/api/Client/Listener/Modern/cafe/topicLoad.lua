@@ -5,12 +5,15 @@ local onCafeTopicLoad = function(self, packet, connection, identifiers)
 
 	packet:read8() -- ?
 
-	local topicId = packet:read32()
-	if not cafe.topics[topicId] then
-		cafe.topics[topicId] = Topic:new(self, nil, topicId)
+	local topicId, tmpTopic = packet:read32()
+	if not cafe.topicsById[topicId] then
+		tmpTopic = Topic:new(self, nil, topicId)
+
+		cafe.topicsById[topicId] = tmpTopic
+		cafe.topics[#cafe.topics + 1] = tmpTopic
 	end
 
-	local topic = cafe.topics[topicId]
+	local topic = cafe.topicsById[topicId]
 	topic:retrieveMessages(packet)
 
 	--[[@

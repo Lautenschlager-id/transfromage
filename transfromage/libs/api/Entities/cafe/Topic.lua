@@ -13,7 +13,7 @@ Topic.new = function(self, client, packet, id)
 	}
 
 	if packet then
-		data.id = packet:read32()
+		data.id = id or packet:read32()
 		Topic.update(data, packet)
 	elseif id then
 		data.id = id
@@ -34,14 +34,22 @@ end
 
 Topic.retrieveMessages = function(self, packet)
 	local client = self._client
+
+	local tmpMsg
 	local messages, totalMessages = { }, 0
+	local messagesById = { }
 
 	while packet.stackLen > 0 do
+		tmpMsg = Message:new(client, self.id, packet)
+
 		totalMessages = totalMessages + 1
-		messages[totalMessages] = Message:new(client, self.id, packet)
+		messages[totalMessages] = tmpMsg
+
+		messagesById[tmpMsg.id] = tmpMsg
 	end
 
 	self.messages = messages
+	self.messagesById = messagesById
 	self.author = messages[1].author
 
 	return self

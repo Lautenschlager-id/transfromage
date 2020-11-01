@@ -70,7 +70,7 @@ local run = coroutine.wrap(function()
 			collectgarbage()
 
 			if err then
-				error(err)
+				error(err .. "\nDebu Traceback: " .. debug.traceback())
 			end
 
 			if expected > 0 then

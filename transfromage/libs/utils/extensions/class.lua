@@ -31,9 +31,13 @@ end
 	@returns table A metatable with constructor and alias handlers.
 ]]
 table.setNewClass = function(name)
-	local class = setmetatable({ }, classMeta)
+	local class = setmetatable({
+		__metatable = name,
+		__tostring = function()
+			return name
+		end
+	}, classMeta)
 	class.__index = class
-	class.__metatable = name
 
 	return class
 end
