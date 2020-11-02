@@ -58,7 +58,7 @@ local testCases = {
 
 	{ "IGNORE", "misc.lua" },
 
-	{ "CHECK+BROKEN", "cafe.lua" }, -- topics title is fucked up
+	{ "IGNORE+TODO", "cafe.lua" },
 }
 
 local loadTests = function()

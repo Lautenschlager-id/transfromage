@@ -1,5 +1,4 @@
 require("wrapper")(function(test, transfromage, client)
-
 	test("get cafe data", function(expect)
 		local listLoaded = false
 
@@ -31,7 +30,7 @@ require("wrapper")(function(test, transfromage, client)
 				client:reloadCafe()
 			else
 				p("Closing cafe")
-				client:openCafe(false)
+				client:openCafe(true)
 			end
 		end, 2))
 
@@ -93,7 +92,7 @@ require("wrapper")(function(test, transfromage, client)
 				totalMessages = totalMessages - 1
 				if totalMessages == 0 then
 					p("Closing cafe")
-					client:openCafe(false)
+					client:openCafe(true)
 				end
 			end, totalMessages))
 		end))
@@ -132,7 +131,7 @@ require("wrapper")(function(test, transfromage, client)
 			assert(#topics > 0)
 
 			p("Opening cafe topic")
-			client.cafe:openTopic(topics[1])
+			client.cafe:openTopic(topics[#topics])
 		end))
 
 		client:on("cafeTopicLoad", expect(function(topic)

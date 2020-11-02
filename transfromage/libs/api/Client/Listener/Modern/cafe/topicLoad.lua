@@ -47,6 +47,10 @@ local onCafeTopicLoad = function(self, packet, connection, identifiers)
 
 	local messages, tmpMessage = topic.messages
 	local cachedMessages = cafe.cachedMessages
+	if not cachedMessages[topic.id] then
+		cachedMessages[topic.id] = { }
+		cachedMessages = cachedMessages[topic.id]
+	end
 
 	for i = 1, #messages do -- Unfortunately I couldn't make it decrescent, otherwise it would trigger the events in the wrong order
 		tmpMessage = messages[i]
