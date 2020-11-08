@@ -20,4 +20,6 @@ require("wrapper")(function(test, transfromage, client)
 
 		client:sendCommand("time")
 	end)
+
+	test("staff list", TO_DO)
 end)
