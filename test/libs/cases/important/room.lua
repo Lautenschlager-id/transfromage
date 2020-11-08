@@ -11,8 +11,6 @@ require("wrapper")(function(test, transfromage, client)
 
 			assert_eq(type(isPrivate), "boolean", "type(isPrivate)")
 			assert_eq(roomLanguage, client.language, "roomLanguage")
-
-			return true
 		end))
 
 		p("Joining room")
@@ -29,8 +27,6 @@ require("wrapper")(function(test, transfromage, client)
 			assert_eq(string.sub(roomName, 1, 2), "*\3", "roomName[1,2]")
 
 			assert(roomLanguage)
-
-			return true
 		end))
 
 		p("Joining tribe house")

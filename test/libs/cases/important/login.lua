@@ -14,8 +14,6 @@ require("wrapper")(function(test, transfromage, client)
 			assert_neq(language, '', "language")
 
 			client:connect(args[2], args[3])
-
-			return true
 		end))
 
 		client:once("mainConnection", expect(function(playerId, playerName, playedTime)
@@ -29,14 +27,10 @@ require("wrapper")(function(test, transfromage, client)
 			assert(playedTime)
 
 			assert_eq(playerName, args[2], "playerName")
-
-			return true
 		end))
 
 		client:once("connection", expect(function()
 			p("Received event connection")
-
-			return true
 		end))
 
 		p("Starting client")

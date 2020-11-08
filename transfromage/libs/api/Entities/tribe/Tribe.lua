@@ -39,7 +39,7 @@ Tribe.retrieveMembers = function(self, packet)
 	return members
 end
 
-Tribe.retrieveRoles = function(self)
+Tribe.retrieveRoles = function(self, packet)
 	local roles = self.roles
 
 	for r = 1, packet:read16() do

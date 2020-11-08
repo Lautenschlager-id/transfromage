@@ -25,12 +25,11 @@ end
 
 local isListeningSigterm = false
 local killOnSigterm = function(client)
-	if isListeningSigint then
-		-- Adds new client to the list
-		totalClients = totalClients + 1
-		clients[totalClients] = client
-		return
-	end
+	-- Adds new client to the list
+	totalClients = totalClients + 1
+	clients[totalClients] = client
+
+	if isListeningSigint then return end
 	isListeningSigint = true
 
 	uv_signal_start(uv_new_signal(), "sigint", killProcess)

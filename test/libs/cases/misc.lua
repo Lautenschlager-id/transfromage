@@ -2,7 +2,6 @@ require("wrapper")(function(test, transfromage, client)
 	test("server ping", function(expect)
 		client:once("serverPing", expect(function(time)
 			assert(time)
-			return true
 		end))
 
 		return 0
@@ -14,8 +13,6 @@ require("wrapper")(function(test, transfromage, client)
 			assert(time.hour)
 			assert(time.minute)
 			assert(time.second)
-
-			return true
 		end))
 
 		client:sendCommand("time")

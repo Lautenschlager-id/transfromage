@@ -4,8 +4,6 @@ require("wrapper")(function(test, transfromage, client)
 			p("Received event roomMessage")
 			if playerName == client.playerName then
 				assert_eq(message, "666", "message")
-
-				return true
 			end
 		end))
 
@@ -20,8 +18,6 @@ require("wrapper")(function(test, transfromage, client)
 				assert_eq(chatName, testChat.name, "chatName")
 				assert_eq(message, "69", "message")
 				assert_eq(playerCommunity, transfromage.enum.chatCommunity.br, "playerCommunity")
-
-				return true
 			end
 		end))
 
@@ -40,8 +36,6 @@ require("wrapper")(function(test, transfromage, client)
 				assert_eq(chatName, testChat, "chatName")
 				assert_eq(message, "69", "message")
 				assert_eq(playerCommunity, transfromage.enum.chatCommunity.br, "playerCommunity")
-
-				return true
 			end
 		end))
 
@@ -57,8 +51,6 @@ require("wrapper")(function(test, transfromage, client)
 			if playerName == client.playerName then
 				assert_eq(message, "911", "message")
 				assert_eq(playerCommunity, transfromage.enum.chatCommunity.br, "playerCommunity")
-
-				return true
 			end
 		end))
 
