@@ -18,13 +18,11 @@ You can also check out **[Fromage API](https://github.com/Lautenschlager-id/From
 
 This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python version of Transfromage API](https://github.com/Tocutoeltuco/transfromage).
 
-![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 6.0 are no longer working due to internal changes of the game.**<br>
-![/!\\](https://i.imgur.com/HQ188PK.png) **If you are not using an official Bot account, versions under 8.0 are no longer working due to internal changes of the API endpoint.**<br>
-![/!\\](https://i.imgur.com/HQ188PK.png) **Versions under 7.1 no longer support downloading game translations due to internal changes of the game.**<br>
+![/!\\](https://i.imgur.com/HQ188PK.png) **v8.1.0 has undocumented changes and is a quick patch to keep the API working. A new, better, version of the API is under development and will be released soon.**
 
 ## Authentication keys Endpoint
 
-This API relies on an [endpoint](https://api.tocu.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
+This API relies on an [endpoint](https://api.tocuto.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
 
 To use it you will need a token which you can get by [applying through this form](https://forms.gle/N6Et1hLGQ9hmg95F6). See below to know the names of Transfromage managers who handle the token system.
 - **[Tocutoeltuco](https://github.com/Tocutoeltuco)** @discord=> `Tocutoeltuco#0018` <sub>`212634414021214209`</sub>;

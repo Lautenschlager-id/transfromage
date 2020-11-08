@@ -1,6 +1,9 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v8.1.0 - 07/11/2020
+- This quick patch allows the API to work. Nothing should have changed, but you can read the commit's changes if anything. A new, better, version is under development.
+
 ## v8.0.0 - 05/09/2020
 ## News
 - The _ready_ event now receives a new parameter _language_ which in the future may vary.
