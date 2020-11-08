@@ -1,2 +1,4 @@
 *.exe
 MyFirstBot/
+deps/
+*.log

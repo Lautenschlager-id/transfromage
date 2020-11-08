@@ -103,7 +103,7 @@ local meta = {
 	@returns client The new Client object.
 	@struct {
 		playerName = "", -- The nickname of the account that is attached to this instance, if there's any.
-		community = 0, -- The community enum where the object is set to perform the login. Default value is EN.
+		language = 0, -- The language enum where the object is set to perform the login. Default value is EN.
 		main = { }, -- The main connection object, handles the game server.
 		bulle = { }, -- The bulle connection object, handles the room server.
 		event = { }, -- The event emitter object, used to trigger events.
@@ -135,7 +135,7 @@ client.new = function(self, tfmId, token, hasSpecialRole, updateSettings)
 
 	local obj = setmetatable({
 		playerName = nil,
-		community = enum.community.en,
+		language = enum.language.en,
 		main = connection:new("main", eventEmitter),
 		bulle = nil,
 		event = eventEmitter,
@@ -396,7 +396,8 @@ tribulleListener = {
 	end,
 	[66] = function(self, packet, connection, tribulleId) -- Whisper message
 		local playerName, community = packet:readUTF(), packet:read32()
-		local _, message = packet:readUTF(), packet:readUTF()
+		packet:readUTF()
+		local message = packet:readUTF()
 		--[[@
 			@name whisperMessage
 			@desc Triggered when the player receives a whisper.
@@ -719,40 +720,39 @@ packetListener = {
 		[21] = function(self, packet, connection, identifiers) -- Room changed
 			self.playerList = setmetatable({ }, meta.playerList) -- Refreshes it
 
-			local isPrivate, roomName = packet:readBool(), packet:readUTF()
+			local isPrivate, roomName, roomLanguage = packet:readBool(), packet:readUTF(), packet:readUTF()
 
 			if string_byte(roomName, 2) == 3 then
 				--[[@
 					@name joinTribeHouse
 					@desc Triggered when the account joins a tribe house.
 					@param tribeName<string> The name of the tribe.
+					@param roomLanguage<string> The language of the tribe.
 				]]
-				self.event:emit("joinTribeHouse", string_sub(roomName, 3))
+				self.event:emit("joinTribeHouse", string_sub(roomName, 3), roomLanguage)
 			else
 				--[[@
 					@name roomChanged
 					@desc Triggered when the player changes the room.
 					@param roomName<string> The name of the room.
+					@param roomLanguage<string> The language of the room.
 					@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
 				]]
-				self.event:emit("roomChanged", string_fixEntity(roomName), isPrivate)
+				self.event:emit("roomChanged", string_fixEntity(roomName), isPrivate, roomLanguage)
 			end
 		end
 	},
 	[6] = {
 		[6] = function(self, packet, connection, identifiers) -- Room message
-			local playerId, playerName = packet:read32(), packet:readUTF()
-			local playerCommu, message = packet:read8(), string_fixEntity(packet:readUTF())
+			local playerName, message = packet:readUTF(), string_fixEntity(packet:readUTF())
 			--[[@
 				@name roomMessage
 				@desc Triggered when the room receives a new user message.
 				@param playerName<string> The player who sent the message.
 				@param message<string> The message.
-				@param playerCommunity<int> The community id of @playerName.
-				@param playerId<int> The temporary id of @playerName.
 			]]
 			self.event:emit("roomMessage", string_toNickname(playerName, true),
-				string_fixEntity(message), playerCommu, playerId)
+				string_fixEntity(message))
 		end,
 		[20] = function(self, packet, connection, identifiers) -- /time
 			packet:read8() -- ?
@@ -1133,7 +1133,6 @@ packetListener = {
 			local playerId = packet:read32()
 			self.playerName = packet:readUTF()
 			local playedTime = packet:read32()
-			local community = packet:read8()
 
 			timer_setTimeout(5000, function()
 				--[[@
@@ -1142,15 +1141,13 @@ packetListener = {
 					@param playerId<int> The temporary id of the player during the section.
 					@param playerName<string> The name of the player that has connected.
 					@param playedTime<int> The time played by the player.
-					@param community<int> The community ID that the account has been logged into.
 				]]
-				self.event:emit("connection", playerId, self.playerName, playedTime, community)
+				self.event:emit("connection", playerId, self.playerName, playedTime)
 			end)
 		end,
 		[3] = function(self, packet, connection, identifiers) -- Correct handshake identifiers
 			local onlinePlayers = packet:read32()
 
-			local community = packet:readUTF() -- Necessary to get the country and authkeys later
 			local language = packet:readUTF()
 			local country = packet:readUTF()
 
@@ -1158,8 +1155,8 @@ packetListener = {
 
 			self._hbTimer = timer_setInterval(10 * 1000, sendHeartbeat, self)
 
-			local communityPacket = byteArray:new():write8(self.community):write8(0)
-			self.main:send(enum.identifier.community, communityPacket)
+			local communityPacket = byteArray:new():writeUTF(self.language)
+			self.main:send(enum.identifier.language, communityPacket)
 
 			local osInfo = byteArray:new()
 				:writeUTF("en"):writeUTF("Linux")
@@ -1170,29 +1167,43 @@ packetListener = {
 				@name ready
 				@desc Triggered when the connection is alive and ready to login.
 				@param onlinePlayers<int> The number of players connected in the game.
-				@param community<string> The community based on the country.
 				@param country<string> The client's country.
-				@param language<string> The language based on the account's community and country.
+				@param language<string> The language based on the account's country.
 			]]
-			self.event:emit("ready", onlinePlayers, community, country, language)
+			self.event:emit("ready", onlinePlayers, country, language)
 		end,
 		[35] = function(self, packet, connection, identifiers) -- Room list
 			 -- Room types
 			packet:read8(packet:read8())
 
 			local rooms, counter = { }, 0
+			local roomMode = packet:read8()
 			local pinned, pinnedCounter = { }, 0
 
-			local roomType, community, name, count, max, onFcMode
-			local roomMode = packet:read8()
+			local isPinned, language, country, name, count, max, onFcMode
 			while packet.stackLen > 0 do
-				roomType = packet:read8()
-				if roomType == 0 then -- Normal room
-					community = packet:read8()
-					name = packet:readUTF()
-					count = packet:read16() -- total mice
-					max = packet:read8() -- max total mice
-					onFcMode = packet:readBool() -- funcorp mode
+				isPinned = packet:readBool()
+				language = packet:readUTF()
+				country = packet:readUTF()
+				name = packet:readUTF()
+
+				if isPinned then
+					count = tonumber(packet:readUTF())
+					local command = packet:readUTF()
+					local args = packet:readUTF()
+					for roomName, roomCount in args:gmatch('&~(.-),(%d+)') do
+						pinnedCounter = pinnedCounter + 1
+						pinned[pinnedCounter] = {
+							name = roomName,
+							totalPlayers = roomCount,
+							language = language,
+							country = country
+						}
+					end
+				else
+					count = packet:read16()
+					max = packet:read8()
+					onFcMode = packet:readBool()
 
 					counter = counter + 1
 					rooms[counter] = {
@@ -1200,21 +1211,8 @@ packetListener = {
 						totalPlayers = count,
 						maxPlayers = max,
 						onFuncorpMode = onFcMode,
-						community = community
-					}
-				elseif roomType == 1 then -- Pinned rooms / modules
-					community = packet:read8()
-					name = packet:readUTF()
-					count = packet:readUTF() -- total mice
-					count = tonumber(count) or count -- Make it a number
-					packet:readUTF() -- mjj
-					packet:readUTF() -- m room/#module
-
-					pinnedCounter = pinnedCounter + 1
-					pinned[pinnedCounter] = {
-						name = name,
-						totalPlayers = count,
-						community = community
+						language = language,
+						country = country
 					}
 				end
 			end
@@ -1231,14 +1229,16 @@ packetListener = {
 						totalPlayers = 0, -- Number of players in the room.
 						maxPlayers = 0, -- Maximum Number of players the room can get.
 						onFuncorpMode = false, -- Whether the room is having a funcorp event (orange name) or not.
-						community = 0 -- The community of the room.
+						language = int, -- Language of room
+						country = int, -- Country of room
 					}
 				}
 				@struct @pinned {
 					[i] = {
-						name = "", -- The name of the object.
-						totalPlayers = 0, -- Number of players in the object counter. (Might be a string)
-						community = 0 -- The community of the object.
+						name = "", -- The name of the room.
+						totalPlayers = 0, -- Number of players in the room.
+						language = int, -- Language of room
+						country = int, -- Country of room
 					}
 				}
 			]]
@@ -1724,6 +1724,23 @@ packetListener = {
 		[7] = function(self, packet, connection, identifiers) -- Updates player shaman state [false]
 			handlePlayerField(self, packet, "isShaman", nil, nil, false)
 		end
+	},
+	[176] = {
+		[5] = function(self, packet, connection, identifiers)
+			--[[@
+				@name newLanguage
+				@desc Triggered when a language is changed.
+				@param language<string> The code of the language.
+				@param country<string> The code of the country.
+				@param readRight<boolean> Whether the language is read left to right or not.
+				@param readSpecialChar<boolean> Whether the language has special characters or not.
+			 ]]
+			local language, country = packet:readUTF(), packet:readUTF()
+			local readRight, readSpecialChar = packet:readBool(), packet:readBool()
+			self.event:emit("newLanguage", language, country, readRight, readSpecialChar)
+		end,
+		[6] = function(self, packet, connection, identifiers)
+		end
 	}
 }
 
@@ -2180,18 +2197,19 @@ end
 -- Methods
 -- Initialization
 --[[@
-	@name setCommunity
-	@desc Sets the community the bot will connect to.
+	@name setLanguage
+	@desc Sets the language the bot will connect to.
 	@desc /!\ This method must be called before the @see start.
-	@param community?<enum.community> An enum from @see community. (index or value) @default EN
+	@param language?<enum.language> An enum from @see language. (index or value) @default EN
 ]]
-client.setCommunity = function(self, community)
-	community = enum_validate(enum.community, enum.community.en, community,
-		string_format(enum.error.invalidEnum, "setCommunity", "community", "community"))
-	if not community then return end
+client.setLanguage = function(self, language)
+	language = enum_validate(enum.language, enum.language.en, language,
+		string_format(enum.error.invalidEnum, "setCommunity", "language", "language"))
+	if not language then return end
 
-	self.community = community
+	self.language = language
 end
+client.setCommunity = "setLanguage"
 --[[@
 	@name handlePlayers
 	@desc Toggles the field _\_handle\_players_ of the instance.
@@ -2298,7 +2316,7 @@ end
 ]]
 client.enterRoom = function(self, roomName, isSalonAuto)
 	self.main:send(enum.identifier.room,
-		byteArray:new():write8(self.community):writeUTF(roomName):writeBool(isSalonAuto))
+		byteArray:new():writeUTF(''):writeUTF(roomName):writeBool(isSalonAuto))
 end
 --[[@
 	@name enterPrivateRoom
@@ -2652,7 +2670,13 @@ client.requestRoomList = function(self, roomMode)
 
 	self.main:send(enum.identifier.roomList, byteArray:new():write8(roomMode))
 end
-
+--[[@
+	@name requestLanguage
+	@desc Requests the list of available languages.
+]]
+client.requestLanguage = function(self)
+	self.main:send(enum.identifier.getLanguage, byteArray:new())
+end
 ----- Compatibility -----
 client.insertReceiveFunction = "insertPacketListener"
 client.insertTribulleFunction = "insertTribulleListener"
