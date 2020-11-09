@@ -1,6 +1,17 @@
 require("wrapper")(function(test, transfromage, client)
+	test("tribe message", function(expect)
+		client:on("tribeMessage", expect(function(memberName, message)
+			p("Received event tribeMessage")
+			if playerName == client.playerName then
+				assert_eq(message, "666", "message")
+			end
+		end))
+
+		client:sendTribeMessage("666")
+	end)
+
 	test("open tribe interface", function(expect)
-		client:on("tribeInterface", expect(function(tribe)
+		client:once("tribeInterface", expect(function(tribe)
 			p("Received event tribeInterface")
 			assert(tribe)
 
@@ -33,31 +44,22 @@ require("wrapper")(function(test, transfromage, client)
 			assert((next(tribe.roles)))
 		end))
 
-		client:openTribeInterface(true)
-	end)
-
-	test("tribe message", function(expect)
-		client:on("tribeMessage", expect(function(memberName, message)
-			p("Received event tribeMessage")
-			if playerName == client.playerName then
-				assert_eq(message, "666", "message")
-			end
-		end))
-
-		client:sendTribeMessage("666")
+		client:openTribeInterface()
 	end)
 
 	test("tribe greeting message", function(expect)
 		local currentMessage = client.tribe.greetingMessage
 
-		client:on("tribeInterface", expect(function(tribe)
+		client:once("tribeInterface", expect(function(tribe)
 			p("Received event tribeInterface")
 			client:setTribeGreetingMessage(currentMessage)
 
-			assert(tribe.greetingMessage == "69")
+			assert(tribe)
+			assert(client.tribe)
+
+			assert_eq(tribe.greetingMessage, "69", "t.greetingMessage")
 		end))
 
 		client:setTribeGreetingMessage("69")
-		client:openTribeInterface()
 	end)
 end)
