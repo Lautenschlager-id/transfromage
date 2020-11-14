@@ -73,4 +73,8 @@ Tribe.setMemberRole = function(self, memberName, roleId)
 	return self._client:setTribeMemberRole(memberName, roleId)
 end
 
+Tribe.sendMessage = function(self, message)
+	return self._client:sendTribeMessage(message)
+end
+
 return Tribe

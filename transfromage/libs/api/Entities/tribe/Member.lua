@@ -13,7 +13,7 @@ Member.new = function(self, client, packet)
 	data.id = packet:read32()
 	data.playerName = string_toNickname(packet:readUTF())
 
-	data.gender = packet:readByte()
+	data.gender = packet:read8()
 
  	packet:read32() -- id again
 

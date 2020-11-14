@@ -56,11 +56,10 @@ local testCases = {
 	{ "IGNORE", "important/message.lua" },
 	{ "BROKEN", "important/room.lua" },
 
-	{ "CHECK+TODO", "tribe.lua" },
+	{ "IGNORE+TODO", "cafe.lua" },
+	{ "IGNORE+TODO", "tribe.lua" },
 
 	{ "IGNORE", "misc.lua" },
-
-	{ "IGNORE+TODO", "cafe.lua" },
 }
 
 local loadTests = function()

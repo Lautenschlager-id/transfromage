@@ -62,4 +62,34 @@ require("wrapper")(function(test, transfromage, client)
 
 		client:setTribeGreetingMessage("69")
 	end)
+
+	test("tribe message (OO)", function(expect)
+		client:on("tribeMessage", expect(function(memberName, message)
+			p("Received event tribeMessage")
+			if playerName == client.playerName then
+				assert_eq(message, "666", "message")
+			end
+		end))
+
+		client.tribe:sendMessage("666")
+	end)
+
+	test("open tribe interface (OO)", function(expect)
+		client:once("tribeInterface", expect(function(tribe)
+			p("Received event tribeInterface")
+		end))
+
+		client.tribe:openInterface()
+	end)
+
+	test("tribe greeting message (OO)", function(expect)
+		local currentMessage = client.tribe.greetingMessage
+
+		client:once("tribeInterface", expect(function(tribe)
+			p("Received event tribeInterface")
+			client.tribe:setGreetingMessage(currentMessage)
+		end))
+
+		client.tribe:setGreetingMessage("69")
+	end)
 end)
