@@ -14,8 +14,8 @@ local onStaffList = function(self, packet, connection, identifiers) -- /mod, /ma
 	local individualNames, namesCounter = { }, 0
 
 	for community, names in string_gmatch(data, "%[(.-)%] ([^\n]+)") do
-		communities[community] = { }
-		community = communities[community]
+		namesByCommunity[community] = { }
+		community = namesByCommunity[community]
 
 		commuCounter = 0
 		for name in string_gmatch(names, "<.->(.-)</.->") do

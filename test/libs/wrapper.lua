@@ -82,7 +82,9 @@ local run = coroutine.wrap(function()
 
 		if pass then
 			passed = passed + 1
-			totalTime = totalTime + time
+			if time ~= '?' then
+				totalTime = totalTime + time
+			end
 			print("\t# Test finished with success (" .. time .. "s): " .. colorize("highlight", test.name))
 		else
 			print(colorize("err", err))
