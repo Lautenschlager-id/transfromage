@@ -57,6 +57,7 @@ local testCases = {
 	{ "BROKEN", "important/room.lua" },
 
 	{ "IGNORE+TODO", "cafe.lua" },
+
 	{ "IGNORE+TODO", "tribe.lua" },
 
 	{ "IGNORE", "misc.lua" },

@@ -12,5 +12,3 @@ local os_time = os.time
 Client.connectionTime = function(self)
 	return os_time() - self._loginTime
 end
-
-
