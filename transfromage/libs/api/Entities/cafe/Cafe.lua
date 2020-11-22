@@ -59,6 +59,10 @@ Cafe.reload = function(self)
 	return self._client:reloadCafe()
 end
 
+Cafe.createTopic = function(self, title, message)
+	return self._client:createCafeTopic(title, message)
+end
+
 Cafe.openTopic = function(self, topic)
 	if type(topic) == "table" then
 		topic = topic.id

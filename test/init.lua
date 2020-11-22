@@ -41,7 +41,6 @@ end
 
 local testCases = {
 	{ "IGNORE+TODO", "utils/extensions.lua" },
-	{ "TODO", "utils/bit64.lua" },
 	{ "IGNORE+TODO", "utils/encoding.lua" },
 
 	{ "IGNORE+TODO", "packetControl.lua" },
