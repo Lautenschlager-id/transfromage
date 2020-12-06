@@ -24,7 +24,7 @@ end
 local onSocketConnection = function(connection)
 	local client = connection._client
 
-	local startPacket = ByteArray:new():write16(enum_setting.gameVersion):write16(8)
+	local startPacket = ByteArray:new():write16(enum_setting.gameVersion)
 	if not client._isOfficialBot then
 		startPacket
 			:writeUTF("en")
