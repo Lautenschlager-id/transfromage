@@ -2085,7 +2085,7 @@ client.start = coroutine_makef(function(self, tfmId, token)
 	self.main:connect(enum.setting.mainIp)
 
 	self.main.event:once("_socketConnection", function()
-		local packet = byteArray:new():write16(self._gameVersion):write16(8)
+		local packet = byteArray:new():write16(self._gameVersion)
 		if not self._hasSpecialRole then
 			packet
 				:writeUTF("en")
