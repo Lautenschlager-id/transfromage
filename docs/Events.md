@@ -1028,7 +1028,7 @@ end)
 >| tribeName | `string` | The name of the tribe. |
 >| tribeMembers | `table` | The members' data. |
 >| tribeRoles | `table` | An array with the all roles name (key) and id (value). |
->| tribeHouseMap | `int` | he map code of the tribe house. |
+>| tribeHouseMap | `int` | The map code of the tribe house. |
 >| greetingMessage | `string` | The tribe's greeting message. |
 >| tribeId | `int` | The id of the tribe. |
 >
