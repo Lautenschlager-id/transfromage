@@ -3,9 +3,9 @@ local Connection = require("./init")
 local ByteArray = require("classes/ByteArray")
 
 ------------------------------------------- Optimization -------------------------------------------
-local bit_band             = bit.band
-local bit_bor              = bit.bor
-local bit_lshift           = bit.lshift
+local bit_band   = bit.band
+local bit_bor    = bit.bor
+local bit_lshift = bit.lshift
 ----------------------------------------------------------------------------------------------------
 
 --[[@

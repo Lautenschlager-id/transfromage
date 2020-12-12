@@ -27,7 +27,7 @@ end
 ]]
 local packetListener = function(client, connectionFieldName)
 	local self = { }
-	self[1] = timer_setInterval(250, tryListeningSetup, self, client, connectionFieldName) -- check why 250
+	self[1] = timer_setInterval(50, tryListeningSetup, self, client, connectionFieldName)
 end
 
 return packetListener

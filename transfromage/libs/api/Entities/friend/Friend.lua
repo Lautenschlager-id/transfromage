@@ -10,13 +10,13 @@ Friend.new = function(self, client, packet)
 		_client = client
 	}
 
-	data.id = packet:read32()
+ 	data.id = packet:read32()
 
 	data.playerName = string_toNickname(packet:readUTF())
 
  	data.gender = packet:read8()
 
- 	packet:read32() -- id again
+	data.hasAvatar = packet:read32() ~= 0
 
 	data.isFriend = packet:readBool()
 	data.isConnected = packet:readBool()

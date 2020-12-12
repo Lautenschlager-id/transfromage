@@ -2,6 +2,8 @@ local ByteArray = require("classes/ByteArray")
 local Connection = require("api/Connection")
 local enum = require("api/enum")
 
+local packetListener = require("api/Client/utils/_internal/packetListener")
+
 ------------------------------------------- Optimization -------------------------------------------
 local enum_setting = enum.setting
 local string_split = string.split
@@ -23,6 +25,9 @@ local onBulleSwitch = function(self, packet, connection, identifiers)
 
 	self.bulleConnection = Connection:new(self, "bulle")
 	self.bulleConnection:connect(bulleIp, enum_setting.port[self.mainConnection.portIndex])
+	if oldBulle then
+		packetListener(self, "bulleConnection")
+	end
 
 	self.event:once("_socketConnection", function()
 		if oldBulle then

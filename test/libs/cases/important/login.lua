@@ -13,7 +13,7 @@ require("wrapper")(function(test, transfromage, client)
 			assert(language)
 			assert_neq(language, '', "language")
 
-			client:connect(args[2], args[3])
+			client:connect(args[2], args[3], "*transfromage")
 		end))
 
 		client:once("mainConnection", expect(function(playerId, playerName, playedTime)
@@ -35,5 +35,15 @@ require("wrapper")(function(test, transfromage, client)
 
 		p("Starting client")
 		client:start(args[4], args[5])
+	end)
+
+	test("skip first room change", function(expect)
+		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
+			p("Received event roomChanged")
+
+			assert(roomName)
+			assert(isPrivate ~= nil)
+			assert(roomLanguage)
+		end))
 	end)
 end)
