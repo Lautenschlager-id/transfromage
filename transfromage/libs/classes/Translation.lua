@@ -81,6 +81,10 @@ Translation.new = function(self, language, onDownload)
 	return translation
 end
 
+Translation.getObject = function(language)
+	return downloadedTranslations[language]
+end
+
 --[[@
 	@name translation.free
 	@desc Deletes translation lines that are not going to be used. (Saves process)

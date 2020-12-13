@@ -10,6 +10,8 @@
 - loginCipher
 - packetCipher
 
+- Translation.getObject
+
 - Client.createCafeTopic + Cafe.createTopic
 - Client.sendCafeMessage + Topic.newMessage + Message.reply
 - Client.likeCafeMessage + Message.like
