@@ -1,7 +1,7 @@
 local Client = require("api/Client/init")
 
 local ByteArray = require("classes/ByteArray")
-local createListener = require("api/Client/utils/createListener")
+local createListener = require("api/Client/utils/_internal/createListener")
 local legacyListener = require("api/Client/Listener/Legacy/init")
 
 ------------------------------------------- Optimization -------------------------------------------

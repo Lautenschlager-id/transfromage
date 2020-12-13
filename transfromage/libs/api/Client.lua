@@ -11,6 +11,7 @@ local type      = type
 
 -- Tools
 folderLoader("api/Client/utils")
+folderLoader("api/Client/utils/developer")
 
 -- Init Listeners
 local _, listenerTypes = folderLoader("api/Client/Listener")
