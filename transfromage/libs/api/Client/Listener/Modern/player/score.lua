@@ -2,7 +2,7 @@ local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 
 local updateFlag = require("api/enum").updatePlayer.score
 
-local onScore = function()
+local onScore = function(self, packet, connection, identifiers)
 	if not handlePlayers(self) then return end
 
 	local player = self.playerList[packet:read32()]
