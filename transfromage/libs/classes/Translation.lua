@@ -15,6 +15,7 @@ local string_gsub     = string.gsub
 local string_match    = string.match
 local string_split    = string.split
 local table_copy      = table.copy
+local type            = type
 local zlibDecompress  = require("miniz").inflate
 ----------------------------------------------------------------------------------------------------
 
@@ -95,6 +96,11 @@ end
 	@returns boolean,nil Whether the given data got deleted successfully.
 ]]
 Translation.free = function(self, whitelist, whitelistPattern)
+	if type(self) == "string" then
+		self = downloadedTranslations[self]
+		if not self then return end
+	end
+
 	if not whitelist and not whitelistPattern then
 		downloadedTranslations[self.language] = nil
 		return true
@@ -184,6 +190,11 @@ end
 	@returns boolean,nil If not @raw, the value is a boolean true if return #1 is table.
 ]]
 Translation.get = function(self, index, raw)
+	if type(self) == "string" then
+		self = downloadedTranslations[self]
+		if not self then return end
+	end
+
 	local data = self.data
 
 	if not index then
@@ -215,6 +226,11 @@ end
 	@returns boolean,nil Whether the given daata was set successfully.
 ]]
 Translation.set = function(self, setPattern, f, isPlain)
+	if type(self) == "string" then
+		self = downloadedTranslations[self]
+		if not self then return end
+	end
+
 	local data = self.data
 	local dataWithLuaFormatting = self._dataWithLuaFormatting
 	local dataWithGendersHandled = self._dataWithGendersHandled
