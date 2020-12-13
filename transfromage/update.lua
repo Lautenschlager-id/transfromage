@@ -68,7 +68,7 @@ repeat
 
 	local installLatestVersion = function()
 		-- Lit won't update existing files, so all previous files must be deleted first.
-		deleteCurrentFiles("deps/transfromage")
+		deleteCurrentFiles("deps/Transfromage")
 
 		-- Installs the updated version of the API
 		os_execute("lit install Lautenschlager-id/transfromage")
