@@ -4,6 +4,7 @@ local string_toNickname = string.toNickname
 
 local onProfileLoaded = function(self, packet, connection, identifiers)
 	local data = { }
+	data.playerName = packet:readUTF()
 	data.id = packet:read32()
 	data.registrationDate = packet:read32()
 	data.role = packet:read8() -- enum.role

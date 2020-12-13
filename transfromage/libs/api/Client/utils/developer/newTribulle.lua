@@ -33,5 +33,5 @@ Client.insertTribulleListener = function(self, tribulleID, f, append, coro)
 		end
 	end
 
-	createListener(tribulleListener, C, CC, finalListener)
+	createListener(tribulleListener, finalListener, C, CC)
 end

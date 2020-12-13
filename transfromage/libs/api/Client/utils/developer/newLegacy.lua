@@ -36,5 +36,5 @@ Client.insertLegacyListener = function(self, C, CC, f, append, coro)
 		end
 	end
 
-	createListener(legacyListener, C, CC, finalListener)
+	createListener(legacyListener, finalListener, C, CC)
 end

@@ -35,5 +35,5 @@ Client.insertModernListener = function(self, C, CC, f, append, coro)
 		end
 	end
 
-	createListener(modernListener, C, CC, finalListener)
+	createListener(modernListener, finalListener, C, CC)
 end
