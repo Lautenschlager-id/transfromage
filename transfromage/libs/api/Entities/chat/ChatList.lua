@@ -48,6 +48,8 @@ ChatList.get = function(self, chatName)
 
 		self[chatName] = Chat:new(self._client, chatName, self._currentFingerprint)
 		self[self._currentFingerprint] = self[chatName]
+
+		self._count = self._count + 1
 	end
 
 	return self[chatName]

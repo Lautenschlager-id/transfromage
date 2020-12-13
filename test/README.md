@@ -15,10 +15,6 @@
 - Client.likeCafeMessage + Message.like
 - unreadCafeMessage
 
-- Client.chatWho + Chat.who
-- ChatList.__pairs / __len
-- chatWho
-
 - Friend
 - Client.addFriend
 - Client.blacklistPlayer

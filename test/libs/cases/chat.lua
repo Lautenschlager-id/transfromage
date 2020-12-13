@@ -1,4 +1,26 @@
 require("wrapper")(function(test, transfromage, client)
+	test("chat list metamethods", function(expect)
+		local chatNames = { "help", "lua", "mapcrew" }
+
+		local chatNamesByIndex = { }
+		local chats = { }
+
+		local totalChats = #chatNames
+		for c = 1, totalChats do
+			chatNamesByIndex[chatNames[c]] = true
+			chats[c] = client.chatList:get(chatNames[c])
+
+			assert_eq(tostring(chats[c]), "Chat", "str(t[i])")
+		end
+
+		assert_eq(#client.chatList, totalChats, "totalChats")
+
+		for chatName, chat in pairs(client.chatList) do
+			assert(chatNamesByIndex[chatName])
+			assert_eq(tostring(chat), "Chat", "str(c)")
+		end
+	end)
+
 	test("chat who", function(expect)
 		local testChat = "help"
 
