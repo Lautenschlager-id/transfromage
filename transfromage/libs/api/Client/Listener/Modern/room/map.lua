@@ -12,7 +12,7 @@ local onNewGame = function(self, packet, connection, identifiers)
 	packet:read16() -- ?
 
 	local xml = packet:read8(packet:read16())
-	if self._processXml then
+	if self._decryptXML then
 		xml = table_writeBytes(xml)
 		if xml ~= '' then
 			map.xml = zlibDecompress(xml, 1)

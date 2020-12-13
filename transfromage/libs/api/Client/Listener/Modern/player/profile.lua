@@ -46,13 +46,14 @@ local onProfileLoaded = function(self, packet, connection, identifiers)
 	local modeStats, mode = { }
 	for i = 1, data.totalModeStats do
 		mode = packet:read8()
-		data.modeStats[modeId] = { }
-		mode = data.modeStats[mode]
+		modeStats[mode] = { }
+		mode = modeStats[mode]
 
 		mode.progress = packet:read32()
 		mode.progressLimit = packet:read32()
 		mode.imageId = packet:read16()
 	end
+	data.modeStats = modeStats
 
 	data.orbId = packet:read8()
 	data.totalOrbs = packet:read8()
