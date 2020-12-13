@@ -22,7 +22,7 @@ Client.insertModernListener = function(self, C, CC, f, append, coro)
 
 	local finalListener = f
 
-	if coro then
+	if coro ~= false then
 		finalListener = coroutine_makef(f)
 	end
 
