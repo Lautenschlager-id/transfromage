@@ -53,11 +53,13 @@ local testCases = {
 
 	{ "CHECK", "important/login.lua" },
 	{ "IGNORE", "important/message.lua" },
-	{ "CHECK", "important/room.lua" },
+	{ "IGNORE", "important/room.lua" },
 
 	{ "IGNORE+TODO", "cafe.lua" },
 
 	{ "IGNORE+TODO", "tribe.lua" },
+
+	{ "CHECK+TODO", "chat.lua" },
 
 	{ "IGNORE", "misc.lua" },
 }

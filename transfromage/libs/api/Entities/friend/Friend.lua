@@ -10,7 +10,7 @@ Friend.new = function(self, client, packet)
 		_client = client
 	}
 
- 	data.id = packet:read32()
+	data.id = packet:read32()
 
 	data.playerName = string_toNickname(packet:readUTF())
 

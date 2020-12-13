@@ -19,7 +19,7 @@ require("wrapper")(function(test, transfromage, client)
 
 	test("join tribe house", function(expect)
 		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
-			p("Received event joinTribeHouse", roomName)
+			p("Received event joinTribeHouse")
 
 			assert(roomName)
 			assert(roomLanguage)
