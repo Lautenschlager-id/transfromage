@@ -1,3 +1,5 @@
+local timer = require("timer")
+
 require("wrapper")(function(test, transfromage, client)
 	test("tribe message", function(expect)
 		client:on("tribeMessage", expect(function(memberName, message)
@@ -61,6 +63,20 @@ require("wrapper")(function(test, transfromage, client)
 		end))
 
 		client:setTribeGreetingMessage("69")
+	end)
+
+	test("join tribe house (OO)", function(expect)
+		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
+			p("Received event joinTribeHouse")
+
+			assert(roomName)
+			assert(roomLanguage)
+		end))
+
+		p("Joining tribe house")
+		timer.setTimeout(3500, client.tribe.joinHouse, client.tribe)
+
+		return -3500
 	end)
 
 	test("tribe message (OO)", function(expect)
