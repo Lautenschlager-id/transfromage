@@ -41,4 +41,13 @@ require("wrapper")(function(test, transfromage, client)
 		assert_eq(en:get("T_200"), nil, "f(T_200)")
 		assert_eq(en:get("T_114"), "Alpha & Omega", "f(T_114)")
 	end)
+
+	test("non OO translation", function(expect)
+		assert_eq(en, Translation.getObject("en"), "f(en)")
+
+		Translation.set("en", "T_114", function(value, code) return "?" end)
+		assert_eq(en:get("T_114"), Translation.get("en", "T_114"), "f(T_114)")
+
+		Translation.free("en", { ["T_114"] = true })
+	end)
 end)
