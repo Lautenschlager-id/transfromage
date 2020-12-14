@@ -45,7 +45,6 @@
 - playerGetCheese
 - newPlayer
 
-- Tribe.joinHouse
 - Client.kickTribeMember + Tribe.kickMember + Member.kick
 - Client.recruitPlayer + Tribe.recruitPlayer
 - Client.setTribeMemberRole + Tribe.setMemberRole + Member.setRole
@@ -60,11 +59,6 @@
 - Connection socket timeout (all ports)
 - Client.connect (with bot role)
 - Connection.close
-
-- Client.on
-- Client.once
-- Client.emit
-- Client.waitFor
 
 - getAuthenticationKeys (failure & success)
 - sigterm multiple accounts (?)

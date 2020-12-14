@@ -75,7 +75,7 @@ Client.waitFor = function(self, eventName, timeout, predicate)
 	self:on(eventName, eventCallback)
 
 	timeout = timeout and timer_setTimeout(timeout, function()
-		self:removeListener(eventName, eventCallback)
+		self.event:removeListener(eventName, eventCallback)
 		return assert(coroutine_resume(coro, false))
 	end)
 

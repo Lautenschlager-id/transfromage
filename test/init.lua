@@ -15,7 +15,7 @@ do
 	local client_on = client.on
 	client.on = function(self, eventName, fn)
 		-- Deletes listener when it is specific again
-		if self.event.handlers and self.event.handlers[eventName] then
+		if eventName:sub(1, 2) ~= "__" and self.event.handlers and self.event.handlers[eventName] then
 			self.event.handlers[eventName] = nil
 		end
 
@@ -43,6 +43,8 @@ local testCases = {
 	{ "IGNORE+TODO", "utils/extensions.lua" },
 	{ "IGNORE+TODO", "utils/encoding.lua" },
 
+	{ "CHECK", "utils/event.lua" },
+
 	{ "IGNORE+TODO", "packetControl.lua" },
 
 	{ "IGNORE", "translation.lua" },
@@ -51,16 +53,16 @@ local testCases = {
 
 	{ "TODO", "important/connection.lua" },
 
-	{ "CHECK", "important/login.lua" },
+	{ "IGNORE", "important/login.lua" },
 
 	{ "IGNORE+TODO", "chat.lua" },
 	{ "IGNORE", "important/message.lua" },
 
-	{ "CHECK+IGNORE", "important/room.lua" },
+	{ "IGNORE+IGNORE", "important/room.lua" },
 
 	{ "IGNORE+TODO", "cafe.lua" },
 
-	{ "CHECK+IGNORE+TODO", "tribe.lua" },
+	{ "IGNORE+IGNORE+TODO", "tribe.lua" },
 
 	{ "IGNORE", "misc.lua" },
 }
@@ -71,7 +73,7 @@ local loadTests = function()
 	for name = 1, #testCases do
 		name = testCases[name]
 
-		if string.find(name[1], "CHECK") then
+		if string.find(name[1], "CHECK", 1, true) then
 			testWrapper(name[2])
 			require("cases/" .. name[2])
 		end
