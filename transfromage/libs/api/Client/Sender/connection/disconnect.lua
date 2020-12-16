@@ -6,8 +6,8 @@ local Client = require("api/Client/init")
 	@returns boolean Whether the Connection objects can be destroyed or not.
 ]]
 Client.disconnect = function(self)
-	if self.mainConnnection then
-		self.mainConnnection.isOpen = false
+	if self.mainConnection then
+		self.mainConnection.isOpen = false
 		return true
 	end
 
