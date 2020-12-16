@@ -68,7 +68,7 @@ Client.waitFor = function(self, eventName, timeout, predicate)
 			end
 
 			self.event:removeListener(eventName, eventCallback)
-			return assert(coroutine_resume(coro, true, ...))
+			return coroutine_resume(coro, true, ...)
 		end
 	end
 
@@ -76,7 +76,7 @@ Client.waitFor = function(self, eventName, timeout, predicate)
 
 	timeout = timeout and timer_setTimeout(timeout, function()
 		self.event:removeListener(eventName, eventCallback)
-		return assert(coroutine_resume(coro, false))
+		return coroutine_resume(coro, false)
 	end)
 
 	return coroutine_yield()
