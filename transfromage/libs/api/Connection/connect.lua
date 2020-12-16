@@ -9,14 +9,13 @@ local enum_ports           = enum.setting.port
 local enum_timer           = enum.timer
 local error                = error
 local net_createConnection = require("net").createConnection
-local timer_setTimeout     = require("timer").setTimeout
 ----------------------------------------------------------------------------------------------------
 
 local tryPortConnection = function(connection, hasPort, ip)
 	if not connection.isOpen then
 		if not hasPort then
 			connection.portIndex = connection.portIndex + 1
-			if connection.portIndex <= #enum.setting.port then
+			if connection.portIndex <= #enum_ports then
 				return connection:connect(ip)
 			end
 		end
@@ -43,10 +42,6 @@ Connection.connect = function(self, ip, port)
 		self.ip = ip
 		self.isOpen = true
 
-		socket:on("data", function(data)
-			self.Buffer:push(data)
-		end)
-
 		--[[@
 			@name _socketConnection
 			@desc Triggered when the socket gets connected.
@@ -56,5 +51,16 @@ Connection.connect = function(self, ip, port)
 		self._client.event:emit("_socketConnection", self, port)
 	end)
 
-	timer_setTimeout(enum_timer.socketTimeout, tryPortConnection, self, hasPort, ip)
+	socket:setTimeout(enum_timer.socketTimeout, function()
+		tryPortConnection(self, hasPort, ip)
+	end)
+
+	socket:on("data", function(data)
+		self.Buffer:push(data)
+	end)
+
+	socket:once("end", function()
+		self.isOpen = false
+		self._client.event:emit("disconnection", self)
+	end)
 end

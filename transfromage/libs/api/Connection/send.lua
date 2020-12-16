@@ -37,20 +37,15 @@ Connection.send = function(self, identifiers, alphaPacket)
 
 	table_add(gammaPacket.stack, betaPacket.stack)
 
-	local written = self.socket and self.socket:write(table_writeBytes(gammaPacket.stack))
-	if not written then
-		self.isOpen = false
-		if self.ip ~= enum_setting.mainIp then -- Avoids that 'disconnection' gets triggered twice when it is the main instance.
-			self._client.event:emit("disconnection", self)
-			return
-		end
-	end
+	if self.socket then
+		self.socket:write(table_writeBytes(gammaPacket.stack))
 
-	--[[@
-		@name send
-		@desc Triggered when the client sends packets to the server.
-		@param identifiers<table> The C, CC identifiers sent in the request.
-		@param packet<ByteArray> The Byte Array object that was sent.
-	]]
-	self._client.event:emit("send", identifiers, alphaPacket)
+		--[[@
+			@name send
+			@desc Triggered when the client sends packets to the server.
+			@param identifiers<table> The C, CC identifiers sent in the request.
+			@param packet<ByteArray> The Byte Array object that was sent.
+		]]
+		self._client.event:emit("send", identifiers, alphaPacket)
+	end
 end
