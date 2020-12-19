@@ -19,9 +19,9 @@ local type             = type
 ByteArray.read8 = function(self, quantity)
 	quantity = quantity or 1
 
-	local stackReadPos = self.stackReadPos + quantity
-	local byteStack = table_arrayRange(self.stack, self.stackReadPos, stackReadPos - 1)
-	self.stackReadPos = stackReadPos
+	local stackReadPos = self._stackReadPos + quantity
+	local byteStack = table_arrayRange(self.stack, self._stackReadPos, stackReadPos - 1)
+	self._stackReadPos = stackReadPos
 
 	local sLen = #byteStack
 	self.stackLen = self.stackLen - sLen
