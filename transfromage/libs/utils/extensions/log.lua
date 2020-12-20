@@ -1,5 +1,3 @@
-local APISettings = require("../../../settings")
-
 ------------------------------------------- Optimization -------------------------------------------
 local colorThemes   = require("utils").theme
 local error         = error
@@ -19,26 +17,15 @@ local colorCodes = {
 	success   = colorThemes.string
 }
 
-local formatColor
-if APISettings.coloredLogs then
-	formatColor = function(raw, code, text)
-		return (colorCodes[code] and string_format(colorFormat, colorCodes[code], text) or raw)
-	end
-else
-	formatColor = function(raw, code, text)
-		return colorCodes[code] and text or raw
-	end
+@#IF COLORED_LOGS
+local formatColor = function(raw, code, text)
+	return (colorCodes[code] and string_format(colorFormat, colorCodes[code], text) or raw)
 end
-
-local logFile, writeLogs = APISettings.logFile
-if logFile and logFile ~= '' then
-	logFile = io_open(logFile, 'a')
-
-	writeLogs = function(rawLog)
-		logFile:write(rawLog)
-		logFile:flush()
-	end
+@#ELSE
+local formatColor = function(raw, code, text)
+	return colorCodes[code] and text or raw
 end
+@#ENDIF
 
 --[[@
 	@name os.log
@@ -50,6 +37,9 @@ end
 	@param returnValue?<boolean> Whether the formated message has to be returned. If not, it'll be sent to the prompt automatically. @default false
 	@returns nil,string The formated message, depending on @returnValue.
 ]]
+@#IF LOG_FILE & LOG_FILE ~= ''
+local logFile = io_open(_G.PREPDIR_SETTINGS.LOG_FILE, 'a')
+@#ENDIF
 os.log = function(log, ...)
 	log = string_format(tostring(log), ...)
 
@@ -57,19 +47,19 @@ os.log = function(log, ...)
 
 	print(coloredLog)
 
-	if writeLogs then
-		local colorlessLog = string_gsub(log, "↑.-↓(.-)↑", "%1")
-		writeLogs(colorlessLog)
-	end
+	@#IF LOG_FILE & LOG_FILE ~= ''
+	logFile:write(rawLog)
+	logFile:flush(string_gsub(log, "↑.-↓(.-)↑", "%1"))
+	@#ENDIF
 end
 
-if APISettings.coloredErrors then
-	_G.error = function(message, level, ...)
-		os.log(message, ...) -- Colored message
-		return error('^', level)
-	end
-else
-	_G.error = function(message, level, ...)
-		return error(string_format(string_gsub(tostring(message), "↑.-↓(.-)↑", "%1"), ...), level)
-	end
+@#IF COLORED_ERRORS
+_G.error = function(message, level, ...)
+	os.log(message, ...) -- Colored message
+	return error('^', level)
 end
+@#ELSE
+_G.error = function(message, level, ...)
+	return error(string_format(string_gsub(tostring(message), "↑.-↓(.-)↑", "%1"), ...), level)
+end
+@#ENDIF

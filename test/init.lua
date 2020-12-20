@@ -40,8 +40,8 @@ _G.assert_neq = function(x, y, varname)
 end
 
 local testCases = {
-	{ "IGNORE+TODO", "utils/extensions.lua" },
-	{ "IGNORE+TODO", "utils/encoding.lua" },
+	{ "CHECK+IGNORE+TODO", "utils/extensions.lua" },
+	{ "CHECK+IGNORE+TODO", "utils/encoding.lua" },
 
 	{ "CHECK", "utils/event.lua" },
 

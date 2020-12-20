@@ -12,6 +12,7 @@ return {
 		"creationix/base64",
 		"creationix/coro-http",
 		"luvit/secure-socket",
+		"Lautenschlager-id/prepdir"
 	},
 	tags = {
 		"api",

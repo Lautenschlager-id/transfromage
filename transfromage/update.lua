@@ -1,7 +1,6 @@
 local fs = require("fs")
 
 local apiPackage = require("./package")
-local apiSettings = require("./settings")
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
@@ -20,9 +19,9 @@ local string_match   = string.match
 local table_concat   = table.concat
 ----------------------------------------------------------------------------------------------------
 
+@#IF UPDATE
 repeat
-	local update = apiSettings.update
-	if not update then break end
+	local update = _G.PREPDIR_SETTINGS.UPDATE
 	update = string_lower(update)
 
 	local isLatestVersion = coroutine.wrap(function()
@@ -81,5 +80,6 @@ repeat
 
 	installLatestVersion()
 until true
+@#ENDIF
 
 return apiPackage.version
