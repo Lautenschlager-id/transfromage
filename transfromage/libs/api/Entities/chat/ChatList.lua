@@ -44,7 +44,7 @@ end
 
 ChatList.get = function(self, chatName)
 	if not self[chatName] then
-		self._currentFingerprint = (self._currentFingerprint + 1) % 0xFFFFFFFF
+		self._currentFingerprint = (self._currentFingerprint + 1) % 0x7FFFFFFF
 
 		self[chatName] = Chat:new(self._client, chatName, self._currentFingerprint)
 		self[self._currentFingerprint] = self[chatName]

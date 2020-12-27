@@ -3,7 +3,7 @@ local require = require
 ----------------------------------------------------------------------------------------------------
 
 _G.PREPDIR_SETTINGS = require("./settings")
-require("prepdir")
+assert(require("prepdir"))
 
 -- Initializes all extensions
 require("utils/extensions")

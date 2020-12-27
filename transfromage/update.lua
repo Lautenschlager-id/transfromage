@@ -21,8 +21,7 @@ local table_concat   = table.concat
 
 @#IF UPDATE
 repeat
-	local update = _G.PREPDIR_SETTINGS.UPDATE
-	update = string_lower(update)
+	local update = string_lower(_G.PREPDIR_SETTINGS.UPDATE)
 
 	local isLatestVersion = coroutine.wrap(function()
 		local _, githubAPIPackage = http_request("GET", enum_url.apiPackage)
