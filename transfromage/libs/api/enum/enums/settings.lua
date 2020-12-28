@@ -51,8 +51,9 @@ enum.setting = {
 	@type string
 ]]
 enum.url = enum {
-	translation = "http://transformice.com/langues/tfm-%s.gz",
-	authKeys    = "https://api.tocuto.tk/get_transformice_keys.php?tfmid=%s&token=%s",
-	apiPackage  = "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/\z
+	translation  = "http://transformice.com/langues/tfm-%s.gz",
+	authKeys     = "https://api.tocuto.tk/get_transformice_keys.php?tfmid=%s&token=%s",
+	gameSettings = "https://api.tocuto.tk/get_transformice_ip.php",
+	apiPackage   = "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/\z
 		package.lua"
 }

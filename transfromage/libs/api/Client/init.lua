@@ -49,7 +49,7 @@ local Client = table.setNewClass("Client")
 		_updateSettings = false -- Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
 	}
 ]]
-Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
+Client.new = function(self, tfmId, token, isOfficialBot)
 	local eventEmitter = eventEmitter:new()
 
 	local client = setmetatable({
@@ -60,7 +60,6 @@ Client.new = function(self, tfmId, token, isOfficialBot, endpointUpdate)
 		tribe = nil,
 
 		_isOfficialBot = isOfficialBot,
-		_endpointUpdate = endpointUpdate,
 
 		mainConnection = nil,
 		bulleConnection = nil,

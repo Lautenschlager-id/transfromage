@@ -31,27 +31,24 @@ local getAuthenticationKeys = function(self, tfmID, token)
 	end
 
 	if not result.success then
-		return not self._isOfficialBot and error(enum_error.authEndpointFailure,
-			enum_errorLevel.high, tostring(result.error))
+		return error(enum_error.authEndpointFailure, enum_errorLevel.high, tostring(result.error))
 	end
 
 	if result.internal_error then
-		return not self._isOfficialBot and error(enum_error.authEndpointInternal,
+		return error(enum_error.authEndpointInternal,
 			enum_errorLevel.high, result.internal_error_step,
 			(result.internal_error_step == 2 and enum_error.gameMaintenace or '')
 		)
 	end
 
 	enum_setting.mainIP = result.ip
+	enum_setting.port = result.ports
+	enum_setting.gameVersion = result.version
 
-	if not self._isOfficialBot then
-		enum_setting.gameVersion = result.version
-
-		self._connectionAuthenticationKey = result.auth_key
-		self._connectionKey = result.connection_key
-		self._identificationKeys = result.identification_keys
-		self._messageKeys = result.msg_keys
-	end
+	self._connectionAuthenticationKey = result.auth_key
+	self._connectionKey = result.connection_key
+	self._identificationKeys = result.identification_keys
+	self._messageKeys = result.msg_keys
 
 	enum.setting = enum(enum_setting)
 end

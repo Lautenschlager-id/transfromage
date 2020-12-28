@@ -1,6 +1,7 @@
 local Client = require("api/Client/init")
 
 local getAuthenticationKeys = require("api/Client/utils/_internal/authenticationEndpoint")
+local getGameSettings = require("api/Client/utils/_internal/settingsEndpoint")
 local killOnSigterm = require("api/Client/utils/_internal/sigterm")
 local onSocketConnection = require("api/Client/Listener/_internal/socketConnection")
 
@@ -21,8 +22,10 @@ Client.start = coroutine_makef(function(self, tfmID, token)
 	self._isConnected = false
 
 	-- Non-official bot proccess
-	if not self._isOfficialBot or self._endpointUpdate then
+	if not self._isOfficialBot then
 		getAuthenticationKeys(self, tfmID, token)
+	else
+		getGameSettings(self)
 	end
 
 	self.mainConnection:connect(enum_setting.mainIP)
