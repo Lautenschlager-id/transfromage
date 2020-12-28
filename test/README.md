@@ -40,8 +40,6 @@
 - refreshPlayerList
 - profileLoaded
 - updatePlayer
-- playerEmoticon
-- playerEmote
 - playerGetCheese
 - newPlayer
 
@@ -69,12 +67,9 @@
 
 - Client.decryptXML
 - Client.enterPrivate
-- Client.requestRoomListRoom
+- Client.requestRoomList
 - roomList
 - newGame
-
-- Client.playEmoticon
-- Client.playEmote
 
 - Client.loadLua
 - lua

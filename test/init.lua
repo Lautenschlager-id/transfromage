@@ -40,10 +40,10 @@ _G.assert_neq = function(x, y, varname)
 end
 
 local testCases = {
-	{ "CHECK+IGNORE+TODO", "utils/extensions.lua" },
-	{ "CHECK+IGNORE+TODO", "utils/encoding.lua" },
+	{ "IGNORE+TODO", "utils/extensions.lua" },
+	{ "IGNORE+TODO", "utils/encoding.lua" },
 
-	{ "CHECK", "utils/event.lua" },
+	{ "IGNORE", "utils/event.lua" },
 
 	{ "IGNORE+TODO", "packetControl.lua" },
 
@@ -53,7 +53,7 @@ local testCases = {
 
 	{ "TODO", "important/connection.lua" },
 
-	{ "IGNORE", "important/login.lua" },
+	{ "CHECK+IGNORE", "important/login.lua" },
 
 	{ "IGNORE+TODO", "chat.lua" },
 	{ "IGNORE", "important/message.lua" },
@@ -65,6 +65,8 @@ local testCases = {
 	{ "IGNORE+IGNORE+TODO", "tribe.lua" },
 
 	{ "IGNORE", "misc.lua" },
+
+	{ "CHECK", "player/emote.lua" },
 }
 
 local loadTests = function()
