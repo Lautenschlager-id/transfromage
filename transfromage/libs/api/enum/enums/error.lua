@@ -8,12 +8,7 @@ local error = {
 	translationFailure = "↑failure↓[TRANSLATION]↑ Language ↑highlight↓%s↑ could not be \z
 		downloaded. File not found in Transformice's archives.",
 	timeout = "↑error↓[SOCKET]↑ Timed out.",
-	invalidToken = "↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is \z
-		invalid.\n\t%s",
-	authEndpointFailure = "↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: %s : %s",
-	authEndpointInternal = "↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\z
-		\n\t'%s'%s",
-	gameMaintenace = ": The game may be under maintenance.",
+	authEndpoint = "↑error↓[API ENDPOINT]↑ %s : %s",
 	failLogin = "↑error↓[LOGIN]↑ Impossible to log in. Try again later.",
 	enumConflict = "↑failure↓[ENUM]↑ Enumeration conflict in ↑highlight↓%s↑ and ↑highlight↓%s↑",
 	enumOverwrite = "↑failure↓[ENUM]↑ Can not overwrite enumerations."

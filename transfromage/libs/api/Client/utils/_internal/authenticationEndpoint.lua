@@ -1,4 +1,4 @@
-	local enum = require("api/enum")
+local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
 local enum_error      = enum.error
@@ -25,19 +25,7 @@ local getAuthenticationKeys = function(self, tfmID, token)
 	result = json_decode(result)
 
 	if not result.success then
-		if result.error == "INVALIDTOKEN" or result.error == "UNKNOWNTOKEN" then
-			return error(enum_error.invalidToken, enum_errorLevel.high,
-				tostring(result.description))
-		end
-
-		local gameUnderMaintenance = (result.error == "MAINTENANCE")
-		if gameUnderMaintenance or result.error == "INTERNAL" then
-			return error(enum_error.authEndpointInternal, enum_errorLevel.high, result.error,
-				(gameUnderMaintenance and enum_error.gameMaintenace or '')
-			)
-		end
-
-		return error(enum_error.authEndpointFailure, enum_errorLevel.high, tostring(result.error),
+		return error(enum_error.authEndpoint, enum_errorLevel.high, tostring(result.error),
 			tostring(result.description))
 	end
 
