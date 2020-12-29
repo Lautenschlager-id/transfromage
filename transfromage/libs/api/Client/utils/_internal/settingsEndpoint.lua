@@ -17,12 +17,14 @@ local string_split = string.split
 ]]
 local getGameSettings = function(self)
 	local _, result = http_request("GET", enum_url.gameSettings)
+	result = json_decode(result)
 
-	if result == "unknown" then return end
+	if not result.success then
+		return -- log?
+	end
 
-	local data = string_split(result, ':', true)
-	enum_setting.mainIP = data[1]
-	enum_setting.port = string_split(data[2], '-', true)
+	enum_setting.mainIP = result.server.ip
+	enum_setting.port = result.server.ports
 
 	enum.setting = enum(enum_setting)
 end

@@ -10,7 +10,7 @@ local error = {
 	timeout = "↑error↓[SOCKET]↑ Timed out.",
 	invalidToken = "↑error↓[API ENDPOINT]↑ ↑highlight↓TFMID↑ or ↑highlight↓TOKEN↑ value is \z
 		invalid.\n\t%s",
-	authEndpointFailure = "↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: %s",
+	authEndpointFailure = "↑error↓[API ENDPOINT]↑ Impossible to get the keys.\n\tError: %s : %s",
 	authEndpointInternal = "↑error↓[API ENDPOINT]↑ An internal error occurred in the API endpoint.\z
 		\n\t'%s'%s",
 	gameMaintenace = ": The game may be under maintenance.",

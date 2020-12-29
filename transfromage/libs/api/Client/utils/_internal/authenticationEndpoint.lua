@@ -1,4 +1,4 @@
-local enum = require("api/enum")
+	local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
 local enum_error      = enum.error
@@ -22,33 +22,33 @@ local tostring        = tostring
 ]]
 local getAuthenticationKeys = function(self, tfmID, token)
 	local _, result = http_request("GET", string_format(enum_url.authKeys, tfmID, token))
-
-	local rawresult = result
 	result = json_decode(result)
 
-	if not result then
-		return error(enum_error.invalidToken, enum_errorLevel.high, tostring(rawresult))
-	end
-
 	if not result.success then
-		return error(enum_error.authEndpointFailure, enum_errorLevel.high, tostring(result.error))
+		if result.error == "INVALIDTOKEN" or result.error == "UNKNOWNTOKEN" then
+			return error(enum_error.invalidToken, enum_errorLevel.high,
+				tostring(result.description))
+		end
+
+		local gameUnderMaintenance = (result.error == "MAINTENANCE")
+		if gameUnderMaintenance or result.error == "INTERNAL" then
+			return error(enum_error.authEndpointInternal, enum_errorLevel.high, result.error,
+				(gameUnderMaintenance and enum_error.gameMaintenace or '')
+			)
+		end
+
+		return error(enum_error.authEndpointFailure, enum_errorLevel.high, tostring(result.error),
+			tostring(result.description))
 	end
 
-	if result.internal_error then
-		return error(enum_error.authEndpointInternal,
-			enum_errorLevel.high, result.internal_error_step,
-			(result.internal_error_step == 2 and enum_error.gameMaintenace or '')
-		)
-	end
+	enum_setting.mainIP = result.server.ip
+	enum_setting.port = result.server.ports
+	enum_setting.gameVersion = result.server.version
 
-	enum_setting.mainIP = result.ip
-	enum_setting.port = result.ports
-	enum_setting.gameVersion = result.version
-
-	self._connectionAuthenticationKey = result.auth_key
-	self._connectionKey = result.connection_key
-	self._identificationKeys = result.identification_keys
-	self._messageKeys = result.msg_keys
+	self._connectionAuthenticationKey = result.keys.auth
+	self._connectionKey = result.keys.connection
+	self._identificationKeys = result.keys.identification
+	self._messageKeys = result.keys.msg
 
 	enum.setting = enum(enum_setting)
 end
