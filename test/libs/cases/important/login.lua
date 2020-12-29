@@ -37,6 +37,20 @@ require("wrapper")(function(test, transfromage, client)
 		client:start(args[4], args[5])
 	end)
 
+	test("handle players", function(expect)
+		client:handlePlayers(false)
+		assert(not client._handlePlayers)
+
+		client:handlePlayers()
+		assert(client._handlePlayers)
+
+		client:handlePlayers()
+		assert(not client._handlePlayers)
+
+		client:handlePlayers(true)
+		assert(client._handlePlayers)
+	end)
+
 	test("skip first room change", function(expect)
 		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
 			p("Received event roomChanged")

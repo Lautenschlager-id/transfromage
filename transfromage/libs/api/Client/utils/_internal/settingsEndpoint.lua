@@ -1,10 +1,10 @@
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
-local enum_setting    = enum.setting
-local enum_url        = enum.url
-local http_request    = require("coro-http").request
-local string_split    = string.split
+local enum_setting = enum.setting
+local enum_url     = enum.url
+local http_request = require("coro-http").request
+local string_split = string.split
 ----------------------------------------------------------------------------------------------------
 
 --[[@

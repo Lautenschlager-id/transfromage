@@ -19,14 +19,14 @@ require("wrapper")(function(test, transfromage, client)
 		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
 			p("Received event roomChanged")
 
-			assert(roomName, client.language .. "-#bolo666", "roomName")
+			assert(roomName, client.language .. "-#bolodefchoco", "roomName")
 
 			assert_eq(type(isPrivate), "boolean", "type(isPrivate)")
 			assert_eq(roomLanguage, client.language, "roomLanguage")
 		end))
 
 		p("Joining room")
-		timer.setTimeout(5000, client.enterRoom, client, "#bolo666")
+		timer.setTimeout(5000, client.enterRoom, client, "#bolodefchoco")
 
 		return -5000
 	end)

@@ -58,7 +58,7 @@ local testCases = {
 	{ "IGNORE+TODO", "chat.lua" },
 	{ "IGNORE", "important/message.lua" },
 
-	{ "IGNORE+IGNORE", "important/room.lua" },
+	{ "CHECK+IGNORE+IGNORE", "important/room.lua" },
 
 	{ "IGNORE+TODO", "cafe.lua" },
 
@@ -66,7 +66,7 @@ local testCases = {
 
 	{ "IGNORE", "misc.lua" },
 
-	{ "CHECK", "player/emote.lua" },
+	{ "CHECK+BROKEN", "player/emote.lua" },
 }
 
 local loadTests = function()

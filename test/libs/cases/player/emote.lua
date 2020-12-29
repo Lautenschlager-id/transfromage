@@ -1,23 +1,39 @@
 require("wrapper")(function(test, transfromage, client)
 	test("play emote", function(expect)
-		client:on("playerEmote", function(player, emote, flag)
-			assert_eq(player, client.playerName, "playerName")
+		client:on("playerEmote", expect(function(player, emote, flag)
+			p("Received event playerEmote")
+
+			assert_eq(tostring(player), "Player", "player")
+
+			assert_eq(player.playerName, client.playerName, "playerName")
 
 			assert_eq(emote, transfromage.enum.emote.flag, "enum_flag")
 
 			assert_eq(flag, "br", "br")
-		end)
+		end))
 
-		client:playEmote(transfromage.enum.emote.flag, "br")
+		for c = 1, 2 do
+			p("Playing emote: " .. tostring(client._handlePlayers))
+			client:playEmote(transfromage.enum.emote.flag, "br")
+			client:handlePlayers(c == 2)
+		end
 	end)
 
 	test("play emoticon", function(expect)
-		client:on("playerEmoticon", function(player, emoticon)
-			assert_eq(player, client.playerName, "playerName")
+		client:on("playerEmoticon", expect(function(player, emoticon)
+			p("Received event playerEmoticon")
+
+			assert_eq(tostring(player), "Player", "player")
+
+			assert_eq(player.playerName, client.playerName, "playerName")
 
 			assert_eq(emoticon, transfromage.enum.emoticon.shades, "enum_shades")
-		end)
+		end))
 
-		client:playEmoticon(transfromage.enum.emoticon.shades)
+		for c = 1, 2 do
+			p("Playing emoticon: " .. tostring(client._handlePlayers))
+			client:playEmoticon(transfromage.enum.emoticon.shades)
+			client:handlePlayers(c == 2)
+		end
 	end)
 end)

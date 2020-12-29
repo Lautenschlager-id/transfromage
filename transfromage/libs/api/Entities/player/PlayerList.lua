@@ -85,7 +85,7 @@ PlayerList.updatePlayer = function(self, packet)
 		]]
 		self._client.event:emit("updatePlayer", playerData, oldPlayerData, updateFlag)
 	else
-		playerData = Player:new(playerName)
+		playerData = Player:new(playerName):update(packet)
 
 		self._count = self._count + 1
 		playerData._index = self._count
