@@ -4,6 +4,7 @@ local enum = require("api/enum")
 local enum_setting = enum.setting
 local enum_url     = enum.url
 local http_request = require("coro-http").request
+local json_decode  = require("json").decode
 local string_split = string.split
 ----------------------------------------------------------------------------------------------------
 
@@ -20,6 +21,11 @@ local getGameSettings = function(self)
 	result = json_decode(result)
 
 	if not result.success then
+		if result.error == "MAINTENANCE" then
+			return error(enum_error.authEndpoint, enum_errorLevel.high, tostring(result.error),
+				tostring(result.description))
+		end
+
 		return -- log?
 	end
 

@@ -48,8 +48,8 @@ os.log = function(log, ...)
 	print(coloredLog)
 
 	@#IF LOG_FILE & LOG_FILE ~= ''
-	logFile:write(rawLog)
-	logFile:flush(string_gsub(log, "↑.-↓(.-)↑", "%1"))
+	logFile:write(string_gsub(log, "↑.-↓(.-)↑", "%1"))
+	logFile:flush()
 	@#ENDIF
 end
 
