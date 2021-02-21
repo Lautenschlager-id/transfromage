@@ -46,14 +46,14 @@ enum.roomMode = enum {
 }
 
 enum.profileStats = enum {
-	racingRoundsPlayed       = 30,
-	racingRoundsCompleted    = 31,
-	racingFirst              = 32,
-	racingPodium             = 33,
 	survivorRoundsPlayed     = 26,
 	survivorShaman           = 27,
 	survivorKills            = 28,
 	survivorRoundsSurvived   = 29,
+	racingRoundsPlayed       = 30,
+	racingRoundsCompleted    = 31,
+	racingFirst              = 32,
+	racingPodium             = 33,
 	defilanteRoundsPlayed    = 42,
 	defilanteRoundsCompleted = 43,
 	defilantePoints          = 44
