@@ -20,11 +20,13 @@ This API had many indirect contributors, including [@Tocutoeltuco](https://githu
 
 ![/!\\](https://i.imgur.com/HQ188PK.png) **v8.1.0 has undocumented changes and is a quick patch to keep the API working. A new, better, version of the API is under development and will be released soon.**
 
-## Authentication keys Endpoint
+## Authentication
 
-This API relies on an [endpoint](https://api.tocuto.tk/get_transformice_keys.php) that gives you access to the Transformice encryption keys.
+To use this API and authenticate your account ingame, you will need to [apply to this form](https://forms.gle/N6Et1hLGQ9hmg95F6).
 
-To use it you will need a token which you can get by [applying through this form](https://forms.gle/N6Et1hLGQ9hmg95F6). See below to know the names of Transfromage managers who handle the token system.
+If you get accepted, you will be able to choose an account (except your main account) to get the _bot role_ in game - and thus, being able to use our API.
+
+See below to know the names of Transfromage managers who handles the system.
 - **[Tocutoeltuco](https://github.com/Tocutoeltuco)** @discord=> `Tocutoeltuco#0018` <sub>`212634414021214209`</sub>;
 - **[Blank3495](https://github.com/Blank3495)** @discord=> `󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪#8737` <sub>`436703225140346881`</sub>;
 - **[Bolodefchoco](https://github.com/Lautenschlager-id)** @discord=> `Lautenschlager#2555` <sub>`285878295759814656`</sub>.
