@@ -49,7 +49,7 @@ local Client = table.setNewClass("Client")
 		_updateSettings = false -- Whether the IP/Port settings should be updated by the endpoint or not when the @hasSpecialRole is true.
 	}
 ]]
-Client.new = function(self, tfmId, token, isOfficialBot)
+Client.new = function(self)
 	local eventEmitter = eventEmitter:new()
 
 	local client = setmetatable({
@@ -58,8 +58,6 @@ Client.new = function(self, tfmId, token, isOfficialBot)
 		_isConnected = false,
 
 		tribe = nil,
-
-		_isOfficialBot = isOfficialBot,
 
 		mainConnection = nil,
 		bulleConnection = nil,
@@ -76,13 +74,7 @@ Client.new = function(self, tfmId, token, isOfficialBot)
 
 		event = eventEmitter,
 
-		_decryptXML = false,
-
-		_connectionAuthenticationKey = nil,
-		_authenticationKey = nil,
-		_connectionKey = nil,
-		_identificationKeys = { },
-		_messageKeys = { }
+		_decryptXML = false
 	}, self)
 
 	client.mainConnection = Connection:new(client, "main")
@@ -92,10 +84,6 @@ Client.new = function(self, tfmId, token, isOfficialBot)
 	client.cafe = Cafe:new(client)
 
 	client.playerList = PlayerList:new(client)
-
-	if tfmId and token then
-		client:start(tfmId, token)
-	end
 
 	return client
 end

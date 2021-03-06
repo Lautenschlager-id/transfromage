@@ -11,5 +11,5 @@ local identifier = require("api/enum").identifier.roomMessage
 	@param message<string> The message.
 ]]
 Client.sendRoomMessage = function(self, message)
-	self:sendEncryptedPacket(ByteArray:new():writeUTF(message), self.bulleConnection, identifier)
+	self.bulleConnection:send(identifier, ByteArray:new():writeUTF(message))
 end

@@ -24,13 +24,9 @@ end
 local onSocketConnection = function(connection)
 	local client = connection._client
 
-	local startPacket = ByteArray:new():write16(enum_setting.gameVersion)
-	if not client._isOfficialBot then
-		startPacket
-			:writeUTF("en")
-			:writeUTF(client._connectionKey)
-	end
-	startPacket:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
+	local startPacket = ByteArray:new()
+		:write16(enum_setting.gameVersion)
+		:writeUTF("Desktop"):writeUTF('-'):write32(0x1FBD):writeUTF('')
 		:writeUTF(
 			-- ;)
 			"4c756120697320616c7761797320626574746572207468616e20507974686f6e2c2069736e27742069743f"

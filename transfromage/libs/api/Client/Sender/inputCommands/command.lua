@@ -11,5 +11,5 @@ local identifier = require("api/enum").identifier.command
 	@param command<string> The command. (without /)
 ]]
 Client.sendCommand = function(self, command)
-	self:sendEncryptedPacket(ByteArray:new():writeUTF(command), self.mainConnection, identifier)
+	self.mainConnection:send(identifier, ByteArray:new():writeUTF(command))
 end

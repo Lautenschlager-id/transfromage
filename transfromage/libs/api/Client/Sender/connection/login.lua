@@ -1,13 +1,11 @@
 local Client = require("api/Client/init")
 
 local ByteArray = require("classes/ByteArray")
-local encode = require("utils/encode")
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
 local bit_bxor           = bit.bxor
-local encode_loginCipher = encode.loginCipher
-local encode_password    = encode.password
+local encode_password    =  require("utils/encode").password
 local enum_error         = enum.error
 local enum_errorLevel    = enum.errorLevel
 local enum_timer         = enum.timer
@@ -56,14 +54,8 @@ Client.connect = function(self, userName, userPassword, startRoom, timeout)
 		:writeUTF(encode_password(userPassword))
 		:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4")
 		:writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-	if not self._isOfficialBot then
-		packet:write32(bit_bxor(self._authenticationKey, self._connectionAuthenticationKey))
-	end
-	packet:write8(0):writeUTF('')
-	if not self._isOfficialBot then
-		packet = encode_loginCipher(packet, self._identificationKeys)
-	end
-	packet:write8(0)
+		:write8(0):writeUTF('')
+		:write8(0)
 
 	self.playerName = userName
 	self.mainConnection:send(identifier, packet)
