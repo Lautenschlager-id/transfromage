@@ -10,7 +10,7 @@ local onRoomList = function(self, packet, connection, identifiers)
 	local roomMode = packet:read8()
 	local pinned, pinnedCounter = { }, 0
 
-	local isPinned, language, country, name, count, max, onFcMode
+	local isPinned, language, country, name, count, max, onFcMode, hasSpecialSettings
 	while packet.stackLen > 0 do
 		isPinned = packet:readBool()
 		language = packet:readUTF()
@@ -34,6 +34,20 @@ local onRoomList = function(self, packet, connection, identifiers)
 			count = packet:read16()
 			max = packet:read8()
 			onFcMode = packet:readBool()
+			hasSpecialSettings = packet:readBool()
+
+			local hasShamanSkills, hasConsumables, hasEvents, hasCollision, hasAie, mapDuration,
+				miceMass, mapRotation
+			if hasSpecialSettings then
+				hasShamanSkills = packet:readBool()
+				hasConsumables = packet:readBool()
+				hasEvents = packet:readBool()
+				hasCollision = packet:readBool()
+				hasAie = packet:readBool()
+				mapDuration = packet:read8()
+				miceMass = packet:read32()
+				mapRotation = packet:read8(packet:read8())
+			end
 
 			counter = counter + 1
 			rooms[counter] = {
@@ -42,7 +56,16 @@ local onRoomList = function(self, packet, connection, identifiers)
 				maxPlayers = max,
 				onFuncorpMode = onFcMode,
 				language = language,
-				country = country
+				country = country,
+				hasSpecialSettings = hasSpecialSettings,
+				hasShamanSkills = hasShamanSkills,
+				hasConsumables = hasConsumables,
+				hasEvents = hasEvents,
+				hasCollision = hasCollision,
+				hasAie = hasAie,
+				mapDuration = mapDuration,
+				miceMass = miceMass,
+				mapRotation = mapRotation
 			}
 		end
 	end
