@@ -34,7 +34,7 @@ require("wrapper")(function(test, transfromage, client)
 		end))
 
 		p("Starting client")
-		client:start(args[4], args[5])
+		client:start()
 	end)
 
 	test("handle players", function(expect)
