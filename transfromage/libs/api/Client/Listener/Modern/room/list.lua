@@ -1,16 +1,21 @@
 ------------------------------------------- Optimization -------------------------------------------
+local string_gmatch = string.gmatch
 local tonumber = tonumber
 ----------------------------------------------------------------------------------------------------
 
 local onRoomList = function(self, packet, connection, identifiers)
-	 -- Room types
+	-- Room types
 	packet:read8(packet:read8())
 
 	local rooms, counter = { }, 0
 	local roomMode = packet:read8()
 	local pinned, pinnedCounter = { }, 0
 
-	local isPinned, language, country, name, count, max, onFcMode, hasSpecialSettings
+	local isPinned, language, country, name
+	local command, args
+
+	local playerCount, maxPlayers, onFcMode, hasSpecialSettings
+
 	while packet.stackLen > 0 do
 		isPinned = packet:readBool()
 		language = packet:readUTF()
@@ -18,30 +23,46 @@ local onRoomList = function(self, packet, connection, identifiers)
 		name = packet:readUTF()
 
 		if isPinned then
-			count = tonumber(packet:readUTF())
-			local command = packet:readUTF()
-			local args = packet:readUTF()
-			for roomName, roomCount in args:gmatch('&~(.-),(%d+)') do -- improve
+			playerCount = packet:readUTF()
+
+			command = packet:readUTF()
+			args = packet:readUTF()
+
+			if command == "lm" then
+				for roomName, roomCount in string_gmatch(args, "&~(.-),(%d+)") do
+					pinnedCounter = pinnedCounter + 1
+					pinned[pinnedCounter] = {
+						name = roomName,
+						totalPlayers = roomCount * 1,
+						language = language,
+						country = country,
+						command = "mjj",
+						args = "m " .. roomName
+					}
+				end
+			else
 				pinnedCounter = pinnedCounter + 1
 				pinned[pinnedCounter] = {
 					name = roomName,
-					totalPlayers = roomCount * 1,
+					totalPlayers = tonumber(playerCount) or playerCount,
 					language = language,
-					country = country
+					country = country,
+					command = command,
+					args = args
 				}
 			end
 		else
-			count = packet:read16()
-			max = packet:read8()
+			playerCount = packet:read16()
+			maxPlayers = packet:read8()
 			onFcMode = packet:readBool()
 			hasSpecialSettings = packet:readBool()
 
 			local hasShamanSkills, hasConsumables, hasEvents, hasCollision, hasAie, mapDuration,
 				miceMass, mapRotation
 			if hasSpecialSettings then
-				hasShamanSkills = packet:readBool()
-				hasConsumables = packet:readBool()
-				hasEvents = packet:readBool()
+				hasShamanSkills = not packet:readBool()
+				hasConsumables = not packet:readBool()
+				hasEvents = not packet:readBool()
 				hasCollision = packet:readBool()
 				hasAie = packet:readBool()
 				mapDuration = packet:read8()
@@ -52,11 +73,12 @@ local onRoomList = function(self, packet, connection, identifiers)
 			counter = counter + 1
 			rooms[counter] = {
 				name = name,
-				totalPlayers = count,
-				maxPlayers = max,
+				totalPlayers = playerCount,
+				maxPlayers = maxPlayers,
 				onFuncorpMode = onFcMode,
 				language = language,
 				country = country,
+
 				hasSpecialSettings = hasSpecialSettings,
 				hasShamanSkills = hasShamanSkills,
 				hasConsumables = hasConsumables,
