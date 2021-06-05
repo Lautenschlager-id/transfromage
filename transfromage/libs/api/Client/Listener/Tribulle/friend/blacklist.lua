@@ -1,8 +1,12 @@
+------------------------------------------- Optimization -------------------------------------------
+local string_toNickname = string.toNickname
+----------------------------------------------------------------------------------------------------
+
 local onBlackListLoaded = function(self, packet, connection, tribulleId)
 	local blackList = { }
 
 	for p = 1, packet:read16() do
-		blackList[p] = packet:readUTF()
+		blackList[p] = string_toNickname(packet:readUTF(), true)
 	end
 
 	--[[@
