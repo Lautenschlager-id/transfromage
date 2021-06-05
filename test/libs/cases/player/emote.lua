@@ -1,6 +1,6 @@
-require("wrapper")(function(test, transfromage, client)
+require("wrapper")(function(test, transfromage, client, _, clientAux)
 	test("play emote", function(expect)
-		client:on("playerEmote", expect(function(player, emote, flag)
+		clientAux:on("playerEmote", expect(function(player, emote, flag)
 			p("Received event playerEmote")
 
 			assert_eq(tostring(player), "Player", "player")

@@ -7,8 +7,6 @@
 - math.normalizePoint
 - string.fixEntity
 - ByteArray.readSigned16
-- loginCipher
-- packetCipher
 
 - Client.createCafeTopic + Cafe.createTopic
 - Client.sendCafeMessage + Topic.newMessage + Message.reply

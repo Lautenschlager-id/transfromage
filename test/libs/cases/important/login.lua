@@ -1,6 +1,8 @@
-require("wrapper")(function(test, transfromage, client)
+require("wrapper")(function(test, transfromage, client, clientId)
+	clientId = clientId * 2
+
 	test("login", function(expect)
-		args[2] = string.toNickname(args[2], true)
+		args[clientId] = string.toNickname(args[clientId], true)
 
 		client:once("ready", expect(function(onlinePlayers, country, language)
 			p("Received event ready")
@@ -13,7 +15,7 @@ require("wrapper")(function(test, transfromage, client)
 			assert(language)
 			assert_neq(language, '', "language")
 
-			client:connect(args[2], args[3], "*transfromage")
+			client:connect(args[clientId], args[clientId+1], "*transfromage")
 		end))
 
 		client:once("mainConnection", expect(function(playerId, playerName, playedTime)
@@ -26,14 +28,14 @@ require("wrapper")(function(test, transfromage, client)
 
 			assert(playedTime)
 
-			assert_eq(playerName, args[2], "playerName")
+			assert_eq(playerName, args[clientId], "playerName")
 		end))
 
 		client:once("connection", expect(function()
 			p("Received event connection")
 		end))
 
-		p("Starting client")
+		p("Starting client", args[clientId])
 		client:start()
 	end)
 

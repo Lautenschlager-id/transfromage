@@ -1,8 +1,8 @@
 -- Based on luvit/tap
 local timer = require("timer")
 local colorize = require("pretty-print").colorize
-local transfromage, client
-local filePrefix
+local transfromage, clients
+local filePrefix, runOnNAccounts
 local tests = { }
 
 local totalTime = 0
@@ -100,7 +100,9 @@ local run = coroutine.wrap(function()
 	end
 
 	p("Disconnecting")
-	client:disconnect()
+	for c = 1, #clients do
+		clients[c]:disconnect()
+	end
 
 	timer.setTimeout(1000, os.exit, -failed)
 end)
@@ -113,17 +115,20 @@ local test = function(name, fn)
 	}
 end
 
-return function(suite, _client)
+return function(suite, _clients)
 	local type = type(suite)
 
 	if type == "function" then
-		suite(test, transfromage, client)
+		for c = 1, runOnNAccounts do
+			suite(test, transfromage, clients[c], c, unpack(clients, 2))
+		end
 	elseif type == "table" then
 		-- Receives from test.lua
-		transfromage, client = suite, _client
+		transfromage, clients = suite, _clients
 	elseif type == "string" then
 		-- File name from test.lua
 		filePrefix = suite
+		runOnNAccounts = _clients -- number of accounts to execute a specific suite
 	else
 		-- Executes all tests
 		run()

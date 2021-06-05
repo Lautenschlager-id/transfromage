@@ -1,25 +1,30 @@
 -- Based on luvit/tap
 
-assert(args[2], "Missing PlayerName")
-assert(args[3], "Missing Password")
-assert(args[4], "Missing PlayerID")
-assert(args[5], "Missing Token")
+for c = 2, #args, 2 do
+	assert(args[c], "Missing PlayerName " .. c/2)
+	assert(args[c + 1], "Missing Password " .. c/2)
+end
+
+local totalAccounts = (#args-1) / 2
 
 local testWrapper = require("wrapper")
 local transfromage = require("transfromage")
 
-local client = transfromage.Client()
-client:setLanguage(transfromage.enum.language.br)
+local clients = { }
+for c = 1, totalAccounts do
+	clients[c] = transfromage.Client()
+	clients[c]:setLanguage(transfromage.enum.language.br)
 
-do
-	local client_on = client.on
-	client.on = function(self, eventName, fn)
-		-- Deletes listener when it is specific again
-		if eventName:sub(1, 2) ~= "__" and self.event.handlers and self.event.handlers[eventName] then
-			self.event.handlers[eventName] = nil
+	do
+		local client_on = clients[c].on
+		clients[c].on = function(self, eventName, fn)
+			-- Deletes listener when it is specific again
+			if eventName:sub(1, 2) ~= "__" and self.event.handlers and self.event.handlers[eventName] then
+				self.event.handlers[eventName] = nil
+			end
+
+			return client_on(self, eventName, fn)
 		end
-
-		return client_on(self, eventName, fn)
 	end
 end
 
@@ -53,30 +58,30 @@ local testCases = {
 
 	{ "TODO", "important/connection.lua" },
 
-	{ "CHECK+IGNORE", "important/login.lua" },
+	{ "CHECK+IGNORE", "important/login.lua", totalAccounts },
 
 	{ "IGNORE+TODO", "chat.lua" },
 	{ "IGNORE", "important/message.lua" },
 
-	{ "CHECK+IGNORE+IGNORE", "important/room.lua" },
+	{ "IGNORE", "important/room.lua", totalAccounts },
 
 	{ "IGNORE+TODO", "cafe.lua" },
 
-	{ "IGNORE+IGNORE+TODO", "tribe.lua" },
+	{ "IGNORE+TODO", "tribe.lua" },
 
 	{ "IGNORE", "misc.lua" },
 
-	{ "CHECK+BROKEN", "player/emote.lua" },
+	{ "IGNORE", "player/emote.lua" },
 }
 
 local loadTests = function()
-	testWrapper(transfromage, client)
+	testWrapper(transfromage, clients)
 
 	for name = 1, #testCases do
 		name = testCases[name]
 
 		if string.find(name[1], "CHECK", 1, true) then
-			testWrapper(name[2])
+			testWrapper(name[2], name[3] or 1)
 			require("cases/" .. name[2])
 		end
 	end
