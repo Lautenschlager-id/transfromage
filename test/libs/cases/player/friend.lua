@@ -1,34 +1,62 @@
 require("wrapper")(function(test, transfromage, client)
-	local tigId
+	local recentlyAddedID
+
+	local checkFriend = function(friend, desc)
+		assert_eq(tostring(friend), "Friend", "str(" .. desc .. ")")
+
+		assert(friend._client)
+		assert(friend.id)
+		assert(friend.playerName)
+		assert(friend.gender)
+		assert_eq(type(friend.hasAvatar), "boolean", "type(" .. desc .. ".hasAvatar)")
+		assert_eq(type(friend.isFriend), "boolean", "type(" .. desc .. ".isFriend)")
+		assert_eq(type(friend.isConnected), "boolean", "type(" .. desc .. ".isConnected)")
+		assert(friend.gameId)
+		assert(friend.roomName)
+		assert(friend.lastConnection)
+	end
 
 	test("add friend", function(expect)
 		client:on("newFriend", expect(function(friend)
 			p("Received event newFriend")
-			assert(friend)
 
-			assert_eq(tostring(friend), "Friend", "str(t)")
+			checkFriend(friend, 't')
 
-			assert(friend._client)
-			assert(friend.id)
 			assert_eq(friend.playerName, "Tigrounette#0001", "playerName")
-			assert(friend.gender)
-			assert_eq(type(friend.hasAvatar), "boolean", "type(hasAvatar)")
-			assert_eq(type(friend.isFriend), "boolean", "type(isFriend)")
-			assert_eq(type(friend.isConnected), "boolean", "type(isConnected)")
-			assert(friend.gameId)
-			assert(friend.roomName)
-			assert(friend.lastConnection)
-
-			tigId = friend.id
+			recentlyAddedID = friend.id
 		end))
 
 		client:addFriend("Tigrounette#0001")
 	end)
 
+	test("friend list", function(expect)
+		client:on("friendList", expect(function(friendList, soulmate)
+			p("Received event friendList")
+
+			checkFriend(soulmate, "sm")
+
+			assert_eq(type(friendList), "table", "type(t)")
+			assert(#friendList >= 1)
+
+			local foundRecentlyAdded = false
+			for friend = 1, #friendList do
+				checkFriend(friendList[friend], "t[" .. friend .. "]")
+
+				if friendList[friend].playerName == "Tigrounette#0001" then
+					foundRecentlyAdded = true
+				end
+			end
+
+			assert(foundRecentlyAdded)
+		end))
+
+		client:requestFriendList()
+	end)
+
 	test("remove friend", function(expect)
 		client:on("removeFriend", expect(function(playerId)
 			p("Received event removeFriend")
-			assert_eq(playerId, tigId, "id")
+			assert_eq(playerId, recentlyAddedID, "id")
 		end))
 
 		client:removeFriend("Tigrounette#0001")

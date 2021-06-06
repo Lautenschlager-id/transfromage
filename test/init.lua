@@ -1,7 +1,5 @@
 -- Based on luvit/tap
 
-rawset(args, 2, '-#-')
-rawset(args, 3, '-')
 
 for c = 2, #args, 2 do
 	assert(args[c], "Missing PlayerName " .. c/2)
@@ -63,10 +61,10 @@ local testCases = {
 
 	{ "CHECK+IGNORE", "important/login.lua", totalAccounts },
 
-	{ "IGNORE+TODO", "chat.lua" },
-	{ "IGNORE", "important/message.lua" },
+	{ "CHECK+IGNORE+TODO", "chat.lua" },
+	{ "CHECK+IGNORE", "important/message.lua" },
 
-	{ "IGNORE", "important/room.lua", totalAccounts },
+	{ "CHECK+IGNORE", "important/room.lua", totalAccounts },
 
 	{ "IGNORE+TODO", "cafe.lua" },
 

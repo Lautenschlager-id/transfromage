@@ -13,19 +13,8 @@
 - Client.likeCafeMessage + Message.like
 - unreadCafeMessage
 
-- Friend
-- Client.addFriend
-- Client.blacklistPlayer
-- Client.requestBlackList
-- Client.requestFriendList
-- Client.removeFriend
-- Client.whitelistPlayer
-- newFriend
-- blackList
 - friendConnection
 - friendDisconnection
-- friendList
-- removeFriend
 
 - Player
 - PlayerList
