@@ -3,6 +3,8 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## News
+- New event _tribeInvite_
+- New function _client.answerTribeInvite_
 - sigterm is handled correctly for all clients now.
 - New event _languageSet_.
 - _updatePlayer_ now receives a third argument related to the field that has been updated.

@@ -1,6 +1,6 @@
 local timer = require("timer")
 
-require("wrapper")(function(test, transfromage, client)
+require("wrapper")(function(test, transfromage, client, _, clientAux)
 	test("tribe message", function(expect)
 		client:on("tribeMessage", expect(function(memberName, message)
 			p("Received event tribeMessage")
@@ -108,4 +108,55 @@ require("wrapper")(function(test, transfromage, client)
 
 		client.tribe:setGreetingMessage("69")
 	end)
+
+	if clientAux then
+		test("recruit player", function(expect)
+			local receivedFirst = false
+			clientAux:on("tribeInvite", expect(function(recruiterName, tribeName)
+				p("Received event tribeInvite")
+
+				assert_eq(recruiterName, client.playerName, "recruiterName")
+				assert_eq(type(tribeName), "string", "t(tribeName)")
+
+				client:answerTribeInvite(recruiterName, receivedFirst)
+				receivedFirst = not receivedFirst
+
+				if receivedFirst then
+					client:recruitPlayer(clientAux.playerName)
+				end
+			end, 2))
+
+			client:on("newTribeMember", expect(function(memberName)
+				p("Received event newTribeMember")
+
+				assert_eq(memberName, clientAux.playerName, "memberName")
+			end))
+
+			client:recruitPlayer(clientAux.playerName)
+		end)
+
+		test("set member role", function(expect)
+			client:on("tribeMemberGetRole", expect(function(memberName, setterName, role)
+				p("Received event tribeMemberGetRole")
+
+				assert_eq(memberName, clientAux.playerName, "memberName")
+				assert_eq(setterName, client.playerName, "setterName")
+
+				assert_eq(type(role), "string", "type(role)") -- improve 1 -> str
+			end))
+
+			client:setTribeMemberRole(clientAux.playerName, 1)
+		end)
+
+		test("kick member", function(expect)
+			client:on("tribeMemberKick", expect(function(memberName, kickerName)
+				p("Received event tribeMemberKick")
+
+				assert_eq(memberName, clientAux.playerName, "memberName")
+				assert_eq(kickerName, client.playerName, "kickerName")
+			end))
+
+			client:kickTribeMember(clientAux.playerName)
+		end)
+	end
 end)

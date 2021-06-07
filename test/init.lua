@@ -1,5 +1,7 @@
 -- Based on luvit/tap
 
+
+
 for c = 2, #args, 2 do
 	assert(args[c], "Missing PlayerName " .. c/2)
 	assert(args[c + 1], "Missing Password " .. c/2)
@@ -67,9 +69,9 @@ local testCases = {
 
 	{ "IGNORE+TODO", "cafe.lua" },
 
-	{ "IGNORE+TODO", "tribe.lua" },
+	{ "CHECK+IGNORE+TODO", "tribe.lua" },
 
-	{ "CHECK+TODO", "player/friend.lua" },
+	{ "IGNORE+TODO", "player/friend.lua" },
 
 	{ "IGNORE", "misc.lua" },
 
