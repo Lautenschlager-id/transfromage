@@ -1,4 +1,5 @@
-require("wrapper")(function(test, transfromage, client)
+require("wrapper")(function(test, transfromage, client, _, clientAux)
+	local friendNickname = clientAux and clientAux.playerName or "Tigrounette#0001"
 	local recentlyAddedID
 
 	local checkFriend = function(friend, desc)
@@ -22,11 +23,11 @@ require("wrapper")(function(test, transfromage, client)
 
 			checkFriend(friend, 't')
 
-			assert_eq(friend.playerName, "Tigrounette#0001", "playerName")
+			assert_eq(friend.playerName, friendNickname, "playerName")
 			recentlyAddedID = friend.id
 		end))
 
-		client:addFriend("Tigrounette#0001")
+		client:addFriend(friendNickname)
 	end)
 
 	test("friend list", function(expect)
@@ -42,7 +43,7 @@ require("wrapper")(function(test, transfromage, client)
 			for friend = 1, #friendList do
 				checkFriend(friendList[friend], "t[" .. friend .. "]")
 
-				if friendList[friend].playerName == "Tigrounette#0001" then
+				if friendList[friend].playerName == friendNickname then
 					foundRecentlyAdded = true
 				end
 			end
@@ -53,13 +54,38 @@ require("wrapper")(function(test, transfromage, client)
 		client:requestFriendList()
 	end)
 
+	if clientAux == false then -- All failed
+		test("friend disconnection", function(expect)
+			client:on("friendDisconnection", expect(function(friendName)
+				p("Received event friendDisconnection")
+				assert_eq(friendName, friendNickname, "friendName")
+			end))
+
+			clientAux:disconnect()
+		end)
+
+		test("reconnect auxiliar account", function(expect)
+			clientAux:once("ready", expect(function()
+				clientAux:connect(args[4], args[5], "*transfromage") -- client.room.name (?)
+			end))
+			clientAux:start()
+		end)
+
+		test("friend connection", function(expect)
+			client:on("friendConnection", expect(function(friendName)
+				p("Received event friendConnection")
+				assert_eq(friendName, friendNickname, "friendName")
+			end))
+		end)
+	end
+
 	test("remove friend", function(expect)
 		client:on("removeFriend", expect(function(playerId)
 			p("Received event removeFriend")
 			assert_eq(playerId, recentlyAddedID, "id")
 		end))
 
-		client:removeFriend("Tigrounette#0001")
+		client:removeFriend(friendNickname)
 	end)
 
 	test("blacklist", function(expect)
@@ -76,7 +102,7 @@ require("wrapper")(function(test, transfromage, client)
 			for n = 1, #playerList do
 				assert_neq(playerList[n], nil, "t[" .. n .. "]")
 
-				if playerList[n] == "Tigrounette#0001" then
+				if playerList[n] == friendNickname then
 					foundRecentlyBlacklisted = true
 				end
 			end
@@ -84,13 +110,13 @@ require("wrapper")(function(test, transfromage, client)
 			if mustFindRecentlyBlacklisted then
 				assert(foundRecentlyBlacklisted)
 
-				client:whitelistPlayer("Tigrounette#0001")
+				client:whitelistPlayer(friendNickname)
 				client:requestBlackList()
 			else
 				assert(not foundRecentlyBlacklisted)
 			end
 		end, 2))
 
-		client:blacklistPlayer("Tigrounette#0001")
+		client:blacklistPlayer(friendNickname)
 	end)
 end)

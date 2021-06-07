@@ -1,16 +1,18 @@
 require("wrapper")(function(test, transfromage, client, _, clientAux)
 	test("play emote", function(expect)
-		clientAux:on("playerEmote", expect(function(player, emote, flag)
-			p("Received event playerEmote")
+		if clientAux then
+			clientAux:on("playerEmote", expect(function(player, emote, flag)
+				p("Received event playerEmote")
 
-			assert_eq(tostring(player), "Player", "player")
+				assert_eq(tostring(player), "Player", "player")
 
-			assert_eq(player.playerName, client.playerName, "playerName")
+				assert_eq(player.playerName, client.playerName, "playerName")
 
-			assert_eq(emote, transfromage.enum.emote.flag, "enum_flag")
+				assert_eq(emote, transfromage.enum.emote.flag, "enum_flag")
 
-			assert_eq(flag, "br", "br")
-		end))
+				assert_eq(flag, "br", "br")
+			end))
+		end
 
 		for c = 1, 2 do
 			p("Playing emote: " .. tostring(client._handlePlayers))
