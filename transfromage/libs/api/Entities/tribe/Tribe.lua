@@ -57,6 +57,10 @@ Tribe.kickMember = function(self, memberName)
 	return self._client:kickTribeMember(memberName)
 end
 
+Tribe.leave = function(self)
+	return self._client:leaveTribe()
+end
+
 Tribe.openInterface = function(self, includeOfflineMembers)
 	return self._client:openTribeInterface(includeOfflineMembers)
 end

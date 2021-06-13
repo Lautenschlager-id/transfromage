@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## News
+- Mew function _client.leaveTribe_ and _client.tribe.leave_.
 - New event _tribeInvite_
 - New function _client.answerTribeInvite_
 - sigterm is handled correctly for all clients now.
