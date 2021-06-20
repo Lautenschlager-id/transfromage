@@ -12,6 +12,7 @@
 - New event _shaman_.
 
 ## Changes
+- Parameter of the event roomChanged "isPrivate" is now "isOfficial", meaning that if you relied on this boolean, please negate it now.
 - Event _connection_ is now triggered when the first bulle connection is set (zero arguments)
 - New event _mainConnection_ that is triggered when the main connection is set (takes all arguments from connection)
 - Event _ping_ is now _serverPing_.

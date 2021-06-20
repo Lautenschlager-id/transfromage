@@ -18,12 +18,12 @@ require("wrapper")(function(test, transfromage, client, clientId)
 	end)
 
 	test("join room", function(expect)
-		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
+		client:on("roomChanged", expect(function(roomName, isOfficial, roomLanguage)
 			p("Received event roomChanged")
 
 			assert(roomName, client.language .. "-#bolodefchoco", "roomName")
 
-			assert_eq(type(isPrivate), "boolean", "type(isPrivate)")
+			assert_eq(type(isOfficial), "boolean", "type(isOfficial)")
 			assert_eq(roomLanguage, client.language, "roomLanguage")
 		end))
 

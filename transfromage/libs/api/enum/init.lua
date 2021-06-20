@@ -44,7 +44,11 @@ local enum = setmetatable({ }, {
 				return next, list
 			end,
 			__len = function()
-				return #list
+				local len = 0
+				for _ in next, list do
+					len = len + 1
+				end
+				return len
 			end,
 			__newindex = function()
 				return error(enum_error.enumOverwrite, enum_errorLevel.low)

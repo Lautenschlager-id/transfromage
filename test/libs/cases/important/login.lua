@@ -54,11 +54,11 @@ require("wrapper")(function(test, transfromage, client, clientId)
 	end)
 
 	test("skip first room change", function(expect)
-		client:on("roomChanged", expect(function(roomName, isPrivate, roomLanguage)
+		client:on("roomChanged", expect(function(roomName, isOfficial, roomLanguage)
 			p("Received event roomChanged")
 
 			assert(roomName)
-			assert(isPrivate ~= nil)
+			assert(isOfficial ~= nil)
 			assert(roomLanguage)
 		end))
 	end)

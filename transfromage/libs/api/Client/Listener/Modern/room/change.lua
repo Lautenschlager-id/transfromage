@@ -9,7 +9,7 @@ local string_sub       = string.sub
 local onRoomChange = function(self, packet, connection, identifiers)
 	self.playerList = PlayerList:new(self)
 
-	local isPrivate, roomName, roomLanguage = packet:readBool(), packet:readUTF(), packet:readUTF()
+	local isOfficial, roomName, roomLanguage = packet:readBool(), packet:readUTF(), packet:readUTF()
 
 	if string_byte(roomName, 2) == 3 then
 		--[[@
@@ -27,7 +27,7 @@ local onRoomChange = function(self, packet, connection, identifiers)
 			@param roomLanguage<string> The language of the room.
 			@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
 		]]
-		self.event:emit("roomChanged", string_fixEntity(roomName), isPrivate, roomLanguage)
+		self.event:emit("roomChanged", string_fixEntity(roomName), isOfficial, roomLanguage)
 	end
 end
 
