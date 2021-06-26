@@ -1,7 +1,6 @@
 local timer = require("timer")
 
 require("wrapper")(function(test, transfromage, client, _, clientAux)
-
 	-- if not client.room.isTribeHouse then
 	test("join tribe house", function(expect)
 		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)

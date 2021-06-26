@@ -40,7 +40,7 @@ enum.identifier = enum {
 	@type *
 ]]
 enum.setting = {
-	mainIP      = "51.75.130.180",
+	mainIP      = "37.187.29.8",
 	port        = { 11801, 12801, 13801, 14801 },
 	gameVersion = 666
 }

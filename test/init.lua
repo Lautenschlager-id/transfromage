@@ -70,7 +70,9 @@ local testCases = {
 
 	{ "IGNORE", "tribe.lua" },
 
-	{ "CHECK+IGNORE", "room.lua" },
+	{ "IGNORE", "room.lua" },
+
+	{ "CHECK+IGNORE", "lua.lua" },
 
 	{ "IGNORE+TODO", "player/friend.lua" },
 
