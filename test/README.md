@@ -20,26 +20,13 @@
 - PlayerList
 - playerDeath
 - playerLeft
-- playerWon
 - playerVampire
 - updatePlayer
 - shaman
 - refreshPlayerList
 - profileLoaded
 - updatePlayer
-- playerGetCheese
 - newPlayer
-
-- Client.kickTribeMember + Tribe.kickMember + Member.kick
-- Client.recruitPlayer + Tribe.recruitPlayer
-- Client.setTribeMemberRole + Tribe.setMemberRole + Member.setRole
-- tribeMemberConnection
-- tribeMemberDisconnection
-- tribeMemberGetRole
-- tribeMemberKick
-- tribeMemberLeave
-- newTribeMember
-- tribeHouseInvitation
 
 - Connection socket timeout (all ports)
 - Client.connect (with bot role)
@@ -51,15 +38,6 @@
 
 - Client.connectionTime
 - Client.handlePlayers
-
-- Client.decryptXML
-- Client.enterPrivate
-- Client.requestRoomList
-- roomList
-- newGame
-
-- Client.loadLua
-- lua
 
 - Client.changeWhisperState
 

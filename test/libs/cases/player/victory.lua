@@ -20,30 +20,30 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 	--end
 
 	test("get cheese and hole", function(expect)
-		client:once("playerGetCheese", expect(function(player, hasCheese)
+		client:once("playerGetCheese", expect(function(playerData, hasCheese)
 			p("Received event playerGetCheese")
 
-			assert_eq(tostring(player), "Player", "str(t)")
+			assert_eq(tostring(playerData), "Player", "str(t)")
 			assert_eq(type(hasCheese), "boolean", "type(hasCheese)")
 
-			assert_eq(player.hasCheese, hasCheese, "t.hasCheese")
-			assert_eq(player.winPosition, -1, "t.winPosition")
-			assert_eq(player.winTimeElapsed, -1, "t.winTimeElapsed")
-			assert_eq(player.hasWon, false, "t.hasWon")
+			assert_eq(playerData.hasCheese, hasCheese, "t.hasCheese")
+			assert_eq(playerData.winPosition, -1, "t.winPosition")
+			assert_eq(playerData.winTimeElapsed, -1, "t.winTimeElapsed")
+			assert_eq(playerData.hasWon, false, "t.hasWon")
 		end))
 
-		client:once("playerWon", expect(function(player, winPosition, winTimeElapsed)
+		client:once("playerWon", expect(function(playerData, winPosition, winTimeElapsed)
 			p("Received event playerWon")
 
-			assert_eq(tostring(player), "Player", "str(t)")
+			assert_eq(tostring(playerData), "Player", "str(t)")
 			assert_eq(type(winPosition), "number", "type(winPosition)")
 			assert_eq(type(winTimeElapsed), "number", "type(winTimeElapsed)")
 
 
-			assert_eq(player.hasCheese, true, "t.hasCheese")
-			assert_neq(player.winPosition, -1, "t.winPosition")
-			assert_neq(player.winTimeElapsed, -1, "t.winTimeElapsed")
-			assert_eq(player.hasWon, true, "t.hasWon")
+			assert_eq(playerData.hasCheese, true, "t.hasCheese")
+			assert_neq(playerData.winPosition, -1, "t.winPosition")
+			assert_neq(playerData.winTimeElapsed, -1, "t.winTimeElapsed")
+			assert_eq(playerData.hasWon, true, "t.hasWon")
 		end))
 
 		timer.setTimeout(5000, client.sendCommand, client, "np @6264090")

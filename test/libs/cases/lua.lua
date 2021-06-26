@@ -31,10 +31,10 @@ require("wrapper")(function(test, transfromage, client)
 		end, 11))
 
 		timer.setTimeout(5000, client.loadLua, client, [[
-for i = 1, 10 do
-	print(i * 10)
-end
-			]])
+			for i = 1, 10 do
+				print(i * 10)
+			end
+		]])
 
 		return -5000
 	end)
