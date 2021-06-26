@@ -151,7 +151,7 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 				p("Received event tribeInvite")
 
 				assert_eq(recruiterName, client.playerName, "recruiterName")
-				assert_eq(type(tribeName), "string", "t(tribeName)")
+				assert_eq(type(tribeName), "string", "type(tribeName)")
 
 				client:answerTribeInvite(recruiterName, receivedFirst)
 				receivedFirst = not receivedFirst
