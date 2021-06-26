@@ -49,4 +49,4 @@ local onPlayerLeft = function(self, data, connection, legacyIdentifiers)
 	self.playerList:deletePlayer(player)
 end
 
-return { onPlayerLeft, 0, 27 }
+return { onPlayerLeft, 8, 7 }
