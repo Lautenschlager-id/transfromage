@@ -18,9 +18,7 @@
 
 - Player
 - PlayerList
-- playerDeath
 - playerLeft
-- playerVampire
 - updatePlayer
 - shaman
 - refreshPlayerList

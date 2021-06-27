@@ -13,7 +13,7 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 		p("Joining tribe house")
 		timer.setTimeout(3500, client.joinTribeHouse, client)
 
-		return -8500
+		return -3500
 	end)
 	--end
 
