@@ -15,12 +15,12 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 		p("Joining tribe house")
 		timer.setTimeout(3500, client.joinTribeHouse, client)
 
-		return -8500
+		return -3500
 	end)
 	--end
 
 	test("get cheese and hole", function(expect)
-		client:once("playerGetCheese", expect(function(playerData, hasCheese)
+		client:on("playerGetCheese", expect(function(playerData, hasCheese)
 			p("Received event playerGetCheese")
 
 			assert_eq(tostring(playerData), "Player", "str(t)")
@@ -32,7 +32,7 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 			assert_eq(playerData.hasWon, false, "t.hasWon")
 		end))
 
-		client:once("playerWon", expect(function(playerData, winPosition, winTimeElapsed)
+		client:on("playerWon", expect(function(playerData, winPosition, winTimeElapsed)
 			p("Received event playerWon")
 
 			assert_eq(tostring(playerData), "Player", "str(t)")
@@ -46,8 +46,12 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 			assert_eq(playerData.hasWon, true, "t.hasWon")
 		end))
 
-		timer.setTimeout(5000, client.sendCommand, client, "np @6264090")
+		timer.setTimeout(5000, client.loadLua, client, string.format([[
+			tfm.exec.respawnPlayer("%s")
+			tfm.exec.giveCheese("%s")
+			tfm.exec.playerVictory("%s")
+		]], client.playerName, client.playerName, client.playerName))
 
-		return -11700 -- The map has a ground that disappears after 6700ms
+		return -5000
 	end)
 end)
