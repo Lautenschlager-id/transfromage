@@ -18,16 +18,12 @@
 
 - Player
 - PlayerList
-- playerLeft
-- updatePlayer
 - shaman
 - refreshPlayerList
 - profileLoaded
 - updatePlayer
-- newPlayer
 
 - Connection socket timeout (all ports)
-- Client.connect (with bot role)
 - Connection.close
 
 - getAuthenticationKeys (failure & success)

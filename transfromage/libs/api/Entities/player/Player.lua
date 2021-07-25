@@ -97,7 +97,7 @@ Player.update = function(self, packet)
 end
 
 Player.copy = function(self)
-	return table_copy(self)
+	return table_copy(self, true)
 end
 
 return Player

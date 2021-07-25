@@ -31,7 +31,7 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 		end))
 
 		client:on("newPlayer", expect(function(playerData, __rollbackExpected)
-			p("Received event newPlayer", playerData.playerName)
+			p("Received event newPlayer", playerDataw.playerName)
 
 			assert_eq(tostring(playerData), "Player", "str(t)")
 			if playerData.playerName ~= clientAux.playerName then

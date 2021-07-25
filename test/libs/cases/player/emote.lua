@@ -14,6 +14,8 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 			end))
 		end
 
+		client:handlePlayers(true)
+
 		for c = 1, 2 do
 			p("Playing emote: " .. tostring(client._handlePlayers))
 			client:playEmote(transfromage.enum.emote.flag, "br")
@@ -31,6 +33,8 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 
 			assert_eq(emoticon, transfromage.enum.emoticon.shades, "enum_shades")
 		end))
+
+		client:handlePlayers(true)
 
 		for c = 1, 2 do
 			p("Playing emoticon: " .. tostring(client._handlePlayers))

@@ -1,5 +1,7 @@
 ------------------------------------------- Optimization -------------------------------------------
+local getmetatable = getmetatable
 local next         = next
+local setmetatable = setmetatable
 local string_char  = string.char
 local table_concat = table.concat
 local type         = type
@@ -51,7 +53,7 @@ end
 	@returns table A new table with all values and indexes of @list.
 ]]
 local table_copy
-table_copy = function(list)
+table_copy = function(list, checkMetatable)
 	local out = { }
 	for k, v in next, list do
 		if type(v) == "table" then
@@ -60,6 +62,14 @@ table_copy = function(list)
 			out[k] = v
 		end
 	end
+
+	if checkMetatable then
+		local meta = getmetatable(list)
+		if meta and type(meta) == "table" then
+			out = setmetatable(out, meta)
+		end
+	end
+
 	return out
 end
 table.copy = table_copy

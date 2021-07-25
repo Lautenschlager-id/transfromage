@@ -32,7 +32,6 @@ end
 ]]
 table.setNewClass = function(name)
 	local class = setmetatable({
-		__metatable = name,
 		__tostring = function()
 			return name
 		end

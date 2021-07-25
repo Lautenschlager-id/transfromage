@@ -1,6 +1,6 @@
 local timer = require("timer")
 
-require("wrapper")(function(test, transfromage, client, _, clientAux)
+require("wrapper")(function(test, transfromage, client)
 	-- if not client.room.isTribeHouse then
 	test("join tribe house", function(expect)
 		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
@@ -33,6 +33,8 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 			assert_eq(playerData.winTimeElapsed, -1, "t.winTimeElapsed")
 			assert_eq(playerData.hasWon, false, "t.hasWon")
 		end, 2))
+
+		client:handlePlayers(true)
 
 		for t = 0, 1 do
 			timer.setTimeout(5000 + (3000 * t), client.loadLua, client, string.format([[

@@ -1,6 +1,6 @@
 local timer = require("timer")
 
-require("wrapper")(function(test, transfromage, client, _, clientAux)
+require("wrapper")(function(test, transfromage, client)
 	-- if not client.room.isTribeHouse then
 	test("join tribe house", function(expect)
 		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
@@ -18,16 +18,15 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 	--end
 
 	test("player death", function(expect)
-		local trigger = 0
 		client:on("playerDeath", expect(function(playerData)
 			p("Received event playerDeath")
-
-			trigger = trigger + 1
 
 			assert_eq(tostring(playerData), "Player", "str(t)")
 
 			assert_eq(playerData.isDead, true, "t.isDead")
 		end))
+
+		client:handlePlayers(true)
 
 		timer.setTimeout(5000, client.loadLua, client, string.format([[
 			tfm.exec.respawnPlayer("%s")

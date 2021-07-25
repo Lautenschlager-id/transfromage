@@ -36,8 +36,15 @@ local run = coroutine.wrap(function()
 			local err
 			local expect = function(fn, totalCalls)
 				expected = expected + (totalCalls or 1)
+
+				local rollbackExpectedCall = function()
+					expected = expected + 1
+				end
+
 				return function(...)
-					local success, ret = pcall(fn, ...)
+					local args = { ... }
+					args[select('#', ...) + 1] = rollbackExpectedCall
+					local success, ret = pcall(fn, unpack(args))
 					if success then
 						expected = expected - 1
 						if expected <= 0 then

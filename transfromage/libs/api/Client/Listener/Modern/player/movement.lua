@@ -3,7 +3,7 @@ local handlePlayers = require("api/Client/utils/_internal/handlePlayers")
 local updateFlag = require("api/enum").updatePlayer.movement
 
 ------------------------------------------- Optimization -------------------------------------------
-local math_normalizePoint = math.normalizePoint
+local math_symmetricFloor = math.symmetricFloor
 ----------------------------------------------------------------------------------------------------
 
 local onPlayerMove = function(self, packet, connection, identifiers)
@@ -14,15 +14,26 @@ local onPlayerMove = function(self, packet, connection, identifiers)
 
 	local oldPlayerData = player:copy()
 
+	packet:read32() -- ?
+
 	player.movingRight = packet:readBool()
 	player.movingLeft = packet:readBool()
 
-	player.x = math_normalizePoint(packet:read32())
-	player.y = math_normalizePoint(packet:read32())
-	player.vx = packet:read16()
-	player.vy = packet:read16()
+	player.x = math_symmetricFloor(packet:read32() * 30 / 100)
+	player.y = math_symmetricFloor(packet:read32() * 30 / 100)
+	player.vx = packet:readSigned16() * 100 / 1000
+	player.vy = packet:readSigned16() * 100 / 1000
 
 	player.isJumping = packet:readBool()
+
+	--[[packet:read8(2) -- ?
+
+	if packet.stackLen > 0 then
+		player.angle = packet:read32()
+		player.angleVelocity = packet:read32()
+
+		packet:read8() -- ?
+	end]]
 
 	self.event:emit("updatePlayer", player, oldPlayerData, updateFlag)
 end

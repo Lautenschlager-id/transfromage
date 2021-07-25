@@ -9,7 +9,6 @@ local math_floor = math.floor
 	@param n<number> The coordinate point value.
 	@returns int The normalized coordinate point value.
 ]]
-math.normalizePoint = function(n)
-	n = n * (8 / 27)
-	return (n > 0 and math_floor(n) or n < 0 and math_ceil(n) or n)
+math.symmetricFloor = function(n)
+	return (n > 0 and math_ceil(n) or n < 0 and math_floor(n) or n)
 end

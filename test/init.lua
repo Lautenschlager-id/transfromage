@@ -80,9 +80,11 @@ local testCases = {
 	{ "IGNORE", "lua.lua" },
 
 	{ "IGNORE", "player/emote.lua" },
-	{ "IGNORE", "player/victory.lua" },
+	{ "IGNORE", "player/cheeseAndVictory.lua" },
 	{ "IGNORE", "player/vampire.lua" },
-	{ "CHECK+IGNORE", "player/death.lua" },
+	{ "IGNORE", "player/death.lua" },
+	{ "IGNORE", "player/joinedAndLeft.lua" },
+	{ "CHECK+IGNORE", "player/update.lua" },
 }
 
 local loadTests = function()
