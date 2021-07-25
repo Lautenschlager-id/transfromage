@@ -29,6 +29,5 @@ enum.updatePlayer = enum {
 	shamanColor     = 2,
 	score           = 3,
 	movement        = 4,
-	facingDirection = 5,
-	ducking         = 6
+	ducking         = 5
 }
