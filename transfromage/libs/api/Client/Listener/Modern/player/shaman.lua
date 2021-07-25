@@ -6,7 +6,7 @@ local onShaman = function(self, packet, connection, identifiers)
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 
-	player.isShaman = packet:readBool()
+	player.isShaman = identifiers[1] == 8 -- 8 = promote, 144 = demote
 
 	self.event:emit("shaman", player, player.isShaman)
 end

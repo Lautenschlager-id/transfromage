@@ -16,8 +16,6 @@
 - friendConnection
 - friendDisconnection
 
-- Player
-- PlayerList
 - shaman
 - profileLoaded
 

@@ -152,6 +152,31 @@ require("wrapper")(function(test, transfromage, client)
 		return -5000
 	end)
 
+	test("player shaman", function(expect)
+		local shouldBeShaman = true
+		client:on("shaman", expect(function(playerData, isShaman)
+			p("Received event shaman")
+
+			assert_eq(isShaman, shouldBeShaman, "isShaman")
+			shouldBeShaman = not shouldBeShaman
+		end, 2))
+
+		client:handlePlayers(true)
+
+		timer.setTimeout(5000, client.loadLua, client, string.format([[
+			local transform = 0
+			eventLoop = function()
+				if transform < 2 then
+					transform = transform + 1
+					tfm.exec.respawnPlayer("%s")
+					tfm.exec.setShaman("%s", transform == 1)
+				end
+			end
+		]], client.playerName, client.playerName))
+
+		return -5000
+	end)
+
 	test("player general update", function(expect)
 		client:on("updatePlayer", expect(function(playerData, oldPlayerData, updateFlag,
 			__rollbackExpected)
