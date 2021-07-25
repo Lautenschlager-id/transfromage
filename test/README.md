@@ -19,9 +19,7 @@
 - Player
 - PlayerList
 - shaman
-- refreshPlayerList
 - profileLoaded
-- updatePlayer
 
 - Connection socket timeout (all ports)
 - Connection.close

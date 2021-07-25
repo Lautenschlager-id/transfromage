@@ -87,9 +87,35 @@ require("wrapper")(function(test, transfromage, client)
 	-- There must be a regular player in the room in order to make this test pass.
 	local realPlayer = "Bolodefchoco#0015"
 
+	-- Instruction: duck
+	test("player ducking", function(expect)
+		client:on("updatePlayer", expect(function(playerData, oldPlayerData, updateFlag,
+			__rollbackExpected)
+			p("Received event updatePlayer", updateFlags(updateFlag))
+
+			assert_eq(tostring(playerData), "Player", "str(t)")
+			assert_eq(tostring(oldPlayerData), "Player", "str(oldT)")
+
+			if updateFlag ~= updateFlags.ducking then
+				__rollbackExpected()
+			else
+				assert_eq(updateFlag, updateFlags.ducking, "updateFlag")
+
+				assert_eq(playerData.playerName, realPlayer, "t.playerName")
+				assert_eq(oldPlayerData.playerName, realPlayer, "oldT.playerName")
+
+				assert_neq(playerData.isDucking, oldPlayerData.isDucking, "isDucking")
+				assert_eq(playerData.isDucking, true, "t.isDucking")
+			end
+		end))
+
+		client:handlePlayers(true)
+	end)
+
 	test("change player position", function(expect)
 		client:on("updatePlayer", expect(function(playerData, oldPlayerData, updateFlag,
 			__rollbackExpected)
+			p("Received event updatePlayer", updateFlags(updateFlag))
 
 			assert_eq(tostring(playerData), "Player", "str(t)")
 			assert_eq(tostring(oldPlayerData), "Player", "str(oldT)")
@@ -126,33 +152,10 @@ require("wrapper")(function(test, transfromage, client)
 		return -5000
 	end)
 
-	-- Instruction: duck
-	test("player ducking", function(expect)
-		client:on("updatePlayer", expect(function(playerData, oldPlayerData, updateFlag,
-			__rollbackExpected)
-
-			assert_eq(tostring(playerData), "Player", "str(t)")
-			assert_eq(tostring(oldPlayerData), "Player", "str(oldT)")
-
-			if updateFlag ~= updateFlags.ducking then
-				__rollbackExpected()
-			else
-				assert_eq(updateFlag, updateFlags.ducking, "updateFlag")
-
-				assert_eq(playerData.playerName, realPlayer, "t.playerName")
-				assert_eq(oldPlayerData.playerName, realPlayer, "oldT.playerName")
-
-				assert_neq(playerData.isDucking, oldPlayerData.isDucking, "isDucking")
-				assert_eq(playerData.isDucking, true, "t.isDucking")
-			end
-		end))
-
-		client:handlePlayers(true)
-	end)
-
 	test("player general update", function(expect)
 		client:on("updatePlayer", expect(function(playerData, oldPlayerData, updateFlag,
 			__rollbackExpected)
+			p("Received event updatePlayer", updateFlags(updateFlag))
 
 			assert_eq(tostring(playerData), "Player", "str(t)")
 			assert_eq(tostring(oldPlayerData), "Player", "str(oldT)")
@@ -165,6 +168,22 @@ require("wrapper")(function(test, transfromage, client)
 				assert_eq(playerData.playerName, client.playerName, "t.playerName")
 				assert_eq(oldPlayerData.playerName, client.playerName, "oldT.playerName")
 			end
+		end))
+
+		client:on("refreshPlayerList", expect(function(playerList)
+			p("Received event refreshPlayerList")
+
+			assert_eq(tostring(playerList), "PlayerList", "str(t)")
+
+			local botFound = false
+			for playerName, playerData in pairs(playerList) do
+				assert_eq(tostring(playerData), "Player", "str(t) " .. playerName)
+
+				if playerName == client.playerName then
+					botFound = true
+				end
+			end
+			assert(botFound)
 		end))
 
 		client:handlePlayers(true)

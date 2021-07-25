@@ -26,7 +26,6 @@ Player.new = function(self, playerName)
 		hasWon = nil,
 		winPosition = nil,
 		winTimeElapsed = nil,
-		isFacingRight = nil,
 		movingRight = nil,
 		movingLeft = nil,
 		isBlueShaman = nil,
@@ -78,7 +77,6 @@ Player.update = function(self, packet)
 	self.winPosition = -1
 	self.winTimeElapsed = -1
 
-	self.isFacingRight = true
 	self.movingRight = false
 	self.movingLeft = false
 
