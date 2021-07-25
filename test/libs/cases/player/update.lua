@@ -184,6 +184,23 @@ require("wrapper")(function(test, transfromage, client)
 				end
 			end
 			assert(botFound)
+
+			local totalPlayers = #playerList
+			assert(totalPlayers > 0)
+
+			local me = playerList[client.playerName]
+			local copy = me:copy()
+
+			assert_neq(me, copy, "me.copy")
+			for k, v in next, me do
+				assert_eq(v, copy[k], "me." .. k)
+			end
+			assert_eq(tostring(me), tostring(copy), "str(me)")
+
+			playerList:deletePlayer(me)
+			assert(not playerList[client.playerName])
+
+			assert_eq(#playerList, totalPlayers - 1, "#playerList")
 		end))
 
 		client:handlePlayers(true)
