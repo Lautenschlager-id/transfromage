@@ -54,8 +54,7 @@ Client.connect = function(self, userName, userPassword, startRoom, timeout)
 		:writeUTF(encode_password(userPassword))
 		:writeUTF("app:/TransformiceAIR.swf/[[DYNAMIC]]/2/[[DYNAMIC]]/4")
 		:writeUTF((startRoom and tostring(startRoom)) or "*#bolodefchoco")
-		:write8(0):writeUTF('')
-		:write8(0)
+		:write8(0):write32(0)::write32(0)
 
 	self.playerName = userName
 	self.mainConnection:send(identifier, packet)
