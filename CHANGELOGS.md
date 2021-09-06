@@ -3,15 +3,17 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## News
-- Mew function _client.leaveTribe_ and _client.tribe.leave_.
-- New event _tribeInvite_
-- New function _client.answerTribeInvite_
+- New event _whisperFail_.
+- New function _client.leaveTribe_ and _client.tribe.leave_.
+- New event _tribeInvite_.
+- New function _client.answerTribeInvite_.
 - sigterm is handled correctly for all clients now.
 - New event _languageSet_.
 - _updatePlayer_ now receives a third argument related to the field that has been updated.
 - New event _shaman_.
 
 ## Changes
+- client.changeWhisperState(message, state) is now client.changeWhisperState(state, message)
 - Parameter of the event roomChanged "isPrivate" is now "isOfficial", meaning that if you relied on this boolean, please negate it now.
 - Event _connection_ is now triggered when the first bulle connection is set (zero arguments)
 - New event _mainConnection_ that is triggered when the main connection is set (takes all arguments from connection)

@@ -3,10 +3,6 @@
 - semi auto update
 - log file + os.log
 - colored errors / logs
-- table.setNewClass
-- math.normalizePoint
-- string.fixEntity
-- ByteArray.readSigned16
 
 - Client.createCafeTopic + Cafe.createTopic
 - Client.sendCafeMessage + Topic.newMessage + Message.reply
@@ -15,9 +11,6 @@
 
 - friendConnection
 - friendDisconnection
-
-- shaman
-- profileLoaded
 
 - Connection socket timeout (all ports)
 - Connection.close
@@ -28,8 +21,6 @@
 
 - Client.connectionTime
 - Client.handlePlayers
-
-- Client.changeWhisperState
 
 - accountDataLoaded
 

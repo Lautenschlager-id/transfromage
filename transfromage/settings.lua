@@ -3,6 +3,8 @@ return {
 	-- Can be nil, "permission" (to ask for permission before updating) and "auto" (to update automatically)
 	UPDATE = nil,
 
+	DEBUG = true,
+
 	-- Whether logs should have color or not
 	COLORED_LOGS = true,
 	-- Whether the function error should have color or not

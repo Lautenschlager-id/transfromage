@@ -1,7 +1,9 @@
 ------------------------------------------- Optimization -------------------------------------------
 local table_copy       = table.copy
 local table_writeBytes = table.writeBytes
+local type             = type
 local setmetatable     = setmetatable
+local string_getBytes  = string.getBytes
 ----------------------------------------------------------------------------------------------------
 
 local ByteArray = table.setNewClass("ByteArray")
@@ -22,6 +24,12 @@ end
 	}
 ]]
 ByteArray.new = function(self, stack)
+	@#IF DEBUG
+	if type(stack) == "string" then
+		stack = string_getBytes(stack)
+	end
+	@#ENDIF
+
 	return setmetatable({
 		stack = (stack or { }), -- Array of bytes
 		stackLen = (stack and #stack or 0),

@@ -17,7 +17,7 @@ local enum_whisperState = enum.whisperState
 	@param message?<string> The /silence message. @default ''
 	@param state?<enum.whisperState> An enum from @see whisperState. (index or value) @default enabled
 ]]
-Client.changeWhisperState = function(self, message, state)
+Client.changeWhisperState = function(self, state, message)
 	state = enum_validate(enum_whisperState, enum_whisperState.enabled, state,
 		string_format(enum_error.invalidEnum, "changeWhisperState", "state", "whisperState"))
 	if not state then return end

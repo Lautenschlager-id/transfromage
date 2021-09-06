@@ -50,6 +50,11 @@ enum.whisperState = enum {
 	disabledAll    = 3
 }
 
+enum.whisperFail = enum {
+	disconnected = 1,
+	silence      = 25
+}
+
 
 --[=[
 af = 1,

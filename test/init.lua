@@ -1,5 +1,7 @@
 -- Based on luvit/tap
 
+
+
 for c = 2, #args, 2 do
 	assert(args[c], "Missing PlayerName " .. c/2)
 	assert(args[c + 1], "Missing Password " .. c/2)
@@ -73,7 +75,7 @@ local testCases = {
 
 	{ "IGNORE+TODO", "player/friend.lua" },
 
-	{ "IGNORE", "misc.lua" },
+	{ "CHECK+IGNORE", "misc.lua" },
 
 	{ "IGNORE", "lua.lua" },
 
@@ -82,7 +84,8 @@ local testCases = {
 	{ "IGNORE", "player/vampire.lua" },
 	{ "IGNORE", "player/death.lua" },
 	{ "IGNORE", "player/joinedAndLeft.lua" },
-	{ "CHECK+IGNORE", "player/update.lua" },
+	{ "IGNORE", "player/update.lua" },
+	{ "IGNORE", "player/profile.lua" },
 }
 
 local loadTests = function()
