@@ -23,7 +23,7 @@ local folderLoader = function(path, asArray)
 				files[(asArray and totalFiles or name)] = require(path .. name)
 			end
 		else
-			if name ~= "_internal" then
+			if name ~= "_internal" and string_sub(name, 1, 1) ~= '.' then
 				totalFolders = totalFolders + 1
 				folders[totalFolders] = path .. name
 			end
