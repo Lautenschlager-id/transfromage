@@ -3,7 +3,6 @@ local logMessage   = require("api/enum").logMessage
 local os_log       = os.log
 local rawset       = rawset
 local setmetatable = setmetatable
-local table_copy   = table.copy
 local type         = type
 ----------------------------------------------------------------------------------------------------
 

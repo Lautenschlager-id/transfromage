@@ -135,4 +135,29 @@ require("wrapper")(function(test, transfromage, client)
 		assert_eq(utf8[3], 'ç', "t[3]")
 		assert_eq(utf8[4], 'ã', "t[4]")
 	end)
+
+	test("class extensions", function(expect)
+		local class = table.setNewClass("test")
+
+		local randomArg = math.random(666)
+		class.new = function(self, arg)
+			assert_eq(arg, randomArg, "arg")
+
+			return setmetatable({
+				data = arg / 2
+			}, self)
+		end
+
+		local instance = class(randomArg)
+		assert_eq(tostring(instance), "test", "str(t)")
+
+		assert_eq(type(instance), "table", "type(t)")
+		assert_eq(instance.data, randomArg / 2, "return")
+
+		class.str = class.new
+		class.strOld = "str"
+
+		instance = class:strOld(randomArg)
+		assert_eq(instance.data, randomArg / 2, "return deprecated")
+	end)
 end)
