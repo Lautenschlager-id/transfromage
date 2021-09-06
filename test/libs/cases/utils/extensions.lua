@@ -9,7 +9,11 @@ require("wrapper")(function(test, transfromage, client)
 
 	test("log extensions", TO_DO)
 
-	test("math extensions", TO_DO)
+	test("math extensions", function(expect)
+		assert_eq(math.symmetricFloor(-10.5), -11, "f(-1)")
+		assert_eq(math.symmetricFloor(10.5), 11, "f(1)")
+		assert_eq(math.symmetricFloor(0), 0, "f(0)")
+	end)
 
 	test("string extensions", function(expect)
 		-- TO_DO: string.fixEntity
