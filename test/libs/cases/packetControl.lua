@@ -51,6 +51,7 @@ require("wrapper")(function(test, transfromage, client)
 		local byteArray = ByteArray()
 			:write8(1, 2, 0xFF)
 			:write16(0xFFFF)
+			:write16(-0x7FFF)
 			:write24(0xFFFFFF)
 			:write32(0x7FFFFFFF)
 			:writeUTF(utf)
@@ -58,9 +59,9 @@ require("wrapper")(function(test, transfromage, client)
 			:writeBool(true)
 			:writeBool(false)
 
-		local len = (3 + 2 + 3 + 4 + (0xFFFF + 2) + (0xFFFFFF + 3) + 1 + 1)
+		local len = (3 + 2 + 2 + 3 + 4 + (0xFFFF + 2) + (0xFFFFFF + 3) + 1 + 1)
 
-		assert_eq(byteArray.stackLen, len, "stackLen")
+		assert_eq(byteArray.stackLen, len, "stackLen 1")
 		assert_eq(byteArray.stack[1], 1, "t[1]")
 		assert_eq(byteArray.stack[byteArray.stackLen], 0, "t[-1]")
 
@@ -71,27 +72,26 @@ require("wrapper")(function(test, transfromage, client)
 		assert_eq(byteArray:read8(), 0xFF, "r8()")
 
 		len = len - 3
-		assert_eq(byteArray.stackLen, len, "stackLen")
+		assert_eq(byteArray.stackLen, len, "stackLen 2")
 
 		assert_eq(byteArray:read16(), 0xFFFF, "r16()")
+		assert_eq(byteArray:readSigned16(), -0x7FFF, "rs16()")
 		assert_eq(byteArray:read24(), 0xFFFFFF, "r24()")
 		assert_eq(byteArray:read32(), 0x7FFFFFFF, "r32()")
 
-		len = len - 2 - 3 - 4
-		assert_eq(byteArray.stackLen, len, "stackLen")
+		len = len - 2 - 2 - 3 - 4
+		assert_eq(byteArray.stackLen, len, "stackLen 3")
 
 		assert_eq(byteArray:readUTF(), utf, "rUTF()")
 		assert_eq(byteArray:readBigUTF(), bigUtf, "rBUTF()")
 
 		len = len - (0xFFFF + 2) - (0xFFFFFF + 3)
-		assert_eq(byteArray.stackLen, len, "stackLen")
+		assert_eq(byteArray.stackLen, len, "stackLen 4")
 
 		assert_eq(byteArray:readBool(), true, "rBool()")
 		assert_eq(byteArray:readBool(), false, "rBool()")
 
 		len = len - 1 - 1
-		assert_eq(byteArray.stackLen, len, "stackLen")
-
-		-- TO_DO: ByteArray.readSigned16
+		assert_eq(byteArray.stackLen, len, "stackLen 5")
 	end)
 end)
