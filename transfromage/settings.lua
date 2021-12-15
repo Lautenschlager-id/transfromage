@@ -1,7 +1,7 @@
-return {
+local settings = {
 	-- The API update mode
-	-- Can be nil, "permission" (to ask for permission before updating) and "auto" (to update automatically)
-	UPDATE = nil,
+	-- Can be false, "permission" (to ask for permission before updating) and "auto" (to update automatically)
+	UPDATE = false,
 
 	DEBUG = true,
 
@@ -13,3 +13,12 @@ return {
 	-- File where all logs are saved, use nil to disable it.
 	LOG_FILE = "logs.log",
 }
+
+if _G.PREPDIR_SETTINGS then
+	-- Cannot assign _G.PREPDIR_SETTINGS to settings because there can be default values that aren't assigned by the developer
+	for key, value in next, _G.PREPDIR_SETTINGS do
+		settings[key] = value
+	end
+end
+
+return settings
