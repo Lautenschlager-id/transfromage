@@ -13,6 +13,10 @@
 - New event _shaman_.
 
 ## Changes
+- Event _receivedPacket_ now receives the following parameters: (identifiers, packet, connection)
+- Event _receive_ has been renamed to _receivedPacket_.
+- Event _missedPacket_ has been renamed to _unhandledPacket_.
+- Event _missedTribulle_ has been renamed to _unhandledTribullePacket_.
 - client.changeWhisperState(message, state) is now client.changeWhisperState(state, message)
 - Parameter of the event roomChanged "isPrivate" is now "isOfficial", meaning that if you relied on this boolean, please negate it now.
 - Event _connection_ is now triggered when the first bulle connection is set (zero arguments)
@@ -30,7 +34,7 @@
 - Event _tribeInterface_ now receives only one object parameter _Tribe_.
 - Event _connectionInfo_ has been renamed to _accountDataLoaded_.
 - Event _playerDied_ has been renamed to _playerDeath_.
-- Event _missedOldPacket_ has been renamed to _missedLegacyPacket_.
+- Event _missedOldPacket_ has been renamed to _unhandledLegacyPacket_.
 - _client.main_, _client.bulle_, _client.hbTimer_, _client._receivedAuthkey_, _client.connectionTime_, _client._hasSpecialRole_, have been renamed to _client.mainConnection_, _client.bulleConnection_, _client._heartbeatTimer_, _client._authenticationKey_, _client._loginTime_, _client._isOfficialBot_, respectively.
 - _connection.open_, _connection.port_ has been renamed to _connection.isOpen_, _connection.portIndex_, respectively.
 - When a player becomes shaman, the event _shaman_ will be triggered instead of _updatePlayer_.

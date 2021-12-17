@@ -13,7 +13,7 @@ local onTribullePacket = function(self, packet, connection, identifiers)
 		@param packet<byteArray> The Byte Array object with the packet that was not handled.
 		@param connection<connection> The connection object.
 	]]
-	self.event:emit("missedTribulle", tribulleId, packet, connection)
+	self.event:emit("unhandledTribullePacket", tribulleId, packet, connection)
 end
 
 return { onTribullePacket, 60, 3 }

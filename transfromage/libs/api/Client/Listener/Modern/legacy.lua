@@ -24,7 +24,7 @@ local onLegacyPacket = function(self, packet, connection, identifiers)
 		@param data<table> The data that was not handled.
 		@param connection<connection> The connection object.
 	]]
-	self.event:emit("missedLegacyPacket", legacyIdentifiers, data, connection)
+	self.event:emit("unhandledLegacyPacket", legacyIdentifiers, data, connection)
 end
 
 return { onLegacyPacket, 1, 1 }

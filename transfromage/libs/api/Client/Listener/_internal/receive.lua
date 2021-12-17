@@ -24,7 +24,7 @@ local triggerPacketCallback = function(client, connection, identifiers, packet)
 		@param packet<byteArray> The Byte Array object with the packet that was not handled.
 		@param connection<connection> The connection object.
 	]]
-	client.event:emit("missedPacket", identifiers, packet, connection)
+	client.event:emit("unhandledPacket", identifiers, packet, connection)
 end
 
 local onReceive = function(client, connection)
@@ -41,7 +41,7 @@ local onReceive = function(client, connection)
 			@param self<client> A Client object.
 			@param connectionName<string> The name of the Connection object to get the timer attached to.
 		]]
-		client.event:emit("receive", connection, identifiers, packet:duplicate())
+		client.event:emit("receivedPacket", identifiers, packet:duplicate(), connection)
 	end
 	triggerPacketCallback(client, connection, identifiers, packet)
 end
