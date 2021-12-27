@@ -84,9 +84,11 @@ ShopItem.loadPurchasable = function(self, packet)
 		self.specialData = packet:read32()
 	end
 
-	if self.cheesePrice ~= 1000001 then
-		self.isPurchasable = true
+	if self.cheesePrice == 1000001 then
+		self.isPurchasable = false
 		self.cheesePrice = 0
+	else
+		self.isPurchasable = false
 	end
 
 	self.isCollector = self.flags == 13
