@@ -13,6 +13,7 @@ local bit_lshift = bit.lshift
 	@desc Retrieves the data received from the server.
 	@returns table,nil The bytes that were removed from the buffer queue. Can be nil if the queue is empty or if a packet is only partially received.
 ]]
+
 Connection.receive = function(self)
 	local byte
 	while self._isReadingStackLength and self.Buffer._count ~= 0 do
@@ -26,7 +27,7 @@ Connection.receive = function(self)
 		self._isReadingStackLength = (self._lengthBytes < 35 and bit_band(byte, 0x80) == 0x80)
 	end
 
-	if not self._isReadingStackLength and self.Buffer._count >= self._lengthBytes then
+	if not self._isReadingStackLength and self.Buffer._count >= self._readStackLength then
 		local byteArr = self.Buffer:receive(self._readStackLength)
 
 		self._isReadingStackLength = true
