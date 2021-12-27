@@ -64,8 +64,6 @@ Shop.load = function(self, packet)
 	for i = 1, packet:read16() do
 		self.purchasableShamanItems[i] = ShopShamanItem:new():loadPurchasable(packet)
 	end
-
-	p(packet:read8(100))
 end
 
 return Shop
