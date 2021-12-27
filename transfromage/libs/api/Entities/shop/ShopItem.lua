@@ -26,7 +26,7 @@ ShopItem.new = function(self)
 		isPurchasable = nil,
 		isCollector = nil,
 
-		isEquiped = nil, -- Based on the current outfit
+		isEquipped = nil, -- Based on the current outfit
 	}, self)
 end
 

@@ -51,7 +51,7 @@ enum.whisperState = enum {
 }
 
 enum.whisperFail = enum {
-	disconnected = 1,
+	disconnected = 01,
 	silence      = 25
 }
 

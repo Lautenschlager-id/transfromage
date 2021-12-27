@@ -8,7 +8,7 @@ ShopShamanItem.new = function(self)
 	return setmetatable({
 		id = nil,
 
-		isEquiped = nil,
+		isEquipped = nil,
 
 		totalColors = nil,
 		colors = nil,
@@ -24,7 +24,7 @@ end
 ShopShamanItem.loadOwned = function(self, packet, category, id, totalColors)
 	self.id = packet:read16()
 
-	self.isEquiped = packet:readBool()
+	self.isEquipped = packet:readBool()
 
 	self.totalColors = packet:read8()
 

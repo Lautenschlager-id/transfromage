@@ -2,6 +2,7 @@ local Cafe = require("api/Entities/cafe/Cafe")
 local ChatList = require("api/Entities/chat/ChatList")
 local Connection = require("api/Connection")
 local PlayerList = require("api/Entities/player/PlayerList")
+local Shop = require("api/Entities/shop/Shop")
 
 ------------------------------------------- Optimization -------------------------------------------
 local enum_language = require("api/enum").language
@@ -84,6 +85,8 @@ Client.new = function(self)
 	client.cafe = Cafe:new(client)
 
 	client.playerList = PlayerList:new(client)
+
+	client.shop = Shop:new(client)
 
 	return client
 end

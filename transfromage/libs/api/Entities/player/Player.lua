@@ -57,7 +57,7 @@ Player.update = function(self, packet)
 
 	packet:readUTF() -- ?
 
-	self.look = packet:readUTF()
+	self.look = packet:readUTF() -- Class Shop/Outfit? : Outfit:new():load(packet, i)
 
 	packet:readBool() -- ?
 
