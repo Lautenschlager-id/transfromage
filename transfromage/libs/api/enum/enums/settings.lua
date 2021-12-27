@@ -31,7 +31,8 @@ enum.identifier = enum {
 	room                   = enum { 05, 38 },
 	roomList               = enum { 26, 35 },
 	roomMessage            = enum({ 06, 06 }, true),
-	roomPassword           = enum { 05, 39 }
+	roomPassword           = enum { 05, 39 },
+	shopState              = enum { 08, 20 }
 }
 
 --[[@
