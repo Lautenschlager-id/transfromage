@@ -49,12 +49,19 @@ local insertItem = function(self, item)
 	end
 	itemList.category[item.category][item.id] = item
 
-	itemList[item.uid] = item
+	local category = item.category
+	category = category == 0 and "10" or category
+	itemList[(category .. item.id) * 1] = item
 end
 
 local checkItemSale = function(self, item)
-	local sale = self.sales[item.uid]
+	local category = item.category
+	category = category == 0 and "10" or category
+	local sale = self.sales[category and ((category .. item.id) * 1) or item.uid]
+
 	if not sale then return end
+
+	if not sale.isShamanItem and not item.id then return end
 
 	item.isOnSale = true
 
@@ -123,6 +130,10 @@ Shop.getItem = function(self, category, id)
 		category = self.item.category[category]
 		return category and category[id]
 	end
+end
+
+Shop.getShamanItem = function(self, uid)
+	return self.item.shaman[uid]
 end
 
 return Shop
