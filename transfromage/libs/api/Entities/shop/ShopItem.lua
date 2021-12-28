@@ -27,6 +27,9 @@ ShopItem.new = function(self)
 		isCollector = nil,
 
 		isEquipped = nil, -- Based on the current outfit
+
+		isOnSale = nil,
+		fraisePriceWithDiscount = nil,
 	}, self)
 end
 

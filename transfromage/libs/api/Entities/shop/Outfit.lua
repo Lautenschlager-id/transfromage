@@ -1,7 +1,5 @@
 ------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
-local string_sub   = string.sub
-local table_copy   = table.copy
 ----------------------------------------------------------------------------------------------------
 
 local Outfit = table.setNewClass("Outfit")

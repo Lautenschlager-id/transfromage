@@ -11,22 +11,56 @@ local table_copy   = table.copy
 
 local Shop = table.setNewClass("Shop")
 
+Shop.sales = { }
+
 Shop.new = function(self)
 	return setmetatable({
 		totalCheese = nil,
 		totalFraise = nil,
 
 		currentOutfit = nil,
-		ownedItems = { },
 
+		item = {
+			category = {
+				-- [id]
+			},
+			shaman = {
+
+			},
+			-- [uid]
+		},
+
+		ownedItems = { },
 		purchasableItems = { },
 		purchasableShamanItems = { },
 
-		fashionSquadOutfits = { },
-		ownedOutfits = { },
+		ownedShamanItems = { },
 
-		ownedShamanItems = { }
+		fashionSquadOutfits = { },
+		ownedOutfits = { }
 	}, self)
+end
+
+local insertItem = function(self, item)
+	local itemList = self.item
+
+	if not itemList.category[item.category] then
+		itemList.category[item.category] = { }
+	end
+	itemList.category[item.category][item.id] = item
+
+	itemList[item.uid] = item
+end
+
+local checkItemSale = function(self, item)
+	local sale = self.sales[item.uid]
+	if not sale then return end
+
+	item.isOnSale = true
+
+	if not item.fraisePrice then return end
+	item.fraisePriceWithDiscount = item.fraisePrice -
+		(item.fraisePrice * (sale.discountPercentage / 100))
 end
 
 Shop.load = function(self, packet)
@@ -36,13 +70,21 @@ Shop.load = function(self, packet)
 	self.currentOutfit = Outfit:new():load(packet, -1)
 
 	-- Owned items
+	local tmpItem
 	for i = 1, packet:read32() do
-		self.ownedItems[i] = ShopItem:new():loadOwned(packet)
+		tmpItem = ShopItem:new():loadOwned(packet)
+
+		self.ownedItems[i] = tmpItem
+		insertItem(self, tmpItem)
+		checkItemSale(self, tmpItem)
 	end
 
 	-- Available items in the shop that haven't been purchased yet
 	for i = 1, packet:read32() do
-		self.purchasableItems[i] = ShopItem:new():loadPurchasable(packet)
+		tmpItem = ShopItem:new():loadPurchasable(packet)
+		self.purchasableItems[i] = tmpItem
+		insertItem(self, tmpItem)
+		checkItemSale(self, tmpItem)
 	end
 
 	-- Currently available FS outfits
@@ -57,12 +99,29 @@ Shop.load = function(self, packet)
 
 	-- Owned shaman items
 	for i = 1, packet:read16() do
-		self.ownedShamanItems[i] = ShopShamanItem:new():loadOwned(packet)
+		tmpItem = ShopShamanItem:new():loadOwned(packet)
+
+		self.ownedShamanItems[i] = tmpItem
+		self.item.shaman[tmpItem.uid] = tmpItem
+		checkItemSale(self, tmpItem)
 	end
 
 	-- Available shaman items in the shop that haven't been purchased yet
 	for i = 1, packet:read16() do
-		self.purchasableShamanItems[i] = ShopShamanItem:new():loadPurchasable(packet)
+		tmpItem = ShopShamanItem:new():loadPurchasable(packet)
+
+		self.purchasableShamanItems[i] = tmpItem
+		self.item.shaman[tmpItem.uid] = tmpItem
+		checkItemSale(self, tmpItem)
+	end
+end
+
+Shop.getItem = function(self, category, id)
+	if category and not id then -- uid provided
+		return self.item[category]
+	else
+		category = self.item.category[category]
+		return category and category[id]
 	end
 end
 
