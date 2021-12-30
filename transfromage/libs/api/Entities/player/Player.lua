@@ -1,3 +1,5 @@
+local Outfit = require("./Outfit")
+
 ------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
 local string_sub   = string.sub
@@ -57,7 +59,7 @@ Player.update = function(self, packet)
 
 	packet:readUTF() -- ?
 
-	self.look = packet:readUTF() -- Class Shop/Outfit? : Outfit:new():load(packet, i)
+	self.look = Outfit:new():load(packet)
 
 	packet:readBool() -- ?
 

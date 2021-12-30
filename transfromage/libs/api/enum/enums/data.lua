@@ -31,3 +31,15 @@ enum.updatePlayer = enum {
 	movement        = 4,
 	ducking         = 5
 }
+
+enum.outfitCategory = enum {
+	head          = 1,
+	eyes          = 2,
+	ears          = 3,
+	mouth         = 4,
+	neck          = 5,
+	hairStyle     = 6,
+	tail          = 7,
+	contactLenses = 8,
+	hands         = 9
+}

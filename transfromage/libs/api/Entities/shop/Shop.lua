@@ -1,7 +1,7 @@
 local ShopItem = require("./ShopItem")
 local ShopShamanItem = require("./ShopShamanItem")
 
-local Outfit = require("./Outfit")
+local Outfit = require("../player/Outfit")
 
 ------------------------------------------- Optimization -------------------------------------------
 local setmetatable = setmetatable
@@ -74,7 +74,7 @@ Shop.load = function(self, packet)
 	self.totalCheese = packet:read32()
 	self.totalFraise = packet:read32()
 
-	self.currentOutfit = Outfit:new():load(packet, -1)
+	self.currentOutfit = Outfit:new():load(packet)
 
 	-- Owned items
 	local tmpItem
