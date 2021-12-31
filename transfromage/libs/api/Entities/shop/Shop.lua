@@ -4,6 +4,7 @@ local ShopShamanItem = require("./ShopShamanItem")
 local Outfit = require("../player/Outfit")
 
 ------------------------------------------- Optimization -------------------------------------------
+local math_ceil    = math.ceil
 local setmetatable = setmetatable
 local string_sub   = string.sub
 local table_copy   = table.copy
@@ -50,13 +51,17 @@ local insertItem = function(self, item)
 	itemList.category[item.category][item.id] = item
 
 	local category = item.category
-	category = category == 0 and "10" or category
+	if item.id > 99 then
+		category = (category == 0 and "10") or (category == 22 and "230") or (category == 5 and "60") or category
+	end
 	itemList[(category .. item.id) * 1] = item
 end
 
 local checkItemSale = function(self, item)
 	local category = item.category
-	category = category == 0 and "10" or category
+	if category and item.id > 99 then
+		category = (category == 0 and "10") or (category == 22 and "230") or (category == 5 and "60") or category
+	end
 	local sale = self.sales[category and ((category .. item.id) * 1) or item.uid]
 
 	if not sale then return end
@@ -66,8 +71,8 @@ local checkItemSale = function(self, item)
 	item.isOnSale = true
 
 	if not item.fraisePrice then return end
-	item.fraisePriceWithDiscount = item.fraisePrice -
-		(item.fraisePrice * (sale.discountPercentage / 100))
+	item.fraisePriceWithDiscount = math_ceil(item.fraisePrice -
+		(item.fraisePrice * (sale.discountPercentage / 100)))
 end
 
 Shop.load = function(self, packet)
