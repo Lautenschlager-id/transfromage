@@ -14,8 +14,9 @@
 - New event _shaman_.
 
 ## Changes
-- Event _ newGame_ now receives a parameter `map` with the Map class.
-- Events _joinTribeHouse_ and _changeRoom_ now receive a parameter `room` with the Room class.
+- Field `Map.perm` has been renamed to `Map.permCode`.
+- Event _newGame_ now receives a parameter `map` with the Map class.
+- Events _joinTribeHouse_ and _roomChanged_ now receive a parameter `room` with the Room class.
 - Event _receivedPacket_ now receives the following parameters: (identifiers, packet, connection)
 - Event _receive_ has been renamed to _receivedPacket_.
 - Event _missedPacket_ has been renamed to _unhandledPacket_.

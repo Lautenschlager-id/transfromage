@@ -55,7 +55,7 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 		test("whisper state", function(expect)
 			local attempt = 0
 			client:on("whisperFail", expect(function(failType, silenceMessage)
-				p("Received event whisperFail", failType, silenceMessage)
+				p("Received event whisperFail")
 
 				attempt = attempt + 1
 

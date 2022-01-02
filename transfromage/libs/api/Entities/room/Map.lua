@@ -22,7 +22,7 @@ Map.new = function(self, packet, decryptXML)
 		end
 	end
 	map.author = packet:readUTF()
-	map.perm = packet:read8()
+	map.permCode = packet:read8()
 	map.isMirrored = packet:readBool()
 
 	return setmetatable(map, self)
