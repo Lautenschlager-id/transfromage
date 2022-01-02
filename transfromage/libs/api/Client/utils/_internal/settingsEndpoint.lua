@@ -8,6 +8,7 @@ local enum_url        = enum.url
 local http_request    = require("coro-http").request
 local json_decode     = require("json").decode
 local string_split    = string.split
+local tostring        = tostring
 ----------------------------------------------------------------------------------------------------
 
 --[[@
@@ -20,7 +21,8 @@ local string_split    = string.split
 ]]
 local getGameSettings = function(self)
 	local _, result = http_request("GET", enum_url.gameSettings)
-	result = json_decode(result)
+	result = json_decode(tostring(result))
+	if not result then return end
 
 	if not result.success then
 		if result.error == "MAINTENANCE" then
