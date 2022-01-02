@@ -24,11 +24,6 @@
 
 - accountDataLoaded
 
-- missedLegacyPacket
-- missedTribulle
-- missedPacket
-- receive
-
 - languageSet
 
 - switchBulleConnection

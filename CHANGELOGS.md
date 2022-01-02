@@ -3,6 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.0 - ?
 ## News
+- Shop features.
 - New event _whisperFail_.
 - New function _client.leaveTribe_ and _client.tribe.leave_.
 - New event _tribeInvite_.
@@ -13,6 +14,8 @@
 - New event _shaman_.
 
 ## Changes
+- Event _ newGame_ now receives a parameter `map` with the Map class.
+- Events _joinTribeHouse_ and _changeRoom_ now receive a parameter `room` with the Room class.
 - Event _receivedPacket_ now receives the following parameters: (identifiers, packet, connection)
 - Event _receive_ has been renamed to _receivedPacket_.
 - Event _missedPacket_ has been renamed to _unhandledPacket_.
@@ -46,6 +49,9 @@
 - _buffer_ has been renamed to _Buffer_.
 - _bitwise_ has been renamed to _bit64_.
 - _byteArray_ has been renamed to _ByteArray_.
+
+## Fixes
+- _Connection.receive_ now correctly handles long packets
 
 ## v8.0.0 - 05/09/2020
 ## News

@@ -1,7 +1,7 @@
-local ShopItem = require("./ShopItem")
-local ShopShamanItem = require("./ShopShamanItem")
+local ShopItem = require("api/Entities/shop/ShopItem")
+local ShopShamanItem = require("api/Entities/shop/ShopShamanItem")
 
-local Outfit = require("../player/Outfit")
+local Outfit = require("api/Entities/player/Outfit")
 
 ------------------------------------------- Optimization -------------------------------------------
 local math_ceil    = math.ceil

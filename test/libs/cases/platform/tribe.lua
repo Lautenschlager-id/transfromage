@@ -66,11 +66,11 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 	end)
 
 	test("join tribe house (OO)", function(expect)
-		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
+		client:on("joinTribeHouse", expect(function(room)
 			p("Received event joinTribeHouse")
 
-			assert(roomName)
-			assert(roomLanguage)
+			assert(room.name)
+			assert(room.language)
 		end))
 
 		p("Joining tribe house")

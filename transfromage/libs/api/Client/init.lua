@@ -73,6 +73,10 @@ Client.new = function(self)
 		playerList = nil,
 		_handlePlayers = false,
 
+		shop = nil,
+
+		room = nil,
+
 		event = eventEmitter,
 
 		_decryptXML = false

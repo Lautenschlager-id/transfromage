@@ -3,11 +3,11 @@ local timer = require("timer")
 require("wrapper")(function(test, transfromage, client, _, clientAux)
 	-- if not client.room.isTribeHouse then
 	test("join tribe house", function(expect)
-		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
+		client:on("joinTribeHouse", expect(function(room)
 			p("Received event joinTribeHouse")
 
-			assert(roomName)
-			assert(roomLanguage)
+			assert(room.name)
+			assert(room.language)
 		end))
 
 		p("Joining tribe house")
@@ -58,10 +58,10 @@ require("wrapper")(function(test, transfromage, client, _, clientAux)
 
 	if clientAux then
 		test("enter private room", function(expect)
-			client:on("roomChanged", expect(function(roomName)
+			client:on("roomChanged", expect(function(room)
 				p("Received event roomChanged")
 
-				assert_eq(roomName, "*#test", "roomName")
+				assert_eq(room.name, "*#test", "roomName")
 			end))
 
 			clientAux:on("roomChanged", expect(function()

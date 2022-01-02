@@ -1,26 +1,5 @@
-------------------------------------------- Optimization -------------------------------------------
-local table_writeBytes = table.writeBytes
-local zlibDecompress   = require("miniz").inflate
-----------------------------------------------------------------------------------------------------
-
 local onNewGame = function(self, packet, connection, identifiers)
-	local map = { }
-	map.code = packet:read32()
-
-	packet:read16() -- ?
-	packet:read8() -- ?
-	packet:read16() -- ?
-
-	local xml = packet:read8(packet:read16())
-	if self._decryptXML then
-		xml = table_writeBytes(xml)
-		if xml ~= '' then
-			map.xml = zlibDecompress(xml, 1)
-		end
-	end
-	map.author = packet:readUTF()
-	map.perm = packet:read8()
-	map.isMirrored = packet:readBool()
+	local map = self.room:newMap(packet, self._decryptXML)
 
 	--[[@
 		@name newGame

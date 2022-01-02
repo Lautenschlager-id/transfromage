@@ -1,8 +1,7 @@
 ------------------------------------------- Optimization -------------------------------------------
+local salesList    = require("api/Entities/shop/Shop").sales
 local setmetatable = setmetatable
 ----------------------------------------------------------------------------------------------------
-
-local salesList = require("./Shop").sales
 
 local ShopSale = table.setNewClass("ShopSale")
 

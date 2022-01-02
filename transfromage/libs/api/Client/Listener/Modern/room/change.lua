@@ -1,4 +1,5 @@
 local PlayerList = require("api/Entities/player/PlayerList")
+local Room = require("api/Entities/room/Room")
 
 ------------------------------------------- Optimization -------------------------------------------
 local string_byte      = string.byte
@@ -9,16 +10,16 @@ local string_sub       = string.sub
 local onRoomChange = function(self, packet, connection, identifiers)
 	self.playerList = PlayerList:new(self)
 
-	local isOfficial, roomName, roomLanguage = packet:readBool(), packet:readUTF(), packet:readUTF()
+	self.room = Room:new(packet)
 
-	if string_byte(roomName, 2) == 3 then
+	if self.room.isTribeHouse then
 		--[[@
 			@name joinTribeHouse
 			@desc Triggered when the account joins a tribe house.
 			@param tribeName<string> The name of the tribe.
 			@param roomLanguage<string> The language of the tribe.
 		]]
-		self.event:emit("joinTribeHouse", string_sub(roomName, 3), roomLanguage)
+		self.event:emit("joinTribeHouse", self.room)
 	else
 		--[[@
 			@name roomChanged
@@ -27,7 +28,7 @@ local onRoomChange = function(self, packet, connection, identifiers)
 			@param roomLanguage<string> The language of the room.
 			@param isPrivateRoom<boolean> Whether the room is only accessible by the account or not.
 		]]
-		self.event:emit("roomChanged", string_fixEntity(roomName), isOfficial, roomLanguage)
+		self.event:emit("roomChanged", self.room)
 	end
 end
 

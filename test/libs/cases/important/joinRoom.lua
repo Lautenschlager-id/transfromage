@@ -4,11 +4,13 @@ require("wrapper")(function(test, transfromage, client, clientId)
 	clientId = clientId * 2
 
 	test("join tribe house", function(expect)
-		client:on("joinTribeHouse", expect(function(roomName, roomLanguage)
+		client:on("joinTribeHouse", expect(function(room)
 			p("Received event joinTribeHouse")
 
-			assert(roomName)
-			assert(roomLanguage)
+			assert_eq(tostring(room), "Room", "str(room)")
+			assert(room.isTribeHouse)
+			assert(room.name)
+			assert(room.language)
 		end))
 
 		p("Joining tribe house", args[clientId])
@@ -18,13 +20,16 @@ require("wrapper")(function(test, transfromage, client, clientId)
 	end)
 
 	test("join room", function(expect)
-		client:on("roomChanged", expect(function(roomName, isOfficial, roomLanguage)
+		client:on("roomChanged", expect(function(room)
 			p("Received event roomChanged")
 
-			assert(roomName, client.language .. "-#bolodefchoco", "roomName")
+			assert_eq(tostring(room), "Room", "str(room)")
+			assert(not room.isTribeHouse)
 
-			assert_eq(type(isOfficial), "boolean", "type(isOfficial)")
-			assert_eq(roomLanguage, client.language, "roomLanguage")
+			assert(room.name, client.language .. "-#bolodefchoco", "roomName")
+
+			assert_eq(type(room.isOfficial), "boolean", "type(isOfficial)")
+			assert_eq(room.language, client.language, "roomLanguage")
 		end))
 
 		p("Joining room", args[clientId])
