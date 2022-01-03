@@ -53,7 +53,7 @@ enum.setting = {
 ]]
 enum.url = enum {
 	translation  = "http://transformice.com/langues/tfm-%s.gz",
-	gameSettings = "https://api.tocuto.tk/tfm/get/ip",
+	gameSettings = "https://cheese.formice.com/api/tfm/ip",
 	apiPackage   = "https://raw.githubusercontent.com/Lautenschlager-id/Transfromage/master/\z
 		package.lua"
 }
