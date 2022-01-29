@@ -1,6 +1,8 @@
+local apiPackage = require("./package")
+
+@#IF UPDATE
 local fs = require("fs")
 
-local apiPackage = require("./package")
 local enum = require("api/enum")
 
 ------------------------------------------- Optimization -------------------------------------------
@@ -19,7 +21,6 @@ local string_match   = string.match
 local table_concat   = table.concat
 ----------------------------------------------------------------------------------------------------
 
-@#IF UPDATE
 repeat
 	local update = string_lower(_G.PREPDIR_SETTINGS.UPDATE)
 

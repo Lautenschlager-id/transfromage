@@ -12,7 +12,7 @@ local os_time         = os.time
 	@desc Sends server heartbeats/pings to the servers.
 	@param self<client> A Client object.
 ]]
-sendHeartbeat = function(self)
+local sendHeartbeat = function(self)
 	self.mainConnection:send(enum_identifier.heartbeat, ByteArray:new())
 	if self.bulleConnection and self.bulleConnection.isOpen then
 		self.bulleConnection:send(enum_identifier.heartbeat, ByteArray:new())

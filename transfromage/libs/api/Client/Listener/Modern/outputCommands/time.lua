@@ -1,3 +1,7 @@
+------------------------------------------- Optimization -------------------------------------------
+local tonumber = tonumber
+----------------------------------------------------------------------------------------------------
+
 local onTime = function(self, packet, connection, identifiers)
 	packet:read8() -- ?
 	packet:readUTF() -- $TempsDeJeu

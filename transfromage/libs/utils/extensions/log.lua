@@ -1,3 +1,5 @@
+@#DEFINE SAVE_LOG LOG_FILE & LOG_FILE != ''
+
 ------------------------------------------- Optimization -------------------------------------------
 local colorThemes   = require("utils").theme
 local error         = error
@@ -8,7 +10,21 @@ local string_gsub   = string.gsub
 local tostring      = tostring
 ----------------------------------------------------------------------------------------------------
 
+@#IF SAVE_LOG
+local saveLog
+do
+	local logFile = io_open(_G.PREPDIR_SETTINGS.LOG_FILE, 'a')
+
+	saveLog = function(log)
+		logFile:write(log)
+		logFile:flush()
+	end
+end
+@#ENDIF
+
+@#IF COLORED_LOGS
 local colorFormat = "\27[%sm%s\27[0m"
+
 local colorCodes = {
 	error     = colorThemes.err,
 	failure   = colorThemes.failure,
@@ -17,15 +33,9 @@ local colorCodes = {
 	success   = colorThemes.string
 }
 
-@#IF COLORED_LOGS
 local formatColor = function(raw, code, text)
 	return (colorCodes[code] and string_format(colorFormat, colorCodes[code], text) or raw)
 end
-@#ELSE
-local formatColor = function(raw, code, text)
-	return colorCodes[code] and text or raw
-end
-@#ENDIF
 
 --[[@
 	@name os.log
@@ -37,29 +47,30 @@ end
 	@param returnValue?<boolean> Whether the formated message has to be returned. If not, it'll be sent to the prompt automatically. @default false
 	@returns nil,string The formated message, depending on @returnValue.
 ]]
-@#IF LOG_FILE & LOG_FILE ~= ''
-local logFile = io_open(_G.PREPDIR_SETTINGS.LOG_FILE, 'a')
-@#ENDIF
 os.log = function(log, ...)
 	log = string_format(tostring(log), ...)
 
-	coloredLog = string_gsub(log, "(↑(.-)↓(.-)↑)", formatColor)
-
+	local coloredLog = string_gsub(log, "(↑(.-)↓(.-)↑)", formatColor)
 	print(coloredLog)
-
-	@#IF LOG_FILE & LOG_FILE ~= ''
-	logFile:write(string_gsub(log, "↑.-↓(.-)↑", "%1"))
-	logFile:flush()
-	@#ENDIF
 end
 
-@#IF COLORED_ERRORS
 _G.error = function(message, level, ...)
+	@#IF SAVE_LOG
+	saveLog(message)
+	@#ENDIF
+
 	os.log(message, ...) -- Colored message
 	return error('^', level)
 end
 @#ELSE
 _G.error = function(message, level, ...)
-	return error(string_format(string_gsub(tostring(message), "↑.-↓(.-)↑", "%1"), ...), level)
+	message = string_gsub(tostring(message), "↑.-↓(.-)↑", "%1")
+	message = string_format(message, ...)
+
+	@#IF SAVE_LOG
+	saveLog(message)
+	@#ENDIF
+
+	return error(message, level)
 end
 @#ENDIF

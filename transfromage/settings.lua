@@ -10,7 +10,7 @@ local settings = {
 	-- Whether the function error should have color or not
 	COLORED_ERRORS = false,
 
-	-- File where all logs are saved, use nil to disable it.
+	-- File where all logs are saved, use false to disable it.
 	LOG_FILE = "logs.log",
 }
 

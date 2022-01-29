@@ -1,5 +1,5 @@
 ------------------------------------------- Optimization -------------------------------------------
-local os_time    = os.time
+local os_time = os.time
 ----------------------------------------------------------------------------------------------------
 
 local onLogin = function(self, packet, connection, identifiers)
