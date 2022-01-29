@@ -4,7 +4,7 @@ return {
 	name = "Lautenschlager-id/transfromage",
 	author = "Lautenschlager-id",
 
-	homepage = "https://github.com/Lautenschlager-id/Transfromage",
+	homepage = "https://github.com/Lautenschlager-id/transfromage",
 	license = "MIT",
 
 	files = { "*.lua" },
