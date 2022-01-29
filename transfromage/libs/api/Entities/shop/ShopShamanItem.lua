@@ -6,7 +6,7 @@ local ShopShamanItem = table.setNewClass("ShopShamanItem")
 
 ShopShamanItem.new = function(self)
 	return setmetatable({
-		uid = nil,
+		uniqueId = nil,
 
 		isEquipped = nil,
 
@@ -24,8 +24,8 @@ ShopShamanItem.new = function(self)
 	}, self)
 end
 
-ShopShamanItem.loadOwned = function(self, packet, category, uid, totalColors)
-	self.uid = packet:read16()
+ShopShamanItem.loadOwned = function(self, packet)
+	self.uniqueId = packet:read16()
 
 	self.isEquipped = packet:readBool()
 
@@ -44,7 +44,7 @@ ShopShamanItem.loadOwned = function(self, packet, category, uid, totalColors)
 end
 
 ShopShamanItem.loadPurchasable = function(self, packet)
-	self.uid = packet:read32()
+	self.uniqueId = packet:read32()
 	self.totalColors = packet:read8()
 
 	self.isNew = packet:readBool()

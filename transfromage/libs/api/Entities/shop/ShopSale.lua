@@ -9,7 +9,7 @@ ShopSale.new = function(self, packet)
 	local sale = setmetatable({
 		isShamanItem = nil,
 
-		uid = nil,
+		itemId = nil, -- either dressingId (item) or uniqueId (shaman)
 
 		timestamp = nil,
 
@@ -17,14 +17,14 @@ ShopSale.new = function(self, packet)
 	}, self)
 
 	sale.isShamanItem = not packet:readBool()
-	sale.uid = packet:read32()
+	sale.itemId = packet:read32()
 
 	packet:readBool() -- ?
 
 	sale.timestamp = packet:read32() * 1000
 	sale.discountPercentage = packet:read8()
 
-	salesList[sale.uid] = sale
+	salesList[sale.itemId] = sale
 
 	return sale
 end

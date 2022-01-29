@@ -13,6 +13,7 @@ local table_copy   = table.copy
 local Shop = table.setNewClass("Shop")
 
 Shop.sales = { }
+Shop.collector = { }
 
 Shop.new = function(self)
 	return setmetatable({
@@ -26,16 +27,21 @@ Shop.new = function(self)
 				-- [id]
 			},
 			shaman = {
-
+				-- [uniqueId]
 			},
-			-- [uid]
+			byUniqueId = {
+				-- [uniqueId]
+			},
+			byDressingId = {
+				-- [dressingId]
+			}
 		},
 
 		ownedItems = { },
 		purchasableItems = { },
-		purchasableShamanItems = { },
 
 		ownedShamanItems = { },
+		purchasableShamanItems = { },
 
 		fashionSquadOutfits = { },
 		ownedOutfits = { }
@@ -45,27 +51,19 @@ end
 local insertItem = function(self, item)
 	local itemList = self.item
 
-	if not itemList.category[item.category] then
-		itemList.category[item.category] = { }
+	if not itemList.category[item.categoryId] then
+		itemList.category[item.categoryId] = { }
 	end
-	itemList.category[item.category][item.id] = item
+	itemList.category[item.categoryId][item.id] = item
 
-	local category = item.category
-	if item.id > 99 then
-		category = (category == 0 and "10") or (category == 22 and "230") or (category == 5 and "60") or category
-	end
-	itemList[(category .. item.id) * 1] = item
+	itemList.byUniqueId[item.uniqueId] = item
+
+	itemList.byDressingId[item.dressingId] = item
 end
 
 local checkItemSale = function(self, item)
-	local category = item.category
-	if category and item.id > 99 then
-		category = (category == 0 and "10") or (category == 22 and "230") or (category == 5 and "60") or category
-	end
-	local sale = self.sales[category and ((category .. item.id) * 1) or item.uid]
-
+	local sale = self.sales[item.dressingId or item.uniqueId]
 	if not sale then return end
-
 	if not sale.isShamanItem and not item.id then return end
 
 	item.isOnSale = true
@@ -73,6 +71,14 @@ local checkItemSale = function(self, item)
 	if not item.fraisePrice then return end
 	item.fraisePriceWithDiscount = math_ceil(item.fraisePrice -
 		(item.fraisePrice * (sale.discountPercentage / 100)))
+end
+
+local checkItemCollector = function(self, item)
+	local collector = self.collector[item.dressingId or item.uniqueId]
+	if not collector then return end
+	if not collector.isShamanItem and not item.id then return end
+
+	item.isAvailableCollector = true
 end
 
 Shop.load = function(self, packet)
@@ -89,6 +95,7 @@ Shop.load = function(self, packet)
 		self.ownedItems[i] = tmpItem
 		insertItem(self, tmpItem)
 		checkItemSale(self, tmpItem)
+		checkItemCollector(self, tmpItem)
 	end
 
 	-- Available items in the shop that haven't been purchased yet
@@ -97,6 +104,7 @@ Shop.load = function(self, packet)
 		self.purchasableItems[i] = tmpItem
 		insertItem(self, tmpItem)
 		checkItemSale(self, tmpItem)
+		checkItemCollector(self, tmpItem)
 	end
 
 	-- Currently available FS outfits
@@ -109,13 +117,15 @@ Shop.load = function(self, packet)
 		self.ownedOutfits[i] = Outfit:new():load(packet, i)
 	end
 
+	local shamanItemList = self.item.shaman
 	-- Owned shaman items
 	for i = 1, packet:read16() do
 		tmpItem = ShopShamanItem:new():loadOwned(packet)
 
 		self.ownedShamanItems[i] = tmpItem
-		self.item.shaman[tmpItem.uid] = tmpItem
+		shamanItemList[tmpItem.uniqueId] = tmpItem
 		checkItemSale(self, tmpItem)
+		checkItemCollector(self, tmpItem)
 	end
 
 	-- Available shaman items in the shop that haven't been purchased yet
@@ -123,22 +133,24 @@ Shop.load = function(self, packet)
 		tmpItem = ShopShamanItem:new():loadPurchasable(packet)
 
 		self.purchasableShamanItems[i] = tmpItem
-		self.item.shaman[tmpItem.uid] = tmpItem
+		shamanItemList[tmpItem.uniqueId] = tmpItem
 		checkItemSale(self, tmpItem)
+		checkItemCollector(self, tmpItem)
 	end
 end
 
-Shop.getItem = function(self, category, id)
-	if category and not id then -- uid provided
-		return self.item[category]
-	else
-		category = self.item.category[category]
-		return category and category[id]
+Shop.getItem = function(self, categoryId, id)
+	if not id then -- dressingId or uniqueId
+		id = categoryId
+		return self.item.byDressingId[id] or self.item.byUniqueId[id]
 	end
+
+	local category = self.item.category[categoryId]
+	return category and category[id]
 end
 
-Shop.getShamanItem = function(self, uid)
-	return self.item.shaman[uid]
+Shop.getShamanItem = function(self, uniqueId)
+	return self.item.shaman[uniqueId]
 end
 
 return Shop

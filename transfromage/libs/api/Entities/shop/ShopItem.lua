@@ -5,11 +5,18 @@ local setmetatable = setmetatable
 
 local ShopItem = table.setNewClass("ShopItem")
 
+local categoryPatch = {
+	[00] = 010,
+	[05] = 060,
+	[22] = 230
+}
+
 ShopItem.new = function(self)
 	return setmetatable({
-		uid = nil, -- rename, dressing id
-		id = nil, -- rename, id in the category
-		category = nil,
+		id = nil, -- id in the cat
+		uniqueId = nil, -- unique id
+		dressingId = nil, -- dressing id
+		categoryId = nil, -- cat id
 
 		totalColors = nil,
 		colors = nil,
@@ -25,6 +32,7 @@ ShopItem.new = function(self)
 
 		isPurchasable = nil,
 		isCollector = nil,
+		isAvailableCollector = nil,
 
 		isEquipped = nil, -- Based on the current outfit
 
@@ -33,31 +41,43 @@ ShopItem.new = function(self)
 	}, self)
 end
 
-ShopItem.loadOwned = function(self, packet, category, id, totalColors)
-	if not category then
+ShopItem.loadOwned = function(self, packet, categoryId, id, totalColors)
+	if not categoryId then
 		self.totalColors = packet:read8()
 
-		uid = packet:read32()
-		self.uid = uid
+		local uniqueId = packet:read32()
+		self.uniqueId = uniqueId
 
-		self.category = uid > 9999 and math_floor((uid - 10000) / 10000) or math_floor(uid / 100)
-
-		if uid < 99 then
-			self.id = uid
-		elseif uid < 999 then
-			self.id = uid % (100 * self.category)
-		elseif uid < 9999 then
-			self.id = uid % 100
+		if uniqueId > 9999 then
+			self.categoryId = math_floor((uniqueId - 10000) / 10000)
 		else
-			self.id = uid % 1000
+			self.categoryId = math_floor(uniqueId / 100)
+		end
+
+		if uniqueId < 99 then
+			self.id = uniqueId
+		elseif uniqueId < 999 then
+			self.id = uniqueId % (100 * self.categoryId)
+		elseif uniqueId < 9999 then
+			self.id = uniqueId % 100
+		else
+			self.id = uniqueId % 1000
 		end
 	else
-		self.uid = category * 1000 + id
+		self.uniqueId = categoryId * 1000 + id
 		self.id = id
-		self.category = category
+		self.categoryId = categoryId
 
 		self.totalColors = totalColors
 	end
+
+	local patchedCategory
+	if self.id > 99 then
+		patchedCategory = categoryPatch[self.categoryId] or self.categoryId
+	else
+		patchedCategory = self.categoryId
+	end
+	self.dressingId = (patchedCategory .. self.id) * 1
 
 	if not totalColors and self.totalColors > 0 then -- Only owned items are gonna have this list
 		local colors = { }
@@ -72,7 +92,7 @@ ShopItem.loadOwned = function(self, packet, category, id, totalColors)
 end
 
 ShopItem.loadPurchasable = function(self, packet)
-	local category = packet:read16()
+	local categoryId = packet:read16()
 	local id = packet:read16()
 	local totalColors = packet:read8()
 
@@ -91,12 +111,13 @@ ShopItem.loadPurchasable = function(self, packet)
 		self.isPurchasable = false
 		self.cheesePrice = 0
 	else
-		self.isPurchasable = false
+		self.isPurchasable = true
 	end
 
 	self.isCollector = self.flags == 13
+	self.isAvailableCollector = not self.isCollector -- Becomes true in another packet
 
-	return self:loadOwned(nil, category, id, totalColors)
+	return self:loadOwned(nil, categoryId, id, totalColors)
 end
 
 return ShopItem
