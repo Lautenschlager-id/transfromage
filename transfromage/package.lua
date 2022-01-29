@@ -22,6 +22,7 @@ return {
 		"lua",
 		"luvit",
 		"transformice",
-		"transfromage"
+		"transfromage",
+		"atelier801"
 	}
 }
