@@ -1,6 +1,7 @@
 ------------------------------------------- Optimization -------------------------------------------
-local math_floor   = math.floor
-local setmetatable = setmetatable
+local math_floor    = math.floor
+local setmetatable  = setmetatable
+local string_format = string.format
 ----------------------------------------------------------------------------------------------------
 
 local ShopItem = table.setNewClass("ShopItem")
@@ -77,7 +78,7 @@ ShopItem.loadOwned = function(self, packet, categoryId, id, totalColors)
 	else
 		patchedCategory = self.categoryId
 	end
-	self.dressingId = (patchedCategory .. self.id) * 1
+	self.dressingId = (patchedCategory .. string_format("%02d", self.id)) * 1
 
 	if not totalColors and self.totalColors > 0 then -- Only owned items are gonna have this list
 		local colors = { }
