@@ -23,6 +23,11 @@ local onProfileLoaded = function(self, packet, connection, identifiers)
 	data.bootcamps = packet:read32()
 	data.saves.divine = packet:read32()
 
+	data.skillessSaves = { }
+	data.skillessSaves.normal = packet:read32()
+	data.skillessSaves.hard = packet:read32()
+	data.skillessSaves.divine = packet:read32()
+
 	data.titleId = packet:read16()
 	data.totalTitles = packet:read16()
 	local titles = { }
