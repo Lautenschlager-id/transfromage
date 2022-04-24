@@ -18,4 +18,4 @@ You can also check out **[Fromage API](https://github.com/Lautenschlager-id/From
 
 This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python version of Transfromage API](https://github.com/Tocutoeltuco/transfromage).
 
-# New version is under heavy development, last develop working tree: https://github.com/Lautenschlager-id/Transfromage/tree/38eae3fbe883e17383e88acd04e62e6854ed7771
+# New version is under heavy development, last develop working tree: current
