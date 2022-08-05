@@ -6,7 +6,7 @@ local onPlayerGetCheese = function(self, packet, connection, identifiers)
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 
-	player.hasCheese = packet:readBool()
+	player.hasCheese = packet:read8() > 0
 
 	--[[@
 		@name playerGetCheese
