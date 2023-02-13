@@ -10,7 +10,7 @@ local fs_scandirSync = fs.scandirSync
 local fs_rmdirSync   = fs.rmdirSync
 local http_request   = require("coro-http").request
 local io_read        = io.read
-local logMessages    = enum.logMessages
+local logMessage     = enum.logMessage
 local enum_url       = enum.url
 local os_execute     = os.execute
 local os_exit        = os.exit
@@ -36,8 +36,8 @@ repeat
 	local performUpdate = (update == "auto")
 	if update == "permission" then
 		repeat
-			os_log(logMessages.newVersion, latestVersion)
-			os_log(logMessages.confirmUpdate)
+			os_log(logMessage.newVersion, latestVersion)
+			os_log(logMessage.confirmUpdate)
 			performUpdate = string_lower(io_read())
 		until performUpdate == 'n' or performUpdate == 'y'
 

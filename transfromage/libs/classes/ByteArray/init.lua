@@ -8,6 +8,11 @@ local string_getBytes  = string.getBytes
 
 local ByteArray = table.setNewClass("ByteArray")
 
+--[[@
+	@name ByteArray.__tostring
+	@desc Generates a string with the bytes of the array.
+	@returns string A string with the bytes of the array. Doesn't consider the stack position.
+]]
 ByteArray.__tostring = function(this)
 	return table_writeBytes(table_copy(this.stack))
 end
@@ -37,6 +42,11 @@ ByteArray.new = function(self, stack)
 	}, self)
 end
 
+--[[@
+	@name duplicate
+	@desc Clones the ByteArray into a new object.
+	@returns ByteArray The new, cloned Byte Array object.
+]]
 ByteArray.duplicate = function(self)
 	return ByteArray:new(table_copy(self.stack))
 end
