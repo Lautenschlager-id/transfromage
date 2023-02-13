@@ -50,6 +50,7 @@ end
 	@name table.copy
 	@desc Copies a table to remove its reference.
 	@param list<table> The table to be copied.
+	@param checkMetatable?<boolean> Whether the copy should include the metatable methods @default false
 	@returns table A new table with all values and indexes of @list.
 ]]
 local table_copy

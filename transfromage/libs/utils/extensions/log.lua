@@ -44,8 +44,7 @@ end
 	@desc Available code names: `error`, `failure`, `highlight`, `info`, `success`.
 	@desc This function is also available for the `error` function. Ex: `error("↑error↓Bug↑")`
 	@param str<string> The message to be sent. It may included color formats.
-	@param returnValue?<boolean> Whether the formated message has to be returned. If not, it'll be sent to the prompt automatically. @default false
-	@returns nil,string The formated message, depending on @returnValue.
+	@param ...?<*> Values to be used in format on @str
 ]]
 os.log = function(log, ...)
 	log = string_format(tostring(log), ...)

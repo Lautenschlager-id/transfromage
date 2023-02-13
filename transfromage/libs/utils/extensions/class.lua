@@ -13,7 +13,8 @@ classMeta.__call = function(self, ...)
 end
 
 classMeta.__newindex = function(self, index, value)
-	if type(value) == "string" then -- Aliases / Compatibility
+	if type(value) == "string" then
+		-- class.any = "string" -- == deprecated version of class["string"], for compatibility
 		rawset(self, index, function(this, ...)
 			os_log(logMessage.deprecatedMethod, index, value)
 			return self[value](this, ...)
@@ -27,6 +28,7 @@ end
 	@name table.setNewClass
 	@desc Creates a new class constructor.
 	@desc If the table receives a new index with a string value, it'll create an alias.
+	@param name<string> The class name to be returned on tostring's return.
 	@returns table A metatable with constructor and alias handlers.
 ]]
 table.setNewClass = function(name)

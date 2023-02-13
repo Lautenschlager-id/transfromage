@@ -4,6 +4,14 @@ local require        = require
 local string_sub     = string.sub
 ----------------------------------------------------------------------------------------------------
 
+--[[@
+	@name folderLoader
+	@desc Loads all files in a specifc path.
+	@param path<string> A path in the API's source with .lua files.
+	@param asArray?<boolean> Whether the return value should be an array or an object. @default false
+	@returns table A list or object of the required data.
+	@returns table A list of folders required.
+]]
 local folderLoader = function(path, asArray)
 	path = path .. "/"
 
