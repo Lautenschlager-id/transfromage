@@ -35,9 +35,7 @@ local onRoomList = function(self, packet, connection, identifiers)
 						name = roomName,
 						totalPlayers = roomCount * 1,
 						language = language,
-						country = country,
-						command = "mjj",
-						args = "m " .. roomName
+						country = country
 					}
 				end
 			else
@@ -46,9 +44,7 @@ local onRoomList = function(self, packet, connection, identifiers)
 					name = roomName,
 					totalPlayers = tonumber(playerCount) or playerCount,
 					language = language,
-					country = country,
-					command = command,
-					args = args
+					country = country
 				}
 			end
 		else
@@ -67,6 +63,7 @@ local onRoomList = function(self, packet, connection, identifiers)
 				hasAie = packet:readBool()
 				mapDuration = packet:read8()
 				miceMass = packet:read32()
+				packet:read16() -- custom room size
 				mapRotation = packet:read8(packet:read8())
 			end
 
