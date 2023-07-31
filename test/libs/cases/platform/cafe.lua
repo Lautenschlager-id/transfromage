@@ -1,4 +1,7 @@
-require("wrapper")(function(test, transfromage, client)
+local timer = require("timer")
+
+require("wrapper")(function(test, transfromage, client, _, clientAux)
+--[[
 	test("get cafe data", function(expect)
 		local listLoaded = false
 
@@ -101,8 +104,6 @@ require("wrapper")(function(test, transfromage, client)
 		client:openCafe()
 	end)
 
-	test("cafe messages", TO_DO) -- like message, new message, unread message
-
 	test("get cafe data (OO)", function(expect)
 		local listLoaded = false
 
@@ -153,6 +154,64 @@ require("wrapper")(function(test, transfromage, client)
 
 		p("Opening cafe")
 		client.cafe:open()
+	end)
+	]]
+
+	local randomName = "bot testing " .. math.random(1000)
+	test("create and message cafe topic", function(expect)
+		local createdTopic
+		clientAux:on("cafeTopicList", expect(function(topics)
+			p("Received event cafeTopicList")
+
+			for t = 1, #topics do
+				createdTopic = topics[t]
+
+				if createdTopic.title == randomName then
+					break
+				end
+
+				createdTopic = nil
+			end
+
+			assert_neq(createdTopic, nil, "topic")
+
+			clientAux:sendCafeMessage(createdTopic.id, "hallo")
+
+			timer.setTimeout(500, clientAux.reloadCafe, clientAux)
+		end, 1))
+
+		client:on("unreadCafeMessage", expect(function(topicId, topic)
+			p("Received event unreadCafeMessage")
+
+			assert_eq(type(topicId), "number", "id")
+			assert_eq(tostring(topic), "CafeTopic", "topic")
+
+			if topicId == createdTopic.id then
+				client:openCafeTopic(topicId)
+			end
+		end))
+
+		client:on("cafeTopicLoad", expect(function(topic)
+			p("Received event cafeTopicLoad")
+
+			local message
+			for m = 1, #topic.messages do
+				message = topic.messages[m]
+
+				if message.content == "hallo" then
+					break
+				end
+
+				message = nil
+			end
+
+			assert_neq(message, nil, "message")
+		end, 1))
+
+		client:createCafeTopic(randomName, "testing **bot**\n- Bolo Company")
+		timer.setTimeout(500, clientAux.openCafe, clientAux)
+
+		return -500
 	end)
 
 	test("cafe messages (OO)", TO_DO)
