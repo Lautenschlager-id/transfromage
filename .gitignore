@@ -1,4 +1,5 @@
 *.exe
 MyFirstBot/
 deps/
-*.log
+logs.log
+deps/transfromage

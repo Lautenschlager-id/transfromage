@@ -1,8 +1,58 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
-## v8.1.0 - 07/11/2020
-- This quick patch allows the API to work. Nothing should have changed, but you can read the commit's changes if anything. A new, better, version is under development.
+## v9.0.0 - ?
+## News
+- Shop features.
+- New event _whisperFail_.
+- New function _client.leaveTribe_ and _client.tribe.leave_.
+- New event _tribeInvite_.
+- New function _client.answerTribeInvite_.
+- sigterm is handled correctly for all clients now.
+- New event _languageSet_.
+- _updatePlayer_ now receives a third argument related to the field that has been updated.
+- New event _shaman_.
+
+## Changes
+- Field `Map.perm` has been renamed to `Map.permCode`.
+- Event _newGame_ now receives a parameter `map` with the Map class.
+- Events _joinTribeHouse_ and _roomChanged_ now receive a parameter `room` with the Room class.
+- Event _receivedPacket_ now receives the following parameters: (identifiers, packet, connection)
+- Event _receive_ has been renamed to _receivedPacket_.
+- Event _missedPacket_ has been renamed to _unhandledPacket_.
+- Event _missedTribulle_ has been renamed to _unhandledTribullePacket_.
+- client.changeWhisperState(message, state) is now client.changeWhisperState(state, message)
+- Parameter of the event roomChanged "isPrivate" is now "isOfficial", meaning that if you relied on this boolean, please negate it now.
+- Event _connection_ is now triggered when the first bulle connection is set (zero arguments)
+- New event _mainConnection_ that is triggered when the main connection is set (takes all arguments from connection)
+- Event _ping_ is now _serverPing_.
+- _Client.insertPacketListener_, _Client.insertOldListener_ are now _Client.insertModernListener_, _Client.insertLegacyListener_, respectively.
+- _Client.parsePacket_ is now _Client.triggerPacketCallback_.
+- _Client.closeAll_ is now _Client.killConnections_.
+- Event _\_receive_ no longer exists, it's all handled by _receive_ now.
+- _enum.setting.mainIp_ is now _enum.setting.mainIP_.
+- _Encode._identificationKeys_ and _Encode._messageKeys_ are now in _Client_.
+- _Client._gameVersion_ is now _enum.setting.gameVersion_
+- _Client._processXml_, _Client.processXml_ has been renamed to _Client._decryptXML_, _Client.decryptXML_, respectively.
+- _Client.community_, _Client.setCommunity_, _enum.community_ have been renamed to _Client.language_, _Client.setLanguage_, _enum.language_, respectively.
+- Event _tribeInterface_ now receives only one object parameter _Tribe_.
+- Event _connectionInfo_ has been renamed to _accountDataLoaded_.
+- Event _playerDied_ has been renamed to _playerDeath_.
+- Event _missedOldPacket_ has been renamed to _unhandledLegacyPacket_.
+- _client.main_, _client.bulle_, _client.hbTimer_, _client._receivedAuthkey_, _client.connectionTime_, _client._hasSpecialRole_, have been renamed to _client.mainConnection_, _client.bulleConnection_, _client._heartbeatTimer_, _client._authenticationKey_, _client._loginTime_, _client._isOfficialBot_, respectively.
+- _connection.open_, _connection.port_ has been renamed to _connection.isOpen_, _connection.portIndex_, respectively.
+- When a player becomes shaman, the event _shaman_ will be triggered instead of _updatePlayer_.
+- _connection_ has been renamed to _Connection_.
+- _Translation.download_ is not the class' constructor.
+- _Translation_ is now a class.
+- _translation_ has been renamed to _Translation_.
+- _encode_ is not a class anymore.
+- _buffer_ has been renamed to _Buffer_.
+- _bitwise_ has been renamed to _bit64_.
+- _byteArray_ has been renamed to _ByteArray_.
+
+## Fixes
+- _Connection.receive_ now correctly handles long packets
 
 ## v8.0.0 - 05/09/2020
 ## News
