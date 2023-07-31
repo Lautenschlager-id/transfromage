@@ -4,6 +4,8 @@
 
 **Transformice's API written in Lua (5.1▲) using the Luvit runtime environment**
 
+# This API is under development and both the documentation and tests are not finished. Some methods may be outdated.
+
 ## About
 
 [Transformice](https://www.transformice.com/) is an online independent multiplayer free-to-play platform video game created by the French company [Atelier801](http://societe.atelier801.com/).
@@ -17,5 +19,3 @@ Join the **_[Fifty Shades of Lua](https://discord.gg/qmdryEB)_** [discord](https
 You can also check out **[Fromage API](https://github.com/Lautenschlager-id/Fromage)** for Atelier801's forum.
 
 This API had many indirect contributors, including [@Tocutoeltuco](https://github.com/Tocutoeltuco), [@Useems](https://github.com/Useems), [@Turkitutu](https://github.com/Turkitutu), [@Athesdrake](https://github.com/Athesdrake) and the [python version of Transfromage API](https://github.com/Tocutoeltuco/transfromage).
-
-# New version is under heavy development, last develop working tree: current
