@@ -6,7 +6,8 @@ return {
 		"creationix/base64",
 		"creationix/coro-http",
 		"luvit/secure-socket",
-		"luvit/net"
+		"luvit/net",
+		"Lautenschlager-id/prepdir"
 	},
 	tags = { "transformice", "bot", "game", "api", "lua", "luvit", "fromage", "transfromage" },
 	license = "MIT",
