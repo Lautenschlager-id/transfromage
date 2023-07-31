@@ -13,6 +13,6 @@ return {
 	license = "MIT",
 	author = "Lautenschlager-id",
 	files = {
-		"*.lua"
+		"**.lua"
 	}
 }
