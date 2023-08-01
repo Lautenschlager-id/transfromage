@@ -46,11 +46,11 @@ Player.update = function(self, packet)
 	self.id = packet:read32() -- Temporary id
 
 	self.isShaman = packet:readBool()
-	self.isDead = packet:readBool()
+	self.isDead = packet:read8() > 0 -- Unsure what values above 1 mean?
 
 	self.score = packet:read16()
 
-	self.hasCheese = packet:readBool()
+	self.hasCheese = packet:read8() > 0 -- Cheeses
 
 	self.title = packet:read16()
 	self.titleStars = packet:read8() - 1
@@ -70,6 +70,8 @@ Player.update = function(self, packet)
 
 	local color = packet:read32()
 	self.nameColor = (color == 0xFFFFFFFF and -1 or color)
+
+	packet:read8() -- Respawn counter?
 
 	-- Custom or non-updated data
 	self.isSouris = (string_sub(self.playerName, 1, 1) == '*')
