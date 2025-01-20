@@ -1,5 +1,5 @@
 return {
-	version = "9.0.1",
+	version = "9.0.2",
 
 	name = "Lautenschlager-id/transfromage",
 	author = "Lautenschlager-id",
