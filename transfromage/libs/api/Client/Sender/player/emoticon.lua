@@ -23,5 +23,5 @@ Client.playEmoticon = function(self, emoticon)
 		string_format(enum_error.invalidEnum, "playEmoticon", "emoticon", "emoticon"))
 	if not emoticon then return end
 
-	self.bulleConnection:send(identifier, ByteArray:new():write8(emoticon))
+	self.bulleConnection:send(identifier, ByteArray:new():write16(emoticon))
 end
