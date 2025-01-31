@@ -7,6 +7,7 @@ local enum_setting    = enum.setting
 local enum_url        = enum.url
 local http_request    = require("coro-http").request
 local json_decode     = require("json").decode
+local pcall           = pcall
 local string_split    = string.split
 local tostring        = tostring
 ----------------------------------------------------------------------------------------------------
@@ -20,8 +21,8 @@ local tostring        = tostring
 	@param token<string> The developer's token.
 ]]
 local getGameSettings = function(self)
-	local _, result = http_request("GET", enum_url.gameSettings)
-	result = json_decode(tostring(result))
+	local success, _, result = pcall(http_request, "GET", enum_url.gameSettings)
+	result = success and json_decode(tostring(result))
 	if not result then return end
 
 	if not result.success then
