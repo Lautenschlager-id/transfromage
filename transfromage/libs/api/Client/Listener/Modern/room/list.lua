@@ -67,7 +67,8 @@ local onRoomList = function(self, packet, connection, identifiers)
 				hasAie = packet:readBool()
 				mapDuration = packet:read8()
 				miceMass = packet:read32()
-				mapRotation = packet:read8(packet:read8())
+				maxPlayers = packet:read16()
+				mapRotation = packet:read8(packet:read8()).stack
 			end
 
 			counter = counter + 1
@@ -91,7 +92,6 @@ local onRoomList = function(self, packet, connection, identifiers)
 			}
 		end
 	end
-
 	--[[@
 		@name roomList
 		@desc Triggered when the room list of a mode is loaded.

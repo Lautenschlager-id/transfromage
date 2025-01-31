@@ -6,7 +6,7 @@ local onPlayerEmoticon = function(self, packet, connection, identifiers)
 	local player = self.playerList[packet:read32()]
 	if not player then return end
 
-	local emoticon = packet:read8()
+	local emoticon = packet:read16()
 
 	--[[@
 		@name playerEmoticon

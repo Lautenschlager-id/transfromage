@@ -5,11 +5,15 @@ local onLanguageSet = function(self, packet, connection, identifiers)
 		@param language<string> The code of the language.
 		@param country<string> The code of the country.
 		@param isRightToLeft<boolean> Whether the language is read right to left or not.
-		@param hasSpecialCharacter<boolean> Whether the language has special characters or not.
+		@param hasSpecialCharacters<boolean> Whether the language has special characters or not.
+		@param font<string> The used font.
 		@param connection<connection> The connection in which the language has been set.
 	 ]]
-	self.event:emit("languageSet", packet:readUTF(), packet:readUTF(), packet:readBool(),
-		packet:readBool(), connection)
+	local language, country = packet:readUTF(), packet:readUTF()
+	local isRightToLeft, hasSpecialCharacters = packet:readBool(), packet:readBool()
+	local font = packet:readUTF()
+	self.event:emit("languageSet", language, country, isRightToLeft, hasSpecialCharacters, font,
+		connection)
 end
 
 return { onLanguageSet, 176, 5 }
