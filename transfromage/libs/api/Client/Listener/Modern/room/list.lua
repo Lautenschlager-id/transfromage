@@ -10,9 +10,12 @@ local onRoomList = function(self, packet, connection, identifiers)
 	local rooms, counter = { }, 0
 	local roomMode = packet:read8()
 	local pinned, pinnedCounter = { }, 0
-	
-	local isPinned, language, country, name, count, max, onFcMode
-	local _roomShaman, _roomConsumables, _roomCollision, _roomAIE, _roomRound, _mouseWeight, _roomSize, _roomRotation
+
+	local isPinned, language, country, name
+	local command, args
+
+	local playerCount, maxPlayers, onFcMode, hasSpecialSettings
+
 	while packet.stackLen > 0 do
 		isPinned = packet:readBool()
 		language = packet:readUTF()
@@ -20,62 +23,71 @@ local onRoomList = function(self, packet, connection, identifiers)
 		name = packet:readUTF()
 
 		if isPinned then
-			count = tonumber(packet:readUTF())
-			local command = packet:readUTF()
-			local args = packet:readUTF()
-			for roomName, roomCount in args:gmatch('&~(.-),(%d+)') do
+			playerCount = packet:readUTF()
+
+			command = packet:readUTF()
+			args = packet:readUTF()
+
+			if command == "lm" then
+				for roomName, roomCount in string_gmatch(args, "&~(.-),(%d+)") do
+					pinnedCounter = pinnedCounter + 1
+					pinned[pinnedCounter] = {
+						name = roomName,
+						totalPlayers = roomCount * 1,
+						language = language,
+						country = country,
+						command = "mjj",
+						args = "m " .. roomName
+					}
+				end
+			else
 				pinnedCounter = pinnedCounter + 1
 				pinned[pinnedCounter] = {
 					name = roomName,
-					totalPlayers = roomCount,
+					totalPlayers = tonumber(playerCount) or playerCount,
 					language = language,
-					country = country
+					country = country,
+					command = command,
+					args = args
 				}
 			end
 		else
-			count = packet:read16()
-			max = packet:read8()
+			playerCount = packet:read16()
+			maxPlayers = packet:read8()
 			onFcMode = packet:readBool()
-			onRules = packet:readBool()
-			if onRules then
-				_roomShaman = packet:readBool()
-				_roomConsumables = packet:readBool()
-				_roomCollision = packet:readBool()
-				_roomAIE = packet:readBool()
-				_roomRound = packet:read16()
-				_mouseWeight = packet:read32()
-				_roomSize = packet:read16()
-				_roomRotation = packet:read8()
-				if _roomRotation > 0 then
-					mapRotation = {}
-					for i = 1, _roomRotation do
-						mapRotation[#mapRotation + 1] = packet:read8()    
-					end
-					_roomRotation = mapRotation
-				else
-					_roomRotation = false
-				end
-				features = {
-					roomShaman = _roomShaman,
-					roomConsumables = _roomConsumables,
-					roomCollision = _roomCollision,
-					roomAIE = _roomAIE,
-					roomRound = _roomRound,
-					mouseWeight = _mouseWeight,
-					customRoomSize = _roomSize,
-					roomRotation = _roomRotation
-				}
+			hasSpecialSettings = packet:readBool()
+
+			local hasShamanSkills, hasConsumables, hasEvents, hasCollision, hasAie, mapDuration,
+				miceMass, roomSize, mapRotation
+			if hasSpecialSettings then
+				hasShamanSkills = packet:readBool()
+				hasConsumables = packet:readBool()
+				hasCollision = packet:readBool()
+				hasAie = packet:readBool()
+				mapDuration = packet:read16()
+				miceMass = packet:read32()
+				roomSize = packet:read16()
+				mapRotation = packet:read8(packet:read8()).stack
 			end
+
 			counter = counter + 1
 			rooms[counter] = {
 				name = name,
-				totalPlayers = count,
-				maxPlayers = max,
+				totalPlayers = playerCount,
+				maxPlayers = maxPlayers,
 				onFuncorpMode = onFcMode,
 				language = language,
 				country = country,
-				onRestriction = onRules,
-				rules = features
+
+				hasSpecialSettings = hasSpecialSettings,
+				hasShamanSkills = hasShamanSkills,
+				hasConsumables = hasConsumables,
+				hasCollision = hasCollision,
+				hasAie = hasAie,
+				mapDuration = mapDuration,
+				miceMass = miceMass,
+				roomSize = roomSize,
+				mapRotation = mapRotation
 			}
 		end
 	end
