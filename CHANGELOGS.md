@@ -1,6 +1,16 @@
 # Changelogs
 
 ###### [Semantic Versioning SemVer](https://semver.org/)
+## v9.0.6 - ?
+## News
+- New event _newLanguage_.
+- New event _luaMessage_.
+
+## Changes
+- _Client.enterRoom_ now takes the arguments _(roomName, **roomPassword**, isSalonAuto)_.
+- _Client.enterPrivateRoom_ is obsolete. Use _Client.enterRoom_.
+
+
 ## v9.0.0 - ?
 ## News
 - Shop features.
