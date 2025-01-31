@@ -3,7 +3,7 @@
 ###### [Semantic Versioning SemVer](https://semver.org/)
 ## v9.0.6 - ?
 ## News
-- New event _newLanguage_.
+- New parameter to event _setLanguage_: _font_.
 - New event _luaMessage_.
 
 ## Changes
