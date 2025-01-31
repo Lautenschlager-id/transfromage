@@ -58,15 +58,16 @@ local onRoomList = function(self, packet, connection, identifiers)
 			hasSpecialSettings = packet:readBool()
 
 			local hasShamanSkills, hasConsumables, hasEvents, hasCollision, hasAie, mapDuration,
-				miceMass, roomSize, mapRotation
+				miceMass, mapRotation
 			if hasSpecialSettings then
-				hasShamanSkills = packet:readBool()
-				hasConsumables = packet:readBool()
+				hasShamanSkills = not packet:readBool()
+				hasConsumables = not packet:readBool()
+				hasEvents = not packet:readBool()
 				hasCollision = packet:readBool()
 				hasAie = packet:readBool()
-				mapDuration = packet:read16()
+				mapDuration = packet:read8()
 				miceMass = packet:read32()
-				roomSize = packet:read16()
+				maxPlayers = packet:read16()
 				mapRotation = packet:read8(packet:read8()).stack
 			end
 
@@ -82,11 +83,11 @@ local onRoomList = function(self, packet, connection, identifiers)
 				hasSpecialSettings = hasSpecialSettings,
 				hasShamanSkills = hasShamanSkills,
 				hasConsumables = hasConsumables,
+				hasEvents = hasEvents,
 				hasCollision = hasCollision,
 				hasAie = hasAie,
 				mapDuration = mapDuration,
 				miceMass = miceMass,
-				roomSize = roomSize,
 				mapRotation = mapRotation
 			}
 		end
