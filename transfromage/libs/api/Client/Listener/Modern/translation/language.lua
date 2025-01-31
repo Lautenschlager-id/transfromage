@@ -6,10 +6,12 @@ local onNewLanguage = function(self, packet, connection, identifiers)
 		@param country<string> The code of the country.
 		@param isRTL<boolean> Whether the language is read left to right or not.
 		@param hasSpecialCharacters<boolean> Whether the language has special characters or not.
+		@param font<string> The used font.
 	 ]]
 	local language, country = packet:readUTF(), packet:readUTF()
 	local isRTL, hasSpecialCharacters = packet:readBool(), packet:readBool()
-	self.event:emit("newLanguage", language, country, isRTL, hasSpecialCharacters)
+	local font = packet:readUTF()
+	self.event:emit("newLanguage", language, country, isRTL, hasSpecialCharacters, font)
 end
 
 return { onNewLanguage, 176, 5 }
